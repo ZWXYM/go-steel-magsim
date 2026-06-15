@@ -1,0 +1,2755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fe-Si 多晶微磁学仿真平台</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg-0:#07090f;--bg-1:#0d1220;--bg-2:#111827;--bg-3:#1a2235;--bg-4:#1e2d45;
+  --border:#1e3050;--border-hi:#2a4470;
+  --cyan:#38bdf8;--cyan-d:#0ea5e9;--amber:#f59e0b;--amber-d:#d97706;
+  --green:#34d399;--red:#f87171;--purple:#a78bfa;--orange:#fb923c;
+  --t1:#e2e8f0;--t2:#94a3b8;--t3:#475569;
+  --fw:var(--font-ui);
+  --font-ui:'Exo 2',sans-serif;--font-mono:'JetBrains Mono',monospace;--font-d:'Rajdhani',sans-serif;
+  --sw:220px;--hh:54px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg-0);color:var(--t1);font-family:var(--font-ui);font-size:14px;
+  display:flex;height:100vh;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(56,189,248,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,189,248,.03) 1px,transparent 1px);
+  background-size:40px 40px;z-index:0}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--bg-1);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:10;flex-shrink:0}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+.sb-logo .lt{font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--cyan);letter-spacing:1px}
+.sb-logo .ls{font-size:10px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
+.nav-sec{padding:10px 0 4px 16px;font-size:9px;color:var(--t3);letter-spacing:2px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;
+  border-left:2px solid transparent;transition:all .15s;color:var(--t2);font-weight:500;font-size:13.5px}
+.nav-item:hover{background:var(--bg-3);color:var(--t1)}
+.nav-item.active{background:rgba(56,189,248,.08);border-left-color:var(--cyan);color:var(--cyan)}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.task-dot{width:7px;height:7px;border-radius:50%;background:var(--t3);margin-left:auto}
+.task-dot.running{background:var(--amber);box-shadow:0 0 5px var(--amber);animation:pulse 1.5s infinite}
+.task-dot.done{background:var(--green)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sb-footer{margin-top:auto;padding:12px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--t3)}
+.ws-disp{font-family:var(--font-mono);font-size:10px;color:var(--t3);word-break:break-all;line-height:1.4;margin-top:4px;cursor:pointer}
+.ws-disp:hover{color:var(--cyan)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;z-index:1}
+.topbar{height:var(--hh);background:var(--bg-1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
+.tb-title{font-family:var(--font-d);font-size:18px;font-weight:700;letter-spacing:.5px}
+.tb-sub{font-size:12px;color:var(--t3);margin-left:auto}
+.content{flex:1;overflow-y:auto;padding:20px 24px;scrollbar-width:thin;scrollbar-color:var(--border-hi) transparent}
+
+/* PAGE */
+.page{display:none}.page.active{display:block}
+
+/* CARD */
+.card{background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:16px}
+.card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.card-title{font-family:var(--font-d);font-size:15px;font-weight:600;letter-spacing:.5px}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.b-cyan{background:rgba(56,189,248,.15);color:var(--cyan);border:1px solid rgba(56,189,248,.3)}
+.b-amber{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
+.b-green{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+.b-purple{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
+
+/* FORM */
+.fr{display:grid;gap:12px;margin-bottom:12px}
+.fr2{grid-template-columns:1fr 1fr}.fr3{grid-template-columns:1fr 1fr 1fr}.fr4{grid-template-columns:1fr 1fr 1fr 1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+input[type=text],input[type=number],select,textarea{
+  background:var(--bg-3);border:1px solid var(--border);color:var(--t1);
+  padding:8px 11px;border-radius:5px;font-family:var(--font-mono);font-size:13px;
+  outline:none;transition:border-color .15s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan-d);background:var(--bg-4)}
+select option{background:var(--bg-2)}
+.hint{font-size:10px;color:var(--t3);margin-top:2px}
+.range-grp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--bg-3);padding:4px;border-radius:7px;width:fit-content}
+.tab-btn{padding:7px 16px;border-radius:5px;cursor:pointer;border:none;background:transparent;
+  color:var(--t2);font-family:var(--font-ui);font-size:13px;font-weight:500;transition:all .15s}
+.tab-btn.active{background:var(--bg-4);color:var(--cyan);border:1px solid var(--border-hi)}
+.tab-c{display:none}.tab-c.active{display:block}
+
+/* BUTTONS */
+.btn{padding:9px 20px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font-d);
+  font-size:13px;font-weight:600;letter-spacing:.5px;transition:all .15s;
+  display:inline-flex;align-items:center;gap:7px}
+.btn-p{background:linear-gradient(135deg,var(--cyan-d),#0369a1);color:#fff;box-shadow:0 2px 10px rgba(14,165,233,.25)}
+.btn-p:hover{box-shadow:0 3px 15px rgba(14,165,233,.4);transform:translateY(-1px)}
+.btn-a{background:linear-gradient(135deg,var(--amber-d),#b45309);color:#fff;box-shadow:0 2px 10px rgba(245,158,11,.2)}
+.btn-a:hover{box-shadow:0 3px 15px rgba(245,158,11,.35);transform:translateY(-1px)}
+.btn-g{background:var(--bg-3);color:var(--t2);border:1px solid var(--border)}
+.btn-g:hover{background:var(--bg-4);color:var(--t1)}
+.btn-danger{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.btn-danger:hover{background:rgba(248,113,113,.25)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+
+/* TASK LOG */
+.task-log{background:var(--bg-0);border:1px solid var(--border);border-radius:6px;padding:12px 14px;
+  font-family:var(--font-mono);font-size:11.5px;line-height:1.7;color:var(--t2);
+  max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;margin-top:12px}
+.ll{}  .ll.ok{color:var(--green)}  .ll.err{color:var(--red)}  .ll.inf{color:var(--cyan)}
+
+/* FILE LIST */
+.file-list{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto}
+.fi{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-3);
+  border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .15s;user-select:none}
+.fi:hover{border-color:var(--border-hi);background:var(--bg-4)}
+.fi.sel{border-color:var(--cyan-d);background:rgba(56,189,248,.08)}
+.fi-chk{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border-hi);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.fi.sel .fi-chk{background:var(--cyan-d);border-color:var(--cyan-d)}
+.fi.sel .fi-chk::after{content:'✓';color:#fff;font-size:10px}
+.fi-info{flex:1}
+.fi-name{font-family:var(--font-mono);font-size:12px;color:var(--t1)}
+.fi-meta{font-size:11px;color:var(--t3);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+
+/* BATCH FOLDER ITEM */
+.batch-folder{background:var(--bg-3);border:1px solid var(--border);border-radius:7px;margin-bottom:6px;overflow:hidden}
+.batch-folder-hdr{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:all .15s;user-select:none}
+.batch-folder-hdr:hover{background:var(--bg-4)}
+.batch-folder-hdr.sel{background:rgba(56,189,248,.06);border-bottom:1px solid var(--border-hi)}
+.batch-folder-files{display:none;padding:6px 10px;border-top:1px solid var(--border)}
+.batch-folder-files.open{display:block}
+.bf-chk{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border-hi);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.batch-folder-hdr.all-sel .bf-chk{background:var(--amber-d);border-color:var(--amber-d)}
+.batch-folder-hdr.all-sel .bf-chk::after{content:'✓';color:#fff;font-size:10px}
+.folder-icon{font-size:16px;color:var(--amber)}
+.batch-expand{margin-left:auto;color:var(--t3);font-size:12px;transition:transform .2s}
+.batch-expand.open{transform:rotate(180deg)}
+
+/* SELECT-ALL BAR */
+.sel-bar{display:flex;align-items:center;gap:8px;padding:7px 10px;
+  background:var(--bg-4);border-radius:6px;margin-bottom:8px;font-size:12px;color:var(--t2)}
+.sel-all-btn{cursor:pointer;color:var(--cyan);font-size:12px;font-weight:600;margin-left:auto;
+  padding:2px 8px;border-radius:4px;border:1px solid rgba(56,189,248,.3);background:rgba(56,189,248,.08);
+  transition:all .15s}
+.sel-all-btn:hover{background:rgba(56,189,248,.18);color:var(--t1)}
+
+/* STATUS */
+.status-ind{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 12px;border-radius:20px;font-weight:500}
+.s-run{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
+.s-ok{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+.s-fail{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+
+/* PROPS */
+.props-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.prop-card{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;position:relative;overflow:hidden}
+.prop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.pc-c::before{background:var(--cyan)}.pc-a::before{background:var(--amber)}
+.pc-g::before{background:var(--green)}.pc-p::before{background:var(--purple)}
+.pl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;font-weight:600}
+.pv{font-family:var(--font-mono);font-size:17px;font-weight:500;margin-top:6px;color:var(--t1);line-height:1.2}
+.pu{font-size:10px;color:var(--t3);margin-top:2px}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chart-card{background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.chart-card h4{font-family:var(--font-d);font-size:13px;color:var(--t2);margin-bottom:10px;letter-spacing:.5px}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:12.5px}
+.dtable th{text-align:left;padding:10px 14px;font-size:10px;text-transform:uppercase;
+  letter-spacing:1.5px;color:var(--t3);border-bottom:1px solid var(--border);font-weight:600}
+.dtable td{padding:11px 14px;border-bottom:1px solid rgba(30,48,80,.5);color:var(--t2);vertical-align:middle}
+.dtable tr:hover td{background:var(--bg-3)}
+.mono{font-family:var(--font-mono);font-size:11.5px}
+.tbadge{display:inline-block;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);font-size:10px;font-weight:600}
+.t-bat{background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.25)}
+.t-ps1{background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.25)}
+.t-sh{background:rgba(52,211,153,.1);color:#34d399;border:1px solid rgba(52,211,153,.25)}
+
+/* ANGLE CHIPS */
+.angle-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.achip{padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:var(--bg-3);
+  cursor:pointer;font-family:var(--font-mono);font-size:12px;color:var(--t2);transition:all .1s;user-select:none}
+.achip.sel{background:rgba(56,189,248,.12);border-color:var(--cyan-d);color:var(--cyan)}
+
+/* COLLAPSIBLE */
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;
+  padding:10px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;
+  margin-bottom:8px;font-size:13px;font-weight:500;color:var(--t2);transition:all .15s}
+.coll-hdr:hover{color:var(--t1);background:var(--bg-4)}
+.coll-body{display:none;padding:14px;background:var(--bg-3);border:1px solid var(--border);
+  border-top:none;border-radius:0 0 6px 6px;margin-top:-9px;margin-bottom:8px}
+.coll-body.open{display:block}
+.chevron{transition:transform .2s;display:inline-block}.chevron.open{transform:rotate(180deg)}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--t3)}
+.empty .ei{font-size:36px;margin-bottom:10px;opacity:.4}
+.empty p{font-size:13px}
+
+/* SPINNER */
+.spin{width:18px;height:18px;border:2px solid var(--border-hi);border-top-color:var(--cyan);
+  border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* TOGGLE */
+.tog-wrap{display:flex;align-items:center;gap:10px;cursor:pointer}
+.tog{width:38px;height:20px;background:var(--bg-4);border-radius:10px;position:relative;
+  transition:background .2s;border:1px solid var(--border-hi)}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;
+  border-radius:50%;background:var(--t3);transition:all .2s}
+.tog.on{background:rgba(56,189,248,.2);border-color:var(--cyan-d)}
+.tog.on::after{left:20px;background:var(--cyan)}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border-hi);border-radius:8px;padding:28px;text-align:center;
+  cursor:pointer;transition:all .2s;background:var(--bg-3)}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--cyan-d);background:rgba(56,189,248,.05)}
+.upload-zone .ui{font-size:28px;opacity:.5}
+.upload-zone p{color:var(--t2);font-size:13px;margin-top:8px}
+.upload-zone small{color:var(--t3);font-size:11px}
+
+/* TOAST */
+.toast-c{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:11px 16px;border-radius:7px;font-size:13px;font-weight:500;max-width:320px;
+  animation:tslide .3s ease;display:flex;align-items:center;gap:8px}
+.toast-ok{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+.toast-err{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.toast-inf{background:rgba(56,189,248,.12);color:var(--cyan);border:1px solid rgba(56,189,248,.25)}
+@keyframes tslide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* BATCH INDEX FILTER */
+.idx-filter{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 10px;
+  background:var(--bg-4);border-radius:6px;font-size:12px}
+
+/* OUTPUT SCAN TREE */
+.run-item{background:var(--bg-3);border:1px solid var(--border);border-radius:7px;margin-bottom:8px;overflow:hidden}
+.run-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.run-hdr:hover{background:var(--bg-4)}
+.run-body{display:none;padding:8px 14px}
+.run-body.open{display:block}
+.config-item{margin-bottom:6px}
+.angle-line{display:flex;align-items:center;gap:10px;padding:6px 10px;background:var(--bg-4);border-radius:5px;margin-top:4px;cursor:pointer;font-size:12px;color:var(--t2);transition:all .15s}
+.angle-line:hover{color:var(--t1);background:var(--bg-3)}
+.angle-line.sel{background:rgba(56,189,248,.08);color:var(--cyan);border:1px solid rgba(56,189,248,.2)}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:3px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="lt">Fe-Si SimPlatform</div>
+    <div class="ls">多晶微磁学仿真集成</div>
+  </div>
+  <div class="nav-sec">功能模块</div>
+  <div class="nav-item active" data-page="texture" onclick="navigate(this)"><span class="nav-icon">⬡</span>织构生成</div>
+  <div class="nav-item" data-page="mx3" onclick="navigate(this)"><span class="nav-icon">⚙</span>MX3脚本生成</div>
+  <div class="nav-item" data-page="batchscripts" onclick="navigate(this)"><span class="nav-icon">▶</span>批处理脚本</div>
+  <div class="nav-item" data-page="taskmanager" onclick="navigate(this)"><span class="nav-icon">☰</span>任务管理<span class="task-dot" id="task-dot"></span></div>
+  <div class="nav-item" data-page="analysis" onclick="navigate(this)"><span class="nav-icon">◈</span>结果分析</div>
+  <div class="nav-sec">机器学习</div>
+  <div class="nav-item" data-page="dataset" onclick="navigate(this)"><span class="nav-icon">📊</span>数据集</div>
+  <div class="nav-item" data-page="training" onclick="navigate(this)"><span class="nav-icon">🤖</span>XGBoost训练</div>
+  <div class="nav-item" data-page="prediction" onclick="navigate(this)"><span class="nav-icon">⚡</span>快速预测</div>
+  <div class="nav-item" data-page="pipeline" onclick="navigate(this)"><span class="nav-icon">🔄</span>自动流水线</div>
+  <div class="sb-footer">
+    <div style="color:var(--t3);font-size:10px;text-transform:uppercase;letter-spacing:1px">工作目录</div>
+    <div class="ws-disp" id="ws-disp" onclick="changeWorkspace()">Loading...</div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title" id="tb-title">织构生成</div>
+    <div class="tb-sub">Fe-Si Polycrystalline Micromagnetic Simulation Platform</div>
+  </div>
+  <div class="content">
+
+  <!-- ======= PAGE: TEXTURE ======= -->
+  <div class="page active" id="page-texture">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'texture','single')">单一生成</button>
+      <button class="tab-btn" onclick="switchTab(this,'texture','batch')">批量生成</button>
+      <button class="tab-btn" onclick="switchTab(this,'texture','preinput')">预备输入</button>
+      <button class="tab-btn" onclick="switchTab(this,'texture','samples')">样本文件夹</button>
+    </div>
+
+    <!-- Single -->
+    <div class="tab-c active" id="texture-tab-single">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">ODF参数配置</span><span class="badge b-cyan">单一织构</span></div>
+        <div class="fr fr2">
+          <div class="fg"><label>Goss体积分数 f_Goss</label><input type="number" id="s-fg" value="0.7" min="0" max="1" step="0.01"><span class="hint">推荐 0.4–0.9</span></div>
+          <div class="fg"><label>旋转角 θ₀ (°)</label><input type="number" id="s-th" value="15" min="0" max="45" step="1"><span class="hint">范围 0–45°</span></div>
+        </div>
+        <div class="fr fr2">
+          <div class="fg"><label>晶粒数 N_grains</label><input type="number" id="s-ng" value="1000" min="100" step="100"></div>
+          <div class="fg"><label>织构半宽 σ (°)</label><input type="number" id="s-hw" value="10" min="1" max="45" step="0.5"></div>
+        </div>
+        <div class="fr fr2">
+          <div class="fg"><label>采样方法</label><select id="s-mth"><option value="importance">importance（快速）</option><option value="rejection">rejection（严格）</option></select></div>
+          <div class="fg"><label>ODF可视化</label><div class="tog-wrap" onclick="togSwitch('s-plot')"><div class="tog" id="s-plot" data-v="false"></div><span id="s-plot-lb" style="font-size:13px;color:var(--t2)">关闭</span></div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px">
+          <button class="btn btn-p" onclick="runSingle()">⬡ 生成织构</button>
+          <span id="s-status"></span>
+        </div>
+        <div id="s-log" class="task-log" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- Batch -->
+    <div class="tab-c" id="texture-tab-batch">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">批量采样配置</span><span class="badge b-amber">LHS采样</span></div>
+        <div class="fr fr2">
+          <div class="fg"><label>样本数 n_samples</label><input type="number" id="b-ns" value="20" min="2"></div>
+          <div class="fg"><label>每样本晶粒数</label><input type="number" id="b-ng" value="100" min="10" step="10"></div>
+        </div>
+        <div class="fr fr3">
+          <div class="fg"><label>f_Goss 范围</label><div class="range-grp"><input type="number" id="b-fg-min" value="0.4" min="0" max="1" step="0.05" placeholder="最小"><input type="number" id="b-fg-max" value="0.9" min="0" max="1" step="0.05" placeholder="最大"></div></div>
+          <div class="fg"><label>θ₀ 范围 (°)</label><div class="range-grp"><input type="number" id="b-th-min" value="0" min="0" max="45" placeholder="最小"><input type="number" id="b-th-max" value="30" min="0" max="45" placeholder="最大"></div></div>
+          <div class="fg"><label>halfwidth 范围 (°)</label><div class="range-grp"><input type="number" id="b-hw-min" value="5" min="1" placeholder="最小"><input type="number" id="b-hw-max" value="15" min="1" placeholder="最大"></div></div>
+        </div>
+        <div class="fr fr2">
+          <div class="fg"><label>采样方法</label><select id="b-mth"><option value="lhs">LHS（推荐）</option><option value="sobol">Sobol</option><option value="grid">Grid</option><option value="random">Random</option></select></div>
+          <div class="fg"><label>保存极图</label><div class="tog-wrap" onclick="togSwitch('b-plots')"><div class="tog" id="b-plots" data-v="false"></div><span id="b-plots-lb" style="font-size:13px;color:var(--t2)">关闭</span></div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px">
+          <button class="btn btn-a" onclick="runBatch()">▶ 批量生成</button>
+          <span id="b-status"></span>
+        </div>
+        <div id="b-log" class="task-log" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- PreInput -->
+    <div class="tab-c" id="texture-tab-preinput">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">预备输入文件 (preinput/)</span>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button class="btn btn-g btn-sm" onclick="loadPreinput()">🔄 刷新</button>
+            <button class="btn btn-p btn-sm" onclick="moveSelToInput()">📂 移至 input/</button>
+          </div>
+        </div>
+        <div id="preinput-list" class="file-list">
+          <div class="empty"><div class="ei">⬡</div><p>点击刷新或先生成织构</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Samples -->
+    <div class="tab-c" id="texture-tab-samples">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">样本文件总览</span><button class="btn btn-g btn-sm" onclick="loadSamples()" style="margin-left:auto">🔄 刷新</button></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">📁 preinput/</div>
+            <div id="samples-preinput" class="file-list"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">📁 input/</div>
+            <div id="samples-input" class="file-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-texture -->
+
+  <!-- ======= PAGE: MX3 ======= -->
+  <div class="page" id="page-mx3">
+    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:16px">
+      <div>
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-title">Input 文件</span>
+            <button class="btn btn-g btn-sm" onclick="loadInputFiles()" style="margin-left:auto">🔄 扫描</button>
+          </div>
+          <div id="input-list-container">
+            <div class="empty"><div class="ei">📁</div><p>点击"扫描"加载 input/ 目录</p></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">仿真模式与角度</span><span class="badge b-cyan">基础配置</span></div>
+          <div class="fr fr2">
+            <div class="fg"><label>仿真模式</label><select id="mx3-mode"><option value="single">Single — 每角度独立文件（推荐）</option><option value="complex">Complex — 单文件含全部角度</option></select></div>
+            <div class="fg"><label>自定义角度（逗号分隔）</label><input type="text" id="mx3-ang-inp" placeholder="留空使用下方快选"><span class="hint">例: 0,30,45,90</span></div>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <label style="margin:0">快速选择角度</label>
+              <span style="margin-left:auto;font-size:11px;color:var(--cyan);cursor:pointer" onclick="selectAllAngles(true)">全选</span>
+              <span style="font-size:11px;color:var(--t3);cursor:pointer" onclick="selectAllAngles(false)">全不选</span>
+            </div>
+            <div class="angle-chips" id="angle-chips"></div>
+          </div>
+        </div>
+
+        <div class="coll-hdr" onclick="toggleColl(this)"><span>⚙ 材料参数</span><span class="chevron">▼</span></div>
+        <div class="coll-body">
+          <div class="fr fr3">
+            <div class="fg"><label>Msat (A/m)</label><input type="number" id="p-msat" value="1520000" step="10000"></div>
+            <div class="fg"><label>Aex (J/m)</label><input type="number" id="p-aex" value="2.1e-11" step="1e-12"></div>
+            <div class="fg"><label>Gilbert α</label><input type="number" id="p-alpha" value="0.01" step="0.001" min="0.001"></div>
+          </div>
+          <div class="fr fr3">
+            <div class="fg"><label>Ku1 基准 (J/m³)</label><input type="number" id="p-ku1" value="48000" step="1000"></div>
+            <div class="fg"><label>Si含量 (%)</label><input type="number" id="p-si" value="3.0" step="0.1" min="0" max="10"></div>
+            <div class="fg"><label>H_max (A/m)</label><input type="number" id="p-hmax" value="7500" step="500"></div>
+          </div>
+        </div>
+
+        <div class="coll-hdr" onclick="toggleColl(this)"><span>▦ 网格参数</span><span class="chevron">▼</span></div>
+        <div class="coll-body">
+          <div class="fr fr4">
+            <div class="fg"><label>Grid X</label><input type="number" id="p-gx" value="4" min="1"></div>
+            <div class="fg"><label>Grid Y</label><input type="number" id="p-gy" value="4" min="1"></div>
+            <div class="fg"><label>Grid Z</label><input type="number" id="p-gz" value="1" min="1"></div>
+            <div class="fg"><label>单元 (nm)</label><input type="number" id="p-cell" value="4" step="0.5" min="0.5"></div>
+          </div>
+          <div class="fr fr2">
+            <div class="fg"><label>每段步数</label><input type="number" id="p-nstep" value="100" min="10" step="10"></div>
+            <div class="fg"><label>RVE 预览</label><div style="font-family:var(--font-mono);font-size:11px;color:var(--t3);padding:8px 10px;background:var(--bg-4);border-radius:4px" id="rve-prev">—</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px">
+          <button class="btn btn-p" onclick="runMX3()">⚙ 生成MX3脚本</button>
+          <span id="mx3-status"></span>
+        </div>
+        <div id="mx3-log" class="task-log" style="display:none"></div>
+      </div>
+    </div>
+  </div><!-- /page-mx3 -->
+
+  <!-- ======= PAGE: BATCH SCRIPTS ======= -->
+  <div class="page" id="page-batchscripts">
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">扫描仿真配置</span>
+        <button class="btn btn-g btn-sm" onclick="scanGrainScripts()" style="margin-left:auto">🔄 扫描 grain_scripts/</button>
+      </div>
+      <div id="batch-config-list">
+        <div class="empty"><div class="ei">📂</div><p>点击扫描加载可用仿真配置</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">批处理脚本配置</span><span class="badge b-amber">多平台</span></div>
+      <div class="fr fr2">
+        <div class="fg"><label>脚本类型</label><select id="script-type" onchange="updScriptUI()"><option value="5">全部生成 (.bat + .ps1 + .sh)</option><option value="1">Windows (.bat)</option><option value="2">PowerShell (.ps1)</option><option value="3">Linux Bash (PATH) (.sh)</option><option value="4">Linux Bash（自定义路径）(.sh)</option></select></div>
+        <div class="fg" id="mumax-path-grp" style="display:none"><label>mumax3 路径</label><input type="text" id="mumax3-path" placeholder="例: ./mumax3  /usr/local/bin/mumax3"></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-a" onclick="runGenBatch()">▶ 生成批处理脚本</button>
+        <span id="batch-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= PAGE: TASK MANAGER ======= -->
+  <div class="page" id="page-taskmanager">
+    <!-- Env check card -->
+    <div class="card" id="env-card">
+      <div class="card-hdr">
+        <span class="card-title">部署环境</span>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <span id="env-summary" style="font-size:12px;color:var(--t3)">加载中...</span>
+          <button class="btn btn-g btn-sm" onclick="checkEnv()">🔍 重新检测</button>
+        </div>
+      </div>
+      <div id="env-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+        <div style="color:var(--t3);font-size:12px;padding:8px">检测中...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">仿真任务脚本</span>
+        <button class="btn btn-g btn-sm" onclick="loadTaskScripts()" style="margin-left:auto">🔄 刷新</button>
+      </div>
+      <div id="task-scripts-wrap">
+        <div class="empty"><div class="ei">☰</div><p>暂无批处理任务文件</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= PAGE: ANALYSIS ======= -->
+  <div class="page" id="page-analysis">
+    <div class="tabs" id="analysis-tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'analysis','upload')">上传分析</button>
+      <button class="tab-btn" onclick="switchTab(this,'analysis','output')">扫描输出文件夹</button>
+    </div>
+
+    <!-- Upload -->
+    <div class="tab-c active" id="analysis-tab-upload">
+      <div style="display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start">
+        <div>
+          <div class="card">
+            <div class="card-hdr"><span class="card-title">上传仿真结果</span><span class="badge b-green">MuMax3</span></div>
+            <div class="upload-zone" id="upload-zone" onclick="document.getElementById('fu').click()"
+                 ondragover="event.preventDefault();this.classList.add('dragover')"
+                 ondragleave="this.classList.remove('dragover')"
+                 ondrop="handleDrop(event)">
+              <div class="ui">📊</div>
+              <p>点击或拖入 table.txt</p>
+              <small>MuMax3 仿真输出文件</small>
+            </div>
+            <input type="file" id="fu" style="display:none" accept=".txt" onchange="handleFileSelect(event)">
+            <div style="margin-top:14px">
+              <div class="fg"><label>Msat (A/m)</label><input type="number" id="a-msat" value="1520000" step="10000"><span class="hint">Fe-3%Si ≈ 1.52×10⁶</span></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+              <button class="btn btn-p" id="analyze-btn" onclick="runAnalysis()" disabled>◈ 分析</button>
+              <span id="a-status"></span>
+            </div>
+            <div id="a-log" class="task-log" style="display:none;max-height:120px"></div>
+          </div>
+          <div class="card" id="props-card" style="display:none">
+            <div class="card-hdr"><span class="card-title">磁特性参数</span><button class="btn btn-g btn-sm" onclick="exportFEMM()">导出FEMM</button><button class="btn btn-g btn-sm" onclick="exportCurrentToMaxwell()" style="margin-left:6px">⚙️ 导出Maxwell .amat</button></div>
+            <div class="props-grid" id="props-grid"></div>
+            <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:11px;color:var(--t3);line-height:1.6" id="props-ref">
+              <strong style="color:var(--t2);display:block;margin-bottom:4px">参考值（典型Fe-Si）</strong>
+              取向: μ_max=30k–50k, Mr/Ms=0.02–0.05<br>无取向: μ_max=2k–8k, Mr/Ms=0.05–0.15
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;padding:9px 14px;background:var(--bg-3);border-radius:7px;border:1px solid var(--border)">
+  <span style="font-size:12px;color:var(--t2);font-weight:600">图表显示模式</span>
+  <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="setLoopMode(!loopMode)">
+    <div class="tog" id="loop-tog" data-v="false"></div>
+    <span id="loop-lbl" style="font-size:13px;color:var(--t2)">时序模式</span>
+  </div>
+  <span style="font-size:11px;color:var(--t3)">时序模式 = 按仿真步骤展开  ·  回线模式 = H轴散点，M-H/B-H/能量/|M| 形成回线</span>
+</div>
+<div class="charts-grid" id="charts-wrap" style="display:none">
+            <div class="chart-card"><h4>M-H 磁滞回线</h4><canvas id="c-mh" height="180"></canvas></div>
+            <div class="chart-card"><h4>B-H 曲线</h4><canvas id="c-bh" height="180"></canvas></div>
+            <div class="chart-card"><h4>总磁导率 μᵣ = B/(μ₀H)</h4><canvas id="c-mut" height="180"></canvas></div>
+            <div class="chart-card"><h4>微分磁导率 dB/dH</h4><canvas id="c-mud" height="180"></canvas></div>
+            <div class="chart-card"><h4>磁能量 vs H</h4><canvas id="c-ene" height="180"></canvas></div>
+            <div class="chart-card"><h4>|M| 幅值检验</h4><canvas id="c-mmg" height="180"></canvas></div>
+          </div>
+          <div id="a-empty" class="empty" style="padding-top:80px">
+            <div class="ei" style="font-size:48px">◈</div>
+            <p style="font-size:14px;margin-top:10px">上传 table.txt 并点击分析</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Output scan -->
+    <div class="tab-c" id="analysis-tab-output">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">扫描 output/ 文件夹</span>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <div class="fg" style="margin:0"><input type="number" id="o-msat" value="1520000" step="10000" placeholder="Msat" style="width:130px"></div>
+            <button class="btn btn-g btn-sm" onclick="scanOutput()">🔄 扫描</button>
+          </div>
+        </div>
+        <div id="output-scan-wrap">
+          <div class="empty"><div class="ei">📂</div><p>点击"扫描"加载 output/ 目录中的仿真结果</p></div>
+        </div>
+      </div>
+
+    <!-- Upload results card -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-hdr">
+        <span class="card-title">上传仿真结果到系统</span>
+        <span class="badge b-purple">ZIP / 文件夹</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📦 上传 ZIP 压缩包</div>
+          <div class="upload-zone" id="zip-upload-zone" onclick="document.getElementById('zip-fu').click()"
+               ondragover="event.preventDefault();this.classList.add('dragover')"
+               ondragleave="this.classList.remove('dragover')"
+               ondrop="handleZipDrop(event)">
+            <div class="ui">🗜</div>
+            <p>点击或拖入 ZIP 文件</p>
+            <small>将 output/run_xxx 目录打包的 ZIP</small>
+          </div>
+          <input type="file" id="zip-fu" style="display:none" accept=".zip" onchange="handleZipSelect(event)">
+          <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+            <button class="btn btn-p btn-sm" id="zip-upload-btn" onclick="uploadZipResults()" disabled>🗜 解压上传</button>
+            <span id="zip-status"></span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📁 上传结果文件夹</div>
+          <div class="upload-zone" id="folder-upload-zone" onclick="document.getElementById('folder-fu').click()">
+            <div class="ui">📁</div>
+            <p>点击选择文件夹</p>
+            <small>选择 run_xxx 对应的结果文件夹</small>
+          </div>
+          <input type="file" id="folder-fu" style="display:none" webkitdirectory multiple onchange="handleFolderSelect(event)">
+          <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+            <button class="btn btn-p btn-sm" id="folder-upload-btn" onclick="uploadFolderResults()" disabled>📁 上传文件夹</button>
+            <span id="folder-status"></span>
+          </div>
+        </div>
+      </div>
+      <div id="upload-result-log" class="task-log" style="display:none;max-height:80px;margin-top:10px"></div>
+    </div>
+
+      <!-- Analysis result panel (shared) -->
+      <div id="output-result-wrap" style="display:none;margin-top:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+          <div>
+            <div class="card" id="o-props-card">
+              <div class="card-hdr"><span class="card-title" id="o-file-label">分析结果</span><button class="btn btn-g btn-sm" onclick="exportFEMM2()">导出FEMM</button></div>
+              <div class="props-grid" id="o-props-grid"></div>
+            </div>
+          </div>
+          <div>
+            <div class="charts-grid" id="o-charts-wrap" style="display:grid">
+              <div class="chart-card"><h4>M-H 磁滞回线</h4><canvas id="oc-mh" height="160"></canvas></div>
+              <div class="chart-card"><h4>B-H 曲线</h4><canvas id="oc-bh" height="160"></canvas></div>
+              <div class="chart-card"><h4>总磁导率</h4><canvas id="oc-mut" height="160"></canvas></div>
+              <div class="chart-card"><h4>微分磁导率</h4><canvas id="oc-mud" height="160"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-analysis -->
+
+  </div><!-- content -->
+</div><!-- main -->
+
+<div class="toast-c" id="toast-c"></div>
+
+
+<!-- Execution modal -->
+<div id="exec-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9997;align-items:center;justify-content:center">
+  <div style="background:var(--bg-2);border:1px solid var(--border-hi);border-radius:10px;
+              width:min(860px,96vw);max-height:90vh;display:flex;flex-direction:column">
+    <!-- header -->
+    <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)">
+      <span style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--t1)" id="exec-title">执行仿真任务</span>
+      <span id="exec-status-badge" style="font-size:11px;color:var(--t3)"></span>
+      <button class="btn btn-g btn-sm" style="margin-left:auto" onclick="closeExecModal()">✕ 关闭</button>
+    </div>
+    <!-- controls -->
+    <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-p" id="exec-start-btn" onclick="startExec()">▶ 开始执行</button>
+      <button class="btn btn-danger btn-sm" id="exec-stop-btn" onclick="stopExec()" disabled>⏹ 强制停止</button>
+      <!-- progress -->
+      <div style="flex:1;min-width:200px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:4px">
+          <span>总进度</span>
+          <span id="exec-progress-text">0 / 0</span>
+        </div>
+        <div style="height:6px;background:var(--bg-4);border-radius:3px;overflow:hidden">
+          <div id="exec-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--cyan-d),var(--cyan));border-radius:3px;transition:width .5s"></div>
+        </div>
+      </div>
+      <div id="exec-stats" style="font-size:11px;color:var(--t3);text-align:right;line-height:1.6">
+        <div>完成: <span id="exec-done-cnt" style="color:var(--green);font-weight:600">0</span></div>
+        <div>失败: <span id="exec-fail-cnt" style="color:var(--red);font-weight:600">0</span></div>
+      </div>
+    </div>
+    <!-- current grain -->
+    <div style="padding:6px 20px;background:var(--bg-3);border-bottom:1px solid var(--border);font-size:12px;color:var(--t2);min-height:28px" id="exec-current">
+      <span style="color:var(--t3)">等待启动...</span>
+    </div>
+    <!-- log -->
+    <div id="exec-log" style="flex:1;overflow-y:auto;padding:10px 16px;font-family:var(--font-mono);font-size:11.5px;line-height:1.7;color:var(--t2);background:var(--bg-0);min-height:280px;max-height:400px;white-space:pre-wrap;word-break:break-all">
+    </div>
+    <!-- footer -->
+    <div style="padding:10px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2);cursor:pointer">
+        <input type="checkbox" id="exec-autoscroll" checked> 自动滚动
+      </label>
+      <span style="font-size:11px;color:var(--t3)" id="exec-elapsed"></span>
+      <button class="btn btn-g btn-sm" style="margin-left:auto" onclick="clearExecLog()">清空日志</button>
+    </div>
+  </div>
+</div>
+
+<!-- Download check modal -->
+<div id="dl-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;align-items:center;justify-content:center">
+  <div style="background:var(--bg-2);border:1px solid var(--border-hi);border-radius:10px;padding:24px 26px;max-width:520px;width:92%;max-height:80vh;overflow-y:auto">
+    <div id="dl-content"></div>
+    <div id="dl-actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const DEFAULT_ANGLES = [0,30,45,60,90,120,135,150,180];
+let selectedPreinput = new Set(); // full_path of single files
+let selectedPreinputFolders = new Set(); // folder_path of batch folders
+let selectedInputFiles = []; // flat array of config_info (for MX3 generation)
+let batchConfigs = {};
+let batchConfigSel = {}; // config_name -> Set of angle codes
+let analysisData = null; // from upload
+let analysisData2 = null; // from output scan
+let charts = {};
+let loopMode = false; // hysteresis loop display toggle
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function navigate(el){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  const p=el.dataset.page;
+  document.getElementById('page-'+p).classList.add('active');
+  const titles={texture:'织构生成',mx3:'MX3 脚本生成',batchscripts:'批处理脚本生成',
+                taskmanager:'仿真任务管理',analysis:'结果分析',
+                dataset:'数据集管理',training:'XGBoost 训练',
+                prediction:'快速预测',pipeline:'自动训练流水线'};
+  document.getElementById('tb-title').textContent=titles[p]||p;
+  if(p==='mx3') loadInputFiles();  // always refresh on navigate
+  if(p==='taskmanager'){loadTaskScripts();checkEnv();refreshJobStatuses();}
+  if(p==='texture' && document.getElementById('preinput-list').innerHTML.includes('点击')) loadPreinput();
+}
+
+function switchTab(btn,page,tabId){
+  const parent=btn.closest('.page')||document.getElementById('page-'+page);
+  parent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  parent.querySelectorAll('.tab-c').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  const c=document.getElementById(page+'-tab-'+tabId);
+  if(c){
+    c.classList.add('active');
+    if(tabId==='preinput') loadPreinput();
+    if(tabId==='samples') loadSamples();
+  }
+}
+
+// ============================================================
+// WORKSPACE
+// ============================================================
+async function loadWorkspace(){
+  const r=await api('/api/workspace');
+  document.getElementById('ws-disp').textContent=r.workspace||'(未设置)';
+}
+async function changeWorkspace(){
+  const p=prompt('输入工作目录：',document.getElementById('ws-disp').textContent);
+  if(!p) return;
+  const r=await api('/api/workspace',{method:'POST',body:{path:p}});
+  if(r.success){document.getElementById('ws-disp').textContent=r.workspace;toast('工作目录已更新','ok');}
+  else toast(r.error||'路径无效','err');
+}
+
+// ============================================================
+// TOGGLE
+// ============================================================
+function togSwitch(id){
+  const el=document.getElementById(id);const on=el.dataset.v==='true';
+  el.dataset.v=(!on).toString();el.classList.toggle('on',!on);
+  const lb=document.getElementById(id+'-lb');if(lb) lb.textContent=!on?'开启':'关闭';
+  if(id==='b-plots' && lb) lb.textContent=!on?'开启（较慢）':'关闭（节省时间）';
+}
+const getTog=id=>document.getElementById(id)?.dataset.v==='true';
+
+// ============================================================
+// COLLAPSIBLE
+// ============================================================
+function toggleColl(hdr){
+  const body=hdr.nextElementSibling;const ch=hdr.querySelector('.chevron');
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);if(ch) ch.classList.toggle('open',!open);
+}
+
+// ============================================================
+// ANGLE CHIPS
+// ============================================================
+function initAngleChips(){
+  const c=document.getElementById('angle-chips'); c.innerHTML='';
+  DEFAULT_ANGLES.forEach(a=>{
+    const chip=document.createElement('div');
+    chip.className='achip sel';chip.textContent=a+'°';chip.dataset.angle=a;
+    chip.onclick=()=>chip.classList.toggle('sel');
+    c.appendChild(chip);
+  });
+}
+function selectAllAngles(sel){
+  document.querySelectorAll('.achip').forEach(c=>{
+    c.classList.toggle('sel',sel);
+  });
+}
+function getAngles(){
+  const custom=document.getElementById('mx3-ang-inp').value.trim();
+  if(custom) return custom.split(',').map(x=>parseFloat(x.trim())).filter(x=>!isNaN(x));
+  return [...document.querySelectorAll('.achip.sel')].map(c=>parseFloat(c.dataset.angle));
+}
+
+// ── RVE preview ──────────────────────────────────────────────
+function updateRVE(){
+  const gx=parseFloat(document.getElementById('p-gx')?.value)||4;
+  const gy=parseFloat(document.getElementById('p-gy')?.value)||4;
+  const gz=parseFloat(document.getElementById('p-gz')?.value)||1;
+  const cell=parseFloat(document.getElementById('p-cell')?.value)||4;
+  const el=document.getElementById('rve-prev');
+  if(el) el.textContent=`${(gx*cell).toFixed(1)} × ${(gy*cell).toFixed(1)} × ${(gz*cell).toFixed(2)} nm`;
+}
+
+// ============================================================
+// TEXTURE: SINGLE
+// ============================================================
+async function runSingle(){
+  const tid=(await api('/api/texture/generate-single',{method:'POST',body:{
+    f_Goss:parseFloat(document.getElementById('s-fg').value),
+    theta_0:parseFloat(document.getElementById('s-th').value),
+    N_grains:parseInt(document.getElementById('s-ng').value),
+    halfwidth:parseFloat(document.getElementById('s-hw').value),
+    sampling_method:document.getElementById('s-mth').value,
+    plot_odf:getTog('s-plot')
+  }})).task_id;
+  pollTask(tid,'s-status','s-log',()=>{loadPreinput();toast('单一织构生成完成','ok')});
+}
+
+// ============================================================
+// TEXTURE: BATCH
+// ============================================================
+async function runBatch(){
+  const tid=(await api('/api/texture/generate-batch',{method:'POST',body:{
+    n_samples:parseInt(document.getElementById('b-ns').value),
+    N_grains:parseInt(document.getElementById('b-ng').value),
+    f_Goss_min:parseFloat(document.getElementById('b-fg-min').value),
+    f_Goss_max:parseFloat(document.getElementById('b-fg-max').value),
+    theta_0_min:parseFloat(document.getElementById('b-th-min').value),
+    theta_0_max:parseFloat(document.getElementById('b-th-max').value),
+    halfwidth_min:parseFloat(document.getElementById('b-hw-min').value),
+    halfwidth_max:parseFloat(document.getElementById('b-hw-max').value),
+    sampling_method:document.getElementById('b-mth').value,
+    save_plots:getTog('b-plots')
+  }})).task_id;
+  pollTask(tid,'b-status','b-log',()=>{loadPreinput();toast('批量织构生成完成','ok')});
+}
+
+// ============================================================
+// TEXTURE: PREINPUT
+// ============================================================
+async function loadPreinput(){
+  const r=await api('/api/texture/preinput');
+  const container=document.getElementById('preinput-list');
+  if(!r.items||!r.items.length){
+    container.innerHTML='<div class="empty"><div class="ei">⬡</div><p>preinput/ 中暂无文件</p></div>';return;
+  }
+
+  // Count for select-all bar
+  const singles=r.items.filter(i=>i.type==='single');
+  const batches=r.items.filter(i=>i.type==='batch');
+  let totalFiles=singles.length+batches.reduce((s,b)=>s+b.n_total,0);
+
+  container.innerHTML='';
+
+  // Select-all bar
+  const bar=document.createElement('div');
+  bar.className='sel-bar';
+  bar.innerHTML=`<span>共 <b>${totalFiles}</b> 个文件（${singles.length}个独立 + ${batches.length}个批次）</span>
+    <span class="sel-all-btn" id="pi-sa-btn" onclick="preinputToggleAll()">全选</span>`;
+  container.appendChild(bar);
+
+  // Singles
+  singles.forEach(f=>{
+    container.appendChild(makeSingleFileItem(f, selectedPreinput, 'pi'));
+  });
+
+  // Batch folders
+  batches.forEach(b=>{
+    container.appendChild(makeBatchFolderItem(b));
+  });
+}
+
+let _piAllSelected=false;
+function preinputToggleAll(){
+  _piAllSelected=!_piAllSelected;
+  const btn=document.getElementById('pi-sa-btn');
+  if(btn) btn.textContent=_piAllSelected?'全不选':'全选';
+  // Toggle all single items
+  document.querySelectorAll('.pi-single-item').forEach(el=>{
+    const fp=el.dataset.fp;
+    el.classList.toggle('sel',_piAllSelected);
+    if(_piAllSelected) selectedPreinput.add(fp);
+    else selectedPreinput.delete(fp);
+    const chk=el.querySelector('.fi-chk');if(chk){chk.classList.toggle('sel',_piAllSelected);}
+  });
+  // Toggle all batch folders
+  document.querySelectorAll('.batch-all-chk').forEach(el=>{
+    const fp=el.dataset.folderpath;
+    if(_piAllSelected) selectedPreinputFolders.add(fp);
+    else selectedPreinputFolders.delete(fp);
+    el.closest('.batch-folder-hdr').classList.toggle('all-sel',_piAllSelected);
+  });
+}
+
+function makeSingleFileItem(f, selSet, prefix){
+  const div=document.createElement('div');
+  div.className=`fi ${prefix}-single-item ${selSet.has(f.full_path)?'sel':''}`;
+  div.dataset.fp=f.full_path;
+  const meta=[
+    f.f_goss!==undefined?`f_Goss=${f.f_goss}`:'',
+    f.theta_0!==undefined?`θ=${f.theta_0}°`:'',
+    f.n_grains?`N=${f.n_grains}`:'',
+    f.halfwidth?`σ=${f.halfwidth}°`:''
+  ].filter(Boolean).join(' · ');
+  div.innerHTML=`<div class="fi-chk ${selSet.has(f.full_path)?'sel':''}"></div>
+    <div class="fi-info">
+      <div class="fi-name">${f.filename||f.full_path.split(/[\\/]/).pop()}</div>
+      ${meta?`<div class="fi-meta"><span>${meta}</span></div>`:''}
+    </div>`;
+  div.onclick=()=>{
+    div.classList.toggle('sel');
+    div.querySelector('.fi-chk').classList.toggle('sel');
+    if(div.classList.contains('sel')) selSet.add(f.full_path);
+    else selSet.delete(f.full_path);
+  };
+  return div;
+}
+
+function makeBatchFolderItem(b){
+  const wrap=document.createElement('div');
+  wrap.className='batch-folder';
+  const isSel=selectedPreinputFolders.has(b.folder_path);
+
+  wrap.innerHTML=`
+    <div class="batch-folder-hdr ${isSel?'all-sel':''}" onclick="toggleBatchFolder(this)">
+      <div class="bf-chk batch-all-chk" data-folderpath="${esc(b.folder_path)}"
+           onclick="event.stopPropagation();toggleBatchFolderSel(this)"></div>
+      <span class="folder-icon">📁</span>
+      <div>
+        <div style="font-weight:600;font-size:13px;color:var(--t1)">${esc(b.folder_name)}</div>
+        <div class="fi-meta"><span>${b.n_total} 个样本文件</span></div>
+      </div>
+      <span class="batch-expand" style="margin-left:auto">▼</span>
+    </div>
+    <div class="batch-folder-files">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;color:var(--t3)">
+        <span>${b.n_total} 个文件</span>
+        <span class="sel-all-btn" style="font-size:11px;padding:1px 6px" onclick="batchFolderSelectAllFiles(this,'${esc(b.folder_path)}',true)">全选单个文件</span>
+        <span style="font-size:11px;color:var(--t3);cursor:pointer;margin-left:4px" onclick="batchFolderSelectAllFiles(this,'${esc(b.folder_path)}',false)">全不选</span>
+      </div>
+      <div class="bf-files-list" data-folder="${esc(b.folder_path)}">
+        ${b.files.map(f=>`
+          <div class="fi bf-file-item" data-fp="${esc(f.full_path)}" data-folder="${esc(b.folder_path)}" onclick="toggleBatchFile(this)">
+            <div class="fi-chk"></div>
+            <div class="fi-info">
+              <div class="fi-name">${esc(f.filename||f.full_path.split(/[\\/]/).pop())}</div>
+              <div class="fi-meta"><span>${f.f_goss!==undefined?`f_Goss=${f.f_goss}`:''}${f.theta_0!==undefined?` θ=${f.theta_0}°`:''}</span></div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  return wrap;
+}
+
+function toggleBatchFolder(hdr){
+  const body=hdr.nextElementSibling;
+  const arrow=hdr.querySelector('.batch-expand');
+  body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open',body.classList.contains('open'));
+}
+
+function toggleBatchFolderSel(chkEl){
+  const fp=chkEl.dataset.folderpath;
+  const hdr=chkEl.closest('.batch-folder-hdr');
+  const isSel=hdr.classList.contains('all-sel');
+  hdr.classList.toggle('all-sel',!isSel);
+  if(!isSel) selectedPreinputFolders.add(fp);
+  else selectedPreinputFolders.delete(fp);
+  // Deselect individual files if folder is selected
+  const wrap=hdr.closest('.batch-folder');
+  wrap.querySelectorAll('.bf-file-item').forEach(el=>{
+    el.classList.remove('sel');el.querySelector('.fi-chk').classList.remove('sel');
+    selectedPreinput.delete(el.dataset.fp);
+  });
+}
+
+function toggleBatchFile(el){
+  el.classList.toggle('sel');
+  el.querySelector('.fi-chk').classList.toggle('sel');
+  if(el.classList.contains('sel')) selectedPreinput.add(el.dataset.fp);
+  else selectedPreinput.delete(el.dataset.fp);
+}
+
+function batchFolderSelectAllFiles(btn, folderPath, selectAll){
+  const wrap=btn.closest('.batch-folder-files');
+  wrap.querySelectorAll('.bf-file-item').forEach(el=>{
+    el.classList.toggle('sel',selectAll);
+    el.querySelector('.fi-chk').classList.toggle('sel',selectAll);
+    if(selectAll) selectedPreinput.add(el.dataset.fp);
+    else selectedPreinput.delete(el.dataset.fp);
+  });
+}
+
+async function moveSelToInput(){
+  const files=[...selectedPreinput];
+  const folders=[...selectedPreinputFolders];
+  if(!files.length && !folders.length){toast('请先选择文件或文件夹','err');return;}
+  const r=await api('/api/texture/move-to-input',{method:'POST',body:{files,folders}});
+  if(r.count>0){
+    toast(`已复制 ${r.count} 项至 input/`,'ok');
+    selectedPreinput.clear();selectedPreinputFolders.clear();
+    loadPreinput();
+  } else toast('复制失败','err');
+}
+
+// ============================================================
+// TEXTURE: SAMPLES
+// ============================================================
+async function loadSamples(){
+  const r=await api('/api/texture/samples');
+  renderSampleFolder(r.preinput||[],'samples-preinput');
+  renderSampleFolder(r.input||[],'samples-input');
+}
+
+function renderSampleFolder(items,containerId){
+  const c=document.getElementById(containerId);
+  if(!items.length){c.innerHTML='<div class="empty" style="padding:20px"><p>空</p></div>';return;}
+  c.innerHTML='';
+  items.forEach(item=>{
+    if(item.type==='single'){
+      const div=document.createElement('div');
+      div.className='fi';div.style.cursor='default';
+      const meta=[item.f_goss!==undefined?`f_Goss=${item.f_goss}`:'',
+                  item.theta_0!==undefined?`θ=${item.theta_0}°`:'',
+                  item.n_grains?`N=${item.n_grains}`:''].filter(Boolean).join(' · ');
+      div.innerHTML=`<span style="opacity:.5;font-size:14px">📄</span>
+        <div class="fi-info"><div class="fi-name">${esc(item.filename||item.full_path.split(/[\\/]/).pop())}</div>
+        ${meta?`<div class="fi-meta"><span>${meta}</span></div>`:''}</div>`;
+      c.appendChild(div);
+    } else {
+      const div=document.createElement('div');div.className='fi';div.style.cursor='default';
+      div.innerHTML=`<span style="opacity:.7;font-size:15px">📁</span>
+        <div class="fi-info">
+          <div class="fi-name" style="color:var(--amber)">${esc(item.folder_name)}</div>
+          <div class="fi-meta"><span>${item.n_total} 个样本</span></div>
+        </div>`;
+      c.appendChild(div);
+    }
+  });
+}
+
+// ============================================================
+// MX3: INPUT FILES
+// ============================================================
+async function loadInputFiles(){
+  const r=await api('/api/mx3/input-files');
+  const container=document.getElementById('input-list-container');
+  selectedInputFiles=[];
+  const items=r.items||[];
+  if(!items.length){
+    container.innerHTML=`<div class="empty"><div class="ei">📁</div><p>${r.message||'未找到文件'}</p><p style="font-size:11px;margin-top:6px;color:var(--t3)">请先在织构生成中移入文件</p></div>`;
+    return;
+  }
+
+  container.innerHTML='';
+  const selBar=document.createElement('div');
+  selBar.className='sel-bar';
+  selBar.innerHTML=`<span>共 ${items.length} 项</span><span class="sel-all-btn" onclick="mx3SelectAll(true)">全选</span>`;
+  container.appendChild(selBar);
+
+  const listWrap=document.createElement('div');listWrap.className='file-list';
+  items.forEach(item=>{
+    if(item.item_type==='single'){
+      const div=makeSingleFileItem(item, new Set(), 'mx3');
+      div.dataset.fileinfo=JSON.stringify(item);
+      div.classList.remove('sel');div.querySelector('.fi-chk').classList.remove('sel');
+      div.onclick=null;
+      div.onclick=()=>{
+        div.classList.toggle('sel');
+        div.querySelector('.fi-chk').classList.toggle('sel');
+        const fi=JSON.parse(div.dataset.fileinfo);
+        if(div.classList.contains('sel')) selectedInputFiles.push(fi);
+        else selectedInputFiles=selectedInputFiles.filter(x=>x.filename!==fi.filename);
+      };
+      div.className='fi mx3-item';
+      listWrap.appendChild(div);
+    } else if(item.item_type==='batch'){
+      // Batch folder with expand + index filter
+      listWrap.appendChild(makeMX3BatchItem(item));
+    }
+  });
+  container.appendChild(listWrap);
+
+  // Load defaults
+  const d=await api('/api/mx3/defaults');
+  if(d){
+    document.getElementById('p-msat').value=d.msat;
+    document.getElementById('p-aex').value=d.aex;
+    document.getElementById('p-alpha').value=d.alpha;
+    document.getElementById('p-ku1').value=d.ku1_base;
+    document.getElementById('p-si').value=d.si_content;
+    document.getElementById('p-hmax').value=d.h_max;
+    document.getElementById('p-gx').value=d.grid_x;
+    document.getElementById('p-gy').value=d.grid_y;
+    document.getElementById('p-gz').value=d.grid_z;
+    document.getElementById('p-cell').value=d.cell_size_nm;
+    document.getElementById('p-nstep').value=d.n_steps;
+    updateRVE();
+  }
+}
+
+function makeMX3BatchItem(item){
+  const wrap=document.createElement('div');
+  wrap.className='batch-folder';wrap.dataset.batchId=item.folder_name;
+
+  wrap.innerHTML=`
+    <div class="batch-folder-hdr" onclick="toggleBatchFolder(this)">
+      <div class="bf-chk" onclick="event.stopPropagation();toggleMX3Batch(this,'${esc(item.folder_name)}')"
+           data-batch="${esc(item.folder_name)}"></div>
+      <span class="folder-icon">📁</span>
+      <div>
+        <div style="font-weight:600;font-size:13px;color:var(--t1)">${esc(item.folder_name)}</div>
+        <div class="fi-meta"><span>${item.n_total} 个样本</span></div>
+      </div>
+      <span class="batch-expand" style="margin-left:auto">▼</span>
+    </div>
+    <div class="batch-folder-files">
+      <div class="idx-filter">
+        <span style="color:var(--t2)">是否仅处理指定编号：</span>
+        <div class="tog-wrap" onclick="togSwitch('bf-filter-${esc(item.folder_name)}');toggleIdxInput('${esc(item.folder_name)}')">
+          <div class="tog" id="bf-filter-${esc(item.folder_name)}" data-v="false"></div>
+          <span id="bf-filter-${esc(item.folder_name)}-lb" style="font-size:12px;color:var(--t2)">否（全部处理）</span>
+        </div>
+      </div>
+      <div id="idx-input-${esc(item.folder_name)}" style="display:none;margin-top:8px">
+        <div class="fg"><label>输入样本编号（逗号分隔）</label>
+          <input type="text" id="idx-val-${esc(item.folder_name)}" placeholder="例: 1,3,5,10" onchange="applyIdxFilter('${esc(item.folder_name)}')">
+          <span class="hint">输入后按回车/离焦应用，对应文件名中的三位序号（001、003...）</span>
+        </div>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--t3)">
+        共 ${item.n_total} 个文件（全选时均处理）<br>
+        <span id="bf-sel-count-${esc(item.folder_name)}">已选 0 个</span>
+      </div>
+    </div>`;
+
+  // Store file info
+  wrap.dataset.files=JSON.stringify(item.files);
+  return wrap;
+}
+
+function toggleMX3Batch(chkEl, batchId){
+  const hdr=chkEl.closest('.batch-folder-hdr');
+  const isSel=hdr.classList.contains('all-sel');
+  hdr.classList.toggle('all-sel',!isSel);
+  const wrap=chkEl.closest('.batch-folder');
+  const files=JSON.parse(wrap.dataset.files||'[]');
+  if(!isSel){
+    // Select all files in this batch (unless index filter is on)
+    const filterOn=document.getElementById('bf-filter-'+batchId)?.dataset.v==='true';
+    let toAdd=files;
+    if(filterOn){
+      const idxStr=document.getElementById('idx-val-'+batchId)?.value||'';
+      const idxSet=new Set(idxStr.split(',').map(x=>parseInt(x.trim())).filter(x=>!isNaN(x)));
+      if(idxSet.size>0) toAdd=files.filter(f=>{
+        const m=f.filename?.match(/_(\d{3})_/);
+        return m && idxSet.has(parseInt(m[1]));
+      });
+    }
+    toAdd.forEach(f=>selectedInputFiles.push(f));
+    document.getElementById('bf-sel-count-'+batchId).textContent=`已选 ${toAdd.length} 个`;
+  } else {
+    const fps=new Set(files.map(f=>f.full_path));
+    selectedInputFiles=selectedInputFiles.filter(x=>!fps.has(x.full_path));
+    document.getElementById('bf-sel-count-'+batchId).textContent=`已选 0 个`;
+  }
+}
+
+function toggleIdxInput(batchId){
+  const filterOn=document.getElementById('bf-filter-'+batchId)?.dataset.v==='true';
+  const inp=document.getElementById('idx-input-'+batchId);
+  if(inp) inp.style.display=filterOn?'block':'none';
+}
+
+function applyIdxFilter(batchId){
+  // Remove old batch files, re-add filtered ones if batch is selected
+  const hdr=document.querySelector(`.batch-folder[data-batch-id="${batchId}"] .batch-folder-hdr, .batch-folder .bf-chk[data-batch="${batchId}"]`)?.closest('.batch-folder-hdr');
+  if(!hdr || !hdr.classList.contains('all-sel')) return;
+  // Re-trigger selection
+  const chk=hdr.querySelector('.bf-chk[data-batch="'+batchId+'"]');
+  if(chk){hdr.classList.remove('all-sel');toggleMX3Batch(chk,batchId);}
+}
+
+function mx3SelectAll(sel){
+  // Select/deselect all mx3-item items
+  document.querySelectorAll('.mx3-item').forEach(el=>{
+    const fi=el.dataset.fileinfo?JSON.parse(el.dataset.fileinfo):null;
+    if(!fi) return;
+    el.classList.toggle('sel',sel);
+    el.querySelector('.fi-chk')?.classList.toggle('sel',sel);
+    if(sel && !selectedInputFiles.find(x=>x.filename===fi.filename))
+      selectedInputFiles.push(fi);
+    else if(!sel)
+      selectedInputFiles=selectedInputFiles.filter(x=>x.filename!==fi.filename);
+  });
+  // Select/deselect all batch folders
+  document.querySelectorAll('.batch-folder .bf-chk[data-batch]').forEach(chk=>{
+    const batchId=chk.dataset.batch;
+    const hdr=chk.closest('.batch-folder-hdr');
+    if(sel && !hdr.classList.contains('all-sel')) toggleMX3Batch(chk,batchId);
+    else if(!sel && hdr.classList.contains('all-sel')) toggleMX3Batch(chk,batchId);
+  });
+}
+
+async function runMX3(){
+  if(!selectedInputFiles.length){toast('请先选择 input/ 中的文件','err');return;}
+  const angles=getAngles();
+  if(!angles.length){toast('请选择至少一个仿真角度','err');return;}
+  const payload={
+    selected_files:selectedInputFiles,mode:document.getElementById('mx3-mode').value,
+    angles,
+    grid_x:parseInt(document.getElementById('p-gx').value),
+    grid_y:parseInt(document.getElementById('p-gy').value),
+    grid_z:parseInt(document.getElementById('p-gz').value),
+    cell_size_nm:parseFloat(document.getElementById('p-cell').value),
+    si_content:parseFloat(document.getElementById('p-si').value),
+    msat:parseFloat(document.getElementById('p-msat').value),
+    aex:parseFloat(document.getElementById('p-aex').value),
+    alpha:parseFloat(document.getElementById('p-alpha').value),
+    ku1_base:parseFloat(document.getElementById('p-ku1').value),
+    h_max:parseFloat(document.getElementById('p-hmax').value),
+    n_steps:parseInt(document.getElementById('p-nstep').value)
+  };
+  const r=await api('/api/mx3/generate',{method:'POST',body:payload});
+  if(r.task_id) pollTask(r.task_id,'mx3-status','mx3-log',()=>toast('MX3脚本生成完成','ok'));
+}
+
+// ============================================================
+// BATCH SCRIPTS
+// ============================================================
+let _batchAll=false;
+async function scanGrainScripts(){
+  const r=await api('/api/batch/scan');
+  batchConfigs=r.configs||{};
+  const container=document.getElementById('batch-config-list');
+  if(!Object.keys(batchConfigs).length){
+    container.innerHTML=`<div class="empty"><div class="ei">📂</div><p>${r.error||'未找到配置'}</p></div>`;
+    batchConfigSel={};return;
+  }
+  batchConfigSel={};
+  container.innerHTML='';
+
+  // Select-all bar
+  const bar=document.createElement('div');bar.className='sel-bar';
+  const n=Object.keys(batchConfigs).length;
+  bar.innerHTML=`<span>${n} 个配置</span><span class="sel-all-btn" id="bc-sa-btn" onclick="batchConfigToggleAll()">全选</span>`;
+  container.appendChild(bar);
+
+  Object.entries(batchConfigs).forEach(([name,cfg])=>{
+    batchConfigSel[name]=new Set(Object.keys(cfg.angles));
+    const row=document.createElement('div');
+    row.className='batch-folder';row.style.marginBottom='8px';
+    row.dataset.config=name;
+
+    const angles=Object.entries(cfg.angles).sort((a,b)=>parseInt(a[0])-parseInt(b[0]));
+    const angleChips=angles.map(([code,a])=>
+      `<div class="achip sel" data-cfg="${esc(name)}" data-code="${code}" onclick="togAngle(this)">${a.angle_value}°</div>`
+    ).join('');
+
+    row.innerHTML=`
+      <div class="batch-folder-hdr all-sel" onclick="toggleBatchFolder(this)">
+        <div class="bf-chk" style="background:var(--cyan-d);border-color:var(--cyan-d)" onclick="event.stopPropagation();togConfig('${esc(name)}',this)">
+          <span style="color:#fff;font-size:10px">✓</span>
+        </div>
+        <span class="folder-icon" style="color:var(--cyan)">⚙</span>
+        <div>
+          <div style="font-weight:600;font-size:13px">${esc(name)}</div>
+          <div class="fi-meta"><span>${cfg.n_grains} 晶粒 · ${Object.keys(cfg.angles).length} 角度</span></div>
+        </div>
+        <span class="batch-expand" style="margin-left:auto">▼</span>
+      </div>
+      <div class="batch-folder-files open">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;color:var(--t3)">
+          <span>选择仿真角度：</span>
+          <span class="sel-all-btn" style="font-size:11px;padding:1px 6px" onclick="batchAngleSelectAll('${esc(name)}',true)">全选</span>
+          <span style="font-size:11px;color:var(--t3);cursor:pointer;margin-left:2px" onclick="batchAngleSelectAll('${esc(name)}',false)">全不选</span>
+        </div>
+        <div class="angle-chips">${angleChips}</div>
+      </div>`;
+    container.appendChild(row);
+  });
+}
+
+function togConfig(name, chkEl){
+  const hdr=chkEl.closest('.batch-folder-hdr');
+  const isSel=hdr.classList.contains('all-sel');
+  hdr.classList.toggle('all-sel',!isSel);
+  if(!isSel){
+    batchConfigSel[name]=new Set(Object.keys(batchConfigs[name].angles));
+    chkEl.innerHTML='<span style="color:#fff;font-size:10px">✓</span>';
+    chkEl.style.background='var(--cyan-d)';chkEl.style.borderColor='var(--cyan-d)';
+    hdr.closest('.batch-folder').querySelectorAll('.achip').forEach(c=>c.classList.add('sel'));
+  } else {
+    delete batchConfigSel[name];
+    chkEl.innerHTML='';chkEl.style.background='';chkEl.style.borderColor='';
+    hdr.closest('.batch-folder').querySelectorAll('.achip').forEach(c=>c.classList.remove('sel'));
+  }
+}
+
+function togAngle(chip){
+  const cfg=chip.dataset.cfg;const code=chip.dataset.code;
+  if(!batchConfigSel[cfg]) batchConfigSel[cfg]=new Set();
+  chip.classList.toggle('sel');
+  if(chip.classList.contains('sel')) batchConfigSel[cfg].add(code);
+  else batchConfigSel[cfg].delete(code);
+}
+
+function batchAngleSelectAll(name,sel){
+  if(sel && !batchConfigSel[name]) batchConfigSel[name]=new Set();
+  const wrap=document.querySelector(`.batch-folder[data-config="${name}"]`);
+  if(!wrap) return;
+  wrap.querySelectorAll('.achip').forEach(c=>{
+    c.classList.toggle('sel',sel);
+    if(sel) batchConfigSel[name].add(c.dataset.code);
+    else if(batchConfigSel[name]) batchConfigSel[name].delete(c.dataset.code);
+  });
+}
+
+let _batchConfigAllSel=false;
+function batchConfigToggleAll(){
+  _batchConfigAllSel=!_batchConfigAllSel;
+  const btn=document.getElementById('bc-sa-btn');
+  if(btn) btn.textContent=_batchConfigAllSel?'全不选':'全选';
+  Object.keys(batchConfigs).forEach(name=>{
+    const wrap=document.querySelector(`.batch-folder[data-config="${name}"]`);
+    if(!wrap) return;
+    const hdr=wrap.querySelector('.batch-folder-hdr');
+    const chk=hdr?.querySelector('.bf-chk');
+    if(_batchConfigAllSel){
+      batchConfigSel[name]=new Set(Object.keys(batchConfigs[name].angles));
+      wrap.querySelectorAll('.achip').forEach(c=>c.classList.add('sel'));
+      hdr?.classList.add('all-sel');
+      if(chk){chk.innerHTML='<span style="color:#fff;font-size:10px">✓</span>';
+        chk.style.background='var(--cyan-d)';chk.style.borderColor='var(--cyan-d)';}
+    } else {
+      delete batchConfigSel[name];
+      wrap.querySelectorAll('.achip').forEach(c=>c.classList.remove('sel'));
+      hdr?.classList.remove('all-sel');
+      if(chk){chk.innerHTML='';chk.style.background='';chk.style.borderColor='';}
+    }
+  });
+}
+function batchConfigSelectAll(){ _batchConfigAllSel=false; batchConfigToggleAll(); }
+
+function updScriptUI(){
+  const t=document.getElementById('script-type').value;
+  document.getElementById('mumax-path-grp').style.display=t==='4'?'block':'none';
+}
+
+async function runGenBatch(){
+  const selected=Object.entries(batchConfigSel)
+    .filter(([,c])=>c&&c.size>0)
+    .map(([n,c])=>({config_name:n,angle_codes:[...c]}));
+  if(!selected.length){toast('请先扫描并选择配置','err');return;}
+  const st=document.getElementById('script-type').value;
+  const mp=document.getElementById('mumax3-path').value.trim();
+  if(st==='4'&&!mp){toast('请输入 mumax3 路径','err');return;}
+  const el=document.getElementById('batch-status');
+  el.innerHTML='<span class="spin"></span>';
+  const r=await api('/api/batch/generate',{method:'POST',body:{selected,script_type:st,mumax3_path:mp||null}});
+  el.innerHTML='';
+  if(r.success){
+    toast(`已生成 ${r.files.length} 个脚本 · ${r.total_tasks} 个任务`,'ok');
+    loadTaskScripts();
+  } else toast(r.error||'生成失败','err');
+}
+
+// ============================================================
+// TASK SCRIPTS MANAGER
+// ============================================================
+async function loadTaskScripts(){
+  const r=await api('/api/task-scripts');
+  const wrap=document.getElementById('task-scripts-wrap');
+  if(!r.scripts||!r.scripts.length){
+    wrap.innerHTML='<div class="empty"><div class="ei">☰</div><p>暂无批处理任务文件</p></div>';return;
+  }
+  wrap.innerHTML=`<table class="dtable"><thead><tr>
+    <th>文件名</th><th>类型</th><th>任务数</th><th>配置</th><th>大小</th><th>生成时间</th><th>状态</th><th>操作</th>
+  </tr></thead><tbody id="task-tbody"></tbody></table>`;
+  const tbody=document.getElementById('task-tbody');
+  r.scripts.forEach(s=>{
+    const safeId=s.name.replace(/[^a-zA-Z0-9_.]/g,'_');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="mono">${esc(s.name)}</td>
+      <td><span class="tbadge t-${s.type}">.${s.type}</span></td>
+      <td><strong style="color:var(--cyan)">${s.task_count}</strong></td>
+      <td style="font-size:11px;color:var(--t3)">${s.configs.join(', ')||'—'}</td>
+      <td class="mono" style="color:var(--t3)">${(s.size/1024).toFixed(1)} KB</td>
+      <td class="mono" style="color:var(--t3);font-size:11px">${s.created}</td>
+      <td id="job-status-${safeId}" style="font-size:11px;color:var(--t3)">—</td>
+      <td><div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="btn btn-g btn-sm" onclick="previewScript('${esc(s.name)}')">预览</button>
+        <button class="btn btn-g btn-sm" onclick="smartDownload('${esc(s.name)}')">⬇ 下载</button>
+        <button class="btn btn-p btn-sm" id="exec-btn-${safeId}" onclick="handleExecBtn('${esc(s.name)}',${s.task_count})" title="执行此脚本">▶ 执行</button>
+        <button class="btn btn-danger btn-sm" onclick="delScript('${esc(s.name)}')">✕</button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function previewScript(name){
+  const r=await api('/api/task-scripts/'+encodeURIComponent(name)+'/preview');
+  if(r.content){
+    const w=window.open('','_blank','width=900,height=650');
+    w.document.write(`<pre style="background:#07090f;color:#94a3b8;padding:20px;font-size:12px;font-family:monospace;white-space:pre-wrap;overflow:auto">${esc(r.content)}</pre>`);
+  }
+}
+
+async function delScript(name){
+  if(!confirm(`确定删除 ${name}？`)) return;
+  const r=await api('/api/task-scripts/'+encodeURIComponent(name),{method:'DELETE'});
+  if(r.success){toast('已删除','ok');loadTaskScripts();}
+  else toast(r.error||'删除失败','err');
+}
+
+// ============================================================
+// ANALYSIS: UPLOAD
+// ============================================================
+let uploadedFile=null;
+function handleFileSelect(e){const f=e.target.files[0];if(f) setFile(f);}
+function handleDrop(e){e.preventDefault();document.getElementById('upload-zone').classList.remove('dragover');const f=e.dataTransfer.files[0];if(f) setFile(f);}
+function setFile(f){
+  uploadedFile=f;
+  document.getElementById('upload-zone').innerHTML=`<div class="ui">📄</div><p style="color:var(--cyan)">${esc(f.name)}</p><small>${(f.size/1024).toFixed(1)} KB · 点击重选</small>`;
+  document.getElementById('analyze-btn').disabled=false;
+}
+
+async function runAnalysis(){
+  if(!uploadedFile){toast('请先上传文件','err');return;}
+  const fd=new FormData();fd.append('file',uploadedFile);fd.append('Msat',document.getElementById('a-msat').value);
+  document.getElementById('a-status').innerHTML='<span class="spin"></span>';
+  document.getElementById('a-log').style.display='none';
+  try{
+    const r=await fetch('/api/analyze',{method:'POST',body:fd});
+    const d=await r.json();
+    document.getElementById('a-status').innerHTML='';
+    if(d.error){
+      toast('分析失败: '+d.error,'err');
+      const l=document.getElementById('a-log');l.style.display='block';l.textContent=d.error+'\n'+(d.traceback||'');return;
+    }
+    analysisData=d;
+    showProps(d.properties,'props-grid');
+    document.getElementById('props-card').style.display='block';
+    renderCharts(d.properties,d.curves,'c-');
+    if(d.log){const l=document.getElementById('a-log');l.style.display='block';l.textContent=d.log.slice(-2000);}
+    toast(`分析完成 · ${d.data_points} 数据点`,'ok');
+  } catch(e){document.getElementById('a-status').innerHTML='';toast('分析出错: '+e.message,'err');}
+}
+
+// ============================================================
+// ANALYSIS: SCAN OUTPUT
+// ============================================================
+let selectedOutputFile=null;
+
+async function scanOutput(){
+  const wrap=document.getElementById('output-scan-wrap');
+  wrap.innerHTML='<div style="padding:20px;color:var(--t2)"><span class="spin"></span> 扫描中...</div>';
+  const r=await api('/api/analysis/scan-output');
+  if(!r.runs||!r.runs.length){
+    wrap.innerHTML=`<div class="empty"><div class="ei">📂</div><p>${r.error||'output/ 目录中暂无运行结果'}</p></div>`;return;
+  }
+  wrap.innerHTML='';
+  r.runs.forEach(run=>{
+    const item=document.createElement('div');item.className='run-item';
+    const totalFiles=run.configs.reduce((s,c)=>s+c.angles.reduce((ss,a)=>ss+a.file_count,0),0);
+    item.innerHTML=`
+      <div class="run-hdr" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open',this.nextElementSibling.classList.contains('open'))">
+        <span style="font-size:14px">🗂</span>
+        <div style="flex:1">
+          <div style="font-size:13px;color:var(--t1)">${esc(run.name)}</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">${run.configs.length} 配置 · ${totalFiles} 文件</div>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="run-body">
+        ${run.configs.map(cfg=>`
+          <div class="config-item">
+            <div style="font-size:12px;color:var(--amber);font-weight:600;margin-bottom:4px">⚙ ${esc(cfg.name)}</div>
+            ${cfg.angles.map(a=>{
+              const files=a.files||[];
+              const fileItems=files.map(fp=>`
+                <div class="angle-line" data-fp="${esc(fp)}" onclick="selectOutputFile(this,'${esc(fp)}')">
+                  <span style="font-family:var(--font-mono);font-size:11px">📄 ${esc(fp.split(/[\\/]/).pop())}</span>
+                </div>`).join('');
+              return `<div style="margin-bottom:8px">
+                <div style="font-size:11px;color:var(--cyan);font-weight:600;padding:4px 8px;background:var(--bg-4);border-radius:4px;margin-bottom:4px">
+                  角度 ${a.angle_value}° — ${a.file_count} 文件
+                </div>
+                <div style="margin-left:8px">${fileItems}</div>
+              </div>`;
+            }).join('')}
+          </div>`).join('')}
+      </div>`;
+    wrap.appendChild(item);
+  });
+}
+
+async function selectOutputFile(el, filepath){
+  document.querySelectorAll('.angle-line').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedOutputFile=filepath;
+  const Msat=parseFloat(document.getElementById('o-msat').value)||1.52e6;
+  document.getElementById('output-result-wrap').style.display='none';
+  const r=await fetch('/api/analysis/analyze-path',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:filepath,Msat})});
+  const d=await r.json();
+  if(d.error){toast('分析失败: '+d.error,'err');return;}
+  analysisData2=d;
+  document.getElementById('o-file-label').textContent=filepath.split(/[\\/]/).pop();
+  showProps(d.properties,'o-props-grid');
+  renderCharts(d.properties,d.curves,'oc-');
+  document.getElementById('output-result-wrap').style.display='block';
+  toast(`分析完成 · ${d.data_points} 数据点`,'ok');
+}
+
+// ============================================================
+// SHARED: PROPS + CHARTS
+// ============================================================
+function showProps(props,gridId){
+  const g=document.getElementById(gridId);
+  const items=[
+    {l:'饱和磁化强度 Ms',v:fmtSci(props.Ms),u:'A/m',c:'pc-c'},
+    {l:'剩余磁化强度 Mr',v:fmtSci(props.Mr),u:'A/m',c:'pc-c'},
+    {l:'矫顽力 Hc',v:props.Hc.toFixed(1),u:'A/m',c:'pc-a'},
+    {l:'μᵣ最大 (总)',v:props.mu_r_max_total.toFixed(0),u:'B/μ₀H',c:'pc-g'},
+    {l:'μᵣ最大 (微分)',v:props.mu_r_max_diff.toFixed(0),u:'dB/dH',c:'pc-g'},
+    {l:'磁滞损耗',v:fmtSci(props.hysteresis_loss),u:'J/m³',c:'pc-p'},
+    {l:'矩形比 Mr/Ms',v:props.Mr_Ms_ratio.toFixed(4),u:'',c:'pc-a'},
+    {l:'|M|最小',v:props.M_mag_min.toFixed(5),u:'归一化',c:props.M_mag_min>=0.95?'pc-g':'pc-a'},
+  ];
+  g.innerHTML=items.map(i=>`<div class="prop-card ${i.c}"><div class="pl">${i.l}</div><div class="pv">${i.v}</div><div class="pu">${i.u}</div></div>`).join('');
+}
+
+function renderCharts(props,curves,pfx){
+  // Shared chart defaults
+  const gridColor='rgba(30,48,80,.55)';
+  const tickColor='#475569';
+  const mkAxis=(title='')=>({ticks:{color:tickColor,maxTicksLimit:6},grid:{color:gridColor},
+    title:title?{display:true,text:title,color:'#64748b',font:{size:10}}:{display:false}});
+  const baseDef={responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{labels:{color:'#94a3b8',font:{size:10}}}},
+    animation:{duration:250}};
+
+  const mk=(id,cfg)=>{if(charts[id]){charts[id].destroy();delete charts[id];}
+    const el=document.getElementById(id);if(!el)return;
+    charts[id]=new Chart(el.getContext('2d'),cfg);};
+
+  if(loopMode){
+    // ── LOOP MODE: scatter {x:H, y:value} – proper hysteresis loop ──
+    const Hf=curves.H_full, Mf=curves.M_full, Bf=curves.B_full, Ef=curves.E_total, MMf=curves.M_mag;
+    const Hc=curves.H_curve, Mut=curves.mu_r_total, Mud=curves.mu_r_diff;
+
+    const scatterOpts=(xTitle,yTitle)=>({...baseDef,
+      scales:{x:{...mkAxis(xTitle),type:'linear'},y:mkAxis(yTitle)}});
+
+    const scatterDS=(data,color,label)=>({
+      label,data,showLine:true,borderColor:color,borderWidth:1.5,
+      pointRadius:0,fill:false});
+
+    mk(pfx+'mh',{type:'scatter',data:{datasets:[scatterDS(
+      Hf.map((h,i)=>({x:h/1000,y:Mf[i]/1e6})),'#38bdf8','M(MA/m)')]},
+      options:scatterOpts('H (kA/m)','M (MA/m)')});
+
+    mk(pfx+'bh',{type:'scatter',data:{datasets:[scatterDS(
+      Hf.map((h,i)=>({x:h/1000,y:Bf[i]*1000})),'#f59e0b','B(mT)')]},
+      options:scatterOpts('H (kA/m)','B (mT)')});
+
+    mk(pfx+'mut',{type:'scatter',data:{datasets:[scatterDS(
+      Hc.map((h,i)=>({x:h/1000,y:Mut[i]})),'#34d399','μᵣ Total')]},
+      options:{...scatterOpts('H (kA/m)','μᵣ'),scales:{x:{...mkAxis('H (kA/m)'),type:'linear'},y:{...mkAxis('μᵣ'),min:0}}}});
+
+    mk(pfx+'mud',{type:'scatter',data:{datasets:[scatterDS(
+      Hc.map((h,i)=>({x:h/1000,y:Mud[i]})),'#a78bfa','μᵣ Diff')]},
+      options:{...scatterOpts('H (kA/m)','dB/dH'),scales:{x:{...mkAxis('H (kA/m)'),type:'linear'},y:{...mkAxis('dB/dH'),min:0}}}});
+
+    if(document.getElementById(pfx+'ene'))
+      mk(pfx+'ene',{type:'scatter',data:{datasets:[scatterDS(
+        Hf.map((h,i)=>({x:h/1000,y:Ef[i]*1e16})),'#fb923c','E(×10⁻¹⁶J)')]},
+        options:scatterOpts('H (kA/m)','E (×10⁻¹⁶ J)')});
+
+    if(document.getElementById(pfx+'mmg'))
+      mk(pfx+'mmg',{type:'scatter',data:{datasets:[
+        scatterDS(Hf.map((h,i)=>({x:h/1000,y:MMf[i]})),'#e879f9','|M|'),
+        scatterDS(Hf.map(h=>({x:h/1000,y:1.0})),'#f87171','期望1.0')
+      ]},options:{...scatterOpts('H (kA/m)','|M| (归一化)'),
+        scales:{x:{...mkAxis('H (kA/m)'),type:'linear'},y:{...mkAxis('|M|'),min:0.85,max:1.05}}}});
+
+  } else {
+    // ── SEQUENTIAL MODE: time-index on x-axis showing temporal evolution ──
+    const idx=curves.H_full.map((_,i)=>i);
+    const Hkm=curves.H_full.map(h=>(h/1000).toFixed(3));// readable H labels for tooltip
+
+    const lineDS=(data,color,label)=>({label,data,borderColor:color,borderWidth:1.5,
+      pointRadius:0,fill:false,tension:0.1});
+
+    const seqOpts=(yTitle)=>({...baseDef,
+      scales:{x:{ticks:{color:tickColor,maxTicksLimit:8,callback:(v,i)=>{
+          // Show H value at every ~10th label
+          return i%Math.ceil(idx.length/8)===0?(+Hkm[i]).toFixed(1)+' kA/m':'';
+        }},grid:{color:gridColor}},
+        y:mkAxis(yTitle)}});
+
+    mk(pfx+'mh',{type:'line',data:{labels:idx,datasets:[lineDS(
+      curves.M_full.map(m=>m/1e6),'#38bdf8','M(MA/m)')]},
+      options:seqOpts('M (MA/m)')});
+
+    mk(pfx+'bh',{type:'line',data:{labels:idx,datasets:[lineDS(
+      curves.B_full.map(b=>b*1000),'#f59e0b','B(mT)')]},
+      options:seqOpts('B (mT)')});
+
+    mk(pfx+'mut',{type:'line',data:{labels:idx.slice(0,curves.mu_r_total.length),datasets:[lineDS(
+      curves.mu_r_total,'#34d399','μᵣ Total')]},
+      options:{...seqOpts('μᵣ'),scales:{...seqOpts('μᵣ').scales,y:{...mkAxis('μᵣ'),min:0}}}});
+
+    mk(pfx+'mud',{type:'line',data:{labels:idx.slice(0,curves.mu_r_diff.length),datasets:[lineDS(
+      curves.mu_r_diff,'#a78bfa','μᵣ Diff')]},
+      options:{...seqOpts('dB/dH'),scales:{...seqOpts('dB/dH').scales,y:{...mkAxis('dB/dH'),min:0}}}});
+
+    if(document.getElementById(pfx+'ene'))
+      mk(pfx+'ene',{type:'line',data:{labels:idx,datasets:[lineDS(
+        curves.E_total.map(e=>e*1e16),'#fb923c','E(×10⁻¹⁶J)')]},
+        options:seqOpts('E (×10⁻¹⁶ J)')});
+
+    if(document.getElementById(pfx+'mmg'))
+      mk(pfx+'mmg',{type:'line',data:{labels:idx,datasets:[
+        lineDS(curves.M_mag,'#e879f9','|M|'),
+        {label:'期望1.0',data:idx.map(()=>1),borderColor:'#f87171',
+         borderWidth:1,pointRadius:0,borderDash:[4,4],fill:false}
+      ]},options:{...seqOpts('|M| (归一化)'),
+        scales:{...seqOpts('|M|').scales,y:{...mkAxis('|M|'),min:0.85,max:1.05}}}});
+  }
+
+  if(pfx==='c-'){document.getElementById('charts-wrap').style.display='grid';document.getElementById('a-empty').style.display='none';}
+}
+
+async function exportFEMM(){if(!analysisData) return;_exportFEMM(analysisData.curves);}
+async function exportFEMM2(){if(!analysisData2) return;_exportFEMM(analysisData2.curves);}
+
+// ── Loop Mode Toggle ────────────────────────────────────────
+function setLoopMode(on){
+  loopMode = on;
+  document.getElementById('loop-tog').classList.toggle('on', on);
+  document.getElementById('loop-tog').dataset.v = on ? 'true' : 'false';
+  document.getElementById('loop-lbl').textContent = on ? '回线模式' : '时序模式';
+  // Re-render current data
+  if(analysisData) renderCharts(analysisData.properties, analysisData.curves, 'c-');
+  if(analysisData2) renderCharts(analysisData2.properties, analysisData2.curves, 'oc-');
+}
+async function _exportFEMM(curves){
+  const r=await fetch('/api/analyze/export-femm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({H_curve:curves.H_curve,B_curve:curves.B_curve})});
+  const blob=await r.blob();const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='femm_bh_curve.txt';a.click();URL.revokeObjectURL(url);
+  toast('FEMM B-H 曲线已导出','ok');
+}
+
+// ============================================================
+// SMART DOWNLOAD (check + zip)
+// ============================================================
+async function smartDownload(filename){
+  showDlModal('<div style="display:flex;align-items:center;gap:10px"><span class="spin"></span><span style="color:var(--t2)">正在检查仿真配置...</span></div>',[]);
+  const r = await api('/api/task-scripts/'+encodeURIComponent(filename)+'/check');
+  if(r.error){
+    showDlModal(`<div style="color:var(--red);font-size:13px">⚠️ 检查失败: ${esc(r.error)}</div>`,[
+      {l:'取消',s:'btn-g',fn:closeDlModal},
+      {l:'仅下载脚本',s:'btn-p',fn:()=>{directDownload(filename);closeDlModal();}}
+    ]);
+    return;
+  }
+  let html=`<div style="font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--t1);margin-bottom:14px">📦 ${esc(filename)}</div>`;
+  html+=`<div style="font-size:12px;color:var(--t3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">引用的仿真配置</div>`;
+  r.configs.forEach(c=>{
+    const ok=c.ok;
+    html+=`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg-3);border-radius:5px;margin-bottom:5px;border:1px solid ${ok?'rgba(52,211,153,.2)':'rgba(248,113,113,.25)'}">
+      <span style="color:${ok?'var(--green)':'var(--red)'};font-weight:700;font-size:14px">${ok?'✓':'✗'}</span>
+      <span style="font-family:var(--font-mono);font-size:12px;color:var(--t1)">${esc(c.name)}</span>
+      <span style="margin-left:auto;font-size:11px;color:${ok?'var(--t3)':'var(--red)'}">
+        ${ok?`${c.angle_count} 角度 · ${c.mx3_count} 个MX3`:'⚠️ 目录缺失或为空'}
+      </span>
+    </div>`;
+  });
+  if(!r.all_ok){
+    html+=`<div style="margin-top:10px;padding:9px 12px;background:rgba(248,113,113,.09);border:1px solid rgba(248,113,113,.3);border-radius:6px;font-size:12px;color:var(--red)">
+      ⚠️ 部分配置缺失，无法打包。请先执行 MX3 脚本生成步骤。</div>`;
+  } else {
+    html+=`<div style="margin-top:10px;padding:9px 12px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25);border-radius:6px;font-size:12px;color:var(--green)">
+      ✓ 所有配置完整，共 ${r.total_mx3} 个 MX3 文件可一并打包下载。</div>`;
+  }
+  const acts=[
+    {l:'取消',s:'btn-g',fn:closeDlModal},
+    {l:'仅下载脚本',s:'btn-g',fn:()=>{directDownload(filename);closeDlModal();}},
+  ];
+  if(r.all_ok) acts.push({l:`📦 打包下载（脚本 + MX3）`,s:'btn-p',fn:()=>{
+    window.location.href='/api/task-scripts/'+encodeURIComponent(filename)+'/download-zip';
+    closeDlModal();
+  }});
+  showDlModal(html,acts);
+}
+
+function directDownload(filename){
+  window.location.href='/api/download/'+encodeURIComponent(filename);
+}
+
+function showDlModal(content,acts){
+  document.getElementById('dl-content').innerHTML=content;
+  const ab=document.getElementById('dl-actions');ab.innerHTML='';
+  acts.forEach(a=>{
+    const btn=document.createElement('button');
+    btn.className='btn '+(a.s||'btn-g');btn.innerHTML=a.l;btn.onclick=a.fn;
+    ab.appendChild(btn);
+  });
+  document.getElementById('dl-modal').style.display='flex';
+}
+
+function closeDlModal(){document.getElementById('dl-modal').style.display='none';}
+
+// ============================================================
+// TASK POLLING
+// ============================================================
+function pollTask(tid,statusElId,logElId,onDone){
+  const sEl=document.getElementById(statusElId);const lEl=document.getElementById(logElId);
+  if(lEl){lEl.style.display='block';lEl.innerHTML='<p class="ll inf">⏳ 任务已提交，等待执行...</p>';}
+  if(sEl) sEl.innerHTML=`<span class="status-ind s-run"><span class="spin"></span> 运行中</span>`;
+  const iv=setInterval(async()=>{
+    const r=await api('/api/tasks/'+tid);
+    if(lEl&&r.output){
+      const lines=r.output.split('\n').filter(Boolean);
+      lEl.innerHTML=lines.map(l=>{
+        const c=l.includes('✓')?'ok':l.includes('错误')||l.includes('Error')||l.includes('Traceback')?'err':l.startsWith('=')?'inf':'';
+        return `<p class="ll ${c}">${esc(l)}</p>`;
+      }).join('');lEl.scrollTop=lEl.scrollHeight;
+    }
+    if(r.status==='completed'){clearInterval(iv);if(sEl) sEl.innerHTML=`<span class="status-ind s-ok">✓ 已完成</span>`;if(onDone) onDone(r);updateTaskDot();}
+    else if(r.status==='failed'){clearInterval(iv);if(sEl) sEl.innerHTML=`<span class="status-ind s-fail">✗ 失败</span>`;toast('任务失败: '+(r.error||'未知'),'err');if(lEl&&r.traceback) lEl.innerHTML+=`<p class="ll err">${esc(r.traceback)}</p>`;updateTaskDot();}
+  },2000);
+}
+function updateTaskDot(){api('/api/tasks').then(r=>{
+  const running=r.tasks?.some(t=>t.status==='running');
+  const dot=document.getElementById('task-dot');
+  if(running) dot.className='task-dot running';
+  else if(r.tasks?.some(t=>t.status==='completed')) dot.className='task-dot done';
+  else dot.className='task-dot';
+});}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+async function api(url,opts={}){
+  const o={...opts};
+  if(o.body&&typeof o.body==='object'&&!(o.body instanceof FormData)){
+    o.headers={...o.headers,'Content-Type':'application/json'};o.body=JSON.stringify(o.body);
+  }
+  try{const r=await fetch(url,o);return await r.json();}
+  catch(e){console.error(e);return{error:e.message};}
+}
+function toast(msg,type='inf'){
+  const c=document.getElementById('toast-c');const el=document.createElement('div');
+  el.className=`toast toast-${type==='ok'?'ok':type==='err'?'err':'inf'}`;
+  const ic={ok:'✓',err:'✗',inf:'ℹ'};
+  el.innerHTML=`<span>${ic[type]||'ℹ'}</span> ${esc(msg)}`;
+  c.appendChild(el);setTimeout(()=>el.remove(),4000);
+}
+function fmtSci(n){
+  if(Math.abs(n)>=1e6) return (n/1e6).toFixed(3)+' M';
+  if(Math.abs(n)>=1e3) return (n/1e3).toFixed(1)+' k';
+  if(Math.abs(n)<0.001&&n!==0) return n.toExponential(3);
+  return n.toFixed(4);
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ============================================================
+// UPLOAD RESULTS
+// ============================================================
+let _zipFile = null;
+let _folderFiles = [];
+let _folderPaths = [];
+
+function handleZipSelect(e){
+  const f=e.target.files[0];if(!f) return;
+  _zipFile=f;
+  const z=document.getElementById('zip-upload-zone');
+  z.innerHTML=`<div class="ui">🗜</div><p style="color:var(--purple)">${esc(f.name)}</p><small>${(f.size/1024/1024).toFixed(2)} MB · 点击重选</small>`;
+  document.getElementById('zip-upload-btn').disabled=false;
+}
+
+function handleZipDrop(e){
+  e.preventDefault();document.getElementById('zip-upload-zone').classList.remove('dragover');
+  const f=e.dataTransfer.files[0];if(f&&f.name.endsWith('.zip')){
+    document.getElementById('zip-fu').files; // can't set directly
+    // use a DataTransfer trick
+    const dt=e.dataTransfer;
+    if(dt.files[0]) handleZipSelect({target:{files:dt.files}});
+  }
+}
+
+function handleFolderSelect(e){
+  const files=[...e.target.files];
+  if(!files.length) return;
+  _folderFiles=files;
+  _folderPaths=files.map(f=>f.webkitRelativePath||f.name);
+  const topDir=_folderPaths[0].split('/')[0];
+  const z=document.getElementById('folder-upload-zone');
+  z.innerHTML=`<div class="ui">📁</div><p style="color:var(--purple)">${esc(topDir)}/</p><small>${files.length} 个文件 · 点击重选</small>`;
+  document.getElementById('folder-upload-btn').disabled=false;
+}
+
+async function uploadZipResults(){
+  if(!_zipFile){toast('请先选择ZIP文件','err');return;}
+  const st=document.getElementById('zip-status');
+  st.innerHTML='<span class="spin"></span>';
+  const fd=new FormData();fd.append('zipfile',_zipFile);
+  try{
+    const r=await fetch('/api/analysis/upload-results',{method:'POST',body:fd});
+    const d=await r.json();st.innerHTML='';
+    const log=document.getElementById('upload-result-log');
+    log.style.display='block';
+    if(d.success){
+      log.innerHTML=`<p class="ll ok">✓ ${esc(d.message)}</p>${d.dirs?d.dirs.map(n=>`<p class="ll">  📁 ${esc(n)}</p>`).join(''):''}`;
+      toast(d.message,'ok');scanOutput();
+    } else {
+      log.innerHTML=`<p class="ll err">✗ ${esc(d.error)}</p>`;
+      toast('上传失败: '+d.error,'err');
+    }
+  }catch(e){st.innerHTML='';toast('上传出错: '+e.message,'err');}
+}
+
+async function uploadFolderResults(){
+  if(!_folderFiles.length){toast('请先选择文件夹','err');return;}
+  const st=document.getElementById('folder-status');
+  st.innerHTML='<span class="spin"></span>';
+  const fd=new FormData();
+  _folderFiles.forEach((f,i)=>{
+    fd.append('files',f);
+    fd.append('paths',_folderPaths[i]);
+  });
+  try{
+    const r=await fetch('/api/analysis/upload-results',{method:'POST',body:fd});
+    const d=await r.json();st.innerHTML='';
+    const log=document.getElementById('upload-result-log');
+    log.style.display='block';
+    if(d.success){
+      log.innerHTML=`<p class="ll ok">✓ ${esc(d.message)}</p>`;
+      toast(d.message,'ok');scanOutput();
+    } else {
+      log.innerHTML=`<p class="ll err">✗ ${esc(d.error)}</p>`;
+      toast('上传失败: '+d.error,'err');
+    }
+  }catch(e){st.innerHTML='';toast('上传出错: '+e.message,'err');}
+}
+
+// ============================================================
+// ENVIRONMENT CHECK
+// ============================================================
+async function checkEnv(){
+  document.getElementById('env-summary').textContent='检测中...';
+  const r=await api('/api/env-check');
+  const body=document.getElementById('env-body');
+
+  const mkCard=(icon,title,ok,detail)=>`
+    <div style="padding:12px 14px;background:var(--bg-3);border-radius:7px;border:1px solid ${ok?'rgba(52,211,153,.2)':'rgba(248,113,113,.2)'}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:16px">${icon}</span>
+        <span style="font-size:12px;font-weight:600;color:${ok?'var(--green)':'var(--red)'}">${ok?'✓':'✗'} ${title}</span>
+      </div>
+      <div style="font-size:11px;color:var(--t3);line-height:1.5;font-family:var(--font-mono)">${esc(detail||'')}</div>
+    </div>`;
+
+  let cards='';
+  // Platform
+  cards+=mkCard('🖥','平台',true,r.platform_detail+' · Python '+r.python);
+  // mumax3
+  const mm=r.mumax3||{};
+  cards+=mkCard('⚡','mumax3',mm.ok,mm.ok?(mm.output||'已就绪'):mm.error);
+  // CUDA
+  const cu=r.cuda||{};
+  if(cu.ok && cu.gpus){
+    cu.gpus.forEach((g,i)=>{ cards+=mkCard('🎮',`GPU ${i}`,true,g); });
+  } else {
+    cards+=mkCard('🎮','CUDA/GPU',false,cu.error||'未检测到');
+  }
+  body.innerHTML=cards;
+
+  const allOk=mm.ok&&cu.ok;
+  document.getElementById('env-summary').innerHTML=
+    allOk?'<span style="color:var(--green);font-weight:600">✓ 环境就绪</span>':
+          '<span style="color:var(--amber);font-weight:600">⚠ 部分组件未就绪</span>';
+}
+
+// ============================================================
+// EXECUTION — Background Queue System
+// ============================================================
+let _execJobId = null;   // currently viewed job
+let _execScript = null;
+let _execSource = null;  // SSE connection
+let _elapsedTimer = null;
+let _execStartTs = null;
+let _jobPollTimer = null; // periodic poll for task manager refresh
+
+// ── Open execution panel (or reconnect to existing job) ──────
+function openExecPanel(filename, totalTasks, existingJobId){
+  _execScript = filename;
+  // If reconnecting to existing job
+  if(existingJobId){
+    _execJobId = existingJobId;
+    document.getElementById('exec-title').textContent = '进度: ' + filename;
+    document.getElementById('exec-start-btn').disabled = true;
+    document.getElementById('exec-start-btn').style.display = 'none';
+    document.getElementById('exec-stop-btn').disabled = false;
+    _reconnectStream(existingJobId);
+  } else {
+    _execJobId = null;
+    document.getElementById('exec-title').textContent = '执行: ' + filename;
+    document.getElementById('exec-start-btn').disabled = false;
+    document.getElementById('exec-start-btn').style.display = '';
+    document.getElementById('exec-stop-btn').disabled = true;
+  }
+  document.getElementById('exec-status-badge').textContent = '';
+  document.getElementById('exec-log').innerHTML = '';
+  document.getElementById('exec-progress-bar').style.width = '0%';
+  document.getElementById('exec-progress-text').textContent = '0 / ' + (totalTasks || '?');
+  document.getElementById('exec-done-cnt').textContent = '0';
+  document.getElementById('exec-fail-cnt').textContent = '0';
+  document.getElementById('exec-current').innerHTML = '<span style="color:var(--t3)">加载中...</span>';
+  document.getElementById('exec-elapsed').textContent = '';
+  document.getElementById('exec-modal').style.display = 'flex';
+}
+
+function closeExecModal(){
+  // Close SSE but do NOT stop the background process
+  if(_execSource){ _execSource.close(); _execSource = null; }
+  if(_elapsedTimer){ clearInterval(_elapsedTimer); _elapsedTimer = null; }
+  document.getElementById('exec-modal').style.display = 'none';
+  // Refresh task manager list so status column updates
+  loadTaskScripts();
+}
+
+function clearExecLog(){ document.getElementById('exec-log').innerHTML = ''; }
+
+// ── Reconnect to running job stream (load full history first) ─
+async function _reconnectStream(jobId){
+  // Load existing lines from status
+  const r = await api('/api/jobs/' + jobId + '/status');
+  if(r.error){ toast('无法获取任务状态', 'err'); return; }
+
+  _execJobId = jobId;
+  // Populate existing lines
+  document.getElementById('exec-log').innerHTML = '';
+  (r.recent_lines || []).forEach(l => appendExecLine(l));
+  updateExecProgress(r.completed, r.failed, r.total);
+  _updateExecBadge(r.status, r.done);
+
+  if(!r.done){
+    _startElapsedTimer(r.started);
+    document.getElementById('exec-stop-btn').disabled = false;
+    _openSSE(jobId);
+  } else {
+    _updateExecBadge(r.status, true);
+    document.getElementById('exec-stop-btn').disabled = true;
+    document.getElementById('exec-start-btn').disabled = false;
+    document.getElementById('exec-start-btn').style.display = '';
+  }
+}
+
+function _openSSE(jobId){
+  if(_execSource){ _execSource.close(); }
+  _execSource = new EventSource('/api/jobs/' + jobId + '/stream');
+  _execSource.onmessage = (e) => {
+    try{
+      const d = JSON.parse(e.data);
+      if(d.line !== undefined) appendExecLine(d.line);
+      if(d.completed !== undefined) updateExecProgress(d.completed, d.failed, d.total || 0);
+      if(d.done){
+        _execSource.close(); _execSource = null;
+        if(_elapsedTimer){ clearInterval(_elapsedTimer); _elapsedTimer = null; }
+        _updateExecBadge(d.status, true);
+        document.getElementById('exec-stop-btn').disabled = true;
+        document.getElementById('exec-start-btn').disabled = false;
+        document.getElementById('exec-start-btn').style.display = '';
+        if(d.status === 'completed') toast('仿真任务执行完成!', 'ok');
+        else toast('任务结束: ' + d.status, 'err');
+        loadTaskScripts();
+      }
+    }catch(ex){ console.error('SSE parse', ex); }
+  };
+  _execSource.onerror = () => {
+    // SSE dropped — job may have ended or server restarted
+    if(_execSource && _execSource.readyState === 2){
+      _execSource = null;
+      document.getElementById('exec-stop-btn').disabled = true;
+    }
+  };
+}
+
+function _updateExecBadge(status, done){
+  const el = document.getElementById('exec-status-badge');
+  if(!el) return;
+  if(!done) el.innerHTML = '<span class="status-ind s-run"><span class="spin"></span> 运行中</span>';
+  else if(status === 'completed') el.innerHTML = '<span class="status-ind s-ok">✓ 完成</span>';
+  else if(status === 'stopped') el.innerHTML = '<span class="status-ind" style="color:var(--amber)">⏹ 已停止</span>';
+  else el.innerHTML = `<span class="status-ind s-fail">✗ ${esc(status)}</span>`;
+}
+
+function _startElapsedTimer(startedStr){
+  if(_elapsedTimer){ clearInterval(_elapsedTimer); }
+  const base = startedStr ? new Date(startedStr).getTime() : Date.now();
+  _elapsedTimer = setInterval(()=>{
+    const s = Math.floor((Date.now() - base) / 1000);
+    const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), ss = s%60;
+    document.getElementById('exec-elapsed').textContent =
+      `用时: ${h?h+'h ':''}${m?m+'m ':''}${ss}s`;
+  }, 1000);
+}
+
+// ── Start new execution ───────────────────────────────────────
+// ── Handle exec button: new or reconnect ────────────────────────
+async function handleExecBtn(filename, totalTasks){
+  // Check if there's already a job for this script
+  const r = await api('/api/jobs');
+  const existing = (r.jobs || []).find(j => j.script === filename && !j.done);
+  if(existing){
+    // Reconnect to existing job
+    openExecPanel(filename, existing.total || totalTasks, existing.id);
+  } else {
+    // Fresh execution
+    openExecPanel(filename, totalTasks, null);
+  }
+}
+
+async function startExec(){
+  if(!_execScript){ toast('未指定脚本', 'err'); return; }
+  document.getElementById('exec-start-btn').disabled = true;
+  document.getElementById('exec-status-badge').innerHTML =
+    '<span class="status-ind s-run"><span class="spin"></span> 提交中...</span>';
+
+  const r = await api('/api/run-script', {method:'POST', body:{filename: _execScript}});
+  if(r.error){
+    toast('启动失败: ' + r.error, 'err');
+    document.getElementById('exec-start-btn').disabled = false;
+    return;
+  }
+  _execJobId = r.job_id;
+
+  if(r.queued){
+    document.getElementById('exec-status-badge').innerHTML =
+      `<span class="status-ind" style="color:var(--purple)">⏳ 排队中（第${r.queue_pos}位）</span>`;
+    document.getElementById('exec-current').innerHTML =
+      '<span style="color:var(--purple)">等待前序任务完成后自动启动...</span>';
+    toast(`已加入任务队列（位置 ${r.queue_pos}）`, 'inf');
+    // Poll status until running
+    _pollUntilRunning(_execJobId);
+  } else {
+    document.getElementById('exec-stop-btn').disabled = false;
+    document.getElementById('exec-start-btn').style.display = 'none';
+    _startElapsedTimer(null);
+    _openSSE(_execJobId);
+  }
+  loadTaskScripts();
+}
+
+function _pollUntilRunning(jobId){
+  const iv = setInterval(async()=>{
+    const r = await api('/api/jobs/' + jobId + '/status');
+    if(!r.error && r.status !== 'queued'){
+      clearInterval(iv);
+      document.getElementById('exec-stop-btn').disabled = false;
+      document.getElementById('exec-start-btn').style.display = 'none';
+      _startElapsedTimer(r.started);
+      _openSSE(jobId);
+      loadTaskScripts();
+    }
+    if(r.done){ clearInterval(iv); loadTaskScripts(); }
+  }, 3000);
+}
+
+async function stopExec(){
+  if(!_execJobId){ return; }
+  if(!confirm('确定要强制停止当前仿真任务吗？')) return;
+  const r = await api('/api/jobs/' + _execJobId + '/stop', {method:'POST'});
+  toast(r.message || r.error || '已发送停止信号', 'inf');
+  document.getElementById('exec-stop-btn').disabled = true;
+}
+
+function appendExecLine(line){
+  const log = document.getElementById('exec-log');
+  if(line === undefined || line === null) return;
+  let color = '';
+  if(line.includes('[OK]')) color = 'color:var(--green)';
+  else if(line.includes('[FAIL]') || line.includes('[ERROR]') || /error/i.test(line)) color = 'color:var(--red)';
+  else if(line.includes('completed!') || line.includes('All configurations')) color = 'color:var(--green);font-weight:600';
+  else if(line.includes('Global Progress')) color = 'color:var(--cyan)';
+  const gm = line.match(/Grain (\d+)\/(\d+) at (\d+)/);
+  if(gm){
+    document.getElementById('exec-current').innerHTML =
+      `<span style="color:var(--amber)">⚙</span> <span style="color:var(--t1)">${esc(line.trim())}</span>`;
+  }
+  const div = document.createElement('div');
+  div.style.cssText = (color || '') + ';padding:1px 0';
+  div.textContent = line;
+  log.appendChild(div);
+  if(document.getElementById('exec-autoscroll')?.checked)
+    log.scrollTop = log.scrollHeight;
+}
+
+function updateExecProgress(completed, failed, total){
+  total = total || 0;
+  const pct = total > 0 ? Math.min(100, Math.round(completed*100/total)) : 0;
+  document.getElementById('exec-progress-bar').style.width = pct + '%';
+  document.getElementById('exec-progress-text').textContent = `${completed} / ${total}${total?` (${pct}%)`:''}`; 
+  document.getElementById('exec-done-cnt').textContent = completed;
+  document.getElementById('exec-fail-cnt').textContent = failed;
+}
+
+// ── Periodic task manager refresh ────────────────────────────
+function startTaskManagerPoll(){
+  if(_jobPollTimer) clearInterval(_jobPollTimer);
+  _jobPollTimer = setInterval(()=>{
+    if(document.querySelector('.nav-item[data-page="taskmanager"].active')){
+      refreshJobStatuses();
+    }
+  }, 5000);
+}
+
+async function refreshJobStatuses(){
+  const r = await api('/api/jobs');
+  if(!r.jobs) return;
+  r.jobs.forEach(job=>{
+    const safeId = job.script.replace(/[^a-zA-Z0-9_.]/g,'_');
+    const statusEl = document.getElementById('job-status-' + safeId) ||
+                     document.getElementById('job-status-' + job.script);
+    if(!statusEl) return;
+    const pct = job.total > 0 ? Math.round(job.completed*100/job.total) : 0;
+    if(job.status === 'running' || job.status === 'starting'){
+      statusEl.innerHTML = `<span style="color:var(--amber);font-weight:600">⚙ 运行中 ${pct?pct+'%':''}</span>`;
+    } else if(job.status === 'queued'){
+      statusEl.innerHTML = '<span style="color:var(--purple)">⏳ 队列中</span>';
+    } else if(job.status === 'completed'){
+      statusEl.innerHTML = `<span style="color:var(--green);font-weight:600">✓ 完成 (${job.completed}/${job.total})</span>`;
+    } else if(job.status === 'stopped'){
+      statusEl.innerHTML = '<span style="color:var(--amber)">⏹ 已停止</span>';
+    } else if(job.status && job.status.startsWith('failed')){
+      statusEl.innerHTML = `<span style="color:var(--red)">✗ ${esc(job.status)}</span>`;
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// 数据集管理
+// ═══════════════════════════════════════════════════
+let _selectedConfigs = [];
+let _bhChartInstance = null;
+let _fiChartInstance = null;
+let _currentPredResult = null;
+let _currentPipelineId = null;
+
+function datasetScan() {
+  document.getElementById('ds-scan-result').innerHTML = '扫描中...';
+  fetch('/api/dataset/scan').then(r => r.json()).then(data => {
+    if (data.error) { alert(data.error); return; }
+    const configs = data.configs || [];
+    _selectedConfigs = configs.map(c => c.config_name);
+    const html = configs.length === 0
+      ? '<p style="color:var(--t3)">未找到可聚合的配置目录</p>'
+      : `<table style="width:100%;font-size:13px;border-collapse:collapse">
+          <tr style="background:var(--bg-3)"><th style="padding:6px 10px;text-align:left">配置名</th><th>晶粒数</th><th>可用角度</th></tr>
+          ${configs.map(c => `
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:5px 10px;font-family:var(--font-mono);font-size:12px">${c.config_name}</td>
+              <td style="padding:5px 10px;text-align:center">${c.n_grains}</td>
+              <td style="padding:5px 10px">${c.available_angles.join(', ')}°</td>
+            </tr>`).join('')}
+        </table><p style="font-size:12px;color:var(--t3);margin-top:6px">已选择全部 ${configs.length} 个配置</p>`;
+    document.getElementById('ds-scan-result').innerHTML = html;
+  });
+}
+
+function datasetAggregate() {
+  const mode = document.getElementById('ds-angle-mode').value;
+  fetch('/api/dataset/aggregate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({configs: _selectedConfigs.length ? _selectedConfigs : null,
+                          angle_mode: mode})
+  }).then(r => r.json()).then(d => {
+    if (d.error) { alert(d.error); return; }
+    pollTask(d.task_id, res => {
+      alert(`聚合完成！${res.n_samples} 个样本 → ${res.dataset_path}`);
+      loadDatasetList();
+    });
+  });
+}
+
+function loadDatasetList() {
+  fetch('/api/dataset/list').then(r => r.json()).then(d => {
+    const ds = d.datasets || [];
+    document.getElementById('ds-list').innerHTML = ds.length === 0
+      ? '<p style="color:var(--t3)">暂无数据集</p>'
+      : ds.map(x => `<div style="display:flex;gap:8px;align-items:center;padding:7px 10px;
+           border-bottom:1px solid var(--border);font-size:13px">
+           <span style="flex:1;font-family:var(--font-mono);font-size:12px">${x.name}</span>
+           <span style="color:var(--t2)">${x.rows} 行</span>
+           <span style="color:var(--t3)">${x.cols} 列</span>
+           <span style="color:var(--t3);font-size:11px">${x.created}</span>
+         </div>`).join('');
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// XGBoost 训练
+// ═══════════════════════════════════════════════════
+function loadDatasetListForTraining() {
+  fetch('/api/dataset/list').then(r => r.json()).then(d => {
+    const sel = document.getElementById('train-dataset');
+    sel.innerHTML = (d.datasets || []).map(x =>
+      `<option value="${x.path}">${x.name} (${x.rows} 行)</option>`).join('');
+  });
+}
+
+function startTraining() {
+  const ds = document.getElementById('train-dataset').value;
+  if (!ds) { alert('请先选择或生成数据集'); return; }
+  const xgbParams = {
+    n_estimators:  parseInt(document.getElementById('xgb-n-est').value),
+    max_depth:     parseInt(document.getElementById('xgb-depth').value),
+    learning_rate: parseFloat(document.getElementById('xgb-lr').value),
+    subsample:     parseFloat(document.getElementById('xgb-sub').value),
+  };
+  document.getElementById('train-status').textContent = '训练中，请稍候...';
+  document.getElementById('train-results').style.display = 'none';
+  fetch('/api/ml/train', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({dataset_path: ds, xgb_params: xgbParams,
+                          test_size: parseFloat(document.getElementById('train-test-size').value)})
+  }).then(r => r.json()).then(d => {
+    if (d.error) { alert(d.error); return; }
+    pollTask(d.task_id, res => {
+      document.getElementById('train-status').textContent = '训练完成！';
+      document.getElementById('res-r2').textContent = res.r2_avg != null ? res.r2_avg.toFixed(4) : '—';
+      document.getElementById('res-mape').textContent = res.mape_avg != null
+        ? (res.mape_avg * 100).toFixed(2) + '%' : '—';
+      document.getElementById('res-model-id').textContent = res.model_id || '—';
+      document.getElementById('train-results').style.display = 'block';
+      renderFeatureImportance(res.feature_importance || {});
+      loadModelList();
+    });
+  });
+}
+
+function renderFeatureImportance(fi) {
+  if (typeof Chart === 'undefined') return;
+  const labels = Object.keys(fi);
+  const vals   = Object.values(fi).map(v => parseFloat(v.toFixed(4)));
+  const ctx    = document.getElementById('fi-chart').getContext('2d');
+  if (_fiChartInstance) _fiChartInstance.destroy();
+  _fiChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {labels, datasets: [{label: '特征重要性', data: vals,
+                                backgroundColor: 'rgba(56,189,248,0.5)', borderColor: '#38bdf8', borderWidth: 1}]},
+    options: {responsive: true, plugins: {legend: {display: false}},
+              scales: {y: {beginAtZero: true}}}
+  });
+}
+
+function loadModelList() {
+  fetch('/api/ml/models').then(r => r.json()).then(d => {
+    const models = d.models || [];
+    document.getElementById('model-list').innerHTML = models.length === 0
+      ? '<p style="color:var(--t3)">暂无已训练模型</p>'
+      : models.map(m => `<div style="display:flex;gap:8px;align-items:center;padding:7px 10px;
+             border-bottom:1px solid var(--border);font-size:13px">
+             <span style="flex:1;font-family:var(--font-mono);font-size:12px">${m.model_id}</span>
+             <span style="color:var(--green)">R²=${m.r2_avg != null ? m.r2_avg.toFixed(3) : '—'}</span>
+             <span style="color:var(--t2)">${m.n_samples} 样本</span>
+             <button class="btn btn-danger" style="padding:3px 10px;font-size:12px" onclick="deleteModel('${m.model_id}')">删除</button>
+           </div>`).join('');
+  });
+}
+
+function deleteModel(mid) {
+  if (!confirm('确定删除模型 ' + mid + ' ?')) return;
+  fetch('/api/ml/models/' + mid, {method: 'DELETE'}).then(() => loadModelList());
+}
+
+// ═══════════════════════════════════════════════════
+// 快速预测
+// ═══════════════════════════════════════════════════
+function loadModelListForPred() {
+  fetch('/api/ml/models').then(r => r.json()).then(d => {
+    const sel = document.getElementById('pred-model');
+    const models = d.models || [];
+    sel.innerHTML = models.map(m =>
+      `<option value="${m.model_id}">${m.model_id} (R²=${m.r2_avg != null ? m.r2_avg.toFixed(3) : '?'})</option>`
+    ).join('') || '<option value="">暂无模型</option>';
+  });
+}
+
+function runPrediction() {
+  const mid = document.getElementById('pred-model').value;
+  if (!mid) { alert('请先训练或加载一个模型'); return; }
+  const params = {
+    f_Goss:       parseFloat(document.getElementById('pred-fgoss').value),
+    theta_0_deg:  parseFloat(document.getElementById('pred-theta').value),
+    halfwidth_deg: parseFloat(document.getElementById('pred-hw').value),
+    N_grains:     parseInt(document.getElementById('pred-n').value),
+    Si_content:   parseFloat(document.getElementById('pred-si').value),
+  };
+  fetch('/api/ml/predict', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({model_id: mid, params})
+  }).then(r => r.json()).then(data => {
+    if (data.error) { alert(data.error); return; }
+    _currentPredResult = data;
+    document.getElementById('pred-result').style.display = 'block';
+    renderBHChart(data);
+    renderScalars(data.scalars || {});
+  });
+}
+
+function renderBHChart(data) {
+  if (typeof Chart === 'undefined') return;
+  const H = data.RD?.H || [];
+  const makeDs = (key, label, color, dash) => ({
+    label, data: (data[key]?.B || []).map((b,i) => ({x: H[i], y: b})),
+    borderColor: color, backgroundColor: color+'30',
+    borderDash: dash, pointRadius: 3, tension: 0.3
+  });
+  const ctx = document.getElementById('bh-chart').getContext('2d');
+  if (_bhChartInstance) _bhChartInstance.destroy();
+  _bhChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {datasets: [
+      makeDs('RD',      'RD (0°)',    '#38bdf8', []),
+      makeDs('Cross45', '45°',        '#34d399', [5,3]),
+      makeDs('TD',      'TD (90°)',   '#f87171', [2,2]),
+    ]},
+    options: {responsive: true,
+              scales: {x: {type:'linear', title:{display:true, text:'H (A/m)'}},
+                       y: {title:{display:true, text:'B (T)'}}}}
+  });
+}
+
+function renderScalars(s) {
+  const rows = [0,45,90].map(a => `
+    <tr>
+      <td style="padding:4px 10px;font-weight:500">${a}°</td>
+      <td style="padding:4px 10px">${(s['Hc_'+a+'deg']||0).toFixed(1)} A/m</td>
+      <td style="padding:4px 10px">${(s['Mr_'+a+'deg']||0).toFixed(4)} A/m</td>
+      <td style="padding:4px 10px">${(s['mu_max_'+a+'deg']||0).toFixed(1)}</td>
+    </tr>`).join('');
+  document.getElementById('pred-scalars').innerHTML =
+    `<table style="font-size:12px;border-collapse:collapse;width:100%">
+       <tr style="background:var(--bg-3)"><th style="padding:4px 10px;text-align:left">方向</th>
+         <th>Hc</th><th>Mr</th><th>μ_max</th></tr>${rows}</table>`;
+}
+
+function exportMaxwellFromPred() {
+  document.getElementById('maxwell-pred-dialog').style.display = 'block';
+}
+
+function doExportMaxwellFromPred() {
+  if (!_currentPredResult) return;
+  const matName  = document.getElementById('pred-mat-name').value || 'GO_Pred';
+  const thickness = parseFloat(document.getElementById('pred-thickness').value) || 0.35;
+  fetch('/api/analyze/export-maxwell-from-prediction', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      model_id:     document.getElementById('pred-model').value,
+      params: {
+        f_Goss:        parseFloat(document.getElementById('pred-fgoss').value),
+        theta_0_deg:   parseFloat(document.getElementById('pred-theta').value),
+        halfwidth_deg: parseFloat(document.getElementById('pred-hw').value),
+        N_grains:      parseInt(document.getElementById('pred-n').value),
+        Si_content:    parseFloat(document.getElementById('pred-si').value),
+      },
+      mat_name: matName,
+      thickness_mm: thickness
+    })
+  }).then(r => r.blob()).then(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = matName + '.amat';
+    a.click();
+    document.getElementById('maxwell-pred-dialog').style.display = 'none';
+  });
+}
+
+function copyBHData() {
+  if (!_currentPredResult) return;
+  const rd = _currentPredResult.RD || {};
+  const td = _currentPredResult.TD || {};
+  const H  = rd.H || [];
+  const lines = ['H (A/m)\tB_RD (T)\tB_TD (T)'];
+  H.forEach((h,i) => lines.push(`${h}\t${(rd.B||[])[i]||''}\t${(td.B||[])[i]||''}`));
+  navigator.clipboard.writeText(lines.join('\n'))
+    .then(() => alert('B-H 数据已复制到剪贴板 (TSV 格式)'));
+}
+
+// ═══════════════════════════════════════════════════
+// 自动流水线
+// ═══════════════════════════════════════════════════
+function startPipeline() {
+  const config = {
+    n_samples:      parseInt(document.getElementById('pipe-n').value),
+    angle_mode:     document.getElementById('pipe-angle-mode').value,
+    f_Goss_range:   [parseFloat(document.getElementById('pipe-fg-lo').value),
+                     parseFloat(document.getElementById('pipe-fg-hi').value)],
+    theta_0_range:  [parseFloat(document.getElementById('pipe-th-lo').value),
+                     parseFloat(document.getElementById('pipe-th-hi').value)],
+    halfwidth_range:[parseFloat(document.getElementById('pipe-hw-lo').value),
+                     parseFloat(document.getElementById('pipe-hw-hi').value)],
+    N_grains_range: [parseInt(document.getElementById('pipe-n-lo').value),
+                     parseInt(document.getElementById('pipe-n-hi').value)],
+    Si_content:     3.0,
+  };
+  fetch('/api/pipeline/start', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(config)
+  }).then(r => r.json()).then(d => {
+    if (d.error) { alert(d.error); return; }
+    _currentPipelineId = d.pipeline_id;
+    document.getElementById('pipeline-panel').style.display = 'block';
+    document.getElementById('pipeline-complete').style.display = 'none';
+    subscribePipeline(d.pipeline_id);
+  });
+}
+
+function subscribePipeline(pid) {
+  const logEl = document.getElementById('pipe-log');
+  const stagesEl = document.getElementById('pipeline-stages');
+  const waitEl   = document.getElementById('pipeline-sim-wait');
+  const doneEl   = document.getElementById('pipeline-complete');
+
+  const stageNames = {
+    texture_gen: '织构生成', script_gen: 'MX3脚本',
+    batch_gen: '批处理脚本', wait_sim: '等待仿真',
+    analyze: '结果聚合', train: 'XGBoost训练'
+  };
+  const STAGES = ['texture_gen','script_gen','batch_gen','wait_sim','analyze','train'];
+
+  const es = new EventSource(`/api/pipeline/${pid}/stream`);
+  es.onmessage = e => {
+    const s = JSON.parse(e.data);
+    if (s.error && !s.stage) { alert('流水线错误: ' + s.error); es.close(); return; }
+
+    stagesEl.innerHTML = STAGES.map((st, i) => {
+      const done    = i < s.stage_index;
+      const current = st === s.stage;
+      const pct     = current ? s.progress_pct : (done ? 100 : 0);
+      const bg      = done ? 'var(--green)' : current ? 'var(--cyan)' : 'var(--border)';
+      return `<div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+          <span style="color:${done?'var(--green)':current?'var(--cyan)':'var(--t3)'}">${done?'✓':current?'▶':' '} ${stageNames[st]}</span>
+          <span style="color:var(--t3)">${done?'完成':current?pct+'%':'等待'}</span>
+        </div>
+        <div style="background:var(--bg-3);border-radius:3px;height:5px">
+          <div style="background:${bg};width:${pct}%;height:5px;border-radius:3px;transition:width .3s"></div>
+        </div></div>`;
+    }).join('');
+
+    if (s.status === 'waiting_sim') {
+      waitEl.style.display = 'block';
+      const scr = (s.results && s.results.batch_script) || '';
+      document.getElementById('sim-script-name').textContent = scr;
+    } else {
+      waitEl.style.display = 'none';
+    }
+
+    if (s.log && s.log.length) {
+      logEl.innerHTML = s.log.slice(-80).map(l =>
+        `<div>${l.replace(/</g,'&lt;')}</div>`).join('');
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    if (s.status === 'completed') {
+      es.close();
+      doneEl.style.display = 'block';
+      const r = s.results || {};
+      document.getElementById('pipe-final-results').innerHTML =
+        `<div>数据集: <code>${r.dataset_path || '—'}</code> (${r.n_samples || '?'} 个样本)</div>
+         <div>模型 ID: <code>${r.model_id || '—'}</code></div>
+         <div>R² = ${r.r2_avg != null ? r.r2_avg.toFixed(4) : '—'}</div>`;
+      loadModelListForPred();
+    }
+    if (s.status === 'failed') {
+      es.close();
+      logEl.style.color = 'var(--red)';
+    }
+  };
+}
+
+function resumePipeline() {
+  if (!_currentPipelineId) return;
+  fetch(`/api/pipeline/${_currentPipelineId}/resume`, {method: 'POST'})
+    .then(r => r.json()).then(d => {
+      if (!d.success) alert(d.error || '无法继续');
+      document.getElementById('pipeline-sim-wait').style.display = 'none';
+    });
+}
+
+function switchToTab(pageId) {
+  const navEl = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+  if (navEl) navigate(navEl);
+}
+
+// ═══════════════════════════════════════════════════
+// Maxwell 导出（分析页面）
+// ═══════════════════════════════════════════════════
+function exportCurrentToMaxwell() {
+  let H, B;
+  if (window.analysisData && window.analysisData.curves) {
+    H = window.analysisData.curves.H_curve;
+    B = window.analysisData.curves.B_curve;
+  } else {
+    alert('请先在分析页面上传并分析一个仿真文件');
+    return;
+  }
+  document.getElementById('maxwell-inline-dialog').style.display = 'block';
+  window._pendingExportRD = {H, B};
+}
+
+function doExportCurrentMaxwell() {
+  const rd = window._pendingExportRD;
+  if (!rd) return;
+  const matName   = document.getElementById('inline-mat-name').value || 'GO_Sim';
+  const thickness = parseFloat(document.getElementById('inline-thickness').value) || 0.35;
+  fetch('/api/analyze/export-maxwell', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({H_RD: rd.H, B_RD: rd.B, mat_name: matName, thickness_mm: thickness})
+  }).then(r => r.blob()).then(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = matName + '.amat';
+    a.click();
+    document.getElementById('maxwell-inline-dialog').style.display = 'none';
+  });
+}
+
+// ── 页面初始化（新增部分） ──────────────────────────
+function _initMLPages(){
+  loadDatasetList();
+  loadDatasetListForTraining();
+  loadModelList();
+  loadModelListForPred();
+}
+
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  loadWorkspace();
+  initAngleChips();
+  startTaskManagerPoll();
+  _initMLPages();
+  // Auto env check after slight delay
+  setTimeout(()=>{ if(document.querySelector('.nav-item[data-page="taskmanager"].active')) checkEnv(); }, 500);
+  ['p-gx','p-gy','p-gz','p-cell'].forEach(id=>{const el=document.getElementById(id);if(el) el.addEventListener('input',updateRVE);});
+  updateRVE();
+  updateTaskDot();
+});
+</script>
+
+<!-- Maxwell 内联导出对话框（挂在 body 层） -->
+<div id="maxwell-inline-dialog" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+     z-index:9999;background:var(--bg-2);border:1px solid var(--border-hi);border-radius:8px;
+     padding:20px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.6)">
+  <div style="font-weight:600;margin-bottom:14px;color:var(--cyan)">⚙️ 导出 Maxwell .amat</div>
+  <div style="display:grid;gap:10px;margin-bottom:14px">
+    <div class="fg"><label>材料名称</label><input id="inline-mat-name" placeholder="GO_Sim"></div>
+    <div class="fg"><label>厚度 (mm)</label><input id="inline-thickness" value="0.35" type="number" step="0.01"></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-p" onclick="doExportCurrentMaxwell()">⬇️ 下载</button>
+    <button class="btn btn-g" onclick="document.getElementById('maxwell-inline-dialog').style.display='none'">取消</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ 数据集管理页 ═══════════════════ -->
+<div class="page" id="page-dataset">
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">📊 数据集管理</span></div>
+    <p style="color:var(--t3);font-size:12px;margin-bottom:14px">扫描 <code>output/</code> 目录，将仿真晶粒结果聚合为 XGBoost 训练集 CSV。</p>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn btn-g" onclick="datasetScan()">🔍 扫描可用配置</button>
+      <select id="ds-angle-mode" style="width:auto">
+        <option value="motor">电机优化模式 (0°/45°/90°)</option>
+        <option value="full">全极图模式 (9 个角度)</option>
+      </select>
+      <button class="btn btn-p" onclick="datasetAggregate()">⚙️ 聚合选中配置</button>
+    </div>
+    <div id="ds-scan-result" style="margin-bottom:16px"></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">已保存的训练集</span>
+      <button class="btn btn-g btn-sm" onclick="loadDatasetList()">🔄 刷新</button>
+    </div>
+    <div id="ds-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ XGBoost 训练页 ═══════════════════ -->
+<div class="page" id="page-training">
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">🤖 XGBoost 训练</span></div>
+    <div class="fr fr2" style="margin-bottom:16px">
+      <div class="fg"><label>数据集</label><select id="train-dataset"></select></div>
+      <div class="fg"><label>测试集比例</label><input type="number" id="train-test-size" value="0.2" min="0.1" max="0.4" step="0.05"></div>
+      <div class="fg"><label>n_estimators</label><input type="number" id="xgb-n-est" value="300"></div>
+      <div class="fg"><label>max_depth</label><input type="number" id="xgb-depth" value="6"></div>
+      <div class="fg"><label>learning_rate</label><input type="number" id="xgb-lr" value="0.05" step="0.005"></div>
+      <div class="fg"><label>subsample</label><input type="number" id="xgb-sub" value="0.8" step="0.05"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button class="btn btn-p" onclick="startTraining()">🚀 开始训练</button>
+      <button class="btn btn-g" onclick="loadDatasetListForTraining()">🔄 刷新数据集</button>
+    </div>
+    <div id="train-status" style="margin-bottom:16px;color:var(--t2)"></div>
+    <div id="train-results" style="display:none">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+        <div class="card" style="text-align:center;padding:12px">
+          <div style="font-size:11px;color:var(--t3);margin-bottom:4px">平均 R²</div>
+          <div style="font-size:22px;font-weight:600;color:var(--green)" id="res-r2">—</div>
+        </div>
+        <div class="card" style="text-align:center;padding:12px">
+          <div style="font-size:11px;color:var(--t3);margin-bottom:4px">平均 MAPE</div>
+          <div style="font-size:22px;font-weight:600;color:var(--amber)" id="res-mape">—</div>
+        </div>
+        <div class="card" style="text-align:center;padding:12px">
+          <div style="font-size:11px;color:var(--t3);margin-bottom:4px">模型 ID</div>
+          <div style="font-size:11px;font-weight:600;word-break:break-all;color:var(--cyan)" id="res-model-id">—</div>
+        </div>
+      </div>
+      <canvas id="fi-chart" height="120"></canvas>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">已保存的模型</span>
+      <button class="btn btn-g btn-sm" onclick="loadModelList()">🔄 刷新</button>
+    </div>
+    <div id="model-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ 快速预测页 ═══════════════════ -->
+<div class="page" id="page-prediction">
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">⚡ 快速预测</span></div>
+    <p style="color:var(--t3);font-size:12px;margin-bottom:14px">选择已训练的模型，输入织构参数，毫秒级返回 B-H 曲线。</p>
+    <div class="fr fr2" style="margin-bottom:16px">
+      <div class="fg"><label>模型</label><select id="pred-model"></select></div>
+      <div class="fg"><label>f_Goss (0.4-0.9)</label><input type="number" id="pred-fgoss" value="0.70" min="0.4" max="0.9" step="0.01"></div>
+      <div class="fg"><label>θ₀ [°] (1-30)</label><input type="number" id="pred-theta" value="15" min="1" max="30" step="1"></div>
+      <div class="fg"><label>半宽 σ [°] (5-15)</label><input type="number" id="pred-hw" value="10" min="5" max="15" step="1"></div>
+      <div class="fg"><label>晶粒数 N</label><input type="number" id="pred-n" value="100" min="10" max="300" step="10"></div>
+      <div class="fg"><label>Si 含量 [%]</label><input type="number" id="pred-si" value="3.0" min="2.5" max="3.5" step="0.1"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button class="btn btn-p" onclick="runPrediction()">⚡ 立即预测</button>
+      <button class="btn btn-g" onclick="loadModelListForPred()">🔄 刷新模型</button>
+    </div>
+    <div id="pred-result" style="display:none">
+      <canvas id="bh-chart" height="200" style="margin-bottom:16px"></canvas>
+      <div id="pred-scalars" style="margin-bottom:12px"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="exportMaxwellFromPred()">⬇️ 导出 Maxwell .amat</button>
+        <button class="btn btn-g" onclick="copyBHData()">📋 复制 B-H 数据 (TSV)</button>
+      </div>
+      <div id="maxwell-pred-dialog" style="display:none;margin-top:12px;
+           padding:16px;border:1px solid var(--border-hi);border-radius:6px;background:var(--bg-3)">
+        <div class="fr fr2" style="margin-bottom:12px">
+          <div class="fg"><label>材料名称</label><input id="pred-mat-name" placeholder="GO_Pred_F70_T15"></div>
+          <div class="fg"><label>厚度 (mm)</label><input id="pred-thickness" value="0.35" type="number" step="0.01"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-p" onclick="doExportMaxwellFromPred()">⬇️ 下载 .amat</button>
+          <button class="btn btn-g" onclick="document.getElementById('maxwell-pred-dialog').style.display='none'">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ 自动流水线页 ═══════════════════ -->
+<div class="page" id="page-pipeline">
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">🔄 自动训练流水线</span></div>
+    <p style="color:var(--t3);font-size:12px;margin-bottom:14px">一键从织构参数采样到 XGBoost 模型，含仿真脚本自动生成。</p>
+    <div class="fr fr2" style="margin-bottom:16px">
+      <div class="fg"><label>样本数</label><input type="number" id="pipe-n" value="20" min="5" max="300"></div>
+      <div class="fg"><label>角度模式</label>
+        <select id="pipe-angle-mode">
+          <option value="motor">电机优化 (0°/45°/90°) — 推荐</option>
+          <option value="full">全极图 (9 个角度)</option>
+        </select>
+      </div>
+      <div class="fg"><label>f_Goss 范围</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="number" id="pipe-fg-lo" value="0.4" step="0.05" style="flex:1">
+          <span style="color:var(--t3)">~</span>
+          <input type="number" id="pipe-fg-hi" value="0.9" step="0.05" style="flex:1">
+        </div>
+      </div>
+      <div class="fg"><label>θ₀ [°] 范围</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="number" id="pipe-th-lo" value="1" style="flex:1">
+          <span style="color:var(--t3)">~</span>
+          <input type="number" id="pipe-th-hi" value="30" style="flex:1">
+        </div>
+      </div>
+      <div class="fg"><label>半宽 σ [°] 范围</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="number" id="pipe-hw-lo" value="5" style="flex:1">
+          <span style="color:var(--t3)">~</span>
+          <input type="number" id="pipe-hw-hi" value="15" style="flex:1">
+        </div>
+      </div>
+      <div class="fg"><label>晶粒数 N 范围</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="number" id="pipe-n-lo" value="50" style="flex:1">
+          <span style="color:var(--t3)">~</span>
+          <input type="number" id="pipe-n-hi" value="150" style="flex:1">
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-p" onclick="startPipeline()" style="margin-bottom:16px">▶ 启动流水线</button>
+    <div id="pipeline-panel" style="display:none">
+      <div id="pipeline-stages" style="margin-bottom:14px"></div>
+      <div id="pipeline-sim-wait" style="display:none;background:rgba(245,158,11,.1);
+           border:1px solid var(--amber);border-radius:6px;padding:12px;margin-bottom:12px">
+        <strong style="color:var(--amber)">⏳ 仿真脚本已生成</strong>
+        <p id="sim-script-name" style="font-family:var(--font-mono);font-size:12px;margin:6px 0;color:var(--t1)"></p>
+        <p style="font-size:12px;color:var(--t2);margin:0 0 10px">请在 GPU 机器上运行该脚本，完成后点击下方按钮继续。</p>
+        <button class="btn btn-p" onclick="resumePipeline()">✅ 仿真已完成，继续</button>
+      </div>
+      <div style="font-size:12px;font-family:var(--font-mono);background:#050810;color:#22ff55;
+           padding:10px;border-radius:4px;height:200px;overflow-y:auto;border:1px solid var(--border)" id="pipe-log"></div>
+      <div id="pipeline-complete" style="display:none;background:rgba(52,211,153,.1);
+           border:1px solid var(--green);border-radius:6px;padding:14px;margin-top:12px">
+        <strong style="color:var(--green)">🎉 流水线完成！</strong>
+        <div id="pipe-final-results" style="margin-top:8px;font-size:13px;color:var(--t2)"></div>
+        <button class="btn btn-p" onclick="switchToTab('prediction')" style="margin-top:10px">→ 前往快速预测</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

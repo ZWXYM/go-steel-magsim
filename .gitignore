@@ -1,0 +1,25 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+
+# Sim output
+output/
+preinput/pipeline_*/
+grain_scripts/pipeline_*/
+
+# ML artifacts
+data/datasets/*.csv
+data/models/*/
+data/exports/*.amat
+
+# Misc
+instance/
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+*.log
+setup_git.ps1
