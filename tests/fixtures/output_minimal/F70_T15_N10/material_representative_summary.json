@@ -1,0 +1,172 @@
+{
+  "generated_at": "2026-06-18T20:55:30.977243",
+  "config_name": "F70_T15_N10",
+  "config_path": "C:\\Users\\10760\\Desktop\\yuce_prompt_test_20260617_235155\\tests\\fixtures\\output_minimal\\F70_T15_N10",
+  "angles": {
+    "0": {
+      "status": "ok",
+      "H": [
+        100,
+        200,
+        500,
+        1000,
+        2000,
+        3000,
+        5000,
+        7500
+      ],
+      "B": [
+        1.5707963428420118e-05,
+        7.853981650021599e-05,
+        0.00026703537571560353,
+        1.502117767927564,
+        1.7467672486113406,
+        1.8065200230762337,
+        1.8408410211958648,
+        1.849620332855943
+      ],
+      "B_at_std_H": [
+        1.5707963428420118e-05,
+        7.853981650021599e-05,
+        0.00026703537571560353,
+        1.502117767927564,
+        1.7467672486113406,
+        1.8065200230762337,
+        1.8408410211958648,
+        1.849620332855943
+      ],
+      "Hc": 779.7574847233717,
+      "Mr": 1132752.9134918903,
+      "mu_max": 15319.527280018072,
+      "n_grains_total": 2,
+      "n_grains_valid": 2,
+      "n_grains_rejected": 0,
+      "n_grains_ok": 2,
+      "aggregation_method": "median_with_representative_grain",
+      "representative_grain_file": "grain_001.txt",
+      "quality_report": {
+        "angle_dir": "C:\\Users\\10760\\Desktop\\yuce_prompt_test_20260617_235155\\tests\\fixtures\\output_minimal\\F70_T15_N10\\angle_000",
+        "n_grains_total": 2,
+        "n_grains_valid": 2,
+        "n_grains_rejected": 0,
+        "rejection_reasons": {},
+        "representative_grain_file": "grain_001.txt",
+        "representative_distance": 0.852802865422438,
+        "aggregation_method": "median_with_representative_grain",
+        "trimmed_mean_B_at_std_H": [
+          1.5707963428420118e-05,
+          7.853981650021599e-05,
+          0.00026703537571560353,
+          1.502117767927564,
+          1.7467672486113406,
+          1.8065200230762337,
+          1.8408410211958648,
+          1.849620332855943
+        ],
+        "calibration_report": {
+          "input_points": 8,
+          "removed_nonfinite": 0,
+          "removed_nonpositive_H": 0,
+          "deduplicated_H": 0,
+          "direction": null,
+          "source": "material_aggregate:angle_000",
+          "max_B": 2.25,
+          "negative_B_clipped": 0,
+          "over_max_B_clipped": 0,
+          "nonmonotonic_segments": 0,
+          "min_slope_fixes": 0,
+          "fallback_used": false,
+          "output_points": 8,
+          "B_min": 1.5707963428420118e-05,
+          "B_max": 1.849620332855943
+        },
+        "sample_errors": []
+      }
+    },
+    "90": {
+      "status": "ok",
+      "H": [
+        100,
+        200,
+        500,
+        1000,
+        2000,
+        3000,
+        5000,
+        7500
+      ],
+      "B": [
+        1.5707963428420118e-05,
+        7.853981650021599e-05,
+        0.00026703537571560353,
+        1.502117767927564,
+        1.7467672486113406,
+        1.8065200230762337,
+        1.8408410211958648,
+        1.849620332855943
+      ],
+      "B_at_std_H": [
+        1.5707963428420118e-05,
+        7.853981650021599e-05,
+        0.00026703537571560353,
+        1.502117767927564,
+        1.7467672486113406,
+        1.8065200230762337,
+        1.8408410211958648,
+        1.849620332855943
+      ],
+      "Hc": 779.7574847233717,
+      "Mr": 1132752.9134918903,
+      "mu_max": 15319.527280018072,
+      "n_grains_total": 2,
+      "n_grains_valid": 2,
+      "n_grains_rejected": 0,
+      "n_grains_ok": 2,
+      "aggregation_method": "median_with_representative_grain",
+      "representative_grain_file": "grain_001.txt",
+      "quality_report": {
+        "angle_dir": "C:\\Users\\10760\\Desktop\\yuce_prompt_test_20260617_235155\\tests\\fixtures\\output_minimal\\F70_T15_N10\\angle_090",
+        "n_grains_total": 2,
+        "n_grains_valid": 2,
+        "n_grains_rejected": 0,
+        "rejection_reasons": {},
+        "representative_grain_file": "grain_001.txt",
+        "representative_distance": 0.852802865422438,
+        "aggregation_method": "median_with_representative_grain",
+        "trimmed_mean_B_at_std_H": [
+          1.5707963428420118e-05,
+          7.853981650021599e-05,
+          0.00026703537571560353,
+          1.502117767927564,
+          1.7467672486113406,
+          1.8065200230762337,
+          1.8408410211958648,
+          1.849620332855943
+        ],
+        "calibration_report": {
+          "input_points": 8,
+          "removed_nonfinite": 0,
+          "removed_nonpositive_H": 0,
+          "deduplicated_H": 0,
+          "direction": null,
+          "source": "material_aggregate:angle_090",
+          "max_B": 2.25,
+          "negative_B_clipped": 0,
+          "over_max_B_clipped": 0,
+          "nonmonotonic_segments": 0,
+          "min_slope_fixes": 0,
+          "fallback_used": false,
+          "output_points": 8,
+          "B_min": 1.5707963428420118e-05,
+          "B_max": 1.849620332855943
+        },
+        "sample_errors": []
+      }
+    }
+  },
+  "scalar_confidence": {
+    "Hc": "low_due_to_mesh_limit",
+    "mu_max": "low_due_to_mesh_limit",
+    "BH_curve": "primary_for_export"
+  }
+}

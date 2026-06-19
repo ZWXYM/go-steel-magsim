@@ -158,13 +158,24 @@ select option{background:var(--bg-2)}
 .pc-c::before{background:var(--cyan)}.pc-a::before{background:var(--amber)}
 .pc-g::before{background:var(--green)}.pc-p::before{background:var(--purple)}
 .pl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;font-weight:600}
-.pv{font-family:var(--font-mono);font-size:17px;font-weight:500;margin-top:6px;color:var(--t1);line-height:1.2}
+.pv{font-family:var(--font-mono);font-size:17px;font-weight:500;margin-top:6px;color:var(--t1);line-height:1.2;overflow-wrap:anywhere}
 .pu{font-size:10px;color:var(--t3);margin-top:2px}
 
 /* CHARTS */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.chart-card{background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.chart-card{background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;position:relative;min-height:0;overflow:hidden}
 .chart-card h4{font-family:var(--font-d);font-size:13px;color:var(--t2);margin-bottom:10px;letter-spacing:.5px}
+.chart-card canvas{display:block;width:100%!important;height:220px!important;max-height:220px!important}
+#oc-bh,#oc-mh,#c-bh,#c-mh{height:230px!important;max-height:230px!important}
+#oc-mut,#oc-mud,#c-mut,#c-mud,#c-ene,#c-mmg{height:170px!important;max-height:170px!important}
+#ofd-b800,#ofd-mu800{height:190px!important;max-height:190px!important}
+#pred-full-b800,#pred-full-mu800{height:280px!important;max-height:280px!important}
+.pred-result-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.8fr);gap:16px;align-items:start}
+.pred-polar-column{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:16px}
+.pred-actions{position:sticky;bottom:12px;z-index:20;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:10px;background:rgba(15,23,42,.88);border:1px solid var(--border);border-radius:8px;backdrop-filter:blur(8px)}
+.pred-actions .btn{white-space:nowrap}
+@media (max-width:1100px){.pred-result-grid{grid-template-columns:1fr}.pred-polar-column{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){.pred-polar-column{grid-template-columns:1fr}.pred-actions{bottom:6px}}
 
 /* TABLE */
 .dtable{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -172,6 +183,41 @@ select option{background:var(--bg-2)}
   letter-spacing:1.5px;color:var(--t3);border-bottom:1px solid var(--border);font-weight:600}
 .dtable td{padding:11px 14px;border-bottom:1px solid rgba(30,48,80,.5);color:var(--t2);vertical-align:middle}
 .dtable tr:hover td{background:var(--bg-3)}
+.info-note{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:9px 12px;color:var(--t2);font-size:12px;line-height:1.6}
+.model-check-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:8px}
+.model-check{display:flex;gap:9px;align-items:flex-start;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;padding:9px 10px;cursor:pointer}
+.model-check input{margin-top:2px;flex-shrink:0}
+.model-check strong{display:block;color:var(--t1);font-size:12px}
+.model-check span{display:block;color:var(--t3);font-size:11px;line-height:1.45;margin-top:2px}
+.dataset-run-list{display:flex;flex-direction:column;gap:8px;max-height:460px;overflow-y:auto}
+.ds-cfg-row{display:flex;gap:8px;align-items:center;padding:8px 10px;border-top:1px solid var(--border);font-size:12px}
+.ds-cfg-row input{width:auto}
+.ds-cfg-path{font-family:var(--font-mono);font-size:10.5px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pred-chart-shell{position:relative;height:300px;margin-bottom:16px}
+.pred-chart-shell canvas,.chart-card canvas{width:100%!important;max-width:100%}
+.compact-matrix{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:10px}
+.compact-matrix .matrix-card{background:var(--bg-3);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:var(--font-mono);font-size:10.5px;color:var(--t2);line-height:1.55}
+/* ODF gallery */
+.odf-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:12px}
+.odf-thumb{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.odf-thumb:hover{border-color:var(--cyan)}
+.odf-thumb img{width:100%;height:130px;object-fit:cover;display:block}
+.odf-thumb-label{font-size:11px;color:var(--t2);padding:6px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.odf-lb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10000;align-items:center;justify-content:center;cursor:pointer}
+.odf-lb-overlay.open{display:flex}
+.odf-lb-overlay img{max-width:90vw;max-height:88vh;border-radius:4px;box-shadow:0 8px 40px rgba(0,0,0,.8)}
+/* Core loss param cards */
+.core-loss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+.cl-card{background:var(--bg-3);border:1px solid rgba(168,85,247,.25);border-radius:8px;padding:10px 14px}
+.cl-card .cl-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.cl-card .cl-val{font-family:var(--font-mono);font-size:13px;color:var(--purple);font-weight:600}
+.cl-card .cl-unit{font-size:10px;color:var(--t3);margin-top:2px}
+.cl-card .cl-note{font-size:9.5px;color:rgba(168,85,247,.6);margin-top:2px}
+/* B-H scalar row */
+.bh-scalar-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.bhs-card{background:var(--bg-3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;min-width:100px}
+.bhs-label{font-size:10px;color:var(--t3);margin-bottom:3px}
+.bhs-val{font-family:var(--font-mono);font-size:12px;color:var(--cyan);font-weight:600}
 .mono{font-family:var(--font-mono);font-size:11.5px}
 .tbadge{display:inline-block;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);font-size:10px;font-weight:600}
 .t-bat{background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.25)}
@@ -247,6 +293,44 @@ select option{background:var(--bg-2)}
 
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:3px}
+
+/* ── SIDEBAR STEP TRACK ────────────────────────────────── */
+.step-track{position:relative;padding-left:0}
+.step-track::before{content:'';position:absolute;left:28px;top:16px;bottom:16px;width:1px;
+  background:linear-gradient(to bottom,transparent,var(--border) 15%,var(--border) 85%,transparent);pointer-events:none}
+.step-badge{min-width:20px;height:20px;border-radius:50%;background:var(--bg-4);
+  border:1.5px solid var(--border);color:var(--t3);font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:var(--font-mono);transition:all .15s;z-index:1;position:relative}
+.nav-item.active .step-badge{background:rgba(56,189,248,.18);border-color:var(--cyan);color:var(--cyan);
+  box-shadow:0 0 6px rgba(56,189,248,.25)}
+.nav-item:hover .step-badge{border-color:var(--border-hi);color:var(--t2)}
+
+/* ── TOPBAR STEP PILL ──────────────────────────────────── */
+.tb-step{font-size:10px;color:var(--t3);font-family:var(--font-mono);
+  padding:2px 9px;border-radius:10px;border:1px solid var(--border);
+  background:var(--bg-3);letter-spacing:.5px;white-space:nowrap}
+
+/* ── WORKFLOW GUIDE BANNER ─────────────────────────────── */
+.wf-guide{display:flex;align-items:flex-start;gap:14px;padding:12px 16px;
+  background:rgba(56,189,248,.035);border:1px solid rgba(56,189,248,.1);
+  border-radius:8px;margin-bottom:16px}
+.wf-guide-icon{font-size:20px;flex-shrink:0;margin-top:1px;opacity:.8}
+.wf-guide-body{flex:1;min-width:0}
+.wf-guide-title{font-size:12.5px;font-weight:600;color:var(--t1);margin-bottom:3px;letter-spacing:.2px}
+.wf-guide-desc{font-size:11.5px;color:var(--t3);line-height:1.65}
+.wf-guide-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.wf-tag{font-size:10px;padding:2px 9px;border-radius:10px;font-weight:600;letter-spacing:.3px}
+.wf-tag-in{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.22)}
+.wf-tag-out{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.22)}
+.wf-tag-note{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.22)}
+
+/* ── NEXT STEP BAR ─────────────────────────────────────── */
+.next-step{display:flex;align-items:center;gap:14px;padding:13px 18px;
+  background:rgba(52,211,153,.03);border:1px solid rgba(52,211,153,.1);
+  border-radius:8px;margin-top:4px}
+.next-step-label{flex:1;font-size:11.5px;color:var(--t3);line-height:1.5}
+.next-step-label strong{color:var(--t2);font-size:12.5px;display:block;margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -256,15 +340,17 @@ select option{background:var(--bg-2)}
     <div class="lt">Fe-Si SimPlatform</div>
     <div class="ls">多晶微磁学仿真集成</div>
   </div>
-  <div class="nav-sec">功能模块</div>
-  <div class="nav-item active" data-page="texture" onclick="navigate(this)"><span class="nav-icon">⬡</span>织构生成</div>
-  <div class="nav-item" data-page="mx3" onclick="navigate(this)"><span class="nav-icon">⚙</span>MX3脚本生成</div>
-  <div class="nav-item" data-page="batchscripts" onclick="navigate(this)"><span class="nav-icon">▶</span>批处理脚本</div>
-  <div class="nav-item" data-page="taskmanager" onclick="navigate(this)"><span class="nav-icon">☰</span>任务管理<span class="task-dot" id="task-dot"></span></div>
-  <div class="nav-item" data-page="analysis" onclick="navigate(this)"><span class="nav-icon">◈</span>结果分析</div>
+  <div class="nav-sec">仿真工作流</div>
+  <div class="step-track">
+    <div class="nav-item active" data-page="texture" onclick="navigate(this)"><span class="step-badge">1</span>织构生成</div>
+    <div class="nav-item" data-page="mx3" onclick="navigate(this)"><span class="step-badge">2</span>MX3 脚本</div>
+    <div class="nav-item" data-page="batchscripts" onclick="navigate(this)"><span class="step-badge">3</span>批处理脚本</div>
+    <div class="nav-item" data-page="taskmanager" onclick="navigate(this)"><span class="step-badge">4</span>运行仿真<span class="task-dot" id="task-dot"></span></div>
+    <div class="nav-item" data-page="analysis" onclick="navigate(this)"><span class="step-badge">5</span>结果分析</div>
+  </div>
   <div class="nav-sec">机器学习</div>
   <div class="nav-item" data-page="dataset" onclick="navigate(this)"><span class="nav-icon">📊</span>数据集</div>
-  <div class="nav-item" data-page="training" onclick="navigate(this)"><span class="nav-icon">🤖</span>XGBoost训练</div>
+  <div class="nav-item" data-page="training" onclick="navigate(this)"><span class="nav-icon">🤖</span>模型训练</div>
   <div class="nav-item" data-page="prediction" onclick="navigate(this)"><span class="nav-icon">⚡</span>快速预测</div>
   <div class="nav-item" data-page="pipeline" onclick="navigate(this)"><span class="nav-icon">🔄</span>自动流水线</div>
   <div class="sb-footer">
@@ -275,18 +361,33 @@ select option{background:var(--bg-2)}
 
 <div class="main">
   <div class="topbar">
-    <div class="tb-title" id="tb-title">织构生成</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="tb-title" id="tb-title">织构生成</div>
+      <span class="tb-step" id="tb-step">STEP 1 / 5</span>
+    </div>
     <div class="tb-sub">Fe-Si Polycrystalline Micromagnetic Simulation Platform</div>
   </div>
   <div class="content">
 
   <!-- ======= PAGE: TEXTURE ======= -->
   <div class="page active" id="page-texture">
+    <div class="wf-guide">
+      <div class="wf-guide-icon">📐</div>
+      <div class="wf-guide-body">
+        <div class="wf-guide-title">Step 1 — 生成晶粒取向文件</div>
+        <div class="wf-guide-desc">基于 ODF 织构模型（Goss 分量 + 随机背景），用 LHS/重要性采样生成多晶硅钢的晶粒欧拉角列表。生成后在"文件管理"Tab 中将所需文件移入 input/ 目录，才能进入下一步。</div>
+        <div class="wf-guide-tags">
+          <span class="wf-tag wf-tag-in">输入：f_Goss / θ₀ / N_grains / σ</span>
+          <span class="wf-tag wf-tag-out">输出：preinput/*.txt</span>
+          <span class="wf-tag wf-tag-note">完成后移至 input/ 再继续</span>
+        </div>
+      </div>
+    </div>
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab(this,'texture','single')">单一生成</button>
       <button class="tab-btn" onclick="switchTab(this,'texture','batch')">批量生成</button>
-      <button class="tab-btn" onclick="switchTab(this,'texture','preinput')">预备输入</button>
-      <button class="tab-btn" onclick="switchTab(this,'texture','samples')">样本文件夹</button>
+      <button class="tab-btn" onclick="switchTab(this,'texture','files')">文件管理</button>
+      <button class="tab-btn" onclick="switchTab(this,'texture','odf');loadODFGallery()">极图查看</button>
     </div>
 
     <!-- Single -->
@@ -338,42 +439,72 @@ select option{background:var(--bg-2)}
       </div>
     </div>
 
-    <!-- PreInput -->
-    <div class="tab-c" id="texture-tab-preinput">
+    <!-- Files: preinput + input unified -->
+    <div class="tab-c" id="texture-tab-files">
       <div class="card">
         <div class="card-hdr">
-          <span class="card-title">预备输入文件 (preinput/)</span>
-          <div style="margin-left:auto;display:flex;gap:8px">
-            <button class="btn btn-g btn-sm" onclick="loadPreinput()">🔄 刷新</button>
+          <span class="card-title">文件管理</span>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <button class="btn btn-g btn-sm" onclick="loadFiles()">🔄 刷新</button>
             <button class="btn btn-p btn-sm" onclick="moveSelToInput()">📂 移至 input/</button>
           </div>
         </div>
-        <div id="preinput-list" class="file-list">
-          <div class="empty"><div class="ei">⬡</div><p>点击刷新或先生成织构</p></div>
+        <p style="font-size:11px;color:var(--t3);margin-bottom:10px">勾选左侧文件，点击"移至 input/"确认后方可生成 MX3 脚本。</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">📁 preinput/ — 待确认</div>
+            <div id="preinput-list" class="file-list">
+              <div class="empty"><div class="ei">⬡</div><p>点击刷新或先生成织构</p></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">📁 input/ — 就绪待仿真</div>
+            <div id="samples-input" class="file-list">
+              <div class="empty" style="padding:20px"><p>空</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ODF figures viewer tab -->
+    <div class="tab-c" id="texture-tab-odf">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">极图预览库</span>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <span style="font-size:11px;color:var(--t3)">保存极图：在批量生成时开启"保存极图"开关</span>
+            <button class="btn btn-g btn-sm" onclick="loadODFGallery()">🔄 刷新</button>
+          </div>
+        </div>
+        <div id="odf-gallery-wrap">
+          <div class="empty"><div class="ei">🔬</div><p>正在加载极图...</p></div>
         </div>
       </div>
     </div>
 
-    <!-- Samples -->
-    <div class="tab-c" id="texture-tab-samples">
-      <div class="card">
-        <div class="card-hdr"><span class="card-title">样本文件总览</span><button class="btn btn-g btn-sm" onclick="loadSamples()" style="margin-left:auto">🔄 刷新</button></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <div>
-            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">📁 preinput/</div>
-            <div id="samples-preinput" class="file-list"></div>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">📁 input/</div>
-            <div id="samples-input" class="file-list"></div>
-          </div>
-        </div>
+    <div class="next-step">
+      <span style="font-size:22px;color:var(--green);opacity:.7">→</span>
+      <div class="next-step-label">
+        <strong>完成此步骤后</strong>
+        在"文件管理"Tab 中勾选文件并点击"移至 input/"，然后前往 Step 2 生成 MX3 仿真脚本。
       </div>
+      <button class="btn btn-g btn-sm" onclick="navigate(document.querySelector('[data-page=mx3]'))">Step 2: MX3 脚本 →</button>
     </div>
   </div><!-- /page-texture -->
 
   <!-- ======= PAGE: MX3 ======= -->
   <div class="page" id="page-mx3">
+    <div class="wf-guide">
+      <div class="wf-guide-icon">⚙</div>
+      <div class="wf-guide-body">
+        <div class="wf-guide-title">Step 2 — 生成 MuMax3 仿真脚本</div>
+        <div class="wf-guide-desc">读取 input/ 中的晶粒取向文件，按选定角度生成每颗晶粒的 MuMax3 仿真脚本（.mx3）。Single 模式每个角度独立文件，支持 GPU 并行；Complex 模式单文件含所有角度。</div>
+        <div class="wf-guide-tags">
+          <span class="wf-tag wf-tag-in">输入：input/*.txt</span>
+          <span class="wf-tag wf-tag-out">输出：grain_scripts/{config}/angle_{θ}/*.mx3</span>
+        </div>
+      </div>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:16px">
       <div>
         <div class="card">
@@ -438,10 +569,30 @@ select option{background:var(--bg-2)}
         <div id="mx3-log" class="task-log" style="display:none"></div>
       </div>
     </div>
+    <div class="next-step">
+      <span style="font-size:22px;color:var(--green);opacity:.7">→</span>
+      <div class="next-step-label">
+        <strong>完成此步骤后</strong>
+        前往 Step 3 扫描生成的脚本目录，并生成对应的批处理文件（.bat / .ps1 / .sh）。
+      </div>
+      <button class="btn btn-g btn-sm" onclick="navigate(document.querySelector('[data-page=batchscripts]'))">Step 3: 批处理脚本 →</button>
+    </div>
   </div><!-- /page-mx3 -->
 
   <!-- ======= PAGE: BATCH SCRIPTS ======= -->
   <div class="page" id="page-batchscripts">
+    <div class="wf-guide">
+      <div class="wf-guide-icon">▶</div>
+      <div class="wf-guide-body">
+        <div class="wf-guide-title">Step 3 — 生成 GPU 批处理脚本</div>
+        <div class="wf-guide-desc">扫描 grain_scripts/ 目录，为每个配置生成批处理脚本。生成后<strong style="color:var(--amber)">将脚本文件拷贝至 GPU 机器</strong>并执行，仿真结果将输出至 output/ 目录。</div>
+        <div class="wf-guide-tags">
+          <span class="wf-tag wf-tag-in">输入：grain_scripts/{config}/</span>
+          <span class="wf-tag wf-tag-out">输出：run_*.bat / .ps1 / .sh</span>
+          <span class="wf-tag wf-tag-note">需在 GPU 机器上执行</span>
+        </div>
+      </div>
+    </div>
     <div class="card">
       <div class="card-hdr">
         <span class="card-title">扫描仿真配置</span>
@@ -462,10 +613,30 @@ select option{background:var(--bg-2)}
         <span id="batch-status"></span>
       </div>
     </div>
+    <div class="next-step">
+      <span style="font-size:22px;color:var(--green);opacity:.7">→</span>
+      <div class="next-step-label">
+        <strong>脚本已生成？</strong>
+        将脚本拷贝至 GPU 机器执行仿真，完成后前往 Step 4 检查运行状态或直接跳至 Step 5 分析结果。
+      </div>
+      <button class="btn btn-g btn-sm" onclick="navigate(document.querySelector('[data-page=taskmanager]'))">Step 4: 运行仿真 →</button>
+    </div>
   </div>
 
   <!-- ======= PAGE: TASK MANAGER ======= -->
   <div class="page" id="page-taskmanager">
+    <div class="wf-guide">
+      <div class="wf-guide-icon">⚡</div>
+      <div class="wf-guide-body">
+        <div class="wf-guide-title">Step 4 — 运行 MuMax3 仿真</div>
+        <div class="wf-guide-desc">检查本机 MuMax3 环境，管理本地批处理任务。若仿真在远程 GPU 机器上运行，可直接跳至 Step 5。仿真完成后结果保存在 output/ 目录。</div>
+        <div class="wf-guide-tags">
+          <span class="wf-tag wf-tag-in">输入：grain_scripts/ + 批处理文件</span>
+          <span class="wf-tag wf-tag-out">输出：output/{run}/angle_{θ}/grain_*.txt</span>
+          <span class="wf-tag wf-tag-note">远程 GPU 可跳过此页</span>
+        </div>
+      </div>
+    </div>
     <!-- Env check card -->
     <div class="card" id="env-card">
       <div class="card-hdr">
@@ -483,23 +654,44 @@ select option{background:var(--bg-2)}
     <div class="card">
       <div class="card-hdr">
         <span class="card-title">仿真任务脚本</span>
-        <button class="btn btn-g btn-sm" onclick="loadTaskScripts()" style="margin-left:auto">🔄 刷新</button>
+        <button class="btn btn-g btn-sm" onclick="clearDoneJobs()" style="margin-left:auto" title="移除所有已完成/已停止的任务记录">🗑 清除已完成</button>
+        <button class="btn btn-g btn-sm" onclick="loadTaskScripts()">🔄 刷新</button>
       </div>
       <div id="task-scripts-wrap">
         <div class="empty"><div class="ei">☰</div><p>暂无批处理任务文件</p></div>
       </div>
     </div>
-  </div>
+    <div class="next-step">
+      <span style="font-size:22px;color:var(--green);opacity:.7">→</span>
+      <div class="next-step-label">
+        <strong>仿真完成？</strong>
+        前往 Step 5 分析仿真结果，提取 B-H 曲线和磁特性参数，并可直接导出 Maxwell .amat 材料文件。
+      </div>
+      <button class="btn btn-g btn-sm" onclick="navigate(document.querySelector('[data-page=analysis]'))">Step 5: 结果分析 →</button>
+    </div>
+  </div><!-- /page-taskmanager -->
 
   <!-- ======= PAGE: ANALYSIS ======= -->
   <div class="page" id="page-analysis">
+    <div class="wf-guide">
+      <div class="wf-guide-icon">◈</div>
+      <div class="wf-guide-body">
+        <div class="wf-guide-title">Step 5 — 提取 B-H 曲线与磁特性</div>
+        <div class="wf-guide-desc">从 MuMax3 输出的 table.txt 中提取磁滞回线、B-H 曲线、磁导率、峰值与达标磁场等关键磁性参数，并支持直接导出 ANSYS Maxwell 材料文件（.amat）。<br>推荐使用"扫描输出文件夹"Tab 批量浏览结果。</div>
+        <div class="wf-guide-tags">
+          <span class="wf-tag wf-tag-in">输入：output/*/grain_*.txt</span>
+          <span class="wf-tag wf-tag-out">输出：B-H 曲线 / 磁特性参数 / .amat</span>
+        </div>
+      </div>
+    </div>
     <div class="tabs" id="analysis-tabs">
-      <button class="tab-btn active" onclick="switchTab(this,'analysis','upload')">上传分析</button>
-      <button class="tab-btn" onclick="switchTab(this,'analysis','output')">扫描输出文件夹</button>
+      <button class="tab-btn active" onclick="switchTab(this,'analysis','output')">扫描输出文件夹</button>
+      <button class="tab-btn" onclick="switchTab(this,'analysis','upload-results')">上传结果</button>
+      <button class="tab-btn" onclick="switchTab(this,'analysis','upload')">单文件分析</button>
     </div>
 
     <!-- Upload -->
-    <div class="tab-c active" id="analysis-tab-upload">
+    <div class="tab-c" id="analysis-tab-upload">
       <div style="display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start">
         <div>
           <div class="card">
@@ -527,26 +719,25 @@ select option{background:var(--bg-2)}
             <div class="props-grid" id="props-grid"></div>
             <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:11px;color:var(--t3);line-height:1.6" id="props-ref">
               <strong style="color:var(--t2);display:block;margin-bottom:4px">参考值（典型Fe-Si）</strong>
-              取向: μ_max=30k–50k, Mr/Ms=0.02–0.05<br>无取向: μ_max=2k–8k, Mr/Ms=0.05–0.15
+              取向: μ_max=30k–50k<br>无取向: μ_max=2k–8k
             </div>
           </div>
         </div>
         <div>
-          <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;padding:9px 14px;background:var(--bg-3);border-radius:7px;border:1px solid var(--border)">
-  <span style="font-size:12px;color:var(--t2);font-weight:600">图表显示模式</span>
-  <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="setLoopMode(!loopMode)">
-    <div class="tog" id="loop-tog" data-v="false"></div>
-    <span id="loop-lbl" style="font-size:13px;color:var(--t2)">时序模式</span>
-  </div>
-  <span style="font-size:11px;color:var(--t3)">时序模式 = 按仿真步骤展开  ·  回线模式 = H轴散点，M-H/B-H/能量/|M| 形成回线</span>
-</div>
-<div class="charts-grid" id="charts-wrap" style="display:none">
-            <div class="chart-card"><h4>M-H 磁滞回线</h4><canvas id="c-mh" height="180"></canvas></div>
-            <div class="chart-card"><h4>B-H 曲线</h4><canvas id="c-bh" height="180"></canvas></div>
-            <div class="chart-card"><h4>总磁导率 μᵣ = B/(μ₀H)</h4><canvas id="c-mut" height="180"></canvas></div>
-            <div class="chart-card"><h4>微分磁导率 dB/dH</h4><canvas id="c-mud" height="180"></canvas></div>
-            <div class="chart-card"><h4>磁能量 vs H</h4><canvas id="c-ene" height="180"></canvas></div>
-            <div class="chart-card"><h4>|M| 幅值检验</h4><canvas id="c-mmg" height="180"></canvas></div>
+          <!-- 主图：B-H + M-H -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="charts-wrap" style="display:none">
+            <div class="chart-card"><h4>B-H 曲线</h4><canvas id="c-bh" height="220"></canvas></div>
+            <div class="chart-card"><h4>M-H 磁滞回线</h4><canvas id="c-mh" height="220"></canvas></div>
+          </div>
+          <!-- 高级图表（折叠） -->
+          <div class="coll-hdr" id="adv-coll-hdr" onclick="toggleColl(this)" style="display:none;margin-top:8px"><span>📈 高级图表</span><span class="chevron">▼</span></div>
+          <div class="coll-body" id="adv-coll-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:8px">
+              <div class="chart-card"><h4>总磁导率 μᵣ</h4><canvas id="c-mut" height="160"></canvas></div>
+              <div class="chart-card"><h4>微分磁导率 dB/dH</h4><canvas id="c-mud" height="160"></canvas></div>
+              <div class="chart-card"><h4>磁能量 vs H</h4><canvas id="c-ene" height="160"></canvas></div>
+              <div class="chart-card"><h4>|M| 幅值检验</h4><canvas id="c-mmg" height="160"></canvas></div>
+            </div>
           </div>
           <div id="a-empty" class="empty" style="padding-top:80px">
             <div class="ei" style="font-size:48px">◈</div>
@@ -556,13 +747,14 @@ select option{background:var(--bg-2)}
       </div>
     </div>
 
-    <!-- Output scan -->
-    <div class="tab-c" id="analysis-tab-output">
+    <!-- ── Tab: 扫描输出文件夹 ── -->
+    <div class="tab-c active" id="analysis-tab-output">
       <div class="card">
         <div class="card-hdr">
           <span class="card-title">扫描 output/ 文件夹</span>
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-            <div class="fg" style="margin:0"><input type="number" id="o-msat" value="1520000" step="10000" placeholder="Msat" style="width:130px"></div>
+            <label style="font-size:11px;color:var(--t3)">Msat</label>
+            <input type="number" id="o-msat" value="1520000" step="10000" placeholder="Msat (A/m)" style="width:130px">
             <button class="btn btn-g btn-sm" onclick="scanOutput()">🔄 扫描</button>
           </div>
         </div>
@@ -571,70 +763,121 @@ select option{background:var(--bg-2)}
         </div>
       </div>
 
-    <!-- Upload results card -->
-    <div class="card" style="margin-top:16px">
-      <div class="card-hdr">
-        <span class="card-title">上传仿真结果到系统</span>
-        <span class="badge b-purple">ZIP / 文件夹</span>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div>
-          <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📦 上传 ZIP 压缩包</div>
-          <div class="upload-zone" id="zip-upload-zone" onclick="document.getElementById('zip-fu').click()"
-               ondragover="event.preventDefault();this.classList.add('dragover')"
-               ondragleave="this.classList.remove('dragover')"
-               ondrop="handleZipDrop(event)">
-            <div class="ui">🗜</div>
-            <p>点击或拖入 ZIP 文件</p>
-            <small>将 output/run_xxx 目录打包的 ZIP</small>
+      <!-- Analysis result panel (output-scan context) -->
+      <div id="output-result-wrap" style="display:none;margin-top:16px">
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-title" id="o-file-label" style="font-family:var(--font-mono);font-size:12px">分析结果</span>
+            <div style="margin-left:auto;display:flex;gap:6px">
+              <button class="btn btn-g btn-sm" onclick="exportFEMM2()">📄 导出FEMM</button>
+              <button class="btn btn-p btn-sm" onclick="exportOutputToMaxwell()">⚙️ 导出Maxwell .amat</button>
+            </div>
           </div>
-          <input type="file" id="zip-fu" style="display:none" accept=".zip" onchange="handleZipSelect(event)">
-          <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
-            <button class="btn btn-p btn-sm" id="zip-upload-btn" onclick="uploadZipResults()" disabled>🗜 解压上传</button>
-            <span id="zip-status"></span>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📁 上传结果文件夹</div>
-          <div class="upload-zone" id="folder-upload-zone" onclick="document.getElementById('folder-fu').click()">
-            <div class="ui">📁</div>
-            <p>点击选择文件夹</p>
-            <small>选择 run_xxx 对应的结果文件夹</small>
-          </div>
-          <input type="file" id="folder-fu" style="display:none" webkitdirectory multiple onchange="handleFolderSelect(event)">
-          <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
-            <button class="btn btn-p btn-sm" id="folder-upload-btn" onclick="uploadFolderResults()" disabled>📁 上传文件夹</button>
-            <span id="folder-status"></span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+            <div>
+              <div class="props-grid" id="o-props-grid"></div>
+              <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:11px;color:var(--t3);line-height:1.7;margin-top:10px">
+                <strong style="color:var(--t2);display:block;margin-bottom:4px">典型 Fe-Si 参考值</strong>
+                取向硅钢：μ_max = 30k–50k<br>
+                无取向硅钢：μ_max = 2k–8k
+              </div>
+            </div>
+            <div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="o-charts-wrap">
+                <div class="chart-card"><h4>B-H 曲线</h4><canvas id="oc-bh" height="200"></canvas></div>
+                <div class="chart-card"><h4>M-H 磁滞回线</h4><canvas id="oc-mh" height="200"></canvas></div>
+              </div>
+              <div class="coll-hdr" onclick="toggleColl(this)" style="margin-top:8px"><span>📈 高级图表</span><span class="chevron">▼</span></div>
+              <div class="coll-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:8px">
+                  <div class="chart-card"><h4>总磁导率 μᵣ</h4><canvas id="oc-mut" height="160"></canvas></div>
+                  <div class="chart-card"><h4>微分磁导率</h4><canvas id="oc-mud" height="160"></canvas></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        <div class="card" id="full-direction-wrap" style="display:none;margin-top:14px">
+          <div class="card-hdr">
+            <span class="card-title">全向性能图</span>
+            <span class="badge b-green">RD/TD 插值</span>
+          </div>
+          <div class="charts-grid">
+            <div class="chart-card"><h4>角度 - B@800</h4><canvas id="ofd-b800" height="180"></canvas></div>
+            <div class="chart-card"><h4>角度 - μ@800</h4><canvas id="ofd-mu800" height="180"></canvas></div>
+          </div>
+          <div id="ofd-transfer-matrix" class="compact-matrix"></div>
+          <div style="font-size:11px;color:var(--t3);line-height:1.6;margin-top:10px">
+            基于 RD/TD 材料级代表曲线生成，已有中间角度仿真会作为对照点叠加。
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap">
+            <button class="btn btn-c btn-sm" onclick="exportBHAnalysis('material')">⬇️ 导出 .amat + BH分析报告</button>
+            <input id="ofd-mat-name" placeholder="材料名称 (留空自动生成)"
+                   style="font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);width:200px">
+            <span style="font-size:12px;color:var(--t3)">厚度</span>
+            <input id="ofd-thickness" value="0.35" type="number" step="0.01" min="0.1" max="1.0"
+                   style="font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);width:68px">
+            <span style="font-size:11px;color:var(--t3)">mm</span>
+          </div>
+          <div style="margin-top:8px">
+            <button onclick="toggleBHMatSelector('ofd-mat-sel')"
+                    style="font-size:11px;padding:2px 8px;border-radius:3px;border:1px solid var(--border);background:var(--bg-2);color:var(--t2);cursor:pointer">
+              ▼ 自选对比材料</button>
+            <div id="ofd-mat-sel" style="display:none;margin-top:6px;padding:10px;border:1px solid var(--border);border-radius:4px;background:var(--bg-3);max-height:260px;overflow-y:auto">
+              <span style="color:var(--t3);font-size:11px">正在加载材料列表…</span>
+            </div>
+          </div>
+          <div id="ofd-analysis-result" style="display:none;margin-top:14px"></div>
+        </div>
       </div>
-      <div id="upload-result-log" class="task-log" style="display:none;max-height:80px;margin-top:10px"></div>
     </div>
 
-      <!-- Analysis result panel (shared) -->
-      <div id="output-result-wrap" style="display:none;margin-top:16px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+    <!-- ── Tab: 上传结果 ── -->
+    <div class="tab-c" id="analysis-tab-upload-results">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">上传仿真结果到系统</span>
+          <span class="badge b-purple">ZIP / 文件夹</span>
+        </div>
+        <div style="color:var(--t3);font-size:12px;margin-bottom:14px">在 GPU 机器完成仿真后，将 <code style="color:var(--cyan)">output/run_xxx/</code> 目录打包成 ZIP 或整体选中上传，系统会解压归档到本地 output/ 目录，之后可在"扫描输出文件夹"中读取分析。</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
           <div>
-            <div class="card" id="o-props-card">
-              <div class="card-hdr"><span class="card-title" id="o-file-label">分析结果</span><button class="btn btn-g btn-sm" onclick="exportFEMM2()">导出FEMM</button></div>
-              <div class="props-grid" id="o-props-grid"></div>
+            <div style="font-size:11px;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600">📦 方式一：上传 ZIP 压缩包</div>
+            <div class="upload-zone" id="zip-upload-zone" onclick="document.getElementById('zip-fu').click()"
+                 ondragover="event.preventDefault();this.classList.add('dragover')"
+                 ondragleave="this.classList.remove('dragover')"
+                 ondrop="handleZipDrop(event)">
+              <div class="ui">🗜</div>
+              <p>点击或拖入 ZIP 文件</p>
+              <small>将 output/run_xxx 目录打包的 ZIP</small>
+            </div>
+            <input type="file" id="zip-fu" style="display:none" accept=".zip" onchange="handleZipSelect(event)">
+            <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+              <button class="btn btn-p btn-sm" id="zip-upload-btn" onclick="uploadZipResults()" disabled>🗜 解压上传</button>
+              <span id="zip-status"></span>
             </div>
           </div>
           <div>
-            <div class="charts-grid" id="o-charts-wrap" style="display:grid">
-              <div class="chart-card"><h4>M-H 磁滞回线</h4><canvas id="oc-mh" height="160"></canvas></div>
-              <div class="chart-card"><h4>B-H 曲线</h4><canvas id="oc-bh" height="160"></canvas></div>
-              <div class="chart-card"><h4>总磁导率</h4><canvas id="oc-mut" height="160"></canvas></div>
-              <div class="chart-card"><h4>微分磁导率</h4><canvas id="oc-mud" height="160"></canvas></div>
+            <div style="font-size:11px;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600">📁 方式二：上传结果文件夹</div>
+            <div class="upload-zone" id="folder-upload-zone" onclick="document.getElementById('folder-fu').click()">
+              <div class="ui">📁</div>
+              <p>点击选择文件夹</p>
+              <small>选择 run_xxx 对应的结果文件夹</small>
+            </div>
+            <input type="file" id="folder-fu" style="display:none" webkitdirectory multiple onchange="handleFolderSelect(event)">
+            <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+              <button class="btn btn-p btn-sm" id="folder-upload-btn" onclick="uploadFolderResults()" disabled>📁 上传文件夹</button>
+              <span id="folder-status"></span>
             </div>
           </div>
         </div>
+        <div id="upload-result-log" class="task-log" style="display:none;max-height:100px;margin-top:12px"></div>
       </div>
     </div>
+
   </div><!-- /page-analysis -->
 
-  </div><!-- content -->
-</div><!-- main -->
+  <!-- ML pages continue below, still inside .content -->
 
 <div class="toast-c" id="toast-c"></div>
 
@@ -707,7 +950,7 @@ let batchConfigSel = {}; // config_name -> Set of angle codes
 let analysisData = null; // from upload
 let analysisData2 = null; // from output scan
 let charts = {};
-let loopMode = false; // hysteresis loop display toggle
+let loopMode = true; // always use H-axis loop mode
 
 // ============================================================
 // NAVIGATION
@@ -719,13 +962,21 @@ function navigate(el){
   const p=el.dataset.page;
   document.getElementById('page-'+p).classList.add('active');
   const titles={texture:'织构生成',mx3:'MX3 脚本生成',batchscripts:'批处理脚本生成',
-                taskmanager:'仿真任务管理',analysis:'结果分析',
-                dataset:'数据集管理',training:'XGBoost 训练',
+                taskmanager:'运行仿真',analysis:'结果分析',
+                dataset:'数据集管理',training:'模型训练',
                 prediction:'快速预测',pipeline:'自动训练流水线'};
   document.getElementById('tb-title').textContent=titles[p]||p;
-  if(p==='mx3') loadInputFiles();  // always refresh on navigate
+
+  // 更新步骤 Pill
+  const stepMap={texture:'STEP 1 / 5',mx3:'STEP 2 / 5',batchscripts:'STEP 3 / 5',
+                 taskmanager:'STEP 4 / 5',analysis:'STEP 5 / 5'};
+  const stepEl=document.getElementById('tb-step');
+  if(stepEl){stepEl.textContent=stepMap[p]||'ML';stepEl.style.opacity=stepMap[p]?'1':'.55';}
+
+  if(p==='mx3') loadInputFiles();
   if(p==='taskmanager'){loadTaskScripts();checkEnv();refreshJobStatuses();}
-  if(p==='texture' && document.getElementById('preinput-list').innerHTML.includes('点击')) loadPreinput();
+  if(p==='texture') loadFiles();
+  if(p==='analysis') scanOutput();        // 导航到分析页时自动扫描
 }
 
 function switchTab(btn,page,tabId){
@@ -1007,8 +1258,15 @@ async function moveSelToInput(){
   if(r.count>0){
     toast(`已复制 ${r.count} 项至 input/`,'ok');
     selectedPreinput.clear();selectedPreinputFolders.clear();
-    loadPreinput();
+    loadFiles();
   } else toast('复制失败','err');
+}
+
+// 统一加载文件管理 Tab（preinput 左列 + input 右列）
+async function loadFiles(){
+  loadPreinput(); // populates #preinput-list
+  const r=await api('/api/texture/samples');
+  renderSampleFolder(r.input||[],'samples-input');
 }
 
 // ============================================================
@@ -1382,32 +1640,84 @@ async function loadTaskScripts(){
   if(!r.scripts||!r.scripts.length){
     wrap.innerHTML='<div class="empty"><div class="ei">☰</div><p>暂无批处理任务文件</p></div>';return;
   }
-  wrap.innerHTML=`<table class="dtable"><thead><tr>
-    <th>文件名</th><th>类型</th><th>任务数</th><th>配置</th><th>大小</th><th>生成时间</th><th>状态</th><th>操作</th>
-  </tr></thead><tbody id="task-tbody"></tbody></table>`;
-  const tbody=document.getElementById('task-tbody');
+
+  // ── 按批次名称（去扩展名）分组 ────────────────────────────
+  const groups={};
   r.scripts.forEach(s=>{
-    const safeId=s.name.replace(/[^a-zA-Z0-9_.]/g,'_');
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="mono">${esc(s.name)}</td>
-      <td><span class="tbadge t-${s.type}">.${s.type}</span></td>
-      <td><strong style="color:var(--cyan)">${s.task_count}</strong></td>
-      <td style="font-size:11px;color:var(--t3)">${s.configs.join(', ')||'—'}</td>
-      <td class="mono" style="color:var(--t3)">${(s.size/1024).toFixed(1)} KB</td>
-      <td class="mono" style="color:var(--t3);font-size:11px">${s.created}</td>
-      <td id="job-status-${safeId}" style="font-size:11px;color:var(--t3)">—</td>
-      <td><div style="display:flex;gap:5px;flex-wrap:wrap">
-        <button class="btn btn-g btn-sm" onclick="previewScript('${esc(s.name)}')">预览</button>
-        <button class="btn btn-g btn-sm" onclick="smartDownload('${esc(s.name)}')">⬇ 下载</button>
-        <button class="btn btn-p btn-sm" id="exec-btn-${safeId}" onclick="handleExecBtn('${esc(s.name)}',${s.task_count})" title="执行此脚本">▶ 执行</button>
-        <button class="btn btn-danger btn-sm" onclick="delScript('${esc(s.name)}')">✕</button>
-      </div></td>`;
-    tbody.appendChild(tr);
+    const base=s.name.replace(/\.(bat|ps1|sh)$/i,'');
+    if(!groups[base]) groups[base]={base,scripts:[],task_count:0,configs:[],created:s.created};
+    groups[base].scripts.push(s);
+    if(s.task_count>groups[base].task_count) groups[base].task_count=s.task_count;
+    groups[base].configs=[...new Set([...groups[base].configs,...s.configs])];
+    if(s.created>groups[base].created) groups[base].created=s.created;
   });
+  const sorted=Object.values(groups).sort((a,b)=>b.created.localeCompare(a.created));
+
+  let html=`<table class="dtable"><thead><tr>
+    <th>批次名称</th><th>格式</th><th>任务数</th><th>配置</th><th>生成时间</th><th>操作</th>
+  </tr></thead><tbody>`;
+
+  sorted.forEach((g,gi)=>{
+    const gId=`sg${gi}`;
+    const badges=g.scripts.map(s=>`<span class="tbadge t-${s.type}">.${s.type}</span>`).join(' ');
+    html+=`<tr class="script-group-row" onclick="toggleSG('${gId}')" style="cursor:pointer;user-select:none">
+      <td class="mono" style="display:flex;align-items:center;gap:6px">
+        <span id="${gId}arr" style="display:inline-block;transition:transform .18s;font-size:10px;color:var(--t3)">▶</span>
+        ${esc(g.base)}
+      </td>
+      <td>${badges}</td>
+      <td><strong style="color:var(--cyan)">${g.task_count}</strong></td>
+      <td style="font-size:11px;color:var(--t3)">${g.configs.join(', ')||'—'}</td>
+      <td class="mono" style="color:var(--t3);font-size:11px">${g.created}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delSG('${esc(g.base)}','${esc(JSON.stringify(g.scripts.map(s=>s.path)))}')">✕ 全删</button></td>
+    </tr>
+    <tr id="${gId}exp" style="display:none"><td colspan="6" style="padding:4px 8px 10px 28px">
+      <table class="dtable" style="background:var(--c1);border-radius:6px">
+        <thead><tr><th>类型</th><th>大小</th><th>状态</th><th>操作</th></tr></thead><tbody>`;
+
+    g.scripts.forEach(s=>{
+      const sid=s.path.replace(/[^a-zA-Z0-9_.]/g,'_');
+      html+=`<tr>
+        <td><span class="tbadge t-${s.type}">.${s.type}</span></td>
+        <td class="mono" style="color:var(--t3);font-size:11px">${(s.size/1024).toFixed(1)} KB</td>
+        <td id="job-status-${sid}" style="font-size:11px;color:var(--t3)">—</td>
+        <td><div style="display:flex;gap:5px">
+          <button class="btn btn-g btn-sm" onclick="previewScript('${esc(s.path)}')">预览</button>
+          <button class="btn btn-g btn-sm" onclick="smartDownload('${esc(s.path)}')">⬇</button>
+          <button class="btn btn-p btn-sm" id="exec-btn-${sid}" onclick="handleExecBtn('${esc(s.path)}',${s.task_count})" title="执行">▶ 执行</button>
+          <button class="btn btn-danger btn-sm" onclick="delScript('${esc(s.path)}')">✕</button>
+        </div></td>
+      </tr>`;
+    });
+
+    html+=`</tbody></table></td></tr>`;
+  });
+
+  html+=`</tbody></table>`;
+  wrap.innerHTML=html;
+}
+
+function toggleSG(gId){
+  const exp=document.getElementById(gId+'exp');
+  const arr=document.getElementById(gId+'arr');
+  const open=exp.style.display==='none'||exp.style.display==='';
+  exp.style.display=open?'table-row':'none';
+  if(arr) arr.style.transform=open?'rotate(90deg)':'';
+}
+
+async function delSG(base,pathsJson){
+  if(!confirm(`确定删除批次 "${base}" 的所有脚本？`)) return;
+  let paths; try{paths=JSON.parse(pathsJson);}catch{paths=[];}
+  for(const p of paths){
+    try{await api('/api/task-scripts/'+encodeURIComponent(p),{method:'DELETE'});}catch(e){}
+  }
+  toast('批次已删除','ok');
+  loadTaskScripts();
 }
 
 async function previewScript(name){
-  const r=await api('/api/task-scripts/'+encodeURIComponent(name)+'/preview');
+  const encoded=name.split('/').map(encodeURIComponent).join('/');
+  const r=await api('/api/task-scripts/'+encoded+'/preview');
   if(r.content){
     const w=window.open('','_blank','width=900,height=650');
     w.document.write(`<pre style="background:#07090f;color:#94a3b8;padding:20px;font-size:12px;font-family:monospace;white-space:pre-wrap;overflow:auto">${esc(r.content)}</pre>`);
@@ -1416,7 +1726,9 @@ async function previewScript(name){
 
 async function delScript(name){
   if(!confirm(`确定删除 ${name}？`)) return;
-  const r=await api('/api/task-scripts/'+encodeURIComponent(name),{method:'DELETE'});
+  // 对每段路径分别编码，保留斜杠以兼容 Flask <path:filename> 路由
+  const encoded=name.split('/').map(encodeURIComponent).join('/');
+  const r=await api('/api/task-scripts/'+encoded,{method:'DELETE'});
   if(r.success){toast('已删除','ok');loadTaskScripts();}
   else toast(r.error||'删除失败','err');
 }
@@ -1447,7 +1759,7 @@ async function runAnalysis(){
       const l=document.getElementById('a-log');l.style.display='block';l.textContent=d.error+'\n'+(d.traceback||'');return;
     }
     analysisData=d;
-    showProps(d.properties,'props-grid');
+    showProps(d.properties,d.curves,'props-grid');
     document.getElementById('props-card').style.display='block';
     renderCharts(d.properties,d.curves,'c-');
     if(d.log){const l=document.getElementById('a-log');l.style.display='block';l.textContent=d.log.slice(-2000);}
@@ -1467,40 +1779,96 @@ async function scanOutput(){
   if(!r.runs||!r.runs.length){
     wrap.innerHTML=`<div class="empty"><div class="ei">📂</div><p>${r.error||'output/ 目录中暂无运行结果'}</p></div>`;return;
   }
-  wrap.innerHTML='';
-  r.runs.forEach(run=>{
-    const item=document.createElement('div');item.className='run-item';
-    const totalFiles=run.configs.reduce((s,c)=>s+c.angles.reduce((ss,a)=>ss+a.file_count,0),0);
-    item.innerHTML=`
-      <div class="run-hdr" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').classList.toggle('open',this.nextElementSibling.classList.contains('open'))">
-        <span style="font-size:14px">🗂</span>
-        <div style="flex:1">
-          <div style="font-size:13px;color:var(--t1)">${esc(run.name)}</div>
-          <div style="font-size:11px;color:var(--t3);margin-top:2px">${run.configs.length} 配置 · ${totalFiles} 文件</div>
+  // ── 汇总统计 ──────────────────────────────────────
+  const totalRuns=r.runs.length;
+  const totalFiles=r.runs.reduce((s,run)=>s+run.configs.reduce((ss,c)=>ss+c.angles.reduce((sss,a)=>sss+a.file_count,0),0),0);
+  const totalConfigs=r.runs.reduce((s,run)=>s+run.configs.length,0);
+
+  let html=`
+  <!-- 汇总信息栏 -->
+  <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+    <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:10px 18px;min-width:100px;text-align:center">
+      <div style="font-size:22px;font-weight:700;color:var(--cyan);font-family:var(--font-d)">${totalRuns}</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:2px">运行批次</div>
+    </div>
+    <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:10px 18px;min-width:100px;text-align:center">
+      <div style="font-size:22px;font-weight:700;color:var(--amber);font-family:var(--font-d)">${totalConfigs}</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:2px">配置组</div>
+    </div>
+    <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:10px 18px;min-width:100px;text-align:center">
+      <div style="font-size:22px;font-weight:700;color:var(--green);font-family:var(--font-d)">${totalFiles}</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:2px">仿真文件</div>
+    </div>
+  </div>`;
+
+  html+=`<div style="display:flex;flex-direction:column;gap:8px">`;
+  r.runs.forEach((run,ri)=>{
+    const runFiles=run.configs.reduce((s,c)=>s+c.angles.reduce((ss,a)=>ss+a.file_count,0),0);
+    const allAngles=[...new Set(run.configs.flatMap(c=>c.angles.map(a=>a.angle_value)))].sort((a,b)=>a-b);
+    html+=`
+    <div class="run-item" style="border-radius:8px;overflow:hidden">
+      <div class="run-hdr" onclick="toggleRunItem(this)" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px 14px;background:var(--bg-3);border-radius:8px;border:1px solid var(--border)">
+        <span style="font-size:18px;flex-shrink:0">🗂</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;color:var(--t1);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(run.name)}</div>
+          <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--t3)">${run.configs.length} 配置</span>
+            <span style="font-size:11px;color:var(--t3)">·</span>
+            <span style="font-size:11px;color:var(--cyan)">${runFiles} 文件</span>
+            ${allAngles.length?`<span style="font-size:11px;color:var(--t3)">·</span><span style="font-size:11px;color:var(--amber)">角度: ${allAngles.join('°, ')}°</span>`:''}
+          </div>
         </div>
-        <span class="chevron">▼</span>
+        <span class="chevron" style="color:var(--t3);font-size:10px;transition:transform .18s">▼</span>
       </div>
-      <div class="run-body">
-        ${run.configs.map(cfg=>`
-          <div class="config-item">
-            <div style="font-size:12px;color:var(--amber);font-weight:600;margin-bottom:4px">⚙ ${esc(cfg.name)}</div>
-            ${cfg.angles.map(a=>{
-              const files=a.files||[];
-              const fileItems=files.map(fp=>`
-                <div class="angle-line" data-fp="${esc(fp)}" onclick="selectOutputFile(this,'${esc(fp)}')">
-                  <span style="font-family:var(--font-mono);font-size:11px">📄 ${esc(fp.split(/[\\/]/).pop())}</span>
-                </div>`).join('');
-              return `<div style="margin-bottom:8px">
-                <div style="font-size:11px;color:var(--cyan);font-weight:600;padding:4px 8px;background:var(--bg-4);border-radius:4px;margin-bottom:4px">
-                  角度 ${a.angle_value}° — ${a.file_count} 文件
+      <div class="run-body" style="display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;background:var(--bg-2);padding:10px 14px">
+        ${run.configs.map(cfg=>{
+          // 序列化所有角度数据供多角度对比使用（esc 转义 HTML 属性中的双引号）
+          const anglesDataEsc=esc(JSON.stringify(cfg.angles.map(a=>({angle_value:a.angle_value,files:a.files}))));
+          return `
+        <div class="config-item" style="margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+            <span style="font-size:12px;color:var(--amber);font-weight:600">⚙ ${esc(cfg.name)}</span>
+            <span style="font-size:11px;color:var(--t3)">${cfg.angles.length} 角度</span>
+            <button class="btn btn-p btn-sm" data-config-path="${esc(cfg.path||'')}" onclick="event.stopPropagation();showMaterialRepresentative(this.dataset.configPath)" style="margin-left:auto">材料级聚合分析</button>
+            ${cfg.angles.length>1?`<button class="btn btn-g btn-sm" onclick="event.stopPropagation();compareConfigAngles('${anglesDataEsc}')" style="margin-left:auto">📊 中间角验证</button>`:''}
+          </div>
+          ${cfg.angles.map(a=>{
+            const filesEsc=esc(JSON.stringify(a.files||[]));
+            return `<div style="margin-bottom:10px;margin-left:12px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+                <div style="font-size:11px;color:var(--cyan);font-weight:600;padding:3px 10px;background:var(--bg-4);border-radius:4px">
+                  ${a.angle_value}° — ${a.file_count} 晶粒
                 </div>
-                <div style="margin-left:8px">${fileItems}</div>
-              </div>`;
-            }).join('')}
-          </div>`).join('')}
-      </div>`;
-    wrap.appendChild(item);
+                <button class="btn btn-g btn-sm" onclick="event.stopPropagation();analyzeAngleAvg('${filesEsc}',${a.angle_value})"
+                  title="调试单角度下所有晶粒的均值曲线">晶粒追溯</button>
+              </div>
+              <details style="margin-top:4px">
+                <summary style="cursor:pointer;color:var(--t3);font-size:11px;list-style:none">单晶粒调试文件（默认折叠）</summary>
+                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+                ${(a.files||[]).map(fp=>`<div class="angle-line" data-fp="${esc(fp)}" onclick="selectOutputFile(this,'${esc(fp)}')"
+                  style="font-family:var(--font-mono);font-size:11px;padding:3px 8px;border-radius:4px;background:var(--bg-3);border:1px solid var(--border);cursor:pointer;white-space:nowrap">
+                  单晶粒 ${esc(fp.split(/[\\/]/).pop())}
+                </div>`).join('')}
+                </div>
+              </details>
+            </div>`;
+          }).join('')}
+        </div>`;
+        }).join('')}
+      </div>
+    </div>`;
   });
+  html+=`</div>`;
+  wrap.innerHTML=html;
+}
+
+function toggleRunItem(hdr){
+  const body=hdr.nextElementSibling;
+  const chevron=hdr.querySelector('.chevron');
+  const open=body.style.display==='none'||body.style.display==='';
+  body.style.display=open?'block':'none';
+  if(chevron) chevron.style.transform=open?'rotate(180deg)':'';
+  hdr.style.borderRadius=open?'8px 8px 0 0':'8px';
 }
 
 async function selectOutputFile(el, filepath){
@@ -1508,33 +1876,482 @@ async function selectOutputFile(el, filepath){
   el.classList.add('sel');
   selectedOutputFile=filepath;
   const Msat=parseFloat(document.getElementById('o-msat').value)||1.52e6;
+  setOutputAdvancedVisible(true);
+  setOutputChartTitles(false);
   document.getElementById('output-result-wrap').style.display='none';
+  const fdWrap=document.getElementById('full-direction-wrap'); if(fdWrap) fdWrap.style.display='none';
   const r=await fetch('/api/analysis/analyze-path',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:filepath,Msat})});
   const d=await r.json();
   if(d.error){toast('分析失败: '+d.error,'err');return;}
   analysisData2=d;
   document.getElementById('o-file-label').textContent=filepath.split(/[\\/]/).pop();
-  showProps(d.properties,'o-props-grid');
+  showProps(d.properties,d.curves,'o-props-grid');
   renderCharts(d.properties,d.curves,'oc-');
   document.getElementById('output-result-wrap').style.display='block';
   toast(`分析完成 · ${d.data_points} 数据点`,'ok');
 }
 
+function materialAngle(summary, angle){
+  return (summary?.angles || {})[String(angle)] || (summary?.angles || {})[angle] || null;
+}
+
+function setOutputAdvancedVisible(visible){
+  const body=document.getElementById('oc-mut')?.closest('.coll-body');
+  const hdr=body?.previousElementSibling;
+  if(hdr) hdr.style.display=visible?'flex':'none';
+  if(body) body.style.display=visible?'block':'none';
+}
+
+function setOutputChartTitles(material=false){
+  const bhTitle=document.getElementById('oc-bh')?.closest('.chart-card')?.querySelector('h4');
+  const mhTitle=document.getElementById('oc-mh')?.closest('.chart-card')?.querySelector('h4');
+  if(bhTitle) bhTitle.textContent=material?'材料级 B-H 曲线':'B-H 曲线';
+  if(mhTitle) mhTitle.textContent=material?'方向电磁指标':'M-H 磁滞回线';
+}
+
+function materialOkAngles(summary){
+  return Object.entries(summary?.angles || {})
+    .filter(([,x]) => x?.status === 'ok' && Array.isArray(x.H) && Array.isArray(x.B) && x.H.length && x.B.length)
+    .sort((a,b)=>Number(a[0])-Number(b[0]));
+}
+
+function finiteCurvePairs(xs, ys){
+  const n=Math.min(xs?.length || 0, ys?.length || 0);
+  const out=[];
+  for(let i=0;i<n;i++){
+    const x=Number(xs[i]), y=Number(ys[i]);
+    if(Number.isFinite(x) && Number.isFinite(y)) out.push([x,y]);
+  }
+  return out;
+}
+
+function interpYAtX(xs, ys, target){
+  const pairs=finiteCurvePairs(xs, ys).sort((a,b)=>a[0]-b[0]);
+  if(!pairs.length || !Number.isFinite(target)) return null;
+  if(target < pairs[0][0] || target > pairs[pairs.length-1][0]) return null;
+  const candidates=[];
+  for(const [x,y] of pairs){
+    if(Math.abs(x-target)<1e-9) candidates.push(y);
+  }
+  for(let i=1;i<pairs.length;i++){
+    const [x0,y0]=pairs[i-1], [x1,y1]=pairs[i];
+    if((target>=x0 && target<=x1) || (target>=x1 && target<=x0)){
+      if(Math.abs(x1-x0)<1e-12){
+        candidates.push(y0,y1);
+        continue;
+      }
+      const t=(target-x0)/(x1-x0);
+      candidates.push(y0+t*(y1-y0));
+    }
+  }
+  if(candidates.length) return candidates.reduce((best,y)=>y>best?y:best, candidates[0]);
+  return pairs[pairs.length-1][1];
+}
+
+function interpXAtY(xs, ys, target){
+  const pairs=finiteCurvePairs(xs, ys);
+  if(!pairs.length || !Number.isFinite(target)) return null;
+  let best=null;
+  for(let i=1;i<pairs.length;i++){
+    const [x0,y0]=pairs[i-1], [x1,y1]=pairs[i];
+    if((target-y0)*(target-y1)<=0 && Math.abs(y1-y0)>1e-12){
+      const t=(target-y0)/(y1-y0);
+      const x=x0+t*(x1-x0);
+      if(best===null || Math.abs(x)<Math.abs(best)) best=x;
+    }
+  }
+  return best;
+}
+
+function tailSlopeTPerMApm(xs, ys){
+  const pairs=finiteCurvePairs(xs, ys).sort((a,b)=>a[0]-b[0]);
+  if(pairs.length<2) return null;
+  const start=Math.max(0, Math.floor(pairs.length*0.75)-1);
+  const [x0,y0]=pairs[start], [x1,y1]=pairs[pairs.length-1];
+  if(Math.abs(x1-x0)<1e-12) return null;
+  return ((y1-y0)/(x1-x0))*1e6;
+}
+
+function curveMetricsFromBH(H, B){
+  const pairs=finiteCurvePairs(H, B);
+  const mu0=4*Math.PI*1e-7;
+  const peak=pairs.reduce((best,pair)=>pair[1]>(best?.[1] ?? -Infinity)?pair:best, null);
+  const b800=interpYAtX(H, B, 800);
+  const b1000=interpYAtX(H, B, 1000);
+  const b5000=interpYAtX(H, B, 5000);
+  const hAt15=interpXAtY(H, B, 1.5);
+  const hAt17=interpXAtY(H, B, 1.7);
+  const mu800=Number.isFinite(b800) ? b800/(mu0*800) : null;
+  const totalMu=pairs
+    .filter(([h,b])=>Math.abs(h)>1 && b/h>0)
+    .map(([h,b])=>Math.abs(b/(mu0*h)))
+    .filter(Number.isFinite);
+  const diffMu=[];
+  for(let i=1;i<pairs.length;i++){
+    const [h0,b0]=pairs[i-1], [h1,b1]=pairs[i];
+    if(Math.abs(h1-h0)>1e-12){
+      const v=(b1-b0)/(h1-h0)/mu0;
+      if(Number.isFinite(v) && v>0) diffMu.push(v);
+    }
+  }
+  const maxH=pairs.reduce((m,[h])=>Math.max(m,h), Number.NEGATIVE_INFINITY);
+  const bHigh=b5000 ?? (Number.isFinite(maxH) ? interpYAtX(H, B, maxH) : null);
+  return {
+    B800:b800,
+    B1000:b1000,
+    B5000:b5000,
+    BHigh:bHigh,
+    HAt15:hAt15,
+    HAt17:hAt17,
+    peakB:peak?.[1],
+    HAtPeak:peak?.[0],
+    mu800,
+    muMaxTotal:totalMu.length ? Math.max(...totalMu) : null,
+    muMaxDiff:diffMu.length ? Math.max(...diffMu) : null,
+    highSlope:tailSlopeTPerMApm(H, B),
+  };
+}
+
+function bhDataset(label, H, B, color, extra={}){
+  return {
+    label,
+    data: finiteCurvePairs(H, B).map(([x,y])=>({x,y})),
+    showLine:true,
+    parsing:false,
+    borderColor:color,
+    backgroundColor:color+'22',
+    borderWidth:extra.borderWidth ?? 2,
+    pointRadius:extra.pointRadius ?? 0,
+    pointHoverRadius:extra.pointHoverRadius ?? 4,
+    borderDash:extra.borderDash || [],
+    tension:extra.tension ?? 0.12,
+    fill:false,
+  };
+}
+
+function bhChartOptions(title, yTitle='B (T)'){
+  return {
+    animation:false,
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'#94a3b8',boxWidth:10}},
+      title:{display:!!title,text:title,color:'#94a3b8'}
+    },
+    scales:{
+      x:{type:'linear',title:{display:true,text:'H (A/m)',color:'#94a3b8'},ticks:{color:'#64748b'},grid:{color:'rgba(30,48,80,.55)'}},
+      y:{title:{display:true,text:yTitle,color:'#94a3b8'},ticks:{color:'#64748b'},grid:{color:'rgba(30,48,80,.55)'}}
+    }
+  };
+}
+
+function fmtMetric(n, digits=3){
+  return Number.isFinite(n) ? Number(n).toFixed(digits) : '—';
+}
+
+function fmtMetricH(n){
+  return Number.isFinite(n) ? fmtSci(Math.abs(n)) : '—';
+}
+
+function fmtMetricMu(n){
+  if(!Number.isFinite(n)) return '—';
+  return n>=10000 ? (n/1000).toFixed(1)+'k' : n.toFixed(0);
+}
+
+function renderMaterialProps(summary){
+  const grid = document.getElementById('o-props-grid');
+  if (!grid) return;
+  const okAngles = materialOkAngles(summary);
+  const primary = okAngles.find(([a])=>Number(a)===0)
+    || okAngles.find(([a])=>Number(a)===180)
+    || okAngles.find(([a])=>Number(a)===90)
+    || okAngles[0];
+  const angleLabel = primary ? `${Number(primary[0])}° (${primary[1].n_grains_valid || 0}/${primary[1].n_grains_total || 0})` : '—';
+  const H = primary?.[1]?.H || [];
+  const B = primary?.[1]?.B || [];
+  const m = curveMetricsFromBH(H, B);
+  const card = (label, value, unit='', cls='pc-c') => `
+    <div class="prop-card ${cls}">
+      <div class="pl">${esc(label)}</div>
+      <div class="pv">${esc(String(value ?? '—'))}</div>
+      <div class="pu">${esc(unit)}</div>
+    </div>`;
+  // Per-direction B values for anisotropy display
+  const rdItem = okAngles.find(([k])=>Number(k)===0);
+  const tdItem = okAngles.find(([k])=>Number(k)===90);
+  const m_rd = rdItem ? curveMetricsFromBH(rdItem[1].H||[], rdItem[1].B||[]) : null;
+  const m_td = tdItem ? curveMetricsFromBH(tdItem[1].H||[], tdItem[1].B||[]) : null;
+  const rd800=m_rd?.B800, td800=m_td?.B800;
+  const rd1000=m_rd?.B1000, td1000=m_td?.B1000;
+  const aniso = Number.isFinite(rd800)&&Number.isFinite(td800)&&td800>0
+    ? (rd800/td800).toFixed(3) : null;
+
+  grid.innerHTML = [
+    card('有效方向数', okAngles.length, 'directions', 'pc-g'),
+    m_rd&&Number.isFinite(rd800)  ? card('B@800 (RD)',    fmtMetric(rd800,3),  'T', 'pc-c') : '',
+    m_td&&Number.isFinite(td800)  ? card('B@800 (TD)',    fmtMetric(td800,3),  'T', 'pc-c') : '',
+    aniso                          ? card('各向异性比',    aniso, 'B800_RD / B800_TD', 'pc-p') : '',
+    m_rd&&Number.isFinite(rd1000) ? card('B@1000 (RD)',   fmtMetric(rd1000,3), 'T', 'pc-c') : '',
+    m_td&&Number.isFinite(td1000) ? card('B@1000 (TD)',   fmtMetric(td1000,3), 'T', 'pc-c') : '',
+    Number.isFinite(m.BHigh)      ? card('B@5000 (≈Bs)',  fmtMetric(m.BHigh,3),'T', 'pc-c') : '',
+    card('主方向', angleLabel, '校准代表曲线', 'pc-p'),
+  ].join('');
+}
+
+function renderMaterialRepresentativeCharts(summary){
+  if (typeof Chart === 'undefined') return;
+  const okAngles = materialOkAngles(summary);
+  const colorForAngle = a => Number(a)===0 ? '#38bdf8' : Number(a)===90 ? '#f87171' : Number(a)===180 ? '#a78bfa' : '#34d399';
+  const datasets = okAngles.map(([angle,item]) => {
+    const color = colorForAngle(angle);
+    const name = Number(angle)===0 ? 'RD' : Number(angle)===90 ? 'TD' : `${angle}°`;
+    return bhDataset(`${name} material (${item.n_grains_valid}/${item.n_grains_total})`, item.H || [], item.B || [], color, {
+      pointRadius:2,
+      tension:.18,
+    });
+  });
+  const bh = document.getElementById('oc-bh');
+  if (bh) {
+    destroyChartById('oc-bh');
+    if(!datasets.length){
+      const ctx=bh.getContext('2d');
+      ctx.clearRect(0,0,bh.width,bh.height);
+    }else{
+      charts['oc-bh'] = new Chart(bh.getContext('2d'), {type:'scatter', data:{datasets}, options:bhChartOptions('材料级聚合 B-H 曲线')});
+    }
+  }
+  const mh = document.getElementById('oc-mh');
+  if (mh) {
+    destroyChartById('oc-mh');
+    const labels=okAngles.map(([a])=>`${a}°`);
+    const b800=okAngles.map(([,x])=>curveMetricsFromBH(x.H, x.B).B800);
+    const mu800=okAngles.map(([,x])=>curveMetricsFromBH(x.H, x.B).mu800);
+    charts['oc-mh'] = new Chart(mh.getContext('2d'), {
+      type:'bar',
+      data:{labels,datasets:[
+        {type:'bar',label:'B@800 (T)',data:b800,backgroundColor:'rgba(56,189,248,.45)',borderColor:'#38bdf8',borderWidth:1,yAxisID:'y'},
+        {type:'line',label:'μr@800',data:mu800,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.16)',borderWidth:2,pointRadius:3,tension:.25,yAxisID:'y1'},
+      ]},
+      options:{animation:false,responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#94a3b8',boxWidth:10}}},
+        scales:{
+          x:{ticks:{color:'#64748b'}},
+          y:{beginAtZero:true,position:'left',title:{display:true,text:'B (T)',color:'#94a3b8'},ticks:{color:'#64748b'}},
+          y1:{beginAtZero:true,position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'μr',color:'#94a3b8'},ticks:{color:'#64748b'}}
+        }}
+    });
+  }
+}
+
+async function showMaterialRepresentative(configPath){
+  if(!configPath){toast('配置路径缺失','err');return;}
+  const wrap=document.getElementById('output-result-wrap');
+  const fdWrap=document.getElementById('full-direction-wrap');
+  if(wrap) wrap.style.display='block';
+  if(fdWrap) fdWrap.style.display='block';
+  setOutputAdvancedVisible(false);
+  setOutputChartTitles(true);
+  document.getElementById('o-file-label').textContent=(configPath.split(/[\\/]/).pop()||configPath)+' · 材料级聚合';
+  const Msat=parseFloat(document.getElementById('o-msat').value)||1.52e6;
+  const summary=await api(`/api/analysis/material-representative?config_path=${encodeURIComponent(configPath)}&Msat=${encodeURIComponent(Msat)}`);
+  if(summary.error){toast('材料级聚合失败: '+summary.error,'err');return;}
+  const rd = materialAngle(summary, 0);
+  const td = materialAngle(summary, 90);
+  const okAngles = materialOkAngles(summary);
+  const primaryAngle = okAngles.find(([a])=>Number(a)===0)
+    || okAngles.find(([a])=>Number(a)===180)
+    || okAngles.find(([a])=>Number(a)===90)
+    || okAngles[0];
+  const primary = (rd?.status === 'ok' ? rd : primaryAngle?.[1]) || {};
+  window.analysisData2 = analysisData2 = {
+    source: 'material_representative',
+    material_summary: summary,
+    properties: {
+      Ms: Msat,
+      Mr: primary?.Mr || 0,
+      Hc: primary?.Hc || 0,
+      mu_r_max_total: primary?.mu_max || 1,
+      mu_r_max_diff: primary?.mu_max || 1,
+      hysteresis_loss: 0,
+      Mr_Ms_ratio: 0,
+      M_mag_min: 1,
+      M_mag_mean: 1,
+      Msat,
+    },
+    curves: {
+      H_curve: primary?.H || [],
+      B_curve: primary?.B || [],
+      H_TD: td?.H || [],
+      B_TD: td?.B || [],
+    },
+  };
+  try{
+    renderMaterialProps(summary);
+    renderMaterialRepresentativeCharts(summary);
+    if(rd?.status === 'ok' && td?.status === 'ok'){
+      await showFullDirection(configPath, {silent:true, keepLabel:true});
+    }else{
+      const fdWrap=document.getElementById('full-direction-wrap');
+      if(fdWrap) fdWrap.style.display='none';
+      toast('已显示材料级聚合；缺少 RD/TD 成对方向，暂不生成全向图','inf');
+      return;
+    }
+    toast('材料级聚合分析已生成','ok');
+  }catch(e){
+    console.error(e);
+    toast('材料级分析渲染失败: '+e.message,'err');
+  }
+}
+
+async function showFullDirection(configPath, options={}){
+  if(!configPath){toast('配置路径缺失','err');return;}
+  const wrap=document.getElementById('output-result-wrap');
+  const fdWrap=document.getElementById('full-direction-wrap');
+  if(wrap) wrap.style.display='block';
+  if(fdWrap) fdWrap.style.display='block';
+  if(!options.keepLabel) document.getElementById('o-file-label').textContent=(configPath.split(/[\\/]/).pop()||configPath)+' · 全向性能图';
+  const Msat=parseFloat(document.getElementById('o-msat').value)||1.52e6;
+  const r=await api(`/api/analysis/full-direction?config_path=${encodeURIComponent(configPath)}&Msat=${encodeURIComponent(Msat)}`);
+  if(r.error){toast('全向图生成失败: '+r.error,'err');return;}
+  renderFullDirectionCharts(r,'ofd-');
+  renderTransferMatrixSummary(r);
+  if(!options.silent) toast('全向性能图已生成','ok');
+}
+
+function fullDirectionPolarData(summary, metric){
+  const seen=new Map();
+  (summary || []).forEach(x=>{
+    const angle=Number(x.angle_deg);
+    const value=Number(x[metric]);
+    if(!Number.isFinite(angle) || !Number.isFinite(value)) return;
+    const a=((angle%360)+360)%360;
+    seen.set(a, value);
+    if(a !== 0 && a !== 180) seen.set((360-a)%360, value);
+  });
+  if(seen.has(0) && !seen.has(360)) seen.set(360, seen.get(0));
+  return [...seen.entries()].sort((a,b)=>a[0]-b[0]).map(([angle,value])=>({angle,value}));
+}
+
+function renderPredictionPolarChart(canvasId, summary, metric, label, color, unit){
+  const el=document.getElementById(canvasId); if(!el) return;
+  destroyChartById(canvasId);
+  const points=fullDirectionPolarData(summary, metric);
+  charts[canvasId]=new Chart(el.getContext('2d'),{
+    type:'radar',
+    data:{
+      labels:points.map(p=>`${Math.round(p.angle)}°`),
+      datasets:[{
+        label,
+        data:points.map(p=>p.value),
+        borderColor:color,
+        backgroundColor:color+'24',
+        borderWidth:2,
+        pointRadius:1.5,
+        pointHoverRadius:4,
+        fill:true,
+      }]
+    },
+    options:{
+      animation:false,
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{color:'#94a3b8',boxWidth:10}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${Number(ctx.raw).toFixed(metric==='B800_T'?3:0)} ${unit}`}}
+      },
+      scales:{
+        r:{
+          beginAtZero:true,
+          angleLines:{color:'rgba(71,85,105,.38)'},
+          grid:{color:'rgba(30,48,80,.75)'},
+          ticks:{color:'#94a3b8',backdropColor:'rgba(15,23,42,.72)',maxTicksLimit:5},
+          pointLabels:{color:'#64748b',font:{size:10},callback:label=>{
+            const n=parseInt(label,10);
+            return n%45===0 ? label : '';
+          }}
+        }
+      }
+    }
+  });
+}
+
+function renderFullDirectionCharts(full,pfx){
+  if(typeof Chart==='undefined'||!full) return;
+  const summary=full.summary||[];
+  const overlay=full.measured_overlay||[];
+  const wrapId=pfx==='pred-full-'?'pred-full-wrap':'full-direction-wrap';
+  const wrap=document.getElementById(wrapId); if(wrap) wrap.style.display=pfx==='pred-full-'?'grid':'block';
+  if(pfx==='pred-full-'){
+    renderPredictionPolarChart('pred-full-b800', summary, 'B800_T', 'B@800 全向', '#38bdf8', 'T');
+    renderPredictionPolarChart('pred-full-mu800', summary, 'mu800', 'μr@800 全向', '#34d399', '');
+    return;
+  }
+  const draw=(canvasId,metric,label,yTitle,color)=>{
+    const el=document.getElementById(canvasId); if(!el) return;
+    destroyChartById(canvasId);
+    const datasets=[{
+      label,
+      data:summary.map(x=>({x:x.angle_deg,y:x[metric]})).filter(p=>Number.isFinite(p.y)),
+      borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:2,tension:.28,fill:false
+    }];
+    const measured=overlay.map(x=>({x:x.angle_deg,y:x[metric]})).filter(p=>Number.isFinite(p.y));
+    if(measured.length){
+      datasets.push({label:'仿真对照点',data:measured,showLine:false,pointRadius:5,
+        pointHoverRadius:6,borderColor:'#f59e0b',backgroundColor:'#f59e0b'});
+    }
+    charts[canvasId]=new Chart(el.getContext('2d'),{type:'line',data:{datasets},
+      options:{animation:false,responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#94a3b8',boxWidth:10}}},
+        scales:{x:{type:'linear',min:0,max:180,title:{display:true,text:'角度 (deg)',color:'#94a3b8'},
+                    ticks:{color:'#64748b',callback:v=>(v===0?'RD':(v===90?'TD':(v===180?'180/RD':v)))}},
+                y:{title:{display:true,text:yTitle,color:'#94a3b8'},ticks:{color:'#64748b'}}}}});
+  };
+  draw(pfx+'b800','B800_T','B@800','B (T)','#38bdf8');
+  draw(pfx+'mu800','mu800','μ@800','μr','#34d399');
+}
+
+function renderTransferMatrixSummary(full){
+  const el=document.getElementById('ofd-transfer-matrix');
+  if(!el) return;
+  const mats=full?.transfer_matrices || {};
+  const keys=['0','30','45','60','90','135','180'].filter(k=>mats[k]);
+  if(!keys.length){el.innerHTML='';return;}
+  el.innerHTML = keys.map(k=>{
+    const m=mats[k] || {};
+    const r=m.rotation_matrix || [[0,0],[0,0]];
+    const w=m.rd_td_projection_weights || [0,0];
+    const fmt=v=>Number(v).toFixed(3);
+    return `<div class="matrix-card">
+      <strong style="color:var(--cyan)">${esc(k)}° transfer</strong><br>
+      R=[${fmt(r[0]?.[0]||0)}, ${fmt(r[0]?.[1]||0)}; ${fmt(r[1]?.[0]||0)}, ${fmt(r[1]?.[1]||0)}]<br>
+      weights RD/TD=[${fmt(w[0]||0)}, ${fmt(w[1]||0)}]
+    </div>`;
+  }).join('');
+}
+
 // ============================================================
 // SHARED: PROPS + CHARTS
 // ============================================================
-function showProps(props,gridId){
+function showProps(props, curves, gridId){
   const g=document.getElementById(gridId);
+  if(!g) return;
+  const mu0=4*Math.PI*1e-7;
+  const Bs  = Number.isFinite(props.Ms)&&props.Ms>0    ? props.Ms*mu0  : null;
+  const Hc  = Number.isFinite(props.Hc)                ? props.Hc      : null;
+  const Br  = Number.isFinite(props.Mr)&&props.Mr>0    ? props.Mr*mu0  : null;
+  let mui = null;
+  if(curves&&curves.H_curve&&curves.B_curve&&curves.H_curve.length>1){
+    const H0=curves.H_curve[0], B0=curves.B_curve[0];
+    if(H0>0&&B0>0) mui=Math.round(B0/(mu0*H0));
+  }
+  const Mmag=props.M_mag_min;
   const items=[
-    {l:'饱和磁化强度 Ms',v:fmtSci(props.Ms),u:'A/m',c:'pc-c'},
-    {l:'剩余磁化强度 Mr',v:fmtSci(props.Mr),u:'A/m',c:'pc-c'},
-    {l:'矫顽力 Hc',v:props.Hc.toFixed(1),u:'A/m',c:'pc-a'},
-    {l:'μᵣ最大 (总)',v:props.mu_r_max_total.toFixed(0),u:'B/μ₀H',c:'pc-g'},
-    {l:'μᵣ最大 (微分)',v:props.mu_r_max_diff.toFixed(0),u:'dB/dH',c:'pc-g'},
-    {l:'磁滞损耗',v:fmtSci(props.hysteresis_loss),u:'J/m³',c:'pc-p'},
-    {l:'矩形比 Mr/Ms',v:props.Mr_Ms_ratio.toFixed(4),u:'',c:'pc-a'},
-    {l:'|M|最小',v:props.M_mag_min.toFixed(5),u:'归一化',c:props.M_mag_min>=0.95?'pc-g':'pc-a'},
-  ];
+    Bs!=null  ?{l:'Bs 饱和磁感',   v:Bs.toFixed(4),  u:'T',                              c:'pc-c'}:null,
+    Hc!=null  ?{l:'Hc 矫顽力',     v:Hc.toFixed(1),  u:'A/m',                            c:'pc-a'}:null,
+    Br!=null  ?{l:'Br 剩磁通量',   v:Br.toFixed(4),  u:'T',                              c:'pc-p'}:null,
+    mui!=null ?{l:'μᵢ 初始磁导率', v:String(mui),    u:'低场估算',                         c:'pc-g'}:null,
+    Mmag!=null?{l:'|M|最小 (收敛)',v:Mmag.toFixed(4),u:Mmag>=0.95?'✓ 收敛良好':'⚠ <0.95',c:Mmag>=0.95?'pc-g':'pc-a'}:null,
+  ].filter(Boolean);
   g.innerHTML=items.map(i=>`<div class="prop-card ${i.c}"><div class="pl">${i.l}</div><div class="pv">${i.v}</div><div class="pu">${i.u}</div></div>`).join('');
 }
 
@@ -1637,7 +2454,11 @@ function renderCharts(props,curves,pfx){
         scales:{...seqOpts('|M|').scales,y:{...mkAxis('|M|'),min:0.85,max:1.05}}}});
   }
 
-  if(pfx==='c-'){document.getElementById('charts-wrap').style.display='grid';document.getElementById('a-empty').style.display='none';}
+  if(pfx==='c-'){
+    document.getElementById('charts-wrap').style.display='grid';
+    document.getElementById('a-empty').style.display='none';
+    document.getElementById('adv-coll-hdr').style.display='flex';
+  }
 }
 
 async function exportFEMM(){if(!analysisData) return;_exportFEMM(analysisData.curves);}
@@ -1646,10 +2467,6 @@ async function exportFEMM2(){if(!analysisData2) return;_exportFEMM(analysisData2
 // ── Loop Mode Toggle ────────────────────────────────────────
 function setLoopMode(on){
   loopMode = on;
-  document.getElementById('loop-tog').classList.toggle('on', on);
-  document.getElementById('loop-tog').dataset.v = on ? 'true' : 'false';
-  document.getElementById('loop-lbl').textContent = on ? '回线模式' : '时序模式';
-  // Re-render current data
   if(analysisData) renderCharts(analysisData.properties, analysisData.curves, 'c-');
   if(analysisData2) renderCharts(analysisData2.properties, analysisData2.curves, 'oc-');
 }
@@ -1724,6 +2541,11 @@ function closeDlModal(){document.getElementById('dl-modal').style.display='none'
 // TASK POLLING
 // ============================================================
 function pollTask(tid,statusElId,logElId,onDone){
+  if (typeof statusElId === 'function') {
+    onDone = statusElId; statusElId = null; logElId = null;
+  } else if (typeof logElId === 'function') {
+    onDone = logElId; logElId = null;
+  }
   const sEl=document.getElementById(statusElId);const lEl=document.getElementById(logElId);
   if(lEl){lEl.style.display='block';lEl.innerHTML='<p class="ll inf">⏳ 任务已提交，等待执行...</p>';}
   if(sEl) sEl.innerHTML=`<span class="status-ind s-run"><span class="spin"></span> 运行中</span>`;
@@ -1736,7 +2558,7 @@ function pollTask(tid,statusElId,logElId,onDone){
         return `<p class="ll ${c}">${esc(l)}</p>`;
       }).join('');lEl.scrollTop=lEl.scrollHeight;
     }
-    if(r.status==='completed'){clearInterval(iv);if(sEl) sEl.innerHTML=`<span class="status-ind s-ok">✓ 已完成</span>`;if(onDone) onDone(r);updateTaskDot();}
+    if(r.status==='completed'){clearInterval(iv);if(sEl) sEl.innerHTML=`<span class="status-ind s-ok">✓ 已完成</span>`;if(onDone) onDone(r.result || r);updateTaskDot();}
     else if(r.status==='failed'){clearInterval(iv);if(sEl) sEl.innerHTML=`<span class="status-ind s-fail">✗ 失败</span>`;toast('任务失败: '+(r.error||'未知'),'err');if(lEl&&r.traceback) lEl.innerHTML+=`<p class="ll err">${esc(r.traceback)}</p>`;updateTaskDot();}
   },2000);
 }
@@ -1773,6 +2595,18 @@ function fmtSci(n){
   return n.toFixed(4);
 }
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function destroyChartById(id){
+  try{
+    if(charts[id]){charts[id].destroy();delete charts[id];}
+    const el=document.getElementById(id);
+    if(el && typeof Chart!=='undefined' && Chart.getChart){
+      const existing=Chart.getChart(el);
+      if(existing) existing.destroy();
+    }
+  }catch(e){
+    console.warn('chart destroy failed', id, e);
+  }
+}
 
 // ============================================================
 // UPLOAD RESULTS
@@ -2129,6 +2963,7 @@ function startTaskManagerPoll(){
 async function refreshJobStatuses(){
   const r = await api('/api/jobs');
   if(!r.jobs) return;
+  let hasRunning=false, hasDone=false;
   r.jobs.forEach(job=>{
     const safeId = job.script.replace(/[^a-zA-Z0-9_.]/g,'_');
     const statusEl = document.getElementById('job-status-' + safeId) ||
@@ -2137,26 +2972,44 @@ async function refreshJobStatuses(){
     const pct = job.total > 0 ? Math.round(job.completed*100/job.total) : 0;
     if(job.status === 'running' || job.status === 'starting'){
       statusEl.innerHTML = `<span style="color:var(--amber);font-weight:600">⚙ 运行中 ${pct?pct+'%':''}</span>`;
+      hasRunning=true;
     } else if(job.status === 'queued'){
       statusEl.innerHTML = '<span style="color:var(--purple)">⏳ 队列中</span>';
+      hasRunning=true;
     } else if(job.status === 'completed'){
       statusEl.innerHTML = `<span style="color:var(--green);font-weight:600">✓ 完成 (${job.completed}/${job.total})</span>`;
+      hasDone=true;
     } else if(job.status === 'stopped'){
       statusEl.innerHTML = '<span style="color:var(--amber)">⏹ 已停止</span>';
+      hasDone=true;
     } else if(job.status && job.status.startsWith('failed')){
       statusEl.innerHTML = `<span style="color:var(--red)">✗ ${esc(job.status)}</span>`;
+      hasDone=true;
     }
   });
+  // 同步导航徽章
+  const dot=document.getElementById('task-dot');
+  if(dot){
+    if(hasRunning) dot.className='task-dot running';
+    else if(hasDone) dot.className='task-dot done';
+    // 若无 job 则不重置，由 updateTaskDot() 管理后台任务状态
+  }
 }
 
 // ═══════════════════════════════════════════════════
 // 数据集管理
 // ═══════════════════════════════════════════════════
 let _selectedConfigs = [];
+let _selectedConfigPaths = new Set();
+let _datasetScanRuns = [];
 let _bhChartInstance = null;
 let _fiChartInstance = null;
 let _currentPredResult = null;
 let _currentPipelineId = null;
+let _pipelinePresets = {};
+let _mlDatasetPresets = {};
+let _paperTrainingPresets = {};
+let _modelCandidateRelationships = {};
 
 function datasetScan() {
   document.getElementById('ds-scan-result').innerHTML = '扫描中...';
@@ -2213,6 +3066,173 @@ function loadDatasetList() {
 // ═══════════════════════════════════════════════════
 // XGBoost 训练
 // ═══════════════════════════════════════════════════
+function mlDatasetRunName(){
+  const input = document.getElementById('ml-ds-run-name');
+  if (!input) return '';
+  if (!input.value) input.value = 'ml_dataset_' + new Date().toISOString().replace(/[-:T.Z]/g,'').slice(0,14);
+  return input.value.trim();
+}
+
+function applyMlDatasetPreset(){
+  const sel = document.getElementById('ml-gen-preset');
+  const summary = document.getElementById('ml-gen-preset-summary');
+  if (!sel || !summary) return;
+  const p = _mlDatasetPresets[sel.value];
+  if (!p) { summary.textContent = '预设加载中...'; return; }
+  summary.innerHTML = `<strong style="color:var(--cyan)">${esc(p.label)}</strong>
+    <span style="color:var(--t3);margin-left:8px">${esc(p.description || '')}</span><br>
+    <span style="font-family:var(--font-mono);color:var(--t2)">${pipelineEstimateText(p.estimate)}</span>`;
+  mlDatasetRunName();
+}
+
+function loadMlDatasetPresets(){
+  const sel = document.getElementById('ml-gen-preset');
+  if(!sel) return;
+  fetch('/api/ml-dataset/presets')
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.error) throw new Error(d.error);
+      _mlDatasetPresets = d.presets || {};
+      const order = ['smoke','lite','std','max'].filter(k=>_mlDatasetPresets[k]);
+      sel.innerHTML = order.map(k=>`<option value="${k}">${esc(_mlDatasetPresets[k].label)}</option>`).join('');
+      sel.value = _mlDatasetPresets.lite ? 'lite' : (order[0] || '');
+      applyMlDatasetPreset();
+    })
+    .catch(err=>{
+      const summary=document.getElementById('ml-gen-preset-summary');
+      if(summary) summary.innerHTML=`<span style="color:var(--red)">数据集预设加载失败: ${esc(err.message)}</span>`;
+    });
+}
+
+function generateMlDatasetScripts(){
+  const preset = document.getElementById('ml-gen-preset')?.value || 'lite';
+  const runId = mlDatasetRunName();
+  const status = document.getElementById('ml-gen-status');
+  if (status) status.innerHTML = '<span class="spin"></span> 生成 ML 专用仿真脚本中...';
+  fetch('/api/ml-dataset/generate-scripts', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({preset, run_id: runId})
+  }).then(r=>r.json()).then(d=>{
+    if(d.error){ if(status) status.innerHTML = `<span style="color:var(--red)">${esc(d.error)}</span>`; return; }
+    if(status) status.innerHTML = `
+      <div style="color:var(--green);margin-bottom:6px">已生成 ML 专用仿真脚本</div>
+      <div>脚本: <code>${esc(d.batch_script)}</code></div>
+      <div>建议输出批次: <code>${esc(d.recommended_output_run)}</code></div>
+      <div>清单: <code>${esc(d.manifest_path)}</code></div>
+      <div style="color:var(--amber);margin-top:6px">请到“运行 MuMax3 仿真”页面运行该脚本；完成后回到这里扫描并优先选择同名批次。</div>`;
+  }).catch(e=>{ if(status) status.innerHTML = `<span style="color:var(--red)">${esc(e.message)}</span>`; });
+}
+
+function datasetScan() {
+  const box = document.getElementById('ds-scan-result');
+  box.innerHTML = '<div style="padding:12px;color:var(--t2)"><span class="spin"></span> 扫描 output/ 批次...</div>';
+  fetch('/api/analysis/scan-output').then(r => r.json()).then(data => {
+    if (data.error && !(data.runs || []).length) { box.innerHTML = `<div style="color:var(--red)">${esc(data.error)}</div>`; return; }
+    _datasetScanRuns = data.runs || [];
+    _selectedConfigPaths = new Set();
+    _datasetScanRuns.forEach(run => {
+      if ((run.name || '').startsWith('run_ml_dataset_')) {
+        (run.configs || []).forEach(cfg => { if (cfg.path) _selectedConfigPaths.add(cfg.path); });
+      }
+    });
+    renderDatasetScanRuns();
+  });
+}
+
+function renderDatasetScanRuns(){
+  const box = document.getElementById('ds-scan-result');
+  const runs = _datasetScanRuns || [];
+  if (!runs.length) {
+    box.innerHTML = '<p style="color:var(--t3)">未找到可聚合的 output/run_* 结果</p>';
+    return;
+  }
+  const totalConfigs = runs.reduce((s,r)=>s+(r.configs||[]).length,0);
+  box.innerHTML = `
+    <div class="info-note" style="margin-bottom:10px">
+      建议只选择由上方 <code>ml_dataset_*</code> 生成并完成仿真的批次。混入旧测试输出会污染训练集，使 CV B-H RMSE 和论文结论失真。
+    </div>
+    <div class="sel-bar">
+      <span id="ds-selected-count">已选 ${_selectedConfigPaths.size} / ${totalConfigs}</span>
+      <span class="sel-all-btn" onclick="datasetSelectAll('ml')">只选 ML 专用批次</span>
+      <span class="sel-all-btn" onclick="datasetSelectAll(true)">全选</span>
+      <span class="sel-all-btn" onclick="datasetSelectAll(false)">全不选</span>
+    </div>
+    <div class="dataset-run-list">
+      ${runs.map(run=>{
+        const rec=(run.name||'').startsWith('run_ml_dataset_');
+        const cfgs=run.configs || [];
+        return `<details ${rec?'open':''} class="batch-folder">
+          <summary class="batch-folder-hdr" style="list-style:none">
+            <span class="folder-icon">${rec?'★':'▸'}</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:${rec?'var(--green)':'var(--t2)'}">${esc(run.name)}</span>
+            <span style="font-size:11px;color:var(--t3);margin-left:auto">${cfgs.length} 配置</span>
+            ${rec?'<span class="badge b-green">ML DATASET</span>':''}
+          </summary>
+          ${cfgs.map(cfg=>{
+            const checked=_selectedConfigPaths.has(cfg.path);
+            const angles=(cfg.angles||[]).map(a=>a.angle_value).join(', ');
+            const grains=(cfg.angles||[])[0]?.file_count || 0;
+            return `<label class="ds-cfg-row">
+              <input type="checkbox" class="ds-config-check" data-path="${esc(cfg.path||'')}" ${checked?'checked':''} onchange="datasetToggleConfig(this)">
+              <div style="flex:1;min-width:0">
+                <div style="color:var(--t1);font-family:var(--font-mono);font-size:12px">${esc(cfg.name)}</div>
+                <div class="ds-cfg-path">${esc(cfg.path || '')}</div>
+              </div>
+              <span style="color:var(--cyan)">${esc(angles)}°</span>
+              <span style="color:var(--t3)">${grains} grains</span>
+            </label>`;
+          }).join('')}
+        </details>`;
+      }).join('')}
+    </div>`;
+  datasetUpdateSelectedCount();
+}
+
+function datasetToggleConfig(cb){
+  const p = cb.dataset.path;
+  if(!p) return;
+  if(cb.checked) _selectedConfigPaths.add(p);
+  else _selectedConfigPaths.delete(p);
+  datasetUpdateSelectedCount();
+}
+
+function datasetSelectAll(mode){
+  _selectedConfigPaths = new Set();
+  if(mode === true || mode === 'ml'){
+    (_datasetScanRuns || []).forEach(run => {
+      const isMl = (run.name || '').startsWith('run_ml_dataset_');
+      if(mode === true || isMl) (run.configs || []).forEach(cfg => { if(cfg.path) _selectedConfigPaths.add(cfg.path); });
+    });
+  }
+  document.querySelectorAll('.ds-config-check').forEach(cb => cb.checked = _selectedConfigPaths.has(cb.dataset.path));
+  datasetUpdateSelectedCount();
+}
+
+function datasetUpdateSelectedCount(){
+  const total = (_datasetScanRuns || []).reduce((s,r)=>s+(r.configs||[]).length,0);
+  const el = document.getElementById('ds-selected-count');
+  if(el) el.textContent = `已选 ${_selectedConfigPaths.size} / ${total}`;
+}
+
+function datasetAggregate() {
+  const mode = document.getElementById('ds-angle-mode').value;
+  const configPaths = [..._selectedConfigPaths];
+  if(!configPaths.length){ alert('请先扫描并勾选要聚合的材料配置。建议选择 run_ml_dataset_* 批次。'); return; }
+  fetch('/api/dataset/aggregate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({config_paths: configPaths, angle_mode: mode, tag: 'ml_selected'})
+  }).then(r => r.json()).then(d => {
+    if (d.error) { alert(d.error); return; }
+    pollTask(d.task_id, res => {
+      alert(`聚合完成：${res.n_samples} 个样本 → ${res.dataset_path}`);
+      loadDatasetList();
+      loadDatasetListForTraining();
+    });
+  });
+}
+
 function loadDatasetListForTraining() {
   fetch('/api/dataset/list').then(r => r.json()).then(d => {
     const sel = document.getElementById('train-dataset');
@@ -2221,9 +3241,107 @@ function loadDatasetListForTraining() {
   });
 }
 
+function currentPaperTrainingPreset() {
+  const sel = document.getElementById('paper-preset');
+  return sel ? (_paperTrainingPresets[sel.value] || null) : null;
+}
+
+function applyPaperTrainingPreset() {
+  const preset = currentPaperTrainingPreset();
+  const el = document.getElementById('paper-preset-summary');
+  if (!el) return;
+  if (!preset || !preset.config) {
+    el.textContent = '预设加载中...';
+    return;
+  }
+  const c = preset.config;
+  el.innerHTML =
+    `<strong style="color:var(--cyan)">${esc(preset.label)}</strong>
+     <span style="color:var(--t3);margin-left:8px">${esc(preset.description)}</span><br>
+     <span style="font-family:var(--font-mono);color:var(--t2)">候选: ${esc((c.candidate_models || []).join(' / '))}</span>
+     <span style="color:var(--t2);margin-left:8px">CV=${c.n_splits} fold · min=${c.min_samples} samples · PCA≤${c.pca_max_components}</span>`;
+}
+
+function loadPaperTrainingPresets() {
+  const sel = document.getElementById('paper-preset');
+  if (!sel) return;
+  fetch('/api/ml/paper-presets')
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) throw new Error(d.error);
+      _paperTrainingPresets = d.presets || {};
+      const order = ['smoke', 'lite', 'std', 'max'].filter(k => _paperTrainingPresets[k]);
+      sel.innerHTML = order.map(k => `<option value="${k}">${esc(_paperTrainingPresets[k].label)}</option>`).join('');
+      sel.value = _paperTrainingPresets.lite ? 'lite' : (order[0] || '');
+      applyPaperTrainingPreset();
+      populatePipelineTrainingPresetSelect();
+    })
+    .catch(err => {
+      const el = document.getElementById('paper-preset-summary');
+      if (el) el.textContent = '预设加载失败: ' + err.message;
+    });
+}
+
+function toggleTrainingMode() {
+  const mode = document.getElementById('train-mode')?.value || 'xgb';
+  const xgbBox = document.getElementById('xgb-param-grid');
+  const paperBox = document.getElementById('paper-param-grid');
+  if (xgbBox) xgbBox.style.display = mode === 'xgb' ? 'grid' : 'none';
+  if (paperBox) paperBox.style.display = mode === 'paper' ? 'grid' : 'none';
+}
+
+function renderPaperTrainingResult(res) {
+  document.getElementById('train-results').style.display = 'block';
+  const fiCanvas = document.getElementById('fi-chart');
+  if (fiCanvas) fiCanvas.style.display = 'none';
+  const ranking = res.ranking || [];
+  if (res.status === 'insufficient_data') {
+    document.getElementById('train-status').textContent = `样本不足：${res.n_samples} / ${res.min_samples}，未生成论文级模型。`;
+    document.getElementById('res-r2').textContent = '样本不足';
+    document.getElementById('res-mape').textContent = '—';
+    document.getElementById('res-model-id').textContent = '—';
+    document.getElementById('paper-ranking').innerHTML = `<div style="color:var(--amber)">${esc(res.message || '样本不足')}</div>`;
+    return;
+  }
+  const best = ranking[0] || {};
+  document.getElementById('train-status').textContent = `论文级模型选择完成：${res.selected_model}（按 CV B-H RMSE 最小选择）。`;
+  document.getElementById('res-r2').textContent = res.selected_model || '—';
+  document.getElementById('res-mape').textContent = best.bh_rmse_T_mean != null ? Number(best.bh_rmse_T_mean).toFixed(5) + ' T' : '—';
+  document.getElementById('res-model-id').textContent = res.model_id || '—';
+  document.getElementById('paper-ranking').innerHTML =
+    `<div style="font-size:12px;color:var(--t2);margin-bottom:8px">
+       选择指标: <code>${esc(res.selection_metric || 'cv bh_rmse_T mean')}</code> · artifact: <code>${esc(res.artifact_dir || '—')}</code>
+     </div>
+     <table class="dtable">
+       <tr><th>模型</th><th>CV B-H RMSE</th><th>CV B-H MAE</th><th>CV R²</th></tr>
+       ${ranking.map(row => `<tr>
+         <td><code>${esc(row.model || '')}</code></td>
+         <td>${row.bh_rmse_T_mean != null ? Number(row.bh_rmse_T_mean).toFixed(5) + ' T' : '—'}</td>
+         <td>${row.bh_mae_T_mean != null ? Number(row.bh_mae_T_mean).toFixed(5) + ' T' : '—'}</td>
+         <td>${row.r2_avg_mean != null ? Number(row.r2_avg_mean).toFixed(4) : '—'}</td>
+       </tr>`).join('')}
+     </table>`;
+}
+
 function startTraining() {
   const ds = document.getElementById('train-dataset').value;
   if (!ds) { alert('请先选择或生成数据集'); return; }
+  const mode = document.getElementById('train-mode')?.value || 'xgb';
+  document.getElementById('paper-ranking').innerHTML = '';
+  if (mode === 'paper') {
+    const preset = document.getElementById('paper-preset')?.value || 'lite';
+    document.getElementById('train-status').textContent = '论文级候选模型比较中，请稍候...';
+    document.getElementById('train-results').style.display = 'none';
+    fetch('/api/ml/paper-train', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({dataset_path: ds, preset})
+    }).then(r => r.json()).then(d => {
+      if (d.error) { alert(d.error); return; }
+      pollTask(d.task_id, renderPaperTrainingResult);
+    });
+    return;
+  }
   const xgbParams = {
     n_estimators:  parseInt(document.getElementById('xgb-n-est').value),
     max_depth:     parseInt(document.getElementById('xgb-depth').value),
@@ -2232,6 +3350,8 @@ function startTraining() {
   };
   document.getElementById('train-status').textContent = '训练中，请稍候...';
   document.getElementById('train-results').style.display = 'none';
+  const fiCanvas = document.getElementById('fi-chart');
+  if (fiCanvas) fiCanvas.style.display = 'block';
   fetch('/api/ml/train', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -2240,10 +3360,16 @@ function startTraining() {
   }).then(r => r.json()).then(d => {
     if (d.error) { alert(d.error); return; }
     pollTask(d.task_id, res => {
-      document.getElementById('train-status').textContent = '训练完成！';
-      document.getElementById('res-r2').textContent = res.r2_avg != null ? res.r2_avg.toFixed(4) : '—';
+      const exploratory = res.metric_reliability === 'exploratory_only';
+      document.getElementById('train-status').textContent = exploratory
+        ? '训练完成：探索模型，样本不足，未发布正式验证指标。'
+        : '训练完成！';
+      document.getElementById('res-r2').textContent = res.r2_avg != null
+        ? res.r2_avg.toFixed(4)
+        : (res.train_r2_avg != null ? '训练 ' + res.train_r2_avg.toFixed(4) : '—');
       document.getElementById('res-mape').textContent = res.mape_avg != null
-        ? (res.mape_avg * 100).toFixed(2) + '%' : '—';
+        ? (res.mape_avg * 100).toFixed(2) + '%'
+        : (res.train_mape_avg != null ? '训练 ' + (res.train_mape_avg * 100).toFixed(2) + '%' : '—');
       document.getElementById('res-model-id').textContent = res.model_id || '—';
       document.getElementById('train-results').style.display = 'block';
       renderFeatureImportance(res.feature_importance || {});
@@ -2275,7 +3401,10 @@ function loadModelList() {
       : models.map(m => `<div style="display:flex;gap:8px;align-items:center;padding:7px 10px;
              border-bottom:1px solid var(--border);font-size:13px">
              <span style="flex:1;font-family:var(--font-mono);font-size:12px">${m.model_id}</span>
-             <span style="color:var(--green)">R²=${m.r2_avg != null ? m.r2_avg.toFixed(3) : '—'}</span>
+             <span style="color:${m.metric_reliability==='holdout_validation'?'var(--green)':'var(--amber)'}">${
+               m.r2_avg != null ? '验证R²=' + m.r2_avg.toFixed(3)
+               : (m.train_r2_avg != null ? '探索 训练R²=' + m.train_r2_avg.toFixed(3) : 'R²=—')
+             }</span>
              <span style="color:var(--t2)">${m.n_samples} 样本</span>
              <button class="btn btn-danger" style="padding:3px 10px;font-size:12px" onclick="deleteModel('${m.model_id}')">删除</button>
            </div>`).join('');
@@ -2295,20 +3424,215 @@ function loadModelListForPred() {
     const sel = document.getElementById('pred-model');
     const models = d.models || [];
     sel.innerHTML = models.map(m =>
-      `<option value="${m.model_id}">${m.model_id} (R²=${m.r2_avg != null ? m.r2_avg.toFixed(3) : '?'})</option>`
+      `<option value="${m.model_id}">${m.model_id} (${
+        m.r2_avg != null ? '验证R²=' + m.r2_avg.toFixed(3)
+        : (m.train_r2_avg != null ? '探索/训练R²=' + m.train_r2_avg.toFixed(3) : '指标不可用')
+      })</option>`
     ).join('') || '<option value="">暂无模型</option>';
+  });
+}
+
+function toggleTrainingMode() {
+  const xgbBox = document.getElementById('xgb-param-grid');
+  const paperBox = document.getElementById('paper-param-grid');
+  if (xgbBox) xgbBox.style.display = 'none';
+  if (paperBox) paperBox.style.display = 'grid';
+}
+
+function renderModelCandidateList(){
+  const box = document.getElementById('model-candidate-list');
+  if (!box) return;
+  const preset = currentPaperTrainingPreset();
+  const cfgModels = preset?.config?.candidate_models || Object.keys(_modelCandidateRelationships || {});
+  const rel = preset?.candidate_model_relationships || _modelCandidateRelationships || {};
+  _modelCandidateRelationships = rel;
+  const models = cfgModels.length ? cfgModels : ['direct_xgb','pca_xgb','extra_trees','pca_extra_trees'];
+  box.innerHTML = models.map(name=>{
+    const meta = rel[name] || {};
+    return `<label class="model-check">
+      <input type="checkbox" class="model-candidate-check" value="${esc(name)}" checked>
+      <div>
+        <strong>${esc(meta.label || name)}</strong>
+        <span><code>${esc(name)}</code> · ${esc(meta.target_strategy || 'direct')} · ${esc(meta.regressor || '')}</span>
+        <span>${esc(meta.description || '')}</span>
+      </div>
+    </label>`;
+  }).join('');
+}
+
+function setModelCandidates(selectAll){
+  document.querySelectorAll('.model-candidate-check').forEach(cb => cb.checked = !!selectAll);
+}
+
+function selectedTrainingModels(){
+  return [...document.querySelectorAll('.model-candidate-check:checked')].map(cb => cb.value);
+}
+
+function populatePipelineTrainingPresetSelect(){
+  const sel=document.getElementById('pipe-training-preset');
+  if(!sel) return;
+  const order=['smoke','lite','std','max'].filter(k=>_paperTrainingPresets[k]);
+  sel.innerHTML=order.map(k=>`<option value="${k}">${esc(_paperTrainingPresets[k].label)}</option>`).join('');
+  sel.innerHTML += '<option value="custom">自定义 / 手动设置训练参数</option>';
+  const dataPreset=document.getElementById('pipe-preset')?.value;
+  sel.value=_paperTrainingPresets[dataPreset] ? dataPreset : (_paperTrainingPresets.lite ? 'lite' : (order[0] || ''));
+  sel.onchange=()=>{updatePipelineTrainingSummary();pipeCheckCustomTraining();};
+  updatePipelineTrainingSummary();
+  pipeCheckCustomTraining();
+}
+
+function updatePipelineTrainingSummary(){
+  const el=document.getElementById('pipe-training-summary');
+  const key=document.getElementById('pipe-training-preset')?.value;
+  if(!el) return;
+  if(key==='custom'){
+    const nest=document.getElementById('pipe-custom-nest')?.value||200;
+    const depth=document.getElementById('pipe-custom-depth')?.value||6;
+    const lr=document.getElementById('pipe-custom-lr')?.value||0.1;
+    const sub=document.getElementById('pipe-custom-sub')?.value||0.8;
+    const models=pipeSelectedModels();
+    el.innerHTML=`<strong style="color:var(--cyan)">自定义训练参数</strong>
+      <span style="color:var(--t3);margin-left:8px">手动设置超参数</span><br>
+      <span style="font-family:var(--font-mono);color:var(--t2)">n_estimators: ${nest} · max_depth: ${depth} · lr: ${lr} · subsample: ${sub}</span>
+      ${models.length?`<span style="color:var(--t2);margin-left:8px">模型: ${models.join(' / ')}</span>`:''}`;
+    return;
+  }
+  const p=_paperTrainingPresets[key];
+  if(!p || !p.config){
+    el.innerHTML='<span style="color:var(--amber)">训练预设尚未加载</span>';
+    return;
+  }
+  const c=p.config;
+  el.innerHTML=`<strong style="color:var(--cyan)">${esc(p.label)}</strong>
+    <span style="color:var(--t3);margin-left:8px">${esc(p.description || '')}</span><br>
+    <span style="font-family:var(--font-mono);color:var(--t2)">候选: ${esc((c.candidate_models || []).join(' / '))}</span>
+    <span style="color:var(--t2);margin-left:8px">CV=${c.n_splits} fold · min=${c.min_samples} samples · PCA≤${c.pca_max_components}</span>`;
+}
+
+function applyPaperTrainingPreset() {
+  const preset = currentPaperTrainingPreset();
+  const el = document.getElementById('paper-preset-summary');
+  if (!el) return;
+  if (!preset || !preset.config) {
+    el.textContent = '预设加载中...';
+    renderModelCandidateList();
+    return;
+  }
+  const c = preset.config;
+  _modelCandidateRelationships = preset.candidate_model_relationships || _modelCandidateRelationships || {};
+  el.innerHTML =
+    `<strong style="color:var(--cyan)">${esc(preset.label)}</strong>
+     <span style="color:var(--t3);margin-left:8px">${esc(preset.description)}</span><br>
+     <span style="font-family:var(--font-mono);color:var(--t2)">候选: ${esc((c.candidate_models || []).join(' / '))}</span>
+     <span style="color:var(--t2);margin-left:8px">CV=${c.n_splits} fold · min=${c.min_samples} samples · PCA≤${c.pca_max_components}</span>`;
+  renderModelCandidateList();
+}
+
+function loadPaperTrainingPresets() {
+  const sel = document.getElementById('paper-preset');
+  if (!sel) return;
+  fetch('/api/ml/paper-presets')
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) throw new Error(d.error);
+      _paperTrainingPresets = d.presets || {};
+      const order = ['smoke', 'lite', 'std', 'max'].filter(k => _paperTrainingPresets[k]);
+      sel.innerHTML = order.map(k => `<option value="${k}">${esc(_paperTrainingPresets[k].label)}</option>`).join('');
+      sel.value = _paperTrainingPresets.lite ? 'lite' : (order[0] || '');
+      applyPaperTrainingPreset();
+      populatePipelineTrainingPresetSelect();
+    })
+    .catch(err => {
+      const el = document.getElementById('paper-preset-summary');
+      if (el) el.textContent = '预设加载失败: ' + err.message;
+    });
+}
+
+function startTraining() {
+  const ds = document.getElementById('train-dataset').value;
+  if (!ds) { alert('请先选择或生成数据集'); return; }
+  const preset = document.getElementById('paper-preset')?.value || 'lite';
+  const candidateModels = selectedTrainingModels();
+  if (!candidateModels.length) { alert('请至少勾选一个候选模型'); return; }
+  document.getElementById('paper-ranking').innerHTML = '';
+  document.getElementById('train-status').textContent = `候选模型交叉验证中：${candidateModels.join(' / ')}`;
+  document.getElementById('train-results').style.display = 'none';
+  const fiCanvas = document.getElementById('fi-chart');
+  if (fiCanvas) fiCanvas.style.display = 'none';
+  fetch('/api/ml/paper-train', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({dataset_path: ds, preset, candidate_models: candidateModels})
+  }).then(r => r.json()).then(d => {
+    if (d.error) { alert(d.error); return; }
+    pollTask(d.task_id, res => {
+      renderPaperTrainingResult(res);
+      loadModelList();
+    });
+  });
+}
+
+function loadModelList() {
+  fetch('/api/ml/models').then(r => r.json()).then(d => {
+    if(d.error) throw new Error(d.error);
+    const models = d.models || [];
+    const fmt = (v, digits=4) => v == null || !Number.isFinite(Number(v)) ? '—' : Number(v).toFixed(digits);
+    document.getElementById('model-list').innerHTML = models.length === 0
+      ? '<p style="color:var(--t3)">暂无已训练模型</p>'
+      : `<div class="info-note" style="margin-bottom:10px">CV B-H RMSE 选模型仅应在同一数据集、同一 fold 策略下比较；跨数据集模型不能直接排名。</div>` +
+        models.map(m => `<div style="padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <code style="color:var(--cyan);font-size:11px">${esc(m.model_id)}</code>
+            <span class="badge ${m.prediction_capable===false?'b-amber':'b-green'}">${m.prediction_capable===false?'CV REPORT':'PREDICT'}</span>
+            <span style="color:var(--t1)">类型: ${esc(m.model_type || '—')}</span>
+            <span style="color:var(--t2)">数据集: <code>${esc(m.dataset_name || '—')}</code></span>
+            <span style="color:var(--t3)">${m.n_samples || 0} samples</span>
+            <button class="btn btn-danger" style="margin-left:auto;padding:3px 10px;font-size:12px" onclick="deleteModel('${esc(m.model_id)}')">删除</button>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;color:var(--t2)">
+            <span>CV B-H RMSE: <strong style="color:var(--amber)">${fmt(m.cv_bh_rmse_T_mean,5)} T</strong></span>
+            <span>Holdout B-H RMSE: ${fmt(m.holdout_bh_rmse_T,5)} T</span>
+            <span>R²: ${fmt(m.r2_avg,4)}</span>
+            <span>选择方式: ${esc(m.selection_metric || m.metric_reliability || '—')}</span>
+          </div>
+        </div>`).join('');
+  }).catch(err => {
+    const el=document.getElementById('model-list');
+    if(el) el.innerHTML=`<div style="color:var(--red);font-size:12px">模型列表加载失败: ${esc(err.message)}</div>`;
+  });
+}
+
+function loadModelListForPred() {
+  fetch('/api/ml/models').then(r => r.json()).then(d => {
+    if(d.error) throw new Error(d.error);
+    const sel = document.getElementById('pred-model');
+    const models = (d.models || []).filter(m => m.prediction_capable !== false);
+    sel.innerHTML = models.map(m =>
+      `<option value="${esc(m.model_id)}">${esc(m.model_id)} (${esc(m.model_type || 'direct_xgb')} · ${
+        m.r2_avg != null ? '验证R²=' + Number(m.r2_avg).toFixed(3)
+        : (m.train_r2_avg != null ? '训练R²=' + Number(m.train_r2_avg).toFixed(3) : '指标待补充')
+      })</option>`
+    ).join('') || '<option value="">暂无可预测模型</option>';
+  }).catch(err => {
+    const sel=document.getElementById('pred-model');
+    if(sel) sel.innerHTML=`<option value="">模型加载失败: ${esc(err.message)}</option>`;
   });
 }
 
 function runPrediction() {
   const mid = document.getElementById('pred-model').value;
   if (!mid) { alert('请先训练或加载一个模型'); return; }
+  const predResult = document.getElementById('pred-result');
+  const predFull = document.getElementById('pred-full-wrap');
+  if (predResult) predResult.style.display = 'block';
+  if (predFull) predFull.style.display = 'none';
+  _currentPredResult = null;
+  // N_grains 由后端自动填入 DEFAULT_N_GRAINS=5，前端不传
   const params = {
-    f_Goss:       parseFloat(document.getElementById('pred-fgoss').value),
-    theta_0_deg:  parseFloat(document.getElementById('pred-theta').value),
+    f_Goss:        parseFloat(document.getElementById('pred-fgoss').value),
+    theta_0_deg:   parseFloat(document.getElementById('pred-theta').value),
     halfwidth_deg: parseFloat(document.getElementById('pred-hw').value),
-    N_grains:     parseInt(document.getElementById('pred-n').value),
-    Si_content:   parseFloat(document.getElementById('pred-si').value),
+    Si_content:    parseFloat(document.getElementById('pred-si').value),
   };
   fetch('/api/ml/predict', {
     method: 'POST',
@@ -2319,55 +3643,76 @@ function runPrediction() {
     _currentPredResult = data;
     document.getElementById('pred-result').style.display = 'block';
     renderBHChart(data);
-    renderScalars(data.scalars || {});
+    if (data.full_direction) renderFullDirectionCharts(data.full_direction, 'pred-full-');
+    renderScalars(data.scalars || {}, data.RD);
+    // 显示铁损系数估算
+    const rd=data.RD||{};
+    if(rd.H&&rd.H.length>2){
+      const clWrap=document.getElementById('pred-core-loss');
+      if(clWrap) clWrap.style.display='block';
+      const cl=estimateCoreLossParams(rd.H,rd.B,0.35);
+      renderCoreLossCards(cl,'pred-cl-grid');
+    }
+  }).catch(err => {
+    alert('预测失败: ' + err.message);
   });
 }
 
 function renderBHChart(data) {
   if (typeof Chart === 'undefined') return;
   const H = data.RD?.H || [];
-  const makeDs = (key, label, color, dash) => ({
-    label, data: (data[key]?.B || []).map((b,i) => ({x: H[i], y: b})),
-    borderColor: color, backgroundColor: color+'30',
-    borderDash: dash, pointRadius: 3, tension: 0.3
-  });
+  const makeDs = (key, label, color, dash) => bhDataset(
+    label,
+    data[key]?.H || H,
+    data[key]?.B || [],
+    color,
+    {borderDash:dash, pointRadius:0, tension:.16}
+  );
   const ctx = document.getElementById('bh-chart').getContext('2d');
-  if (_bhChartInstance) _bhChartInstance.destroy();
+  if (_bhChartInstance) {_bhChartInstance.destroy(); _bhChartInstance=null;}
+  destroyChartById('bh-chart');
+  const datasets = [
+    makeDs('RD', 'RD (0°)', '#38bdf8', []),
+    makeDs('TD', 'TD (90°)', '#f87171', [2,2]),
+  ];
+  if (data.Cross45) datasets.splice(1, 0, makeDs('Cross45', '45° legacy', '#34d399', [5,3]));
   _bhChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {datasets: [
-      makeDs('RD',      'RD (0°)',    '#38bdf8', []),
-      makeDs('Cross45', '45°',        '#34d399', [5,3]),
-      makeDs('TD',      'TD (90°)',   '#f87171', [2,2]),
-    ]},
-    options: {responsive: true,
-              scales: {x: {type:'linear', title:{display:true, text:'H (A/m)'}},
-                       y: {title:{display:true, text:'B (T)'}}}}
+    type: 'scatter',
+    data: {datasets},
+    options: bhChartOptions('预测 B-H 曲线')
   });
 }
 
-function renderScalars(s) {
-  const rows = [0,45,90].map(a => `
-    <tr>
+function renderScalars(s, rdCurve) {
+  const angles = ('mu_max_45deg' in s) ? [0,45,90] : [0,90];
+  const rows = angles.map(a => {
+    const mu = s['mu_max_'+a+'deg'];
+    const b800 = s['B800_'+a+'deg'] ?? s['B800_T'];
+    return `<tr>
       <td style="padding:4px 10px;font-weight:500">${a}°</td>
-      <td style="padding:4px 10px">${(s['Hc_'+a+'deg']||0).toFixed(1)} A/m</td>
-      <td style="padding:4px 10px">${(s['Mr_'+a+'deg']||0).toFixed(4)} A/m</td>
-      <td style="padding:4px 10px">${(s['mu_max_'+a+'deg']||0).toFixed(1)}</td>
-    </tr>`).join('');
+      <td style="padding:4px 10px;font-family:var(--font-mono)">${Number.isFinite(mu)?mu.toFixed(0):'—'}</td>
+      <td style="padding:4px 10px;font-family:var(--font-mono)">${Number.isFinite(b800)?b800.toFixed(3)+'T':'—'}</td>
+    </tr>`;
+  }).join('');
+
   document.getElementById('pred-scalars').innerHTML =
-    `<table style="font-size:12px;border-collapse:collapse;width:100%">
+    `<table style="font-size:12px;border-collapse:collapse;width:100%;margin-bottom:4px">
        <tr style="background:var(--bg-3)"><th style="padding:4px 10px;text-align:left">方向</th>
-         <th>Hc</th><th>Mr</th><th>μ_max</th></tr>${rows}</table>`;
+         <th style="padding:4px 10px">μ_max</th><th style="padding:4px 10px">B@800 A/m</th></tr>${rows}</table>`;
 }
 
 function exportMaxwellFromPred() {
-  document.getElementById('maxwell-pred-dialog').style.display = 'block';
+  const dlg=document.getElementById('maxwell-pred-dialog');
+  dlg.style.display = 'block';
+  // 自动更新铁损预览
+  updatePredCoreLoss();
 }
 
 function doExportMaxwellFromPred() {
   if (!_currentPredResult) return;
   const matName  = document.getElementById('pred-mat-name').value || 'GO_Pred';
   const thickness = parseFloat(document.getElementById('pred-thickness').value) || 0.35;
+  // N_grains 由后端 DEFAULT_N_GRAINS=5 自动填入，前端不传
   fetch('/api/analyze/export-maxwell-from-prediction', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -2377,7 +3722,6 @@ function doExportMaxwellFromPred() {
         f_Goss:        parseFloat(document.getElementById('pred-fgoss').value),
         theta_0_deg:   parseFloat(document.getElementById('pred-theta').value),
         halfwidth_deg: parseFloat(document.getElementById('pred-hw').value),
-        N_grains:      parseInt(document.getElementById('pred-n').value),
         Si_content:    parseFloat(document.getElementById('pred-si').value),
       },
       mat_name: matName,
@@ -2389,7 +3733,219 @@ function doExportMaxwellFromPred() {
     a.download = matName + '.amat';
     a.click();
     document.getElementById('maxwell-pred-dialog').style.display = 'none';
+    toast('已下载 ' + matName + '.amat', 'ok');
   });
+}
+
+// ── BH 材料选择器 ────────────────────────────────────────────────────────
+let _bhMatData = null;
+
+async function loadBHMatSelector(targetId) {
+  if (!_bhMatData) {
+    try {
+      const r = await fetch('/api/bh-analysis/reference-list').then(x => x.json());
+      _bhMatData = r.materials || [];
+    } catch(e) {
+      document.getElementById(targetId).innerHTML =
+        `<span style="color:var(--red);font-size:11px">加载失败: ${e.message}</span>`;
+      return;
+    }
+  }
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  const refs = _bhMatData.filter(m => m.source === 'reference');
+  const sims = _bhMatData.filter(m => m.source === 'simulation');
+  const cls  = `bh-mat-check-${targetId}`;
+
+  const group = (title, color, items) => {
+    if (!items.length) return '';
+    return `<div style="margin-bottom:10px">
+      <div style="font-size:11px;font-weight:600;color:${color};margin-bottom:4px">${title}</div>
+      ${items.map(m => `
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t1);margin-bottom:3px;cursor:pointer">
+          <input type="checkbox" data-mat-name="${m.name}" class="${cls}" checked>
+          <span style="font-family:var(--font-mono)">${m.short_name || m.name}</span>
+          <span style="color:var(--t3);font-size:10px">
+            RD=${m.B800_RD != null ? m.B800_RD.toFixed(3) : 'n/a'}T
+            TD=${m.B800_TD != null ? m.B800_TD.toFixed(3) : 'n/a'}T
+          </span>
+          ${m.has_loss_pts ? '<span style="color:var(--cyan);font-size:10px">·损耗</span>' : ''}
+        </label>`).join('')}
+    </div>`;
+  };
+
+  el.innerHTML = `
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+      <button onclick="setBHMatAll('${targetId}',true)"
+              style="padding:1px 7px;border-radius:3px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);cursor:pointer;font-size:11px">全选</button>
+      <button onclick="setBHMatAll('${targetId}',false)"
+              style="padding:1px 7px;border-radius:3px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);cursor:pointer;font-size:11px">清空</button>
+      <span style="font-size:10px;color:var(--t3)">不勾选任何项 = 使用全部参考等级（默认）</span>
+    </div>
+    ${group('参考等级 (go_steel_data)', 'var(--t2)', refs)}
+    ${group('历史仿真导出', 'var(--purple)', sims)}
+    ${!refs.length && !sims.length ? '<span style="color:var(--t3);font-size:11px">暂无材料数据</span>' : ''}
+  `;
+}
+
+function toggleBHMatSelector(targetId) {
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  if (el.style.display === 'none') {
+    el.style.display = 'block';
+    loadBHMatSelector(targetId);
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function setBHMatAll(targetId, checked) {
+  document.querySelectorAll(`.bh-mat-check-${targetId}`).forEach(cb => { cb.checked = checked; });
+}
+
+function _getBHIncludeNames(targetId) {
+  const checks = document.querySelectorAll(`.bh-mat-check-${targetId}`);
+  if (!checks.length) return null;
+  const names = Array.from(checks).filter(c => c.checked).map(c => c.dataset.matName);
+  return names.length ? names : null;
+}
+
+// ── BH 分析报告导出（材料代表性分析 + 快速预测） ─────────────────────────
+async function exportBHAnalysis(source) {
+  let name, rd_H, rd_B, td_H, td_B, thickness_mm, resultEl;
+
+  if (source === 'material') {
+    const angles = window.analysisData2?.material_summary?.angles || {};
+    const rd = angles['0'];
+    const td = angles['90'];
+    if (!rd?.H || !td?.H) {
+      toast('需要 0°（RD）和 90°（TD）方向的有效 B-H 曲线', 'err');
+      return;
+    }
+    rd_H = rd.H; rd_B = rd.B;
+    td_H = td.H; td_B = td.B;
+    name = (document.getElementById('ofd-mat-name')?.value || '').trim()
+        || ('GO_Sim_' + new Date().toISOString().slice(0,10).replace(/-/g,''));
+    thickness_mm = parseFloat(document.getElementById('ofd-thickness')?.value) || 0.35;
+    resultEl = document.getElementById('ofd-analysis-result');
+  } else {
+    const pr = window._currentPredResult;
+    if (!pr?.RD?.H) { toast('请先运行预测', 'err'); return; }
+    rd_H = pr.RD.H; rd_B = pr.RD.B;
+    td_H = (pr.TD || pr.RD).H; td_B = (pr.TD || pr.RD).B;
+    name = (document.getElementById('pred-mat-name')?.value || '').trim()
+        || ('GO_Pred_' + new Date().toISOString().slice(0,10).replace(/-/g,''));
+    thickness_mm = parseFloat(document.getElementById('pred-thickness')?.value) || 0.35;
+    resultEl = document.getElementById('pred-analysis-result');
+  }
+
+  const selectorId = source === 'material' ? 'ofd-mat-sel' : 'pred-mat-sel';
+  const include_names = _getBHIncludeNames(selectorId);
+  const nSel = include_names ? include_names.length : null;
+
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `<div style="color:var(--t3);padding:10px 0;font-size:13px">正在生成对比分析图（${nSel != null ? `已选 ${nSel} 个材料` : '含全部参考等级'}）…</div>`;
+
+  let r;
+  try {
+    r = await fetch('/api/analyze/export-bh-analysis', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ name, rd_H, rd_B, td_H, td_B, thickness_mm, include_names })
+    }).then(x => x.json());
+  } catch(e) {
+    toast('请求失败: ' + e.message, 'err');
+    resultEl.innerHTML = '';
+    return;
+  }
+  if (r.error) {
+    toast('分析失败: ' + r.error, 'err');
+    resultEl.innerHTML = `<span style="color:var(--red);font-size:12px">${r.error}</span>`;
+    return;
+  }
+  resultEl.innerHTML = _renderBHAnalysisResult(r);
+  toast('BH 分析报告已生成', 'ok');
+}
+
+function _renderBHAnalysisResult(r) {
+  const mrd = r.metrics_rd || {};
+  const mtd = r.metrics_td || {};
+  const cl  = r.core_loss  || {};
+
+  const fmt = (v, d=3) => (v == null || !isFinite(Number(v))) ? 'n/a' : Number(v).toFixed(d);
+  const fmtSci = v => (v == null || !isFinite(Number(v))) ? 'n/a' : Number(v).toExponential(3);
+
+  const b800rd = mrd['B_at_800_A_m_T'], b800td = mtd['B_at_800_A_m_T'];
+  const aniso = (b800rd > 0 && b800td != null) ? (b800td / b800rd).toFixed(3) : 'n/a';
+
+  const row = (label, vrd, vtd, unit='') =>
+    `<tr><td style="padding:3px 10px;color:var(--t2)">${label}</td>
+         <td style="padding:3px 10px;text-align:center;font-family:var(--font-mono);color:var(--cyan)">${vrd}</td>
+         <td style="padding:3px 10px;text-align:center;font-family:var(--font-mono);color:var(--purple)">${vtd}</td>
+         <td style="padding:3px 10px;color:var(--t3);font-size:11px">${unit}</td></tr>`;
+
+  const dlLink = r.amat_web_path
+    ? `<a href="${r.amat_web_path}" download="${r.amat_filename}"
+          class="btn btn-p btn-sm" style="text-decoration:none">⬇️ ${r.amat_filename}</a>` : '';
+
+  const csvLink = r.csv_web_path
+    ? `<a href="${r.csv_web_path}" target="_blank"
+          class="btn btn-g btn-sm" style="text-decoration:none;font-size:11px">CSV</a>` : '';
+
+  const ts = Date.now();
+  const plots = r.plots || {};
+  const plotImgs = ['bh_all','rd_analysis','td_aniso'].map(k => plots[k]
+    ? `<img src="${plots[k]}?t=${ts}" alt="${k}"
+            style="width:100%;border-radius:4px;margin-bottom:10px;display:block"
+            onerror="this.style.display='none'">` : ''
+  ).join('');
+
+  const kcNote = cl.Kc_classical_mass != null
+    ? `Kc = ${fmtSci(cl.Kc_classical_mass)} W·s²/kg（层压公式）` : '';
+  const khNote = cl.Kh_fit_mass != null
+    ? `· Kh = ${fmtSci(cl.Kh_fit_mass)} W·s/kg（NNLS 拟合）` : '';
+  const warnNote = cl.fit_warning
+    ? `<br><span style="color:var(--amber)">⚠ ${cl.fit_warning}</span>` : '';
+
+  return `
+<div style="border:1px solid var(--border-hi);border-radius:6px;padding:16px;background:var(--bg-2)">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+    <span style="font-weight:600;color:var(--cyan)">BH 分析报告</span>
+    ${dlLink}${csvLink}
+    ${(r.n_reference_materials || r.n_simulation_materials) ? `<span style="font-size:11px;color:var(--t3)">对比 ${[
+        r.n_reference_materials ? `${r.n_reference_materials} 参考等级` : '',
+        r.n_simulation_materials ? `${r.n_simulation_materials} 历史仿真` : ''
+      ].filter(Boolean).join(' + ')}</span>` : ''}
+  </div>
+
+  <table style="font-size:12px;border-collapse:collapse;width:100%;margin-bottom:14px">
+    <thead><tr style="background:var(--bg-3)">
+      <th style="padding:4px 10px;text-align:left">参数</th>
+      <th style="padding:4px 10px;color:var(--cyan)">RD (0°)</th>
+      <th style="padding:4px 10px;color:var(--purple)">TD (90°)</th>
+      <th style="padding:4px 10px"></th>
+    </tr></thead>
+    <tbody>
+      ${row('B @ 800 A/m',   fmt(mrd['B_at_800_A_m_T']),   fmt(mtd['B_at_800_A_m_T']),   'T')}
+      ${row('B @ 1000 A/m',  fmt(mrd['B_at_1000_A_m_T']),  fmt(mtd['B_at_1000_A_m_T']),  'T')}
+      ${row('B @ 5000 A/m',  fmt(mrd['B_at_5000_A_m_T']),  fmt(mtd['B_at_5000_A_m_T']),  'T')}
+      ${row('μr 视在 @ 800', fmt(mrd['mu_r_app_at_800'],0), fmt(mtd['mu_r_app_at_800'],0), '')}
+      ${row('μr 视在峰值',   fmt(mrd['mu_r_app_max'],0),    fmt(mtd['mu_r_app_max'],0),    '')}
+      ${row('H @ 1.7 T',     fmt(mrd['H_at_1p7_T_A_m'],0), fmt(mtd['H_at_1p7_T_A_m'],0), 'A/m')}
+      ${row('B_TD/B_RD 各向异性 @ 800', aniso, '—', '')}
+    </tbody>
+  </table>
+
+  ${kcNote ? `<div style="font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.7">
+    <span style="color:var(--amber)">铁损系数（Bertotti）：</span>
+    ${kcNote} ${khNote}${warnNote}
+  </div>` : ''}
+
+  <div style="font-size:11px;color:var(--t3);margin-bottom:10px">
+    橙色高亮曲线 = 本次仿真结果；灰色曲线 = go_steel_data 参考等级（实线=RD，虚线=TD）
+  </div>
+  ${plotImgs}
+</div>`;
 }
 
 function copyBHData() {
@@ -2406,20 +3962,207 @@ function copyBHData() {
 // ═══════════════════════════════════════════════════
 // 自动流水线
 // ═══════════════════════════════════════════════════
-function startPipeline() {
-  const config = {
-    n_samples:      parseInt(document.getElementById('pipe-n').value),
-    angle_mode:     document.getElementById('pipe-angle-mode').value,
-    f_Goss_range:   [parseFloat(document.getElementById('pipe-fg-lo').value),
-                     parseFloat(document.getElementById('pipe-fg-hi').value)],
-    theta_0_range:  [parseFloat(document.getElementById('pipe-th-lo').value),
-                     parseFloat(document.getElementById('pipe-th-hi').value)],
-    halfwidth_range:[parseFloat(document.getElementById('pipe-hw-lo').value),
-                     parseFloat(document.getElementById('pipe-hw-hi').value)],
-    N_grains_range: [parseInt(document.getElementById('pipe-n-lo').value),
-                     parseInt(document.getElementById('pipe-n-hi').value)],
-    Si_content:     3.0,
+function pipelineSetInput(id, value) {
+  const el = document.getElementById(id);
+  if (el && value !== undefined && value !== null) el.value = value;
+}
+
+function pipelineEstimateText(est) {
+  if (!est) return '未估算';
+  return `${est.mumax3_tasks} MuMax3 tasks | ${est.n_samples} samples x ${est.n_angles} angles x ${est.n_grains_est} grains | N_STEPS=${est.sim_n_steps}`;
+}
+
+function pipelineEstimateFromInputs(preset) {
+  if (!preset || !preset.config) return null;
+  const nSamples = parseInt(document.getElementById('pipe-n')?.value || preset.config.n_samples || 20);
+  const angleMode = document.getElementById('pipe-angle-mode')?.value || preset.config.angle_mode || 'motor';
+  const nAngles = angleMode === 'full' ? 9 : 2;
+  // N_grains: use pipe-n-fixed if custom, else default 5
+  const nGrains = parseInt(document.getElementById('pipe-n-fixed')?.value || 5);
+  return {
+    n_samples: nSamples,
+    n_angles: nAngles,
+    n_grains_est: nGrains,
+    mumax3_tasks: nSamples * nAngles * nGrains,
+    sim_n_steps: preset.config.sim_n_steps || 100,
   };
+}
+
+function currentPipelinePreset() {
+  const sel = document.getElementById('pipe-preset');
+  return sel ? (_pipelinePresets[sel.value] || null) : null;
+}
+
+function datasetPresetLabel(key, preset){
+  return {
+    smoke:'Dataset Smoke / 冒烟数据集',
+    lite:'Dataset Lite / 轻量数据集',
+    std:'Dataset Std / 标准数据集',
+    max:'Dataset Max / 全量数据集',
+  }[key] || preset?.label || key;
+}
+
+function applyPipelinePreset() {
+  const preset = currentPipelinePreset();
+  if (!preset || !preset.config) { updatePipelinePresetSummary(); return; }
+  const c = preset.config;
+  pipelineSetInput('pipe-n', c.n_samples);
+  pipelineSetInput('pipe-angle-mode', c.angle_mode || 'motor');
+  // Range params only apply when custom dataset is shown
+  pipelineSetInput('pipe-fg-lo', c.f_Goss_range?.[0]);
+  pipelineSetInput('pipe-fg-hi', c.f_Goss_range?.[1]);
+  pipelineSetInput('pipe-th-lo', c.theta_0_range?.[0]);
+  pipelineSetInput('pipe-th-hi', c.theta_0_range?.[1]);
+  pipelineSetInput('pipe-hw-lo', c.halfwidth_range?.[0]);
+  pipelineSetInput('pipe-hw-hi', c.halfwidth_range?.[1]);
+  // N_grains is always fixed at 5 for non-custom presets
+  pipelineSetInput('pipe-n-fixed', 5);
+  updatePipelinePresetSummary();
+  pipeCheckCustomDataset();
+}
+
+function updatePipelinePresetSummary() {
+  const preset = currentPipelinePreset();
+  const el = document.getElementById('pipe-preset-summary');
+  if (!el) return;
+  if (!preset) {
+    const key = document.getElementById('pipe-preset')?.value;
+    if (key === 'custom') {
+      const nSamples = document.getElementById('pipe-n')?.value || '?';
+      const angleMode = document.getElementById('pipe-angle-mode')?.value || 'motor';
+      const nFixed = document.getElementById('pipe-n-fixed')?.value || 5;
+      const nAngles = angleMode === 'full' ? 9 : 2;
+      el.innerHTML = `<strong style="color:var(--cyan)">自定义数据集</strong>
+        <span style="color:var(--t3);margin-left:8px">手动设置所有数据集参数</span><br>
+        <span style="font-family:var(--font-mono);color:var(--t2)">样本: ${nSamples} · N_grains: ${nFixed} · 角度: ${angleMode==='full'?'9方向':'RD/TD'} · 预计 ${nSamples}×${nAngles}×${nFixed} 仿真任务</span>`;
+    } else {
+      el.textContent = '预设加载中...';
+    }
+    return;
+  }
+  const reliable = preset.metric_expectation === 'holdout_validation'
+    ? '输出正式 holdout 指标'
+    : '仅链路测试，不发布正式指标';
+  el.innerHTML =
+    `<strong style="color:var(--cyan)">${esc(datasetPresetLabel(document.getElementById('pipe-preset')?.value, preset))}</strong>
+     <span style="color:var(--t3);margin-left:8px">控制样本数、角度模式、晶粒数与仿真步数；不控制训练超参数。</span><br>
+     <span style="font-family:var(--font-mono);color:var(--t2)">${pipelineEstimateText(pipelineEstimateFromInputs(preset) || preset.estimate)}</span>
+     <span style="color:${preset.metric_expectation === 'holdout_validation' ? 'var(--green)' : 'var(--amber)'};margin-left:8px">${reliable}</span>`;
+}
+
+function bindPipelinePresetInputs() {
+  ['pipe-n','pipe-angle-mode','pipe-n-fixed',
+   'pipe-fg-lo','pipe-fg-hi','pipe-th-lo','pipe-th-hi','pipe-hw-lo','pipe-hw-hi'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', updatePipelinePresetSummary);
+    el.addEventListener('change', updatePipelinePresetSummary);
+  });
+  ['pipe-custom-nest','pipe-custom-depth','pipe-custom-lr','pipe-custom-sub'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', updatePipelineTrainingSummary);
+    el.addEventListener('change', updatePipelineTrainingSummary);
+  });
+}
+
+function loadPipelinePresets() {
+  const sel = document.getElementById('pipe-preset');
+  if (!sel) return;
+  fetch('/api/pipeline/presets')
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) throw new Error(d.error);
+      _pipelinePresets = d.presets || {};
+      const order = ['smoke', 'lite', 'std', 'max'].filter(k => _pipelinePresets[k]);
+      sel.innerHTML = order.map(k => {
+        const p = _pipelinePresets[k];
+        return `<option value="${k}">${esc(datasetPresetLabel(k, p))}</option>`;
+      }).join('');
+      sel.innerHTML += '<option value="custom">自定义 / 手动设置数据集参数</option>';
+      sel.value = _pipelinePresets.lite ? 'lite' : (order[0] || '');
+      applyPipelinePreset();
+      pipeCheckCustomDataset();
+    })
+    .catch(err => {
+      const el = document.getElementById('pipe-preset-summary');
+      if (el) el.textContent = '预设加载失败: ' + err.message;
+    });
+}
+
+function pipeCheckCustomDataset(){
+  const isCustom = document.getElementById('pipe-preset')?.value === 'custom';
+  const el = document.getElementById('pipe-custom-dataset');
+  if(el) el.style.display = isCustom ? 'block' : 'none';
+}
+
+function pipeCheckCustomTraining(){
+  const isCustom = document.getElementById('pipe-training-preset')?.value === 'custom';
+  const el = document.getElementById('pipe-custom-training');
+  if(el) el.style.display = isCustom ? 'block' : 'none';
+}
+
+function pipeSelectAllModels(v){
+  document.querySelectorAll('.pipe-model-check').forEach(cb => cb.checked = !!v);
+}
+
+function pipeSelectedModels(){
+  return [...document.querySelectorAll('.pipe-model-check:checked')].map(cb => cb.value);
+}
+
+function startPipeline() {
+  const presetId = document.getElementById('pipe-preset')?.value || 'lite';
+  const trainingPresetId = document.getElementById('pipe-training-preset')?.value || presetId;
+  const isCustomDs = presetId === 'custom';
+  const isCustomTr = trainingPresetId === 'custom';
+  const preset = _pipelinePresets[presetId] || null;
+
+  const candidateModels = pipeSelectedModels();
+  if(!candidateModels.length){ alert('请至少选择一个训练模型'); return; }
+
+  // N_grains: custom uses fixed value; presets lock it to 5
+  const nGrainsFixed = isCustomDs
+    ? parseInt(document.getElementById('pipe-n-fixed')?.value || 5)
+    : 5;
+
+  const config = {
+    preset:               isCustomDs ? null : presetId,
+    paper_training_preset: isCustomTr ? null : trainingPresetId,
+    n_samples:            parseInt(document.getElementById('pipe-n').value),
+    angle_mode:           document.getElementById('pipe-angle-mode').value,
+    N_grains:             nGrainsFixed,
+    N_grains_range:       [nGrainsFixed, nGrainsFixed],
+    Si_content:           3.0,
+    candidate_models:     candidateModels,
+  };
+
+  if(isCustomDs){
+    config.f_Goss_range   = [parseFloat(document.getElementById('pipe-fg-lo').value),
+                              parseFloat(document.getElementById('pipe-fg-hi').value)];
+    config.theta_0_range  = [parseFloat(document.getElementById('pipe-th-lo').value),
+                              parseFloat(document.getElementById('pipe-th-hi').value)];
+    config.halfwidth_range= [parseFloat(document.getElementById('pipe-hw-lo').value),
+                              parseFloat(document.getElementById('pipe-hw-hi').value)];
+  } else if(preset && preset.config){
+    config.f_Goss_range   = preset.config.f_Goss_range;
+    config.theta_0_range  = preset.config.theta_0_range;
+    config.halfwidth_range= preset.config.halfwidth_range;
+    config.sim_n_steps    = preset.config.sim_n_steps;
+  }
+
+  if(isCustomTr){
+    config.xgb_params = {
+      n_estimators: parseInt(document.getElementById('pipe-custom-nest')?.value || 300),
+      max_depth:    parseInt(document.getElementById('pipe-custom-depth')?.value || 6),
+      learning_rate: parseFloat(document.getElementById('pipe-custom-lr')?.value || 0.05),
+      subsample:    parseFloat(document.getElementById('pipe-custom-sub')?.value || 0.8),
+    };
+    config.test_size = parseFloat(document.getElementById('pipe-custom-test')?.value || 0.2);
+  } else if(preset && preset.config){
+    config.test_size  = preset.config.test_size;
+    config.xgb_params = preset.config.xgb_params;
+  }
+
   fetch('/api/pipeline/start', {
     method: 'POST', headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(config)
@@ -2441,7 +4184,7 @@ function subscribePipeline(pid) {
   const stageNames = {
     texture_gen: '织构生成', script_gen: 'MX3脚本',
     batch_gen: '批处理脚本', wait_sim: '等待仿真',
-    analyze: '结果聚合', train: 'XGBoost训练'
+    analyze: '结果聚合', train: '多模型训练'
   };
   const STAGES = ['texture_gen','script_gen','batch_gen','wait_sim','analyze','train'];
 
@@ -2483,10 +4226,33 @@ function subscribePipeline(pid) {
       es.close();
       doneEl.style.display = 'block';
       const r = s.results || {};
+      const fmt = v => Number.isFinite(Number(v)) ? Number(v).toFixed(4) : '—';
+      const pct = v => Number.isFinite(Number(v)) ? (Number(v) * 100).toFixed(2) + '%' : '—';
+      const reliable = r.metric_reliability === 'holdout_validation';
+      const metricLines = reliable
+        ? [
+            `验证R² = ${fmt(r.r2_avg)}`,
+            `验证MAPE = ${pct(r.mape_avg)}`,
+            `训练R² = ${fmt(r.train_r2_avg)}`,
+            `训练MAPE = ${pct(r.train_mape_avg)}`,
+          ]
+        : [
+            `探索模型：训练R² = ${fmt(r.train_r2_avg)}`,
+            `训练MAPE = ${pct(r.train_mape_avg)}`,
+            `正式验证指标未发布`,
+          ];
+      const warnings = (r.metric_warnings || []).map(x => `<div style="color:var(--amber)">${esc(x)}</div>`).join('');
+      const paperLine = r.selected_candidate_model
+        ? `<div>候选模型选择: <code>${esc(r.selected_candidate_model)}</code> · CV B-H RMSE=${fmt(r.cv_bh_rmse_T_mean)} T</div>`
+        : (r.paper_model_status ? `<div>候选模型选择: <code>${esc(r.paper_model_status)}</code></div>` : '');
       document.getElementById('pipe-final-results').innerHTML =
-        `<div>数据集: <code>${r.dataset_path || '—'}</code> (${r.n_samples || '?'} 个样本)</div>
-         <div>模型 ID: <code>${r.model_id || '—'}</code></div>
-         <div>R² = ${r.r2_avg != null ? r.r2_avg.toFixed(4) : '—'}</div>`;
+        `<div>预设: <code>${esc(r.preset_label || r.preset_id || '手动')}</code></div>
+         <div>数据集: <code>${esc(r.dataset_path || '—')}</code> (${r.n_samples || '?'} 个样本)</div>
+         <div>模型 ID: <code>${esc(r.model_id || '—')}</code></div>
+         ${paperLine}
+         <div style="color:${reliable ? 'var(--green)' : 'var(--amber)'}">指标可靠性: ${reliable ? 'holdout_validation' : esc(r.metric_reliability || 'exploratory_only')}</div>
+         <div>${metricLines.join(' ｜ ')}</div>
+         ${warnings}`;
       loadModelListForPred();
     }
     if (s.status === 'failed') {
@@ -2522,8 +4288,10 @@ function exportCurrentToMaxwell() {
     alert('请先在分析页面上传并分析一个仿真文件');
     return;
   }
-  document.getElementById('maxwell-inline-dialog').style.display = 'block';
   window._pendingExportRD = {H, B};
+  document.getElementById('maxwell-inline-dialog').style.display = 'block';
+  const t=parseFloat(document.getElementById('inline-thickness')?.value)||0.35;
+  renderCoreLossPreview(H, B, t, 'inline-cl-preview');
 }
 
 function doExportCurrentMaxwell() {
@@ -2533,7 +4301,8 @@ function doExportCurrentMaxwell() {
   const thickness = parseFloat(document.getElementById('inline-thickness').value) || 0.35;
   fetch('/api/analyze/export-maxwell', {
     method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({H_RD: rd.H, B_RD: rd.B, mat_name: matName, thickness_mm: thickness})
+    body: JSON.stringify({H_RD: rd.H, B_RD: rd.B, H_TD: rd.H_TD, B_TD: rd.B_TD,
+                          mat_name: matName, thickness_mm: thickness})
   }).then(r => r.blob()).then(blob => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -2543,10 +4312,177 @@ function doExportCurrentMaxwell() {
   });
 }
 
+// 从 output-scan 结果导出 Maxwell .amat
+function exportOutputToMaxwell() {
+  if (!window.analysisData2 || !window.analysisData2.curves) {
+    alert('请先在左侧文件列表中点选一个仿真文件进行分析');
+    return;
+  }
+  const c=window.analysisData2.curves;
+  window._pendingExportRD = {
+    H: c.H_curve, B: c.B_curve,
+    H_TD: c.H_TD, B_TD: c.B_TD
+  };
+  document.getElementById('maxwell-inline-dialog').style.display = 'block';
+  const t=parseFloat(document.getElementById('inline-thickness')?.value)||0.35;
+  renderCoreLossPreview(c.H_curve, c.B_curve, t, 'inline-cl-preview');
+}
+
+// ═══════════════════════════════════════════════════
+// 角度均值分析
+// ═══════════════════════════════════════════════════
+async function analyzeAngleAvg(filesJson, angleValue){
+  let files;
+  try{ files=JSON.parse(filesJson); }catch(e){ alert('文件列表解析失败'); return; }
+  if(!files||files.length===0){ alert('该角度下暂无仿真文件'); return; }
+
+  // 切换到结果面板并显示 loading
+  const wrap=document.getElementById('output-result-wrap');
+  if(wrap) wrap.style.display='block';
+  setOutputAdvancedVisible(false);
+  setOutputChartTitles(false);
+  document.getElementById('o-file-label').textContent=`${angleValue}° · 晶粒追溯均值`;
+  const propEl=document.getElementById('o-props-grid');
+  const chartEl=document.getElementById('oc-bh');
+  if(propEl) propEl.innerHTML=`<div style="padding:12px;color:var(--cyan)"><span class="spin"></span> 正在计算 ${angleValue}° 均值（${files.length} 晶粒）…</div>`;
+
+  const r=await api('/api/analysis/analyze-angle',{method:'POST',body:{filepaths:files,Msat:1.52e6}});
+  if(r.error){ if(propEl) propEl.innerHTML=`<div style="color:var(--red)">${esc(r.error)}</div>`; return; }
+
+  // 保存全局结果供导出使用（兼容 exportOutputToMaxwell/exportFEMM2）
+  window.analysisData2 = r;
+  const fdWrap=document.getElementById('full-direction-wrap'); if(fdWrap) fdWrap.style.display='none';
+
+  // 渲染属性面板
+  const p=r.properties||{};
+  const c=r.curves||{};
+  const stdNote = r.has_std ? `<span style="font-size:11px;color:var(--t3)">±σ 带已显示（${r.grain_count} 晶粒）</span>` : '';
+  const m = curveMetricsFromBH(c.H_curve, c.B_curve);
+  const traceCard = (label,value,unit='',cls='pc-c') => `
+    <div class="prop-card ${cls}">
+      <div class="pl">${esc(label)}</div>
+      <div class="pv">${esc(String(value ?? '—'))}</div>
+      <div class="pu">${esc(unit)}</div>
+    </div>`;
+  if(propEl) propEl.innerHTML=[
+    traceCard('角度', `${angleValue}°`, 'grain avg', 'pc-p'),
+    traceCard('有效晶粒', `${r.grain_count}`, r.grain_count>2?'grains ✓':'grains ⚠', r.grain_count>2?'pc-g':'pc-a'),
+    Number.isFinite(m.peakB) ?traceCard('Bs ≈ B峰值', fmtMetric(m.peakB,3), 'T', 'pc-c'):'',
+    Number.isFinite(m.B800)  ?traceCard('B@800',      fmtMetric(m.B800,3),  'T', 'pc-c'):'',
+    Number.isFinite(m.B1000) ?traceCard('B@1000',     fmtMetric(m.B1000,3), 'T', 'pc-c'):'',
+    `<div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px">
+      ${stdNote}
+      ${r.error_count>0?`<span style="font-size:11px;color:var(--red)">${r.error_count} 个文件读取失败</span>`:''}
+    </div>`
+  ].join('');
+
+  // 绘制 B-H 图（带 ±σ 带）
+  if(chartEl){
+    const ctx=chartEl.getContext('2d');
+    destroyChartById('oc-bh');
+    const H=c.H_curve||[];
+    const B=c.B_curve||[];
+    const Bstd=c.B_std||[];
+    const datasets=[bhDataset(`${angleValue}° 均值 B-H`, H, B, '#38bdf8', {pointRadius:2,tension:.16})];
+    if(Bstd.length===B.length && r.has_std){
+      datasets.push(bhDataset('B+σ', H, H.map((_,i)=>(B[i]||0)+(Bstd[i]||0)), '#7dd3fc', {borderWidth:1,borderDash:[5,4]}));
+      datasets.push(bhDataset('B−σ', H, H.map((_,i)=>(B[i]||0)-(Bstd[i]||0)), '#7dd3fc', {borderWidth:1,borderDash:[5,4]}));
+    }
+    charts['oc-bh']=new Chart(ctx,{type:'scatter',data:{datasets},
+      options:bhChartOptions(`${angleValue}° 晶粒均值 B-H（n=${r.grain_count}）`)});
+  }
+  const mhEl=document.getElementById('oc-mh');
+  if(mhEl){
+    destroyChartById('oc-mh');
+    const H=c.H_curve||[];
+    const M=c.M_curve||[];
+    charts['oc-mh']=new Chart(mhEl.getContext('2d'),{type:'scatter',
+      data:{datasets:[{
+        label:`${angleValue}° 均值 M-H`,
+        data:H.map((h,i)=>({x:h,y:(M[i]||0)/1e6})),
+        borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.12)',
+        borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:.16,fill:false,showLine:true,parsing:false
+      }]},
+      options:{animation:false,responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#94a3b8',boxWidth:10}}},
+        scales:{x:{type:'linear',title:{display:true,text:'H (A/m)',color:'#94a3b8'},ticks:{color:'#64748b'}},
+                y:{title:{display:true,text:'M (MA/m)',color:'#94a3b8'},ticks:{color:'#64748b'}}}}});
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 多角度对比
+// ═══════════════════════════════════════════════════
+const ANGLE_COLORS=['#38bdf8','#34d399','#fb923c','#a78bfa','#f472b6','#facc15','#60a5fa','#4ade80'];
+
+async function compareConfigAngles(anglesJson){
+  let angles;
+  try{ angles=JSON.parse(anglesJson); }catch(e){ alert('角度数据解析失败'); return; }
+  if(!angles||angles.length<1){ alert('该配置下无可对比角度'); return; }
+
+  const modal=document.getElementById('angle-compare-modal');
+  const statusEl=document.getElementById('ac-status');
+  const canvas=document.getElementById('ac-chart');
+  modal.style.display='flex';
+  statusEl.innerHTML=`<span class="spin"></span> 计算中（${angles.length} 个角度）…`;
+
+  // 并行请求所有角度的均值分析
+  const results=await Promise.all(angles.map(a=>
+    api('/api/analysis/analyze-angle',{method:'POST',body:{filepaths:a.files||[],Msat:1.52e6}})
+      .then(r=>({angle:a.angle_value,...r}))
+      .catch(e=>({angle:a.angle_value,error:String(e)}))
+  ));
+
+  const ok=results.filter(r=>!r.error && r.curves);
+  const failed=results.filter(r=>r.error);
+  statusEl.innerHTML=ok.length
+    ? `<span style="color:var(--green)">✓ ${ok.length} 个角度</span>${failed.length?` <span style="color:var(--red)">· ${failed.length} 失败</span>`:''}`
+    : `<span style="color:var(--red)">全部失败</span>`;
+
+  if(!ok.length) return;
+
+  // 销毁旧图
+  if(window._acChart){ window._acChart.destroy(); window._acChart=null; }
+  const ctx=canvas.getContext('2d');
+  const datasets=ok.map((res,i)=>{
+    const H=res.curves.H_curve||[];
+    const B=res.curves.B_curve||[];
+    const color=ANGLE_COLORS[i%ANGLE_COLORS.length];
+    return {
+      label:`${res.angle}° (n=${res.grain_count})`,
+      data:H.map((h,j)=>({x:h,y:B[j]||0})),
+      borderColor:color,backgroundColor:color+'22',
+      borderWidth:2,pointRadius:2,tension:0.35,fill:false
+    };
+  });
+  window._acChart=new Chart(ctx,{type:'line',data:{datasets},
+    options:{animation:false,responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#94a3b8',boxWidth:10}}},
+      scales:{x:{type:'linear',title:{display:true,text:'H (A/m)',color:'#94a3b8'},ticks:{color:'#64748b'}},
+              y:{title:{display:true,text:'B (T)',color:'#94a3b8'},ticks:{color:'#64748b'}}}}});
+}
+
+function closeAngleCompare(){
+  document.getElementById('angle-compare-modal').style.display='none';
+  if(window._acChart){ window._acChart.destroy(); window._acChart=null; }
+}
+
+// ═══════════════════════════════════════════════════
+// 清除已完成任务
+// ═══════════════════════════════════════════════════
+async function clearDoneJobs(){
+  const r=await api('/api/jobs/clear-done',{method:'POST'});
+  if(r.cleared!==undefined){
+    toast(r.cleared>0?`已清除 ${r.cleared} 个完成/停止任务`:'没有可清除的任务','ok');
+    loadTaskScripts();
+  }
+}
+
 // ── 页面初始化（新增部分） ──────────────────────────
 function _initMLPages(){
   loadDatasetList();
   loadDatasetListForTraining();
+  loadPaperTrainingPresets();
   loadModelList();
   loadModelListForPred();
 }
@@ -2558,38 +4494,298 @@ document.addEventListener('DOMContentLoaded',()=>{
   initAngleChips();
   startTaskManagerPoll();
   _initMLPages();
+  loadMlDatasetPresets();
+  bindPipelinePresetInputs();
+  loadPipelinePresets();
+  toggleTrainingMode();
   // Auto env check after slight delay
   setTimeout(()=>{ if(document.querySelector('.nav-item[data-page="taskmanager"].active')) checkEnv(); }, 500);
   ['p-gx','p-gy','p-gz','p-cell'].forEach(id=>{const el=document.getElementById(id);if(el) el.addEventListener('input',updateRVE);});
   updateRVE();
   updateTaskDot();
+  // ESC 关闭执行模态框和多角度对比模态框
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      const execModal=document.getElementById('exec-modal');
+      if(execModal&&execModal.style.display!=='none') execModal.style.display='none';
+      const acModal=document.getElementById('angle-compare-modal');
+      if(acModal&&acModal.style.display!=='none') closeAngleCompare();
+      const mxModal=document.getElementById('maxwell-inline-dialog');
+      if(mxModal&&mxModal.style.display!=='none') mxModal.style.display='none';
+      // Close ODF lightbox
+      const odfLb=document.getElementById('odf-lb');
+      if(odfLb) odfLb.classList.remove('open');
+    }
+  });
 });
+
+// ═══════════════════════════════════════════════════
+// B-H 标量提取：矫顽力 Hc、剩磁 Mr、饱和磁通 Bsat
+// 从材料级宏观 B-H 曲线（仅正半轴数据）提取
+// ═══════════════════════════════════════════════════
+function extractBHScalars(H, B){
+  if(!H||!B||H.length<2) return {};
+  const mu0=4*Math.PI*1e-7;
+  // 过滤有效点
+  const pairs=[];
+  for(let i=0;i<H.length;i++){
+    if(Number.isFinite(H[i])&&Number.isFinite(B[i])&&H[i]>=0&&B[i]>=0)
+      pairs.push([H[i],B[i]]);
+  }
+  if(pairs.length<2) return {};
+  pairs.sort((a,b)=>a[0]-b[0]);
+
+  const Bsat=Math.max(...pairs.map(p=>p[1]));
+
+  // Mr：B 在 H→0 时的外推值（取最小 H 点的 B，或线性外推到 H=0）
+  let Mr=null;
+  if(pairs[0][0]===0){
+    Mr=pairs[0][1];
+  } else if(pairs.length>=2){
+    const [h0,b0]=pairs[0],[h1,b1]=pairs[1];
+    if(Math.abs(h1-h0)>1e-9) Mr=Math.max(0, b0-(b1-b0)/(h1-h0)*h0);
+  }
+
+  // Hc：B-H 曲线上 B=0 时对应的 H（矫顽力）
+  // 用 μ₀*Hc ≈ Mr/μmax 估算（Rayleigh loop近似），或从数据外推
+  let Hc=null;
+  // 找到 B 最接近0的地方（实际正半轴曲线 B>0，用 Mr 估算）
+  if(Mr!=null && Mr>0){
+    // 找最大微分磁导率
+    let muMax=0;
+    for(let i=1;i<pairs.length;i++){
+      const dH=pairs[i][0]-pairs[i-1][0];
+      const dB=pairs[i][1]-pairs[i-1][1];
+      if(dH>1e-9) muMax=Math.max(muMax,dB/dH/mu0);
+    }
+    if(muMax>1) Hc=Mr/(mu0*muMax);
+  }
+  // 若有负 H 数据（完整磁滞回线），直接插值
+  const negPairs=[];
+  for(let i=0;i<H.length;i++){
+    if(Number.isFinite(H[i])&&Number.isFinite(B[i])&&H[i]<0)
+      negPairs.push([H[i],B[i]]);
+  }
+  if(negPairs.length>=2){
+    negPairs.sort((a,b)=>a[0]-b[0]);
+    for(let i=0;i<negPairs.length-1;i++){
+      if(negPairs[i][1]>=0&&negPairs[i+1][1]<=0){
+        const t=(0-negPairs[i][1])/(negPairs[i+1][1]-negPairs[i][1]);
+        Hc=Math.abs(negPairs[i][0]+(negPairs[i+1][0]-negPairs[i][0])*t);
+        break;
+      }
+    }
+  }
+
+  return {Bsat, Mr, Hc};
+}
+
+// ═══════════════════════════════════════════════════
+// Steinmetz/Bertotti 铁损系数客户端估算
+// 与 maxwell_exporter._estimate_core_loss_params() 逻辑一致
+// ═══════════════════════════════════════════════════
+function estimateCoreLossParams(H, B, thickness_mm=0.35, conductivity=2e6){
+  const mu0=4*Math.PI*1e-7;
+  const pairs=[];
+  for(let i=0;i<H.length;i++){
+    if(Number.isFinite(H[i])&&Number.isFinite(B[i])&&H[i]>0&&B[i]>0)
+      pairs.push([H[i],B[i]]);
+  }
+  if(pairs.length<2) return {kh:5e-4,kc:2e-5,ke:3e-3};
+  pairs.sort((a,b)=>a[0]-b[0]);
+
+  const Bm=Math.max(...pairs.map(p=>p[1]));
+  // 最接近 B~0 的点估算 Hc
+  let minBIdx=0;
+  pairs.forEach((p,i)=>{if(Math.abs(p[1])<Math.abs(pairs[minBIdx][1])) minBIdx=i;});
+  const Hc_est=minBIdx>0?Math.abs(pairs[minBIdx][0]):pairs[0][0];
+  let kh=mu0*Math.max(Hc_est,1)/(Math.PI*Math.max(Bm,0.1));
+  kh=Math.min(Math.max(kh,1e-4),0.05);
+
+  const d=thickness_mm*1e-3;
+  let kc=(Math.PI**2)*conductivity*(d**2)/6;
+  kc=Math.min(Math.max(kc,1e-6),1e-3);
+
+  let ke=Math.min(Math.max(0.002*Bm,1e-4),0.02);
+  return {kh,kc,ke,kdc:0};
+}
+
+// ═══════════════════════════════════════════════════
+// 渲染铁损系数卡片
+// ═══════════════════════════════════════════════════
+function renderCoreLossCards(cl, containerId){
+  const el=document.getElementById(containerId);
+  if(!el||!cl) return;
+  const fmt=v=>Number.isFinite(v)?v.toExponential(3):'—';
+  const cards=[
+    {label:'Kh 磁滞损耗系数',val:fmt(cl.kh),unit:'W·s/T²/m³',note:'Ph = Kh·f·Bm²'},
+    {label:'Kc 涡流损耗系数',val:fmt(cl.kc),unit:'W·s²/T²/m³',note:'Pe = Kc·f²·Bm²'},
+    {label:'Ke 附加损耗系数',val:fmt(cl.ke),unit:'W·s¹·⁵/T¹·⁵/m³',note:'Pex = Ke·f^1.5·Bm^1.5'},
+    {label:'Kdc DC偏置系数',val:'0',unit:'—',note:'Kph = 1+Kdc·Bdc²'},
+  ];
+  el.innerHTML=`<div class="core-loss-grid">${cards.map(c=>`
+    <div class="cl-card">
+      <div class="cl-label">${c.label}</div>
+      <div class="cl-val">${c.val}</div>
+      <div class="cl-unit">${c.unit}</div>
+      <div class="cl-note">${c.note}</div>
+    </div>`).join('')}</div>`;
+}
+
+function renderCoreLossPreview(H, B, thickness_mm, containerId){
+  if(!H||!B||H.length<2){document.getElementById(containerId).innerHTML='';return;}
+  const cl=estimateCoreLossParams(H,B,thickness_mm||0.35);
+  const fmt=v=>Number.isFinite(v)?v.toExponential(3):'—';
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML=`
+    <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">估算铁损系数 (RD 曲线)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <div class="cl-card"><div class="cl-label">Kh 磁滞</div><div class="cl-val">${fmt(cl.kh)}</div></div>
+      <div class="cl-card"><div class="cl-label">Kc 涡流</div><div class="cl-val">${fmt(cl.kc)}</div></div>
+      <div class="cl-card"><div class="cl-label">Ke 附加</div><div class="cl-val">${fmt(cl.ke)}</div></div>
+      <div class="cl-card"><div class="cl-label">Kdc</div><div class="cl-val">0</div></div>
+    </div>
+    <div style="font-size:9.5px;color:var(--t3);margin-top:5px">⚠️ 先验估算，非实测 B-P 数据</div>`;
+}
+
+function updateInlineCoreLoss(){
+  const t=parseFloat(document.getElementById('inline-thickness')?.value)||0.35;
+  const rd=window._pendingExportRD;
+  if(rd&&rd.H&&rd.H.length>2) renderCoreLossPreview(rd.H,rd.B,t,'inline-cl-preview');
+}
+
+function updatePredCoreLoss(){
+  const t=parseFloat(document.getElementById('pred-thickness')?.value)||0.35;
+  if(window._currentPredResult?.RD?.H)
+    renderCoreLossPreview(window._currentPredResult.RD.H,window._currentPredResult.RD.B,t,'maxwell-pred-cl-preview');
+}
+
+// ═══════════════════════════════════════════════════
+// ODF 极图查看器
+// ═══════════════════════════════════════════════════
+async function loadODFGallery(){
+  const wrap=document.getElementById('odf-gallery-wrap');
+  if(!wrap) return;
+  wrap.innerHTML='<div class="empty"><div class="ei" style="font-size:30px">⏳</div><p>扫描极图文件中...</p></div>';
+  try{
+    const r=await api('/api/odf/figures');
+    const items=(r.items||[]).filter(i=>i.has_odf);
+    if(!items.length){
+      wrap.innerHTML='<div class="empty"><div class="ei">🔬</div><p>未找到极图文件</p><p style="font-size:11px;color:var(--t3)">在批量生成时开启"保存极图"开关后会自动保存</p></div>';
+      return;
+    }
+    let html='<div class="odf-gallery">';
+    items.forEach(item=>{
+      item.figures.forEach(fig=>{
+        const url=`/api/odf/preview?path=${encodeURIComponent(fig.path)}`;
+        html+=`<div class="odf-thumb" onclick="showODFLightbox('${url.replace(/'/g,"\\'")}')">
+          <img src="${url}" loading="lazy" alt="${esc(fig.name)}" onerror="this.parentElement.style.display='none'">
+          <div class="odf-thumb-label" title="${esc(item.folder)} / ${esc(fig.name)}">${esc(item.folder)} · ${esc(fig.name)}</div>
+        </div>`;
+      });
+    });
+    html+='</div>';
+    html+=`<div style="font-size:11px;color:var(--t3);margin-top:8px">共 ${items.reduce((s,i)=>s+i.figures.length,0)} 张极图，来自 ${items.length} 个批次</div>`;
+    wrap.innerHTML=html;
+  }catch(e){
+    wrap.innerHTML=`<div class="empty"><div class="ei">⚠</div><p>加载失败：${esc(e.message)}</p></div>`;
+  }
+}
+
+function showODFLightbox(url){
+  let lb=document.getElementById('odf-lb');
+  if(!lb){
+    lb=document.createElement('div');lb.id='odf-lb';lb.className='odf-lb-overlay';
+    lb.innerHTML='<img id="odf-lb-img" src="" alt="极图">';
+    lb.onclick=()=>lb.classList.remove('open');
+    document.body.appendChild(lb);
+  }
+  document.getElementById('odf-lb-img').src=url;
+  lb.classList.add('open');
+}
 </script>
 
 <!-- Maxwell 内联导出对话框（挂在 body 层） -->
 <div id="maxwell-inline-dialog" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
      z-index:9999;background:var(--bg-2);border:1px solid var(--border-hi);border-radius:8px;
-     padding:20px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.6)">
-  <div style="font-weight:600;margin-bottom:14px;color:var(--cyan)">⚙️ 导出 Maxwell .amat</div>
-  <div style="display:grid;gap:10px;margin-bottom:14px">
+     padding:20px;min-width:380px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.6)">
+  <div style="font-weight:600;margin-bottom:14px;color:var(--cyan)">⚙️ 导出 ANSYS Maxwell .amat</div>
+  <div style="display:grid;gap:10px;margin-bottom:10px">
     <div class="fg"><label>材料名称</label><input id="inline-mat-name" placeholder="GO_Sim"></div>
-    <div class="fg"><label>厚度 (mm)</label><input id="inline-thickness" value="0.35" type="number" step="0.01"></div>
+    <div class="fg"><label>厚度 (mm)</label><input id="inline-thickness" value="0.35" type="number" step="0.01" onchange="updateInlineCoreLoss()"></div>
+  </div>
+  <div id="inline-cl-preview" style="margin-bottom:10px"></div>
+  <div style="font-size:10px;color:var(--t3);margin-bottom:12px;line-height:1.5">
+    包含：BH_Data_X (RD) · BH_Data_Y (TD) · Permeability_Z · CoreLossKh/Kc/Ke/Kdc · Thickness · Conductivity
   </div>
   <div style="display:flex;gap:8px">
-    <button class="btn btn-p" onclick="doExportCurrentMaxwell()">⬇️ 下载</button>
+    <button class="btn btn-p" onclick="doExportCurrentMaxwell()">⬇️ 下载 .amat</button>
     <button class="btn btn-g" onclick="document.getElementById('maxwell-inline-dialog').style.display='none'">取消</button>
+  </div>
+</div>
+
+<!-- ═══════ 多角度对比模态框 ═══════ -->
+<div id="angle-compare-modal" style="display:none;position:fixed;inset:0;z-index:9998;
+     background:rgba(0,0,0,.7);align-items:center;justify-content:center">
+  <div style="background:var(--bg-2);border:1px solid var(--border-hi);border-radius:10px;
+       padding:20px;width:min(720px,92vw);max-height:90vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.7)">
+    <div style="display:flex;align-items:center;margin-bottom:14px">
+      <span style="font-size:15px;font-weight:700;color:var(--cyan)">📊 多角度 B-H 对比</span>
+      <span id="ac-status" style="font-size:12px;color:var(--t3);margin-left:12px"></span>
+      <button class="btn btn-g btn-sm" onclick="closeAngleCompare()" style="margin-left:auto">✕ 关闭 (ESC)</button>
+    </div>
+    <div style="position:relative;height:360px">
+      <canvas id="ac-chart"></canvas>
+    </div>
+    <div style="font-size:11px;color:var(--t3);margin-top:10px;text-align:center">
+      每条曲线为对应角度下所有晶粒文件的 B-H 均值曲线
+    </div>
   </div>
 </div>
 
 <!-- ═══════════════════ 数据集管理页 ═══════════════════ -->
 <div class="page" id="page-dataset">
+  <div class="wf-guide">
+    <div class="wf-guide-icon">📊</div>
+    <div class="wf-guide-body">
+      <div class="wf-guide-title">ML Step 1 — 聚合仿真结果为训练集</div>
+      <div class="wf-guide-desc">扫描 output/ 目录中已完成的仿真，提取各配置的 B-H 曲线（3角度×8H节点）和标量磁特性，汇总为 XGBoost 可直接读取的 CSV 训练集。</div>
+      <div class="wf-guide-tags">
+        <span class="wf-tag wf-tag-in">输入：output/ 仿真结果</span>
+        <span class="wf-tag wf-tag-out">输出：data/datasets/*.csv</span>
+      </div>
+    </div>
+  </div>
   <div class="card">
-    <div class="card-hdr"><span class="card-title">📊 数据集管理</span></div>
-    <p style="color:var(--t3);font-size:12px;margin-bottom:14px">扫描 <code>output/</code> 目录，将仿真晶粒结果聚合为 XGBoost 训练集 CSV。</p>
+    <div class="card-hdr"><span class="card-title">ML 专用仿真脚本生成</span><span class="badge b-amber">clean dataset</span></div>
+    <div class="info-note" style="margin-bottom:14px">
+      这里会生成独立命名的 <code>ml_dataset_*</code> 织构、MX3 脚本和 PowerShell 批处理。建议后续只聚合该同名 output 批次；混用旧测试结果会污染训练集。
+    </div>
+    <div class="fr fr2" style="margin-bottom:12px">
+      <div class="fg"><label>生成预设</label>
+        <select id="ml-gen-preset" onchange="applyMlDatasetPreset()">
+          <option value="lite">Lite / 轻量数据集</option>
+        </select>
+      </div>
+      <div class="fg"><label>ML 数据集批次名</label><input id="ml-ds-run-name" placeholder="ml_dataset_YYYYMMDD_HHMMSS"></div>
+    </div>
+    <div id="ml-gen-preset-summary" style="font-size:12px;color:var(--t2);line-height:1.7;padding:8px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;margin-bottom:12px">
+      预设加载中...
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="generateMlDatasetScripts()">生成 ML 仿真脚本</button>
+      <button class="btn btn-g" onclick="switchToTab('taskmanager')">前往运行仿真</button>
+    </div>
+    <div id="ml-gen-status" style="font-size:12px;color:var(--t2);line-height:1.7;margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">数据集构建</span></div>
+    <div class="info-note" style="margin-bottom:14px">聚合时建议选择名称与上一步一致的 <code>run_ml_dataset_*</code> 批次。默认只会自动勾选 ML 专用批次，其他结果需要手动选择。</div>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
       <button class="btn btn-g" onclick="datasetScan()">🔍 扫描可用配置</button>
       <select id="ds-angle-mode" style="width:auto">
-        <option value="motor">电机优化模式 (0°/45°/90°)</option>
+        <option value="motor">电机优化模式 (RD/TD)</option>
         <option value="full">全极图模式 (9 个角度)</option>
       </select>
       <button class="btn btn-p" onclick="datasetAggregate()">⚙️ 聚合选中配置</button>
@@ -2607,15 +4803,55 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 <!-- ═══════════════════ XGBoost 训练页 ═══════════════════ -->
 <div class="page" id="page-training">
+  <div class="wf-guide">
+    <div class="wf-guide-icon">🤖</div>
+    <div class="wf-guide-body">
+      <div class="wf-guide-title">ML Step 2 — 多模型代理模型选择</div>
+      <div class="wf-guide-desc">选择已聚合的训练集，勾选候选模型并按预设运行交叉验证；系统按同一数据集下的 CV B-H RMSE 推荐模型，训练产物保存于 data/paper_models/。</div>
+      <div class="wf-guide-tags">
+        <span class="wf-tag wf-tag-in">输入：data/datasets/*.csv</span>
+        <span class="wf-tag wf-tag-out">输出：data/models/{id}/</span>
+      </div>
+    </div>
+  </div>
   <div class="card">
-    <div class="card-hdr"><span class="card-title">🤖 XGBoost 训练</span></div>
-    <div class="fr fr2" style="margin-bottom:16px">
+    <div class="card-hdr"><span class="card-title">多模型训练配置</span></div>
+    <div class="fr fr2" style="margin-bottom:12px">
       <div class="fg"><label>数据集</label><select id="train-dataset"></select></div>
+      <div class="fg" style="display:none"><label>训练模式</label>
+        <select id="train-mode" onchange="toggleTrainingMode()">
+          <option value="xgb">单模型 XGBoost</option>
+          <option value="paper" selected>论文级候选模型选择</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr fr2" id="xgb-param-grid" style="display:none;margin-bottom:16px">
       <div class="fg"><label>测试集比例</label><input type="number" id="train-test-size" value="0.2" min="0.1" max="0.4" step="0.05"></div>
       <div class="fg"><label>n_estimators</label><input type="number" id="xgb-n-est" value="300"></div>
       <div class="fg"><label>max_depth</label><input type="number" id="xgb-depth" value="6"></div>
       <div class="fg"><label>learning_rate</label><input type="number" id="xgb-lr" value="0.05" step="0.005"></div>
       <div class="fg"><label>subsample</label><input type="number" id="xgb-sub" value="0.8" step="0.05"></div>
+    </div>
+    <div class="fr fr2" id="paper-param-grid" style="margin-bottom:16px">
+      <div class="fg"><label>论文级预设</label>
+        <select id="paper-preset" onchange="applyPaperTrainingPreset()">
+          <option value="lite">Lite / 轻量模型选择</option>
+        </select>
+      </div>
+      <div id="paper-preset-summary" style="font-size:12px;color:var(--t2);line-height:1.7;padding:8px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px">
+        预设加载中...
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <label style="margin:0">候选模型</label>
+        <span class="sel-all-btn" style="margin-left:auto" onclick="setModelCandidates(true)">全选</span>
+        <span class="sel-all-btn" style="margin-left:0" onclick="setModelCandidates(false)">全不选</span>
+      </div>
+      <div id="model-candidate-list" class="model-check-grid"></div>
+      <div class="info-note" style="margin-top:10px">
+        公平的 CV B-H RMSE 选型应只比较同一数据集、同一划分策略下训练出的模型；跨数据集模型只能作为趋势参考，不能直接排名。
+      </div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px">
       <button class="btn btn-p" onclick="startTraining()">🚀 开始训练</button>
@@ -2637,6 +4873,7 @@ document.addEventListener('DOMContentLoaded',()=>{
           <div style="font-size:11px;font-weight:600;word-break:break-all;color:var(--cyan)" id="res-model-id">—</div>
         </div>
       </div>
+      <div id="paper-ranking" style="margin-bottom:12px"></div>
       <canvas id="fi-chart" height="120"></canvas>
     </div>
   </div>
@@ -2651,15 +4888,25 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 <!-- ═══════════════════ 快速预测页 ═══════════════════ -->
 <div class="page" id="page-prediction">
+  <div class="wf-guide">
+    <div class="wf-guide-icon">⚡</div>
+    <div class="wf-guide-body">
+      <div class="wf-guide-title">ML Step 3 — 毫秒级 B-H 曲线预测</div>
+      <div class="wf-guide-desc">加载已训练模型，输入任意织构参数组合，即时预测 RD/TD B-H 曲线和标量磁特性，并生成全向角度响应图；Maxwell 导出仍使用 RD/TD。</div>
+      <div class="wf-guide-tags">
+        <span class="wf-tag wf-tag-in">输入：织构参数 (f_Goss / θ₀ / σ / N / Si%)</span>
+        <span class="wf-tag wf-tag-out">输出：B-H 曲线 / .amat 文件</span>
+      </div>
+    </div>
+  </div>
   <div class="card">
-    <div class="card-hdr"><span class="card-title">⚡ 快速预测</span></div>
+    <div class="card-hdr"><span class="card-title">参数输入</span></div>
     <p style="color:var(--t3);font-size:12px;margin-bottom:14px">选择已训练的模型，输入织构参数，毫秒级返回 B-H 曲线。</p>
-    <div class="fr fr2" style="margin-bottom:16px">
+    <div class="fr fr2" style="margin-bottom:10px">
       <div class="fg"><label>模型</label><select id="pred-model"></select></div>
       <div class="fg"><label>f_Goss (0.4-0.9)</label><input type="number" id="pred-fgoss" value="0.70" min="0.4" max="0.9" step="0.01"></div>
       <div class="fg"><label>θ₀ [°] (1-30)</label><input type="number" id="pred-theta" value="15" min="1" max="30" step="1"></div>
       <div class="fg"><label>半宽 σ [°] (5-15)</label><input type="number" id="pred-hw" value="10" min="5" max="15" step="1"></div>
-      <div class="fg"><label>晶粒数 N</label><input type="number" id="pred-n" value="100" min="10" max="300" step="10"></div>
       <div class="fg"><label>Si 含量 [%]</label><input type="number" id="pred-si" value="3.0" min="2.5" max="3.5" step="0.1"></div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px">
@@ -2667,21 +4914,56 @@ document.addEventListener('DOMContentLoaded',()=>{
       <button class="btn btn-g" onclick="loadModelListForPred()">🔄 刷新模型</button>
     </div>
     <div id="pred-result" style="display:none">
-      <canvas id="bh-chart" height="200" style="margin-bottom:16px"></canvas>
-      <div id="pred-scalars" style="margin-bottom:12px"></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn btn-p" onclick="exportMaxwellFromPred()">⬇️ 导出 Maxwell .amat</button>
-        <button class="btn btn-g" onclick="copyBHData()">📋 复制 B-H 数据 (TSV)</button>
-      </div>
-      <div id="maxwell-pred-dialog" style="display:none;margin-top:12px;
-           padding:16px;border:1px solid var(--border-hi);border-radius:6px;background:var(--bg-3)">
-        <div class="fr fr2" style="margin-bottom:12px">
-          <div class="fg"><label>材料名称</label><input id="pred-mat-name" placeholder="GO_Pred_F70_T15"></div>
-          <div class="fg"><label>厚度 (mm)</label><input id="pred-thickness" value="0.35" type="number" step="0.01"></div>
+      <div class="pred-result-grid">
+        <div>
+          <div class="pred-chart-shell"><canvas id="bh-chart"></canvas></div>
+          <!-- B-H scalars: μ_max, Hc, Mr, Bsat -->
+          <div id="pred-scalars" style="margin-bottom:12px"></div>
+          <!-- Core loss coefficients -->
+          <div id="pred-core-loss" style="display:none;margin-bottom:14px">
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+              <span>ANSYS Maxwell 铁损系数估算</span>
+              <span style="color:rgba(168,85,247,.6);font-size:10px">(Steinmetz/Bertotti 先验 · 工程参考)</span>
+            </div>
+            <div class="core-loss-grid" id="pred-cl-grid"></div>
+            <div style="font-size:10px;color:var(--t3);margin-top:6px;line-height:1.5">
+              ⚠️ 以上系数为基于 B-H 曲线形态的工程估算，<strong>非实测多频 B-P 数据</strong>。导入 Maxwell 后建议用供应商实测数据校验。
+            </div>
+          </div>
+          <div class="pred-actions">
+            <button class="btn btn-p" onclick="exportMaxwellFromPred()">⬇️ 导出 .amat</button>
+            <button class="btn btn-c" onclick="exportBHAnalysis('prediction')">⬇️ 导出 .amat + BH分析报告</button>
+            <button class="btn btn-g" onclick="copyBHData()">📋 复制 B-H (TSV)</button>
+          </div>
+          <div style="margin-top:8px">
+            <button onclick="toggleBHMatSelector('pred-mat-sel')"
+                    style="font-size:11px;padding:2px 8px;border-radius:3px;border:1px solid var(--border);background:var(--bg-2);color:var(--t2);cursor:pointer">
+              ▼ 自选对比材料</button>
+            <div id="pred-mat-sel" style="display:none;margin-top:6px;padding:10px;border:1px solid var(--border);border-radius:4px;background:var(--bg-3);max-height:260px;overflow-y:auto">
+              <span style="color:var(--t3);font-size:11px">正在加载材料列表…</span>
+            </div>
+          </div>
+          <div id="pred-analysis-result" style="display:none;margin-top:14px"></div>
+          <div id="maxwell-pred-dialog" style="display:none;margin-top:12px;
+               padding:16px;border:1px solid var(--border-hi);border-radius:6px;background:var(--bg-3)">
+            <div style="font-weight:600;color:var(--cyan);margin-bottom:12px">⚙️ 导出 ANSYS Maxwell .amat</div>
+            <div class="fr fr2" style="margin-bottom:12px">
+              <div class="fg"><label>材料名称</label><input id="pred-mat-name" placeholder="GO_Pred_F70_T15"></div>
+              <div class="fg"><label>厚度 (mm)</label><input id="pred-thickness" value="0.35" type="number" step="0.01" onchange="updatePredCoreLoss()"></div>
+            </div>
+            <div id="maxwell-pred-cl-preview" style="margin-bottom:12px"></div>
+            <div style="font-size:10px;color:var(--t3);margin-bottom:10px">
+              AEDT $begin 格式：component1 (RD) · component2 (TD) · component3 ND·μr · core_loss_kh/kc/ke · 密度 · 厚度
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-p" onclick="doExportMaxwellFromPred()">⬇️ 下载 .amat</button>
+              <button class="btn btn-g" onclick="document.getElementById('maxwell-pred-dialog').style.display='none'">取消</button>
+            </div>
+          </div>
         </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-p" onclick="doExportMaxwellFromPred()">⬇️ 下载 .amat</button>
-          <button class="btn btn-g" onclick="document.getElementById('maxwell-pred-dialog').style.display='none'">取消</button>
+        <div class="pred-polar-column" id="pred-full-wrap" style="display:none">
+          <div class="chart-card"><h4>360° B@800</h4><canvas id="pred-full-b800" height="260"></canvas></div>
+          <div class="chart-card"><h4>360° μr@800</h4><canvas id="pred-full-mu800" height="260"></canvas></div>
         </div>
       </div>
     </div>
@@ -2690,46 +4972,121 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 <!-- ═══════════════════ 自动流水线页 ═══════════════════ -->
 <div class="page" id="page-pipeline">
+  <div class="wf-guide">
+    <div class="wf-guide-icon">🔄</div>
+    <div class="wf-guide-body">
+      <div class="wf-guide-title">自动训练流水线（一键端到端）</div>
+      <div class="wf-guide-desc">自动串联 Step 1–5 及 ML Step 1–2：LHS 参数采样 → 织构文件生成 → MX3 脚本 → 批处理脚本 → <strong style="color:var(--amber)">等待 GPU 仿真</strong> → 聚合数据集 → 快速预测模型 + 多模型候选交叉验证。仿真阶段需要手动确认后才继续。</div>
+      <div class="wf-guide-tags">
+        <span class="wf-tag wf-tag-in">输入：参数范围 + 样本数</span>
+        <span class="wf-tag wf-tag-out">输出：预测模型与候选模型CV报告</span>
+        <span class="wf-tag wf-tag-note">6阶段，仿真阶段需手动确认</span>
+      </div>
+    </div>
+  </div>
   <div class="card">
-    <div class="card-hdr"><span class="card-title">🔄 自动训练流水线</span></div>
-    <p style="color:var(--t3);font-size:12px;margin-bottom:14px">一键从织构参数采样到 XGBoost 模型，含仿真脚本自动生成。</p>
-    <div class="fr fr2" style="margin-bottom:16px">
+    <div class="card-hdr"><span class="card-title">流水线配置</span></div>
+    <p style="color:var(--t3);font-size:12px;margin-bottom:14px">一键从数据集生成到模型训练。数据集预设控制样本/晶粒/仿真成本；训练预设控制候选模型与训练参数；多个模型共享同一数据集，不重复仿真。</p>
+    <div class="fr fr2" style="margin-bottom:8px">
+      <div class="fg"><label>数据集预设</label>
+        <select id="pipe-preset" onchange="applyPipelinePreset();pipeCheckCustomDataset()">
+          <option value="lite">Dataset Lite / 轻量数据集</option>
+        </select>
+      </div>
+      <div class="fg"><label>训练预设</label>
+        <select id="pipe-training-preset" onchange="pipeCheckCustomTraining()">
+          <option value="lite">Lite / 轻量训练</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr fr2" style="margin-bottom:8px">
+      <div id="pipe-preset-summary" style="font-size:12px;color:var(--t2);line-height:1.7;padding:8px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px">
+        数据集预设加载中...
+      </div>
+      <div id="pipe-training-summary" style="font-size:12px;color:var(--t2);line-height:1.7;padding:8px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px">
+        训练预设加载中...
+      </div>
+    </div>
+
+    <!-- 公共参数（始终可见） -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px">
       <div class="fg"><label>样本数</label><input type="number" id="pipe-n" value="20" min="5" max="300"></div>
       <div class="fg"><label>角度模式</label>
         <select id="pipe-angle-mode">
-          <option value="motor">电机优化 (0°/45°/90°) — 推荐</option>
+          <option value="motor">电机优化 (RD/TD) — 推荐</option>
           <option value="full">全极图 (9 个角度)</option>
         </select>
       </div>
-      <div class="fg"><label>f_Goss 范围</label>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input type="number" id="pipe-fg-lo" value="0.4" step="0.05" style="flex:1">
-          <span style="color:var(--t3)">~</span>
-          <input type="number" id="pipe-fg-hi" value="0.9" step="0.05" style="flex:1">
+    </div>
+
+    <!-- 自定义数据集参数（仅 custom 预设显示） -->
+    <div id="pipe-custom-dataset" style="display:none;border:1px solid var(--border-hi);border-radius:8px;padding:14px;margin-bottom:12px;background:var(--bg-3)">
+      <div style="font-size:11px;color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">自定义数据集参数</div>
+      <div class="fr fr3" style="margin-bottom:8px">
+        <div class="fg"><label>晶粒数 N（固定值）</label><input type="number" id="pipe-n-fixed" value="5" min="1" max="50">
+          <span class="hint">预测时也自动填入此值</span></div>
+        <div class="fg"><label>f_Goss 范围</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="number" id="pipe-fg-lo" value="0.4" step="0.05" style="flex:1">
+            <span style="color:var(--t3)">~</span>
+            <input type="number" id="pipe-fg-hi" value="0.9" step="0.05" style="flex:1">
+          </div>
         </div>
-      </div>
-      <div class="fg"><label>θ₀ [°] 范围</label>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input type="number" id="pipe-th-lo" value="1" style="flex:1">
-          <span style="color:var(--t3)">~</span>
-          <input type="number" id="pipe-th-hi" value="30" style="flex:1">
+        <div class="fg"><label>θ₀ [°] 范围</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="number" id="pipe-th-lo" value="1" style="flex:1">
+            <span style="color:var(--t3)">~</span>
+            <input type="number" id="pipe-th-hi" value="30" style="flex:1">
+          </div>
         </div>
-      </div>
-      <div class="fg"><label>半宽 σ [°] 范围</label>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input type="number" id="pipe-hw-lo" value="5" style="flex:1">
-          <span style="color:var(--t3)">~</span>
-          <input type="number" id="pipe-hw-hi" value="15" style="flex:1">
-        </div>
-      </div>
-      <div class="fg"><label>晶粒数 N 范围</label>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input type="number" id="pipe-n-lo" value="50" style="flex:1">
-          <span style="color:var(--t3)">~</span>
-          <input type="number" id="pipe-n-hi" value="150" style="flex:1">
+        <div class="fg"><label>半宽 σ [°] 范围</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="number" id="pipe-hw-lo" value="5" style="flex:1">
+            <span style="color:var(--t3)">~</span>
+            <input type="number" id="pipe-hw-hi" value="15" style="flex:1">
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- 自定义训练参数（仅 custom 训练预设显示） -->
+    <div id="pipe-custom-training" style="display:none;border:1px solid var(--border-hi);border-radius:8px;padding:14px;margin-bottom:12px;background:var(--bg-3)">
+      <div style="font-size:11px;color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">自定义训练参数</div>
+      <div class="fr fr3" style="margin-bottom:8px">
+        <div class="fg"><label>n_estimators</label><input type="number" id="pipe-custom-nest" value="300" min="50" step="50"></div>
+        <div class="fg"><label>max_depth</label><input type="number" id="pipe-custom-depth" value="6" min="2" max="20"></div>
+        <div class="fg"><label>learning_rate</label><input type="number" id="pipe-custom-lr" value="0.05" step="0.005" min="0.001" max="0.5"></div>
+      </div>
+      <div class="fr fr2">
+        <div class="fg"><label>subsample</label><input type="number" id="pipe-custom-sub" value="0.8" step="0.05" min="0.4" max="1"></div>
+        <div class="fg"><label>测试集比例</label><input type="number" id="pipe-custom-test" value="0.2" step="0.05" min="0.1" max="0.4"></div>
+      </div>
+    </div>
+
+    <!-- 模型选择（多选） -->
+    <div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <label style="font-size:12px;font-weight:600;color:var(--t1)">训练模型选择</label>
+        <span style="font-size:11px;color:var(--t3)">多个模型共享同一数据集，不重复仿真</span>
+        <span class="sel-all-btn" style="margin-left:auto" onclick="pipeSelectAllModels(true)">全选</span>
+        <span class="sel-all-btn" onclick="pipeSelectAllModels(false)">全不选</span>
+      </div>
+      <div id="pipe-model-list" class="model-check-grid">
+        <label class="model-check"><input type="checkbox" class="pipe-model-check" value="direct_xgb" checked>
+          <div><strong>Direct XGBoost</strong><span><code>direct_xgb</code> · 直接多输出 · XGBRegressor</span><span>直接预测 B-H 节点，训练快，适合冒烟验证</span></div>
+        </label>
+        <label class="model-check"><input type="checkbox" class="pipe-model-check" value="extra_trees" checked>
+          <div><strong>ExtraTrees</strong><span><code>extra_trees</code> · 直接多输出 · ExtraTreesRegressor</span><span>极随机森林，泛化能力强，不需学习率调参</span></div>
+        </label>
+        <label class="model-check"><input type="checkbox" class="pipe-model-check" value="pca_xgb">
+          <div><strong>PCA + XGBoost</strong><span><code>pca_xgb</code> · 降维后回归 · PCA → XGBRegressor</span><span>先 PCA 压缩 B-H 空间，适合高维输出场景</span></div>
+        </label>
+        <label class="model-check"><input type="checkbox" class="pipe-model-check" value="pca_extra_trees">
+          <div><strong>PCA + ExtraTrees</strong><span><code>pca_extra_trees</code> · 降维后回归 · PCA → ExtraTrees</span><span>PCA 压缩 + 极随机森林，综合方案</span></div>
+        </label>
+      </div>
+    </div>
+
     <button class="btn btn-p" onclick="startPipeline()" style="margin-bottom:16px">▶ 启动流水线</button>
     <div id="pipeline-panel" style="display:none">
       <div id="pipeline-stages" style="margin-bottom:14px"></div>
@@ -2750,6 +5107,9 @@ document.addEventListener('DOMContentLoaded',()=>{
       </div>
     </div>
   </div>
-</div>
+</div><!-- /page-pipeline -->
+
+  </div><!-- content -->
+</div><!-- main -->
 </body>
 </html>

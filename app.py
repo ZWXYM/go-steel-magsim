@@ -1,7 +1,7 @@
 """
 Fe-Si 多晶微磁学仿真集成平台 - Flask Backend v2
 """
-import sys, os, threading, uuid, json, io, traceback, re, shutil, subprocess, time, zipfile as zf_mod2
+import sys, os, threading, uuid, json, io, traceback, re, shutil, subprocess, time, zipfile as zf_mod2, contextlib
 import locale
 from pathlib import Path
 from datetime import datetime
@@ -13,7 +13,9 @@ matplotlib.use('Agg')
 app = Flask(__name__)
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODULES_DIR = os.path.join(SCRIPT_DIR, 'modules')
 sys.path.insert(0, SCRIPT_DIR)
+sys.path.insert(0, MODULES_DIR)  # 所有子模块统一放 modules/
 
 import mx3_generator as gis
 import batch_scheduler as gpb
@@ -24,7 +26,7 @@ _texture_module = None
 def get_texture_module():
     global _texture_module
     if _texture_module is None:
-        spec = importlib.util.spec_from_file_location("texture_gen", os.path.join(SCRIPT_DIR, "odf_texture.py"))
+        spec = importlib.util.spec_from_file_location("texture_gen", os.path.join(MODULES_DIR, "odf_texture.py"))
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         _texture_module = mod
@@ -297,15 +299,17 @@ def generate_batch_scripts():
             base_name = f"run_multi_configs_{ts}"
         script_type = data.get('script_type', '5')
         mumax3_path = data.get('mumax3_path', None)
+        # 确保 scripts/ 目录存在
+        Path('scripts').mkdir(exist_ok=True)
         generated_files = []
         if script_type in ['1','5']:
-            f = f"{base_name}.bat"; gpb.generate_multi_config_batch_script(selected_configs, f); generated_files.append(f)
+            f = f"scripts/{base_name}.bat"; gpb.generate_multi_config_batch_script(selected_configs, f); generated_files.append(f)
         if script_type in ['2','5']:
-            f = f"{base_name}.ps1"; gpb.generate_multi_config_powershell_script(selected_configs, f); generated_files.append(f)
+            f = f"scripts/{base_name}.ps1"; gpb.generate_multi_config_powershell_script(selected_configs, f); generated_files.append(f)
         if script_type in ['3','5']:
-            f = f"{base_name}.sh"; gpb.generate_multi_config_bash_script(selected_configs, f); generated_files.append(f)
+            f = f"scripts/{base_name}.sh"; gpb.generate_multi_config_bash_script(selected_configs, f); generated_files.append(f)
         if script_type == '4' and mumax3_path:
-            f = f"{base_name}_custom.sh"; gpb.generate_multi_config_bash_script(selected_configs, f, mumax3_path); generated_files.append(f)
+            f = f"scripts/{base_name}_custom.sh"; gpb.generate_multi_config_bash_script(selected_configs, f, mumax3_path); generated_files.append(f)
         total_tasks = sum(d['n_grains'] * len(c) for _, d, c in selected_configs)
         return jsonify({'success': True, 'files': generated_files, 'total_tasks': total_tasks})
     except Exception as e:
@@ -315,35 +319,42 @@ def generate_batch_scripts():
 @app.route('/api/task-scripts', methods=['GET'])
 def list_task_scripts():
     scripts = []
-    for ext in ['*.bat','*.ps1','*.sh']:
-        for f in Path('.').glob(ext):
-            if not f.name.startswith('run_'): continue
-            stat = f.stat(); task_count = 0; configs = []; angles_info = []
-            try:
-                content = f.read_text(encoding='utf-8', errors='ignore')
-                bat_m = re.findall(r'for /L %%G in \(1,1,(\d+)\)', content)
-                ps1_m = re.findall(r'\$g -le (\d+)', content)
-                sh_m  = re.findall(r'seq 1 (\d+)', content)
-                if bat_m:  task_count = sum(int(x) for x in bat_m)
-                elif ps1_m: task_count = sum(int(x) for x in ps1_m)
-                elif sh_m:  task_count = sum(int(x) for x in sh_m)
-                configs = list(set(re.findall(r'Configuration \d+/\d+: (\S+)', content)))
-                angles_info = sorted(set(re.findall(r'Angle (\d+) degrees', content)))
-            except Exception: pass
-            scripts.append({'name': f.name, 'size': stat.st_size,
-                            'created': datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
-                            'type': f.suffix[1:], 'task_count': task_count,
-                            'configs': configs, 'angles': angles_info, 'path': str(f)})
+    # 扫描 scripts/ 子目录（新位置）和根目录（兼容旧文件）
+    scan_dirs = [Path('scripts'), Path('.')]
+    seen = set()
+    for scan_dir in scan_dirs:
+        if not scan_dir.exists(): continue
+        for ext in ['*.bat','*.ps1','*.sh']:
+            for f in scan_dir.glob(ext):
+                if not f.name.startswith('run_'): continue
+                if f.name in seen: continue  # 根目录同名文件已被 scripts/ 覆盖
+                seen.add(f.name)
+                stat = f.stat(); task_count = 0; configs = []; angles_info = []
+                try:
+                    content = f.read_text(encoding='utf-8', errors='ignore')
+                    bat_m = re.findall(r'for /L %%G in \(1,1,(\d+)\)', content)
+                    ps1_m = re.findall(r'\$g -le (\d+)', content)
+                    sh_m  = re.findall(r'seq 1 (\d+)', content)
+                    if bat_m:  task_count = sum(int(x) for x in bat_m)
+                    elif ps1_m: task_count = sum(int(x) for x in ps1_m)
+                    elif sh_m:  task_count = sum(int(x) for x in sh_m)
+                    configs = list(set(re.findall(r'Configuration \d+/\d+: (\S+)', content)))
+                    angles_info = sorted(set(re.findall(r'Angle (\d+) degrees', content)))
+                except Exception: pass
+                scripts.append({'name': f.name, 'size': stat.st_size,
+                                'created': datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
+                                'type': f.suffix[1:], 'task_count': task_count,
+                                'configs': configs, 'angles': angles_info, 'path': str(f)})
     return jsonify({'scripts': sorted(scripts, key=lambda x: x['created'], reverse=True)})
 
-@app.route('/api/task-scripts/<filename>', methods=['DELETE'])
+@app.route('/api/task-scripts/<path:filename>', methods=['DELETE'])
 def delete_task_script(filename):
     p = Path(filename)
     if p.exists() and p.suffix in ['.bat','.ps1','.sh']:
         p.unlink(); return jsonify({'success': True})
     return jsonify({'error': '文件不存在'}), 404
 
-@app.route('/api/task-scripts/<filename>/preview', methods=['GET'])
+@app.route('/api/task-scripts/<path:filename>/preview', methods=['GET'])
 def preview_task_script(filename):
     p = Path(filename)
     if p.exists():
@@ -422,7 +433,7 @@ def _posix(p):
 def _scan_run_dir(run_dir, run_info):
     angle_dirs = [d for d in run_dir.iterdir() if d.is_dir() and d.name.startswith('angle_')]
     if angle_dirs:
-        config_info = {'name': run_dir.name, 'angles': []}
+        config_info = {'name': run_dir.name, 'path': _posix(run_dir), 'angles': []}
         for adir in sorted(angle_dirs):
             m = re.match(r'angle_(\d+)', adir.name)
             if not m: continue
@@ -440,7 +451,7 @@ def _scan_run_dir(run_dir, run_info):
             if not subdir.is_dir(): continue
             angle_dirs2 = [d for d in subdir.iterdir() if d.is_dir() and d.name.startswith('angle_')]
             if not angle_dirs2: continue
-            config_info = {'name': subdir.name, 'angles': []}
+            config_info = {'name': subdir.name, 'path': _posix(subdir), 'angles': []}
             for adir in sorted(angle_dirs2):
                 m = re.match(r'angle_(\d+)', adir.name)
                 if not m: continue
@@ -474,6 +485,183 @@ def analyze_path():
         return _do_analyze(resolved, Msat)
     except Exception as e:
         return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+@app.route('/api/analysis/analyze-angle', methods=['POST'])
+def analyze_angle_avg():
+    """对一个角度目录下的所有晶粒文件做 B-H 曲线平均，返回统计结果。"""
+    import numpy as np
+    data = request.get_json(silent=True) or {}
+    if not data and request.data:
+        try:
+            data = json.loads(request.data.decode('utf-8'))
+        except Exception:
+            data = {}
+    filepaths = data.get('filepaths', [])
+    Msat = float(data.get('Msat', 1.52e6))
+    if not filepaths:
+        return jsonify({'error': '未提供文件列表'}), 400
+
+    all_results = []; errors = []
+    for raw_fp in filepaths:
+        fp = os.path.normpath(raw_fp)
+        if not os.path.exists(fp): fp = raw_fp
+        if not os.path.exists(fp):
+            errors.append(f'文件不存在: {os.path.basename(raw_fp)}'); continue
+        try:
+            d = see_module.read_mumax_data(fp)
+            _stdout_save = sys.stdout; sys.stdout = io.StringIO()
+            r2, H, M, B, M_mag, E_total = see_module.extract_magnetic_properties(d, Msat=Msat)
+            sys.stdout = _stdout_save
+            if len(r2.get('H_curve', [])) > 2:
+                all_results.append(r2)
+        except Exception as e:
+            sys.stdout = _stdout_save if '_stdout_save' in dir() else sys.stdout
+            errors.append(f'{os.path.basename(raw_fp)}: {e}')
+
+    if not all_results:
+        return jsonify({'error': '无有效分析结果', 'errors': errors[:10]}), 500
+
+    ref = all_results[len(all_results) // 2]
+    H_ref = np.array(ref['H_curve'])
+    scalar_keys = ['Ms','Mr','Hc','mu_r_max_total','mu_r_max_diff','hysteresis_loss','Mr_Ms_ratio']
+    scalars = {k: [] for k in scalar_keys}
+    B_mat = []; M_mat = []
+
+    for r2 in all_results:
+        H_i = np.array(r2['H_curve']); B_i = np.array(r2['B_curve']); M_i = np.array(r2['M_curve'])
+        if len(H_i) == len(H_ref):
+            B_mat.append(B_i); M_mat.append(M_i)
+        else:
+            B_mat.append(np.interp(H_ref, H_i, B_i))
+            M_mat.append(np.interp(H_ref, H_i, M_i))
+        for k in scalar_keys:
+            if k in r2: scalars[k].append(float(r2[k]))
+
+    B_arr = np.array(B_mat); M_arr = np.array(M_mat)
+    B_avg = B_arr.mean(axis=0); B_std = B_arr.std(axis=0); M_avg = M_arr.mean(axis=0)
+
+    mu0 = 4e-7 * np.pi
+    H_safe = np.where(np.abs(H_ref) > 1.0, H_ref, np.sign(H_ref + 1e-15))
+    mu_r_tot = B_avg / (mu0 * H_safe)
+    mu_r_dif = np.gradient(B_avg, H_ref) / mu0
+
+    avg_s = {k: float(np.mean(v)) if v else 0.0 for k, v in scalars.items()}
+    avg_s.update({'Msat': Msat, 'M_mag_min': 1.0, 'M_mag_mean': 1.0})
+
+    def sub(arr, n=300):
+        arr = np.array(arr)
+        if len(arr) > n:
+            idx = np.linspace(0, len(arr)-1, n, dtype=int); return arr[idx].tolist()
+        return arr.tolist()
+
+    return jsonify({
+        'properties': avg_s,
+        'curves': {
+            'H_curve': sub(H_ref), 'B_curve': sub(B_avg), 'M_curve': sub(M_avg),
+            'B_std':   sub(B_std),
+            'H_full':  sub(H_ref), 'B_full': sub(B_avg), 'M_full': sub(M_avg),
+            'mu_r_total': sub(mu_r_tot), 'mu_r_diff': sub(mu_r_dif),
+            'M_mag': sub(np.ones_like(H_ref)), 'E_total': sub(np.zeros_like(H_ref)),
+        },
+        'grain_count': len(all_results), 'error_count': len(errors),
+        'errors': errors[:5], 'data_points': len(H_ref), 'has_std': True,
+    })
+
+
+@app.route('/api/analysis/material-representative', methods=['GET'])
+def material_representative():
+    raw_path = request.args.get('config_path', '').strip()
+    Msat = float(request.args.get('Msat', 1.52e6))
+    if not raw_path:
+        return jsonify({'error': 'config_path is required'}), 400
+    config_path = os.path.normpath(raw_path)
+    if not os.path.exists(config_path) and os.path.exists(raw_path):
+        config_path = raw_path
+    if not os.path.isdir(config_path):
+        return jsonify({'error': f'配置目录不存在: {raw_path}'}), 404
+    try:
+        from dataset_builder import DatasetBuilder
+        summary = DatasetBuilder().build_material_representative_summary(
+            config_path, Msat=Msat, write_report=True
+        )
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+
+@app.route('/api/analysis/full-direction', methods=['GET'])
+def full_direction_analysis():
+    raw_path = request.args.get('config_path', '').strip()
+    Msat = float(request.args.get('Msat', 1.52e6))
+    if not raw_path:
+        return jsonify({'error': 'config_path is required'}), 400
+    config_path = os.path.normpath(raw_path)
+    if not os.path.exists(config_path) and os.path.exists(raw_path):
+        config_path = raw_path
+    if not os.path.isdir(config_path):
+        return jsonify({'error': f'配置目录不存在: {raw_path}'}), 404
+    try:
+        import numpy as np
+        from dataset_builder import DatasetBuilder
+        from anisotropy_interpolator import interpolate_full_direction
+        from physics_calibrator import MU0
+
+        summary = DatasetBuilder().build_material_representative_summary(
+            config_path, Msat=Msat, write_report=True
+        )
+        angles = summary.get('angles', {})
+        rd = angles.get('0')
+        td = angles.get('90')
+        if not rd or rd.get('status') != 'ok' or not td or td.get('status') != 'ok':
+            return jsonify({'error': '需要 angle_000 与 angle_090 的有效材料级代表曲线'}), 400
+
+        full = interpolate_full_direction(
+            {'H': rd['H'], 'B': rd['B'], 'source': 'analysis_RD'},
+            {'H': td['H'], 'B': td['B'], 'source': 'analysis_TD'},
+        )
+        measured_overlay = []
+        for angle_key, item in angles.items():
+            if item.get('status') != 'ok':
+                continue
+            angle = int(angle_key)
+            if angle in (0, 90):
+                continue
+            H = item.get('H') or []
+            B = item.get('B') or []
+            if not H or not B:
+                continue
+            b800 = float(np.interp(800, H, B))
+            measured_overlay.append({
+                'angle_deg': angle,
+                'B800_T': b800,
+                'mu800': b800 / (MU0 * 800.0),
+                'curve': {'H': H, 'B': B},
+                'source': f'angle_{angle:03d}',
+                'n_grains_valid': item.get('n_grains_valid'),
+            })
+
+        payload = {
+            'config_name': summary.get('config_name'),
+            'config_path': summary.get('config_path'),
+            'rd_source': 'angle_000',
+            'td_source': 'angle_090',
+            **full,
+            'measured_overlay': measured_overlay,
+            'material_representative_sidecar': summary.get('sidecar_path'),
+        }
+        return jsonify(payload)
+    except Exception as e:
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+
+@app.route('/api/jobs/clear-done', methods=['POST'])
+def clear_done_jobs():
+    """从 running_jobs 中移除已完成/失败/停止的任务。"""
+    done_ids = [jid for jid, job in list(running_jobs.items()) if job.get('done')]
+    for jid in done_ids:
+        running_jobs.pop(jid, None)
+    return jsonify({'cleared': len(done_ids)})
+
 
 @app.route('/api/analyze/export-femm', methods=['POST'])
 def export_femm():
@@ -724,6 +912,7 @@ def _start_job(job):
                 job['cmd'],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                stdin=subprocess.DEVNULL,   # 防止 BAT pause 命令阻塞
                 cwd=os.getcwd(),
                 bufsize=1,
             )
@@ -736,7 +925,7 @@ def _start_job(job):
                     except Exception:
                         pass
                 line = _ansi_strip(line)
-                pm = re.search(r'Global Progress: (\d+)/(\d+)', line)
+                pm = re.search(r'Global Progress:.*?(\d+)/(\d+)', line)  # 兼容 BAT "44%  (16/36)" 和 PS1 "16/36" 格式
                 if pm:
                     job['completed'] = int(pm.group(1))
                 if '[FAIL]' in line or '[ERROR]' in line or 'failed!' in line.lower():
@@ -962,6 +1151,7 @@ def dataset_list():
 def dataset_aggregate():
     data    = request.json or {}
     configs = data.get('configs')
+    config_paths = data.get('config_paths')
     mode    = data.get('angle_mode', 'motor')
     Msat    = float(data.get('Msat', 1.52e6))
     from dataset_builder import MOTOR_ANGLES, FULL_ANGLES
@@ -974,14 +1164,224 @@ def dataset_aggregate():
         log = []
         def cb(cur, tot, name):
             log.append('(%d/%d) %s' % (cur, tot, name))
-        df   = db.build_dataset(configs=configs, target_angles=target_angles,
-                                Msat=Msat, progress_callback=cb)
+        df   = db.build_dataset(configs=configs, config_paths=config_paths,
+                                target_angles=target_angles, Msat=Msat,
+                                progress_callback=cb)
+        if len(df) == 0:
+            raise ValueError('no valid selected simulation results were aggregated')
         path = db.save_dataset(df, tag=tag)
         return {'dataset_path': path, 'n_samples': len(df), 'log': log}
 
     run_task(tid, do_aggregate)
     return jsonify({'task_id': tid})
 
+@app.route('/api/ml-dataset/generate-scripts', methods=['POST'])
+def ml_dataset_generate_scripts():
+    data = request.json or {}
+    try:
+        from pipeline_runner import resolve_pipeline_config, estimate_pipeline_tasks, DEFAULT_FIXED_HALFWIDTH_DEG
+        cfg = resolve_pipeline_config(data)
+        run_id = data.get('run_id') or f"ml_dataset_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{str(uuid.uuid4())[:6]}"
+        run_id = re.sub(r'[^A-Za-z0-9_\-]+', '_', run_id).strip('_')
+        if not run_id.startswith('ml_dataset_'):
+            run_id = 'ml_dataset_' + run_id
+
+        angle_mode = cfg.get('angle_mode', 'motor')
+        from dataset_builder import MOTOR_ANGLES, FULL_ANGLES
+        script_angles = FULL_ANGLES if angle_mode == 'full' else MOTOR_ANGLES
+        n_samples = int(cfg.get('n_samples', 24))
+        sim_steps = max(4, int(cfg.get('sim_n_steps', 40)))
+
+        tex = get_texture_module()
+        batch_dir = tex.generate_batch_lhs(
+            n_samples=n_samples,
+            f_Goss_range=cfg.get('f_Goss_range', [0.4, 0.9]),
+            theta_0_range=cfg.get('theta_0_range', [1, 30]),
+            halfwidth_range=cfg.get('halfwidth_range', [DEFAULT_FIXED_HALFWIDTH_DEG, DEFAULT_FIXED_HALFWIDTH_DEG]),
+            N_grains_range=cfg.get('N_grains_range', [8, 8]),
+            Si_content=cfg.get('Si_content', 3.0),
+            output_dir=f'preinput/{run_id}',
+        )
+
+        old_steps = gis.SimulationConfig.N_STEPS
+        try:
+            gis.SimulationConfig.N_STEPS = sim_steps
+            if 'sim_h_max' in cfg:
+                gis.SimulationConfig.H_MAX = float(cfg.get('sim_h_max'))
+            script_dir = f'grain_scripts/{run_id}'
+            txt_files = sorted(Path(batch_dir).glob('grain_orientations_ODF_*.txt'))
+            for tf in txt_files:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    gis.generate_scripts_for_config(str(tf), angles=script_angles, output_dir=script_dir)
+        finally:
+            gis.SimulationConfig.N_STEPS = old_steps
+
+        configs_for_batch = []
+        for name, cfg_item, angles in gis.get_configs_in_dir(f'grain_scripts/{run_id}'):
+            cfg_item = dict(cfg_item)
+            cfg_item['source_dir'] = f'grain_scripts\\{name}'
+            cfg_item['output_name'] = Path(name).name
+            configs_for_batch.append((name, cfg_item, angles))
+        Path('scripts').mkdir(exist_ok=True)
+        batch_script = f'scripts/run_{run_id}.ps1'
+        with contextlib.redirect_stdout(io.StringIO()):
+            gpb.generate_multi_config_powershell_script(
+                configs_for_batch, batch_script, run_name=f'run_{run_id}'
+            )
+
+        manifest = {
+            'run_id': run_id,
+            'recommended_output_run': f'run_{run_id}',
+            'batch_dir': batch_dir,
+            'script_dir': f'grain_scripts/{run_id}',
+            'batch_script': batch_script,
+            'preset_id': cfg.get('preset_id') or cfg.get('preset'),
+            'preset_label': cfg.get('preset_label'),
+            'config': cfg,
+            'angles': script_angles,
+            'n_samples': n_samples,
+            'estimated_tasks': estimate_pipeline_tasks(cfg),
+            'created': datetime.now().isoformat(),
+            'purpose': 'machine_learning_dataset_generation',
+        }
+        manifest_path = f'scripts/{run_id}_manifest.json'
+        Path(manifest_path).write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+        return jsonify({**manifest, 'manifest_path': manifest_path})
+    except Exception as e:
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+@app.route('/api/ml-dataset/presets', methods=['GET'])
+def ml_dataset_presets():
+    try:
+        from pipeline_runner import get_pipeline_presets
+        presets = get_pipeline_presets()
+        result = {}
+        for key, preset in presets.items():
+            item = dict(preset)
+            item['label'] = {
+                'smoke': 'Dataset Smoke / 冒烟数据集',
+                'lite': 'Dataset Lite / 轻量数据集',
+                'std': 'Dataset Std / 标准数据集',
+                'max': 'Dataset Max / 全量数据集',
+            }.get(key, preset.get('label', key))
+            item['kind'] = 'dataset_generation'
+            item['description'] = '仅控制 ML 专用仿真数据集规模、角度、晶粒数与仿真步数；不控制模型训练超参数。'
+            result[key] = item
+        return jsonify({'presets': result})
+    except Exception as e:
+        fallback = {
+            'smoke': {'n_samples': 6, 'n_grains': 4, 'sim_n_steps': 8},
+            'lite': {'n_samples': 24, 'n_grains': 8, 'sim_n_steps': 40},
+            'std': {'n_samples': 64, 'n_grains': 16, 'sim_n_steps': 100},
+            'max': {'n_samples': 128, 'n_grains': 32, 'sim_n_steps': 120},
+        }
+        labels = {
+            'smoke': 'Dataset Smoke / 冒烟数据集',
+            'lite': 'Dataset Lite / 轻量数据集',
+            'std': 'Dataset Std / 标准数据集',
+            'max': 'Dataset Max / 全量数据集',
+        }
+        presets = {}
+        for key, cfg in fallback.items():
+            presets[key] = {
+                'id': key,
+                'label': labels[key],
+                'kind': 'dataset_generation',
+                'description': '仅控制 ML 专用仿真数据集规模、角度、晶粒数与仿真步数；不控制模型训练超参数。',
+                'metric_expectation': 'exploratory_only' if key == 'smoke' else 'holdout_validation',
+                'config': {
+                    'n_samples': cfg['n_samples'],
+                    'angle_mode': 'motor',
+                    'f_Goss_range': [0.4, 0.9],
+                    'theta_0_range': [1, 30],
+                    'halfwidth_range': [10.0, 10.0],
+                    'N_grains_range': [cfg['n_grains'], cfg['n_grains']],
+                    'Si_content': 3.0,
+                    'sim_n_steps': cfg['sim_n_steps'],
+                },
+                'estimate': {
+                    'n_samples': cfg['n_samples'],
+                    'n_angles': 2,
+                    'angles': [0, 90],
+                    'n_grains_est': cfg['n_grains'],
+                    'mumax3_tasks': cfg['n_samples'] * 2 * cfg['n_grains'],
+                    'sim_n_steps': cfg['sim_n_steps'],
+                },
+                'warning': str(e),
+            }
+        return jsonify({'presets': presets, 'warning': str(e)})
+
+
+# -- Dataset / ML simple presets (pipeline 页面用) -------------------------
+
+DATASET_PRESETS = {
+    'smoke': {'n_samples': 4,   'f_Goss_range': [0.5, 0.8], 'theta_0_range': [0, 30],
+              'N_grains': 5, 'halfwidth': 10, 'label': 'Smoke (4 样本)'},
+    'lite':  {'n_samples': 20,  'f_Goss_range': [0.35, 0.95], 'theta_0_range': [0, 45],
+              'N_grains': 5, 'halfwidth': 10, 'label': 'Lite (20 样本)'},
+    'std':   {'n_samples': 60,  'f_Goss_range': [0.35, 0.95], 'theta_0_range': [0, 45],
+              'N_grains': 5, 'halfwidth': 10, 'label': 'Std (60 样本)'},
+    'max':   {'n_samples': 150, 'f_Goss_range': [0.35, 0.95], 'theta_0_range': [0, 45],
+              'N_grains': 5, 'halfwidth': 10, 'label': 'Max (150 样本)'},
+}
+
+ML_TRAIN_PRESETS = {
+    'smoke':       {'model_type': 'direct_xgb', 'n_estimators': 50,  'label': 'Smoke'},
+    'lite':        {'model_type': 'direct_xgb', 'n_estimators': 150, 'label': 'Lite'},
+    'std':         {'model_type': 'direct_xgb', 'n_estimators': 300, 'label': 'Std ⭐'},
+    'max':         {'model_type': 'direct_xgb', 'n_estimators': 600, 'label': 'Max'},
+    'extra_trees': {'model_type': 'extra_trees','n_estimators': 300, 'label': 'ExtraTrees'},
+    'custom':      {'model_type': 'direct_xgb', 'n_estimators': 300, 'label': 'Custom'},
+}
+
+@app.route('/api/dataset/presets', methods=['GET'])
+def dataset_presets():
+    return jsonify({'presets': DATASET_PRESETS})
+
+@app.route('/api/ml/presets', methods=['GET'])
+def ml_train_presets():
+    return jsonify({'presets': ML_TRAIN_PRESETS})
+
+# -- ODF figures viewer ---------------------------------------------------
+
+@app.route('/api/odf/figures', methods=['GET'])
+def odf_figures():
+    """扫描 preinput/ 目录，返回含 odf_figures/ 子目录的批次列表。"""
+    preinput = Path('preinput')
+    items = []
+    if not preinput.exists():
+        return jsonify({'items': items})
+    for subdir in sorted(preinput.iterdir()):
+        if not subdir.is_dir():
+            continue
+        fig_dir = subdir / 'odf_figures'
+        has_odf = fig_dir.is_dir() and any(fig_dir.glob('*.png'))
+        figures = []
+        if has_odf:
+            for f in sorted(fig_dir.glob('*.png')):
+                figures.append({'name': f.name, 'path': _posix(f)})
+        items.append({'folder': subdir.name, 'has_odf': has_odf, 'figures': figures})
+    # 根目录下直接的 odf_figures/
+    root_fig_dir = preinput / 'odf_figures'
+    if root_fig_dir.is_dir():
+        figs = [{'name': f.name, 'path': _posix(f)} for f in sorted(root_fig_dir.glob('*.png'))]
+        if figs:
+            items.insert(0, {'folder': '(根目录)', 'has_odf': True, 'figures': figs})
+    return jsonify({'items': items})
+
+@app.route('/api/odf/preview', methods=['GET'])
+def odf_preview():
+    """内联预览 ODF PNG（不触发下载）。路径必须在 preinput/ 下且为 .png。"""
+    img_path = request.args.get('path', '')
+    p = Path(os.path.normpath(img_path))
+    if p.suffix.lower() != '.png':
+        return jsonify({'error': '只支持 PNG 预览'}), 400
+    parts = p.parts
+    if 'preinput' not in parts and 'odf_figures' not in parts:
+        return jsonify({'error': '路径安全限制：只能预览 preinput/ 下的 ODF 图片'}), 403
+    if not p.exists():
+        return jsonify({'error': '文件不存在'}), 404
+    return send_file(str(p.resolve()), mimetype='image/png')
 
 # -- ML train / infer -----------------------------------------------------
 
@@ -991,19 +1391,62 @@ def ml_train():
     ds   = data.get('dataset_path')
     if not ds or not Path(ds).exists():
         return jsonify({'error': 'dataset file not found'}), 400
-    tid = create_task('xgboost_train')
+    model_type = data.get('model_type', 'direct_xgb')
+    tid = create_task('model_train')
     run_task(tid, _get_ml().train,
              ds,
+             model_type=model_type,
              xgb_params=data.get('xgb_params'),
              test_size=float(data.get('test_size', 0.2)))
     return jsonify({'task_id': tid})
+
+@app.route('/api/ml/paper-presets', methods=['GET'])
+def ml_paper_presets():
+    try:
+        from paper_surrogate_trainer import get_paper_training_presets
+        return jsonify({'presets': get_paper_training_presets()})
+    except Exception as e:
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+@app.route('/api/ml/paper-train', methods=['POST'])
+def ml_paper_train():
+    data = request.json or {}
+    ds = data.get('dataset_path')
+    if not ds or not Path(ds).exists():
+        return jsonify({'error': 'dataset file not found'}), 400
+    from paper_surrogate_trainer import PaperSurrogateTrainer, resolve_paper_training_config
+    cfg = resolve_paper_training_config(data)
+    tid = create_task('paper_surrogate_model_selection')
+
+    def do_train():
+        trainer = PaperSurrogateTrainer(
+            output_dir=data.get('output_dir', 'data/paper_models'),
+            random_state=int(cfg.get('random_state', 42)),
+            xgb_params=cfg.get('xgb_params'),
+            extra_trees_params=cfg.get('extra_trees_params'),
+            pca_variance=float(cfg.get('pca_variance', 0.999)),
+            pca_max_components=cfg.get('pca_max_components'),
+            candidate_models=cfg.get('candidate_models'),
+        )
+        return trainer.run(
+            ds,
+            target_scope=cfg.get('target_scope', 'bh_only'),
+            min_samples=int(cfg.get('min_samples', 24)),
+            test_size=float(cfg.get('test_size', 0.2)),
+            n_splits=int(cfg.get('n_splits', 5)),
+            preset_id=cfg.get('preset_id'),
+            preset_label=cfg.get('preset_label'),
+        )
+
+    run_task(tid, do_train)
+    return jsonify({'task_id': tid, 'preset': cfg.get('preset_id')})
 
 @app.route('/api/ml/models', methods=['GET'])
 def ml_models():
     try:
         return jsonify({'models': _get_ml().list_models()})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'models': [], 'warning': str(e), 'traceback': traceback.format_exc()})
 
 @app.route('/api/ml/predict', methods=['POST'])
 def ml_predict():
@@ -1037,12 +1480,13 @@ def export_maxwell():
     mat_name  = data.get('mat_name') or 'GO_Sim_%s' % datetime.now().strftime('%Y%m%d_%H%M%S')
     thickness = float(data.get('thickness_mm', 0.35))
     try:
-        mx      = _get_mx()
-        content = mx.generate_amat_content(mat_name, H_RD, B_RD, H_TD, B_TD,
-                                           thickness_mm=thickness)
-        mx.save_amat_file(content, mat_name)
+        mx = _get_mx()
+        path = mx.export_from_bh_curves(
+            H_RD, B_RD, H_TD, B_TD, mat_name=mat_name,
+            thickness_mm=thickness, source='analysis_api'
+        )
         return send_file(
-            io.BytesIO(content.encode('utf-8')),
+            path,
             mimetype='application/octet-stream',
             as_attachment=True,
             download_name='%s.amat' % mat_name
@@ -1062,16 +1506,13 @@ def export_maxwell_from_prediction():
         if model_id:
             pred.load(model_id)
         result  = pred.predict_bh(params)
-        mx      = _get_mx()
-        content = mx.generate_amat_content(
-            mat_name,
-            result['RD']['H'], result['RD']['B'],
-            result['TD']['H'], result['TD']['B'],
-            thickness_mm=thickness
+        result['model_id'] = model_id
+        mx = _get_mx()
+        path = mx.export_from_prediction(
+            result, mat_name=mat_name, thickness_mm=thickness
         )
-        mx.save_amat_file(content, mat_name)
         return send_file(
-            io.BytesIO(content.encode('utf-8')),
+            path,
             mimetype='application/octet-stream',
             as_attachment=True,
             download_name='%s.amat' % mat_name
@@ -1087,7 +1528,80 @@ def list_maxwell_exports():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/bh-analysis/reference-list', methods=['GET'])
+def bh_analysis_reference_list():
+    """返回所有可用于对比图的材料列表（参考等级 + data/exports/ 历史仿真）。"""
+    try:
+        import bh_curve_analyzer as bhca
+        materials = bhca.list_available_materials()
+        return jsonify({'materials': materials})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/analyze/export-bh-analysis', methods=['POST'])
+def export_bh_analysis():
+    """
+    生成 .amat 文件（AEDT 格式）并运行 BH 曲线宏观参数分析，
+    对比 go_steel_data/output/ 中的参考等级，生成三张对比图。
+    返回 JSON 包含 metrics / core_loss / plot 路径。
+    """
+    data         = request.json or {}
+    name         = data.get('name') or 'GO_Sim_%s' % datetime.now().strftime('%Y%m%d_%H%M%S')
+    rd_H         = data.get('rd_H', [])
+    rd_B         = data.get('rd_B', [])
+    td_H         = data.get('td_H') or rd_H
+    td_B         = data.get('td_B') or rd_B
+    thickness_mm = float(data.get('thickness_mm', 0.35))
+    include_names = data.get('include_names')  # list[str] | None
+    try:
+        import bh_curve_analyzer as bhca
+
+        mx = _get_mx()
+        amat_content = mx.generate_amat_content(
+            name, rd_H, rd_B, td_H, td_B, thickness_mm=thickness_mm)
+        amat_path = mx.save_amat_file(amat_content, name)
+
+        export_dir = os.path.join(os.getcwd(), 'data', 'exports')
+        analysis   = bhca.analyze_bh_pair(
+            name, rd_H, rd_B, td_H, td_B,
+            save_dir=export_dir, thickness_mm=thickness_mm,
+            include_names=include_names,
+        )
+
+        def to_web(abs_path):
+            rel = os.path.relpath(abs_path, export_dir).replace('\\', '/')
+            return f'/data/exports/{rel}'
+
+        return jsonify({
+            'amat_filename':  '%s.amat' % name,
+            'amat_web_path':  '/data/exports/%s.amat' % name,
+            'plots': {k: to_web(v) for k, v in analysis['plots'].items()},
+            'metrics_rd':  analysis['metrics_rd'],
+            'metrics_td':  analysis['metrics_td'],
+            'core_loss':   analysis['core_loss'],
+            'csv_web_path':  to_web(analysis['csv_path']),
+            'json_web_path': to_web(analysis['json_path']),
+            'n_reference_materials': analysis.get('n_reference_materials', 0),
+        })
+    except Exception as e:
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+
+@app.route('/data/exports/<path:filename>')
+def serve_export_file(filename):
+    """静态文件服务：data/exports/ 下的 .amat / .png / .csv / .json。"""
+    from flask import send_from_directory
+    export_dir = os.path.join(os.getcwd(), 'data', 'exports')
+    return send_from_directory(export_dir, filename)
+
+
 # -- pipeline -------------------------------------------------------------
+
+@app.route('/api/pipeline/presets', methods=['GET'])
+def pipeline_presets():
+    from pipeline_runner import get_pipeline_presets
+    return jsonify({'presets': get_pipeline_presets()})
 
 @app.route('/api/pipeline/start', methods=['POST'])
 def pipeline_start():

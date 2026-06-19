@@ -1,25 +1,31 @@
-﻿# Python
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
-.Python
+*.egg-info/
+.env
 
-# Sim output
+# 运行时生成的数据目录（不纳入版本控制）
+preinput/
+input/
+grain_scripts/
 output/
-preinput/pipeline_*/
-grain_scripts/pipeline_*/
+data/datasets/
+data/models/
+data/exports/
 
-# ML artifacts
-data/datasets/*.csv
-data/models/*/
-data/exports/*.amat
-
-# Misc
-instance/
-.vscode/
+# 批处理脚本（scripts/ 下的运行文件，但保留目录本身）
+scripts/*.bat
+scripts/*.ps1
+scripts/*.sh
+*.bat
+*.ps1
+*.sh
+!setup_git.ps1
 .idea/
-*.swp
 .DS_Store
-Thumbs.db
+**/.DS_Store
+
+# 临时文件与日志
+tmp/
 *.log
-setup_git.ps1
+

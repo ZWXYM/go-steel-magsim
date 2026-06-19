@@ -1,0 +1,6 @@
+Goss texture fraction (f_Goss):      0.70
+Texture rotation angle (theta_0):    15 degrees
+Texture halfwidth (sigma):           10.0
+Halfwidth policy:                    fixed_for_pipeline
+Number of grains:                    10
+Si content:                          3.0
