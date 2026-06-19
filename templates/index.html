@@ -1709,7 +1709,7 @@ async function delSG(base,pathsJson){
   if(!confirm(`确定删除批次 "${base}" 的所有脚本？`)) return;
   let paths; try{paths=JSON.parse(pathsJson);}catch{paths=[];}
   for(const p of paths){
-    try{await api('/api/task-scripts/'+encodeURIComponent(p),{method:'DELETE'});}catch(e){}
+    try{await api('/api/task-scripts/'+p.split('/').map(encodeURIComponent).join('/'),{method:'DELETE'});}catch(e){}
   }
   toast('批次已删除','ok');
   loadTaskScripts();
@@ -2482,7 +2482,8 @@ async function _exportFEMM(curves){
 // ============================================================
 async function smartDownload(filename){
   showDlModal('<div style="display:flex;align-items:center;gap:10px"><span class="spin"></span><span style="color:var(--t2)">正在检查仿真配置...</span></div>',[]);
-  const r = await api('/api/task-scripts/'+encodeURIComponent(filename)+'/check');
+  const _encPath = filename.split('/').map(encodeURIComponent).join('/');
+  const r = await api('/api/task-scripts/'+_encPath+'/check');
   if(r.error){
     showDlModal(`<div style="color:var(--red);font-size:13px">⚠️ 检查失败: ${esc(r.error)}</div>`,[
       {l:'取消',s:'btn-g',fn:closeDlModal},
@@ -2514,14 +2515,14 @@ async function smartDownload(filename){
     {l:'仅下载脚本',s:'btn-g',fn:()=>{directDownload(filename);closeDlModal();}},
   ];
   if(r.all_ok) acts.push({l:`📦 打包下载（脚本 + MX3）`,s:'btn-p',fn:()=>{
-    window.location.href='/api/task-scripts/'+encodeURIComponent(filename)+'/download-zip';
+    window.location.href='/api/task-scripts/'+filename.split('/').map(encodeURIComponent).join('/')+'/download-zip';
     closeDlModal();
   }});
   showDlModal(html,acts);
 }
 
 function directDownload(filename){
-  window.location.href='/api/download/'+encodeURIComponent(filename);
+  window.location.href='/api/download/'+filename.split('/').map(encodeURIComponent).join('/');
 }
 
 function showDlModal(content,acts){
