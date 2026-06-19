@@ -354,18 +354,75 @@ def list_task_scripts():
 
 @app.route('/api/task-scripts/<path:filename>', methods=['DELETE'])
 def delete_task_script(filename):
-    # filename 可能含正斜杠或反斜杠，统一为正斜杠后依次尝试几个候选路径
+    import shutil as _shutil
+    cascade = request.args.get('cascade', 'true').lower() != 'false'
     fname = filename.replace('\\', '/')
     candidates = [
-        Path(fname),                          # 原始路径（如 scripts/run_xxx.ps1）
-        Path('scripts') / Path(fname).name,   # 在 scripts/ 下按文件名查找
-        Path(fname.split('/')[-1]),            # 根目录兼容
+        Path(fname),
+        Path('scripts') / Path(fname).name,
+        Path(fname.split('/')[-1]),
     ]
+    target = None
     for p in candidates:
         if p.exists() and p.suffix in ['.bat', '.ps1', '.sh']:
-            p.unlink()
-            return jsonify({'success': True})
-    return jsonify({'error': '文件不存在'}), 404
+            target = p; break
+    if not target:
+        return jsonify({'error': '文件不存在'}), 404
+
+    deleted = []
+    if cascade:
+        stem = target.stem  # e.g. run_pipeline_abc  or  run_ml_dataset_xyz
+        if stem.startswith('run_'):
+            run_id = stem[4:]          # strip leading 'run_'
+            # 删除同批次其他格式脚本（.bat / .ps1 / .sh）
+            for ext in ['.bat', '.ps1', '.sh']:
+                sib = target.parent / (stem + ext)
+                if sib.exists() and sib != target:
+                    sib.unlink(); deleted.append(_posix(sib))
+            # 删除 manifest JSON
+            for mname in [f'{stem}_manifest.json', f'{run_id}_manifest.json']:
+                mp = target.parent / mname
+                if mp.exists():
+                    mp.unlink(); deleted.append(_posix(mp)); break
+            # 删除关联的 preinput/ 和 grain_scripts/ 子目录
+            for base in ['preinput', 'grain_scripts']:
+                d = Path(base) / run_id
+                if d.exists() and d.is_dir():
+                    _shutil.rmtree(d); deleted.append(_posix(d) + '/')
+
+    target.unlink(); deleted.insert(0, _posix(target))
+    return jsonify({'success': True, 'deleted': deleted})
+
+
+@app.route('/api/grain-scripts/<path:config_name>', methods=['DELETE'])
+def delete_grain_script_config(config_name):
+    import shutil as _shutil
+    d = Path('grain_scripts') / config_name.replace('\\', '/').lstrip('/')
+    if not d.exists() or not d.is_dir():
+        return jsonify({'error': '配置目录不存在'}), 404
+    _shutil.rmtree(d)
+    return jsonify({'success': True, 'deleted': _posix(d) + '/'})
+
+
+@app.route('/api/preinput-item', methods=['DELETE'])
+def delete_preinput_item():
+    import shutil as _shutil
+    data = request.json or {}
+    raw = data.get('path', '').replace('\\', '/')
+    item_type = data.get('type', 'auto')   # 'file' | 'folder' | 'auto'
+    p = Path(raw)
+    # 安全检查：路径必须在 preinput/ 下
+    try:
+        p.resolve().relative_to(Path('preinput').resolve())
+    except ValueError:
+        return jsonify({'error': '路径不在 preinput/ 目录内'}), 403
+    if not p.exists():
+        return jsonify({'error': '路径不存在'}), 404
+    if p.is_dir():
+        _shutil.rmtree(p)
+    else:
+        p.unlink()
+    return jsonify({'success': True, 'deleted': _posix(p)})
 
 @app.route('/api/task-scripts/<path:filename>/preview', methods=['GET'])
 def preview_task_script(filename):

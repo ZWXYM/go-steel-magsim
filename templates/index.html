@@ -447,6 +447,7 @@ select option{background:var(--bg-2)}
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
             <button class="btn btn-g btn-sm" onclick="loadFiles()">🔄 刷新</button>
             <button class="btn btn-p btn-sm" onclick="moveSelToInput()">📂 移至 input/</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSelectedPreinput()">✕ 删除选中</button>
           </div>
         </div>
         <p style="font-size:11px;color:var(--t3);margin-bottom:10px">勾选左侧文件，点击"移至 input/"确认后方可生成 MX3 脚本。</p>
@@ -596,7 +597,9 @@ select option{background:var(--bg-2)}
     <div class="card">
       <div class="card-hdr">
         <span class="card-title">扫描仿真配置</span>
-        <button class="btn btn-g btn-sm" onclick="scanGrainScripts()" style="margin-left:auto">🔄 扫描 grain_scripts/</button>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn btn-g btn-sm" onclick="scanGrainScripts()">🔄 扫描 grain_scripts/</button>
+        </div>
       </div>
       <div id="batch-config-list">
         <div class="empty"><div class="ei">📂</div><p>点击扫描加载可用仿真配置</p></div>
@@ -1534,6 +1537,8 @@ async function scanGrainScripts(){
           <div class="fi-meta"><span>${cfg.n_grains} 晶粒 · ${Object.keys(cfg.angles).length} 角度</span></div>
         </div>
         <span class="batch-expand" style="margin-left:auto">▼</span>
+        <button class="btn btn-danger btn-sm" style="margin-left:8px;padding:2px 8px;font-size:11px"
+          onclick="event.stopPropagation();deleteGrainConfig('${esc(name)}')">✕ 删除</button>
       </div>
       <div class="batch-folder-files open">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;color:var(--t3)">
@@ -1706,12 +1711,17 @@ function toggleSG(gId){
 }
 
 async function delSG(base,pathsJson){
-  if(!confirm(`确定删除批次 "${base}" 的所有脚本？`)) return;
+  if(!confirm(`确定删除批次 "${base}" 的全部脚本？\n（关联的织构文件目录和仿真脚本目录也将一并删除）`)) return;
   let paths; try{paths=JSON.parse(pathsJson);}catch{paths=[];}
+  const allDeleted=[];
   for(const p of paths){
-    try{await api('/api/task-scripts/'+p.split('/').map(encodeURIComponent).join('/'),{method:'DELETE'});}catch(e){}
+    try{
+      const r=await api('/api/task-scripts/'+p.split('/').map(encodeURIComponent).join('/'),{method:'DELETE'});
+      if(r.deleted) allDeleted.push(...r.deleted);
+    }catch(e){}
   }
-  toast('批次已删除','ok');
+  const dirs=allDeleted.filter(x=>x.endsWith('/'));
+  toast(dirs.length?`批次已删除（含关联目录 ${dirs.length} 个）`:'批次已删除','ok');
   loadTaskScripts();
 }
 
@@ -1725,11 +1735,39 @@ async function previewScript(name){
 }
 
 async function delScript(name){
-  if(!confirm(`确定删除 ${name}？`)) return;
-  // 对每段路径分别编码，保留斜杠以兼容 Flask <path:filename> 路由
+  if(!confirm(`确定删除 ${name}？\n（关联的织构文件目录和仿真脚本目录也将一并删除）`)) return;
   const encoded=name.split('/').map(encodeURIComponent).join('/');
   const r=await api('/api/task-scripts/'+encoded,{method:'DELETE'});
-  if(r.success){toast('已删除','ok');loadTaskScripts();}
+  if(r.success){
+    const dirs=(r.deleted||[]).filter(x=>x.endsWith('/'));
+    toast(dirs.length?`已删除（含关联目录 ${dirs.length} 个）`:'已删除','ok');
+    loadTaskScripts();
+  } else toast(r.error||'删除失败','err');
+}
+
+async function deleteSelectedPreinput(){
+  const files=[...selectedPreinput];
+  const folders=[...selectedPreinputFolders];
+  if(!files.length && !folders.length){toast('请先选择文件或文件夹','err');return;}
+  const total=files.length+folders.length;
+  if(!confirm(`确定永久删除选中的 ${total} 项？此操作不可撤销。`)) return;
+  let cnt=0;
+  for(const p of files){
+    try{const r=await api('/api/preinput-item',{method:'DELETE',body:{path:p,type:'file'}});if(r.success)cnt++;}catch(e){}
+  }
+  for(const p of folders){
+    try{const r=await api('/api/preinput-item',{method:'DELETE',body:{path:p,type:'folder'}});if(r.success)cnt++;}catch(e){}
+  }
+  selectedPreinput.clear();selectedPreinputFolders.clear();
+  toast(`已删除 ${cnt} 项`,'ok');
+  loadFiles();
+}
+
+async function deleteGrainConfig(name){
+  if(!confirm(`确定永久删除仿真配置 "${name}"？\n（grain_scripts/${name}/ 目录将被删除，此操作不可撤销）`)) return;
+  const encoded=name.split('/').map(encodeURIComponent).join('/');
+  const r=await api('/api/grain-scripts/'+encoded,{method:'DELETE'});
+  if(r.success){toast(`已删除配置 ${name}`,'ok');scanGrainScripts();}
   else toast(r.error||'删除失败','err');
 }
 
