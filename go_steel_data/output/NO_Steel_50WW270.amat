@@ -1,0 +1,66 @@
+# Maxwell material library — NO_Steel_50WW270
+# Description: Wuhan NO steel, 0.50mm, P15/50≤2.70 W/kg, J2500=1.59T
+# Source: Wuhan Iron & Steel Co. (武钢有限) NO Electrical Steel Catalog
+# BH data: Hmax/Bmax from Epstein frame AC measurements (25cm)
+# Thickness: 0.5 mm | Density: 7600 kg/m³
+# Note: NO steel is isotropic — RD=TD BH curve.
+# Import: File > Import > Import Material Library (.amat)
+
+$begin 'NO_Steel_50WW270'
+	'CoordinateSystemType'='Cartesian'
+	'BulkOrSurface'='Bulk'
+	$begin 'PhysicsTypes'
+		'set'('Electromagnetic')
+	$end 'PhysicsTypes'
+	$begin 'AttachedData'
+	$end 'AttachedData'
+	$begin 'ModifierData'
+		$begin 'ThermalModifierData'
+			'modifier_data'='no_modifier'
+		$end 'ThermalModifierData'
+	$end 'ModifierData'
+	'permittivity'='1'
+	$begin 'permeability'
+		'property_type'='AnisoProperty'
+		$begin 'component1'
+			'property_type'='nonlinear'
+			'BTypeForSingleCurve'='Normal'
+			'HUnit'='A_per_meter'
+			'BUnit'='tesla'
+			'IsTemperatureDependent'=false
+			$begin 'BHCoordinates'
+				'DimUnits'('')
+				Points[62: 0, 0, 20, 0.163, 30, 0.36, 40, 0.563, 50, 0.728, 60, 0.852, 70, 0.943, 80, 1.015, 90, 1.07, 100, 1.115, 151, 1.242, 201, 1.302, 302, 1.36, 402, 1.392, 502, 1.414, 603, 1.43, 703, 1.444, 803, 1.457, 1004, 1.476, 1508, 1.517, 2011, 1.547, 3017, 1.596, 4019, 1.635, 5024, 1.668, 6031, 1.697, 7035, 1.722, 8051, 1.746, 9044, 1.767, 10055, 1.786, 20000, 1.809, 50000, 1.841]
+				$begin 'Temperatures'
+				$end 'Temperatures'
+			$end 'BHCoordinates'
+		$end 'component1'
+		$begin 'component2'
+			'property_type'='nonlinear'
+			'BTypeForSingleCurve'='Normal'
+			'HUnit'='A_per_meter'
+			'BUnit'='tesla'
+			'IsTemperatureDependent'=false
+			$begin 'BHCoordinates'
+				'DimUnits'('')
+				Points[62: 0, 0, 20, 0.163, 30, 0.36, 40, 0.563, 50, 0.728, 60, 0.852, 70, 0.943, 80, 1.015, 90, 1.07, 100, 1.115, 151, 1.242, 201, 1.302, 302, 1.36, 402, 1.392, 502, 1.414, 603, 1.43, 703, 1.444, 803, 1.457, 1004, 1.476, 1508, 1.517, 2011, 1.547, 3017, 1.596, 4019, 1.635, 5024, 1.668, 6031, 1.697, 7035, 1.722, 8051, 1.746, 9044, 1.767, 10055, 1.786, 20000, 1.809, 50000, 1.841]
+				$begin 'Temperatures'
+				$end 'Temperatures'
+			$end 'BHCoordinates'
+		$end 'component2'
+		'component3'='1000'
+	$end 'permeability'
+	'conductivity'='2000000'
+	'Tref'='22cel'
+	'mass_density'='7600'
+	$begin 'core_loss_type'
+		'property_type'='ChoiceProperty'
+		'Choice'='Electrical Steel'
+	$end 'core_loss_type'
+	'core_loss_kh'='0'
+	'core_loss_kc'='0'
+	'core_loss_ke'='0'
+	'core_loss_kdc'='0'
+	'core_loss_equiv_cut_depth'='0.0005meter'
+	'SolveInside'='1'
+$end 'NO_Steel_50WW270'

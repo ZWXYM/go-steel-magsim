@@ -1,0 +1,72 @@
+{
+  "data_source": "Digitized from Nippon Steel / JFE GO electrical steel catalog curves.",
+  "disclaimer": "Research/educational use. Verify against official datasheets for production.",
+  "references": [
+    "Nippon Steel GO Catalog (D001)",
+    "JFE Steel G-Core Catalog",
+    "GB/T 2521-2016"
+  ],
+  "monotonicity_fix": "Applied: BH curves corrected to be strictly monotone (slope >= 0.5*mu0).",
+  "grades": {
+    "B23R075": {
+      "description": "Domain-refined Hi-B",
+      "cn_equivalent": "23QG080",
+      "thickness_mm": 0.23,
+      "B50_RD_T": 1.839,
+      "B800_RD_T": 1.965,
+      "B800_TD_T": 1.7,
+      "checkpoints_RD_count": 27,
+      "checkpoints_TD_count": 21,
+      "files": {
+        "RD": "B23R075_RD.csv",
+        "TD": "B23R075_TD.csv",
+        "combined": "B23R075_combined.csv"
+      }
+    },
+    "B27R090": {
+      "description": "Hi-B",
+      "cn_equivalent": "27QG090",
+      "thickness_mm": 0.27,
+      "B50_RD_T": 1.829,
+      "B800_RD_T": 1.95,
+      "B800_TD_T": 1.68,
+      "checkpoints_RD_count": 28,
+      "checkpoints_TD_count": 21,
+      "files": {
+        "RD": "B27R090_RD.csv",
+        "TD": "B27R090_TD.csv",
+        "combined": "B27R090_combined.csv"
+      }
+    },
+    "B27R095": {
+      "description": "Conventional GO",
+      "cn_equivalent": "27QG095",
+      "thickness_mm": 0.27,
+      "B50_RD_T": 1.776,
+      "B800_RD_T": 1.925,
+      "B800_TD_T": 1.65,
+      "checkpoints_RD_count": 28,
+      "checkpoints_TD_count": 21,
+      "files": {
+        "RD": "B27R095_RD.csv",
+        "TD": "B27R095_TD.csv",
+        "combined": "B27R095_combined.csv"
+      }
+    },
+    "B30P105": {
+      "description": "Conventional GO",
+      "cn_equivalent": "30QG105",
+      "thickness_mm": 0.3,
+      "B50_RD_T": 1.741,
+      "B800_RD_T": 1.901,
+      "B800_TD_T": 1.6,
+      "checkpoints_RD_count": 29,
+      "checkpoints_TD_count": 21,
+      "files": {
+        "RD": "B30P105_RD.csv",
+        "TD": "B30P105_TD.csv",
+        "combined": "B30P105_combined.csv"
+      }
+    }
+  }
+}

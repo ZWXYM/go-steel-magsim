@@ -5,10 +5,10 @@ __pycache__/
 .env
 
 # 运行时生成的数据目录（不纳入版本控制）
-preinput/
-input/
-grain_scripts/
-output/
+/preinput/
+/input/
+/grain_scripts/
+/output/
 data/datasets/
 data/models/
 data/exports/

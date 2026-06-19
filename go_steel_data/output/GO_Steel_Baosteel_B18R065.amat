@@ -1,0 +1,72 @@
+# Maxwell material library - GO_Steel_Baosteel_B18R065
+# Source: Baosteel GO Electrical Steel EVI brochure
+# Local source PDF: go_steel_data/pdf/Baosteel_GO_EVI.pdf
+# Grade: B18R065
+# Family: Domain-refined high permeability GO
+# Thickness: 0.18 mm
+# Typical table values: P17/50=0.48 W/kg, P17/60=0.64 W/kg, J800=1.91 T, S17/50=1.91 VA/kg
+# component1/RD: digitized from Baosteel EVI DC B-H plot
+# component2/TD: representative hard-axis estimate, not supplier data
+# component3/ND: linear mu_r=1000 placeholder
+# H>1000 A/m points are extrapolated toward saturation.
+# Core-loss Kh/Kc/Ke are placeholders and left at 0.
+# Import in Maxwell: File > Import > Import Material Library
+
+$begin 'GO_Steel_Baosteel_B18R065'
+	'CoordinateSystemType'='Cartesian'
+	'BulkOrSurface'='Bulk'
+	$begin 'PhysicsTypes'
+		'set'('Electromagnetic')
+	$end 'PhysicsTypes'
+	$begin 'AttachedData'
+	$end 'AttachedData'
+	$begin 'ModifierData'
+		$begin 'ThermalModifierData'
+			'modifier_data'='no_modifier'
+		$end 'ThermalModifierData'
+	$end 'ModifierData'
+	'permittivity'='1'
+	$begin 'permeability'
+		'property_type'='AnisoProperty'
+		$begin 'component1'
+			'property_type'='nonlinear'
+			'BTypeForSingleCurve'='Normal'
+			'HUnit'='A_per_meter'
+			'BUnit'='tesla'
+			'IsTemperatureDependent'=false
+			$begin 'BHCoordinates'
+				'DimUnits'('')
+				Points[42: 0, 0, 9, 0.399, 10, 0.455, 12, 0.601, 15, 0.803, 20, 1.039, 30, 1.256, 40, 1.385, 50, 1.482, 80, 1.638, 100, 1.693, 150, 1.764, 200, 1.802, 300, 1.84, 500, 1.877, 800, 1.904, 1000, 1.914, 2000, 1.94, 5000, 1.97, 10000, 1.995, 50000, 2.025]
+				$begin 'Temperatures'
+				$end 'Temperatures'
+			$end 'BHCoordinates'
+		$end 'component1'
+		$begin 'component2'
+			'property_type'='nonlinear'
+			'BTypeForSingleCurve'='Normal'
+			'HUnit'='A_per_meter'
+			'BUnit'='tesla'
+			'IsTemperatureDependent'=false
+			$begin 'BHCoordinates'
+				'DimUnits'('')
+				Points[42: 0, 0, 30, 0.15, 50, 0.35, 80, 0.6, 100, 0.8, 130, 1, 160, 1.15, 200, 1.28, 250, 1.4, 300, 1.48, 400, 1.56, 500, 1.62, 600, 1.66, 800, 1.7, 1000, 1.74, 1500, 1.78, 2000, 1.82, 3000, 1.86, 5000, 1.9, 10000, 1.94, 50000, 1.97]
+				$begin 'Temperatures'
+				$end 'Temperatures'
+			$end 'BHCoordinates'
+		$end 'component2'
+		'component3'='1000'
+	$end 'permeability'
+	'conductivity'='2000000'
+	'Tref'='22cel'
+	'mass_density'='7650'
+	$begin 'core_loss_type'
+		'property_type'='ChoiceProperty'
+		'Choice'='Electrical Steel'
+	$end 'core_loss_type'
+	'core_loss_kh'='0'
+	'core_loss_kc'='0'
+	'core_loss_ke'='0'
+	'core_loss_kdc'='0'
+	'core_loss_equiv_cut_depth'='0.00017999999999999998meter'
+	'SolveInside'='1'
+$end 'GO_Steel_Baosteel_B18R065'

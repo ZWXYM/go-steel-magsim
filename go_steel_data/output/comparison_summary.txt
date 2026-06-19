@@ -1,0 +1,80 @@
+========================================================================
+GO ELECTRICAL STEEL — BH CURVE COMPARISON REPORT
+========================================================================
+
+Reference data sources:
+  [1] Nippon Steel ORIENTCORE HI-B catalog D008en (2019)
+      HI-B 0.30mm:  μ_r at 800 A/m = 1920 → B800 = 1.929 T
+      C.G.O. 0.30mm: μ_r at 800 A/m = 1820 → B800 = 1.829 T
+      Saturation Js = 2.03 T (both grades)
+  [2] IEC 60404-8-7 / GB/T 2521-2016 guaranteed minimums
+  [3] Extracted checkpoints (Nippon Steel/JFE catalog, digitized)
+
+------------------------------------------------------------------------
+Grade        Direction B@50     B@800    B@1000   B@2000   Std.min B800   Status
+------------------------------------------------------------------------
+B23R075      RD     1.840    1.965    1.967    1.978    >= 1.92 T      OK (+0.045T above min)
+B23R075      TD     0.350    1.700    1.740    1.820    n/a            (no standard for TD)
+
+B27R090      RD     1.830    1.950    1.952    1.975    >= 1.88 T      OK (+0.070T above min)
+B27R090      TD     0.300    1.680    1.720    1.800    n/a            (no standard for TD)
+
+B27R095      RD     1.780    1.925    1.940    1.960    >= 1.85 T      OK (+0.075T above min)
+B27R095      TD     0.250    1.650    1.690    1.780    n/a            (no standard for TD)
+
+B30P105      RD     1.740    1.900    1.930    1.950    >= 1.82 T      OK (+0.080T above min)
+B30P105      TD     0.200    1.600    1.640    1.750    n/a            (no standard for TD)
+
+------------------------------------------------------------------------
+
+COMPARISON AGAINST NIPPON STEEL CATALOG REFERENCE VALUES:
+
+  Grade B27R090 (Hi-B 0.27mm) vs Nippon HI-B 0.30mm reference:
+    Our B27R090 RD:         B800 = 1.950 T
+    Nippon HI-B 0.30mm ref: B800 = 1.929 T  (μ_r=1920 from catalog)
+    Difference: +0.021 T
+    Note: 0.27mm Hi-B should have slightly HIGHER B800 than 0.30mm
+    → Our B27R090 value (1.950T) is plausible and consistent
+
+  Grade B30P105 (Conventional GO 0.30mm) vs Nippon C.G.O. 0.30mm:
+    Our B30P105 RD:          B800 = 1.900 T
+    Nippon C.G.O. 0.30mm ref: B800 = 1.829 T  (μ_r=1820 from catalog)
+    Difference: +0.071 T
+    Note: B30P105 is a BETTER grade than Nippon's comparison C.G.O.
+    → B30P105 (W17/50≤1.05) outperforms Nippon M-5 (≈W17/50≈1.2-1.3)
+    → This discrepancy is EXPECTED (different grade quality levels)
+
+------------------------------------------------------------------------
+
+MONOTONICITY CORRECTIONS APPLIED TO ORIGINAL CHECKPOINTS:
+
+  B23R075_RD: (500,1.94),(800,1.94) → (500,1.963),(800,1.965)
+    Reason: B dropped from 1.962 at H=300 to 1.94 — physically impossible.
+    Fix: Continued slow rise consistent with approach to saturation.
+
+  B27R090_RD: (300,1.93),(500,1.93),(800,1.93) → (300,1.946),(500,1.948),(800,1.950)
+    Reason: B dropped from 1.945 at H=200 to 1.93 — non-monotone.
+    Fix: Maintained slow monotone rise from 1.945.
+
+  B27R095_RD: plateau at B=1.91 from H=150 to H=800
+    → (150,1.910),(200,1.912),(300,1.915),(500,1.920),(800,1.925)
+    Reason: Zero-slope section violates Maxwell's slope >= mu0 requirement.
+    Fix: Enforced minimal monotone increase (0.5*mu0 per A/m).
+
+  B30P105_RD: plateau + dip (500,1.89),(800,1.88) → (500,1.896),(800,1.900)
+    Reason: B decreased from 1.89 to 1.88 — unphysical B-drop.
+    Fix: Applied slow monotone rise consistent with near-saturation behavior.
+
+------------------------------------------------------------------------
+
+ANISOTROPY ANALYSIS (TD vs RD at H = 800 A/m):
+
+  B23R075: RD B800=1.965T, TD B800=1.700T, ratio=0.865 (13.5% softer in TD)
+  B27R090: RD B800=1.950T, TD B800=1.680T, ratio=0.862 (13.8% softer in TD)
+  B27R095: RD B800=1.925T, TD B800=1.650T, ratio=0.857 (14.3% softer in TD)
+  B30P105: RD B800=1.900T, TD B800=1.600T, ratio=0.842 (15.8% softer in TD)
+
+  Typical reference: HI-B steel has ~10% lower B800 in TD vs RD.
+  Conventional GO has ~4-8% lower B800 in TD vs RD.
+
+========================================================================

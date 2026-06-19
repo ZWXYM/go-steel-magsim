@@ -13,6 +13,10 @@ matplotlib.use('Agg')
 app = Flask(__name__)
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 确保运行时数据目录存在（新机器克隆后自动创建）
+for _d in ['data/exports', 'data/datasets', 'data/models', 'input', 'output', 'preinput']:
+    Path(os.path.join(SCRIPT_DIR, _d)).mkdir(parents=True, exist_ok=True)
 MODULES_DIR = os.path.join(SCRIPT_DIR, 'modules')
 sys.path.insert(0, SCRIPT_DIR)
 sys.path.insert(0, MODULES_DIR)  # 所有子模块统一放 modules/

@@ -1,0 +1,69 @@
+# Maxwell material library — GO_Steel_IEC_M089_27P
+# Description: Domain-refined Hi-B 0.27mm (IEC M089-27P typical values)
+# IEC grade: M089-27P
+# Thickness: 0.27 mm
+# DATA TYPE: REPRESENTATIVE TYPICAL VALUES (not manufacturer-guaranteed)
+# Source: IEC 60404-8-7 grade specs + Nippon Steel catalog D008en
+# Ref:  HI-B 0.30mm   μ_r@800A/m=1920 → B800≈1.929T (Nippon D008en App.III)
+#       CGO 0.30mm    μ_r@800A/m=1820 → B800≈1.829T (Nippon D008en App.III)
+# Verify all values against your material supplier before production use.
+# Import: File > Import > Import Material Library (.amat)
+
+$begin 'GO_Steel_IEC_M089_27P'
+	'CoordinateSystemType'='Cartesian'
+	'BulkOrSurface'='Bulk'
+	$begin 'PhysicsTypes'
+		'set'('Electromagnetic')
+	$end 'PhysicsTypes'
+	$begin 'AttachedData'
+	$end 'AttachedData'
+	$begin 'ModifierData'
+		$begin 'ThermalModifierData'
+			'modifier_data'='no_modifier'
+		$end 'ThermalModifierData'
+	$end 'ModifierData'
+	'permittivity'='1'
+	$begin 'permeability'
+		'property_type'='AnisoProperty'
+		$begin 'component1'
+			'property_type'='nonlinear'
+			'BTypeForSingleCurve'='Normal'
+			'HUnit'='A_per_meter'
+			'BUnit'='tesla'
+			'IsTemperatureDependent'=false
+			$begin 'BHCoordinates'
+				'DimUnits'('')
+				Points[56: 0, 0, 5, 0.11, 8, 0.34, 10, 0.57, 12, 0.83, 15, 1.14, 18, 1.37, 20, 1.47, 23, 1.55, 26, 1.61, 30, 1.65, 35, 1.69, 38, 1.72, 42, 1.76, 50, 1.8, 60, 1.84, 80, 1.87, 100, 1.89, 150, 1.904, 200, 1.91, 300, 1.913, 500, 1.916, 800, 1.92, 1000, 1.922, 2000, 1.948, 5000, 1.972, 10000, 1.988, 50000, 2.015]
+				$begin 'Temperatures'
+				$end 'Temperatures'
+			$end 'BHCoordinates'
+		$end 'component1'
+		$begin 'component2'
+			'property_type'='nonlinear'
+			'BTypeForSingleCurve'='Normal'
+			'HUnit'='A_per_meter'
+			'BUnit'='tesla'
+			'IsTemperatureDependent'=false
+			$begin 'BHCoordinates'
+				'DimUnits'('')
+				Points[42: 0, 0, 30, 0.1, 50, 0.24, 80, 0.46, 100, 0.65, 130, 0.85, 160, 1, 200, 1.15, 250, 1.27, 300, 1.36, 400, 1.45, 500, 1.52, 600, 1.57, 800, 1.62, 1000, 1.66, 1500, 1.71, 2000, 1.76, 3000, 1.81, 5000, 1.86, 10000, 1.91, 50000, 1.96]
+				$begin 'Temperatures'
+				$end 'Temperatures'
+			$end 'BHCoordinates'
+		$end 'component2'
+		'component3'='1000'
+	$end 'permeability'
+	'conductivity'='2000000'
+	'Tref'='22cel'
+	'mass_density'='7650'
+	$begin 'core_loss_type'
+		'property_type'='ChoiceProperty'
+		'Choice'='Electrical Steel'
+	$end 'core_loss_type'
+	'core_loss_kh'='0'
+	'core_loss_kc'='0'
+	'core_loss_ke'='0'
+	'core_loss_kdc'='0'
+	'core_loss_equiv_cut_depth'='0.00027meter'
+	'SolveInside'='1'
+$end 'GO_Steel_IEC_M089_27P'
