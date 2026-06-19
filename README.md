@@ -85,7 +85,7 @@ graph LR
 ### 安装依赖
 
 ```bash
-git clone https://github.com/<your-username>/go-steel-magsim.git
+git clone https://github.com/ZWXYM/go-steel-magsim.git
 cd go-steel-magsim
 pip install -r requirements.txt
 ```
@@ -261,6 +261,6 @@ MIT License — 学术研究与非商业用途。引用请注明出处。
   title  = {GO-Steel MagSim: A Micromagnetic Simulation and ML Surrogate Platform for GO Silicon Steel},
   author = {YUCE},
   year   = {2025},
-  url    = {https://github.com/<your-username>/go-steel-magsim}
+  url    = {https://github.com/ZWXYM/go-steel-magsim}
 }
 ```
