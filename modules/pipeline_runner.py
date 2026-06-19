@@ -11,6 +11,8 @@ import threading
 import contextlib
 import io
 import sys
+import platform
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
@@ -331,24 +333,65 @@ class PipelineRunner:
 
             # ── 阶段 2: 批处理脚本生成 ────────────────────────────
             self._set_stage(pid, 'batch_gen')
-            self._log(pid, '生成批处理脚本 (.ps1 / .bat / .sh)')
-            # 收集所有配置供 gpb 使用
+            self._log(pid, '生成批处理脚本 (.ps1 / .sh)')
             configs_for_gpb = gis.get_configs_in_dir(f'grain_scripts/pipeline_{pid}')
-            import pathlib as _pl; _pl.Path('scripts').mkdir(exist_ok=True)
-            batch_script = f'scripts/run_pipeline_{pid}.ps1'
+            Path('scripts').mkdir(exist_ok=True)
+            batch_ps1 = f'scripts/run_pipeline_{pid}.ps1'
+            batch_sh  = f'scripts/run_pipeline_{pid}.sh'
             with contextlib.redirect_stdout(io.StringIO()):
-                gpb.generate_multi_config_powershell_script(configs_for_gpb, batch_script)
-            s['results']['batch_script'] = batch_script
-            self._log(pid, f'批处理脚本: {batch_script}')
+                gpb.generate_multi_config_powershell_script(configs_for_gpb, batch_ps1)
+                gpb.generate_multi_config_bash_script(configs_for_gpb, batch_sh)
+            s['results']['batch_script']    = batch_ps1
+            s['results']['batch_script_sh'] = batch_sh
+            self._log(pid, f'批处理脚本（Windows）: {batch_ps1}')
+            self._log(pid, f'批处理脚本（Linux）:   {batch_sh}')
             s['progress_pct'] = 100
 
-            # ── 阶段 3: 等待仿真 ──────────────────────────────────
+            # ── 阶段 3: 自动运行仿真（或回退到手动等待） ────────────
             self._set_stage(pid, 'wait_sim')
-            s['status'] = 'waiting_sim'
-            self._log(pid, f'请在 GPU 机器上运行: {batch_script}')
-            self._log(pid, '仿真完成后，请点击页面上的 [仿真已完成，继续] 按钮')
-            ev.wait()  # 阻塞，直到 resume_after_sim 被调用
-            self._log(pid, '收到继续信号，开始聚合分析...')
+
+            # 检测 MuMax3 是否可用
+            mumax3_available = False
+            try:
+                subprocess.run(['mumax3', '-v'], capture_output=True, timeout=12)
+                mumax3_available = True
+            except Exception:
+                pass
+
+            if mumax3_available:
+                s['status'] = 'running_sim'
+                is_win = platform.system() == 'Windows'
+                sim_script = batch_ps1 if is_win else batch_sh
+                cmd = (['powershell', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', sim_script]
+                       if is_win else ['bash', sim_script])
+                self._log(pid, f'检测到 MuMax3，自动执行仿真脚本: {sim_script}')
+                try:
+                    proc = subprocess.Popen(
+                        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                        text=True, encoding='utf-8', errors='replace',
+                    )
+                    for line in proc.stdout:
+                        stripped = line.rstrip()
+                        if stripped:
+                            self._log(pid, stripped)
+                    proc.wait()
+                    if proc.returncode != 0:
+                        raise RuntimeError(f'仿真脚本退出码 {proc.returncode}，请检查 MuMax3 配置')
+                    self._log(pid, f'仿真自动完成 (exit={proc.returncode})')
+                except RuntimeError:
+                    raise
+                except Exception as exc:
+                    self._log(pid, f'⚠ 自动仿真异常: {exc}，切换为手动等待')
+                    s['status'] = 'waiting_sim'
+                    ev.wait()
+            else:
+                s['status'] = 'waiting_sim'
+                self._log(pid, '⚠ 未在 PATH 中检测到 mumax3')
+                self._log(pid, f'  → 请手动在 GPU 机器上运行: {batch_ps1 if platform.system() == "Windows" else batch_sh}')
+                self._log(pid, '  → 仿真完成后，点击 [仿真已完成，继续] 按钮')
+                ev.wait()
+
+            self._log(pid, '进入聚合分析阶段...')
 
             # ── 阶段 4: 结果聚合 ──────────────────────────────────
             self._set_stage(pid, 'analyze')

@@ -348,14 +348,23 @@ def list_task_scripts():
                 scripts.append({'name': f.name, 'size': stat.st_size,
                                 'created': datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
                                 'type': f.suffix[1:], 'task_count': task_count,
-                                'configs': configs, 'angles': angles_info, 'path': str(f)})
+                                'configs': configs, 'angles': angles_info,
+                                'path': str(f).replace('\\', '/')})
     return jsonify({'scripts': sorted(scripts, key=lambda x: x['created'], reverse=True)})
 
 @app.route('/api/task-scripts/<path:filename>', methods=['DELETE'])
 def delete_task_script(filename):
-    p = Path(filename)
-    if p.exists() and p.suffix in ['.bat','.ps1','.sh']:
-        p.unlink(); return jsonify({'success': True})
+    # filename 可能含正斜杠或反斜杠，统一为正斜杠后依次尝试几个候选路径
+    fname = filename.replace('\\', '/')
+    candidates = [
+        Path(fname),                          # 原始路径（如 scripts/run_xxx.ps1）
+        Path('scripts') / Path(fname).name,   # 在 scripts/ 下按文件名查找
+        Path(fname.split('/')[-1]),            # 根目录兼容
+    ]
+    for p in candidates:
+        if p.exists() and p.suffix in ['.bat', '.ps1', '.sh']:
+            p.unlink()
+            return jsonify({'success': True})
     return jsonify({'error': '文件不存在'}), 404
 
 @app.route('/api/task-scripts/<path:filename>/preview', methods=['GET'])

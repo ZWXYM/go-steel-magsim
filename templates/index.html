@@ -654,8 +654,8 @@ select option{background:var(--bg-2)}
     <div class="card">
       <div class="card-hdr">
         <span class="card-title">仿真任务脚本</span>
-        <button class="btn btn-g btn-sm" onclick="clearDoneJobs()" style="margin-left:auto" title="移除所有已完成/已停止的任务记录">🗑 清除已完成</button>
-        <button class="btn btn-g btn-sm" onclick="loadTaskScripts()">🔄 刷新</button>
+        <button class="btn btn-g btn-sm" onclick="loadTaskScripts()" style="margin-left:auto">🔄 刷新列表</button>
+        <button class="btn btn-g btn-sm" onclick="clearDoneJobs()" title="移除执行队列中已完成/已停止的运行记录（不删除脚本文件）">清除运行记录</button>
       </div>
       <div id="task-scripts-wrap">
         <div class="empty"><div class="ei">☰</div><p>暂无批处理任务文件</p></div>
