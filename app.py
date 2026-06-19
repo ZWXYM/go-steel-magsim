@@ -10,6 +10,14 @@ from flask import Flask, request, jsonify, render_template, send_file, Response,
 import matplotlib
 matplotlib.use('Agg')
 
+# Pre-load sklearn submodules at startup so concurrent lazy imports never race on a
+# partially-initialized sklearn.base (Flask threaded=True can trigger this).
+try:
+    import sklearn.base, sklearn.multioutput, sklearn.decomposition
+    import sklearn.ensemble, sklearn.metrics, sklearn.model_selection, sklearn.preprocessing
+except ImportError:
+    pass
+
 app = Flask(__name__)
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
