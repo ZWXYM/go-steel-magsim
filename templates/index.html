@@ -3661,15 +3661,31 @@ function loadModelListForPred() {
   });
 }
 
+// Returns cached prediction result, or fetches fresh using current form inputs.
+async function _fetchPredBH() {
+  if (window._currentPredResult?.RD?.H?.length > 0) return window._currentPredResult;
+  const mid = document.getElementById('pred-model')?.value;
+  if (!mid) throw new Error('请先选择模型并运行预测');
+  const params = {
+    f_Goss:        parseFloat(document.getElementById('pred-fgoss').value),
+    theta_0_deg:   parseFloat(document.getElementById('pred-theta').value),
+    halfwidth_deg: parseFloat(document.getElementById('pred-hw').value),
+    Si_content:    parseFloat(document.getElementById('pred-si').value),
+  };
+  const r = await fetch('/api/ml/predict', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({model_id:mid, params})});
+  const data = await r.json();
+  if (data.error) throw new Error(data.error);
+  window._currentPredResult = data;
+  return data;
+}
+
 function runPrediction() {
   const mid = document.getElementById('pred-model').value;
   if (!mid) { alert('请先训练或加载一个模型'); return; }
-  const predResult = document.getElementById('pred-result');
+  const btn = document.querySelector('button[onclick="runPrediction()"]');
+  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ 预测中...'; }
   const predFull = document.getElementById('pred-full-wrap');
-  if (predResult) predResult.style.display = 'block';
   if (predFull) predFull.style.display = 'none';
-  _currentPredResult = null;
-  // N_grains 由后端自动填入 DEFAULT_N_GRAINS=5，前端不传
   const params = {
     f_Goss:        parseFloat(document.getElementById('pred-fgoss').value),
     theta_0_deg:   parseFloat(document.getElementById('pred-theta').value),
@@ -3687,7 +3703,6 @@ function runPrediction() {
     renderBHChart(data);
     if (data.full_direction) renderFullDirectionCharts(data.full_direction, 'pred-full-');
     renderScalars(data.scalars || {}, data.RD);
-    // 显示铁损系数估算
     const rd=data.RD||{};
     if(rd.H&&rd.H.length>2){
       const clWrap=document.getElementById('pred-core-loss');
@@ -3697,6 +3712,8 @@ function runPrediction() {
     }
   }).catch(err => {
     alert('预测失败: ' + err.message);
+  }).finally(() => {
+    if (btn) { btn.disabled = false; btn.innerHTML = '⚡ 立即预测'; }
   });
 }
 
@@ -3871,8 +3888,8 @@ async function exportBHAnalysis(source) {
     thickness_mm = parseFloat(document.getElementById('ofd-thickness')?.value) || 0.35;
     resultEl = document.getElementById('ofd-analysis-result');
   } else {
-    const pr = window._currentPredResult;
-    if (!pr?.RD?.H) { toast('请先运行预测', 'err'); return; }
+    let pr;
+    try { pr = await _fetchPredBH(); } catch(e) { toast(e.message || '请先运行预测', 'err'); return; }
     rd_H = pr.RD.H; rd_B = pr.RD.B;
     td_H = (pr.TD || pr.RD).H; td_B = (pr.TD || pr.RD).B;
     name = (document.getElementById('pred-mat-name')?.value || '').trim()
@@ -3990,15 +4007,16 @@ function _renderBHAnalysisResult(r) {
 </div>`;
 }
 
-function copyBHData() {
-  if (!_currentPredResult) return;
-  const rd = _currentPredResult.RD || {};
-  const td = _currentPredResult.TD || {};
+async function copyBHData() {
+  let pr;
+  try { pr = await _fetchPredBH(); } catch(e) { toast(e.message || '请先运行预测', 'err'); return; }
+  const rd = pr.RD || {};
+  const td = pr.TD || {};
   const H  = rd.H || [];
   const lines = ['H (A/m)\tB_RD (T)\tB_TD (T)'];
   H.forEach((h,i) => lines.push(`${h}\t${(rd.B||[])[i]||''}\t${(td.B||[])[i]||''}`));
   navigator.clipboard.writeText(lines.join('\n'))
-    .then(() => alert('B-H 数据已复制到剪贴板 (TSV 格式)'));
+    .then(() => toast('B-H 数据已复制到剪贴板 (TSV 格式)', 'ok'));
 }
 
 // ═══════════════════════════════════════════════════
