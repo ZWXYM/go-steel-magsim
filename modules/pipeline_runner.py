@@ -318,7 +318,7 @@ class PipelineRunner:
 
             # ── 阶段 1: MX3 脚本生成 ──────────────────────────────
             self._set_stage(pid, 'script_gen')
-            gis.SimulationConfig.N_STEPS = max(4, int(config.get('sim_n_steps', 100)))
+            gis.SimulationConfig.N_STEPS = max(4, int(config.get('sim_n_steps', gis.SimulationConfig.N_STEPS)))
             self._log(pid, f'仿真步数 N_STEPS={gis.SimulationConfig.N_STEPS}')
             if 'sim_h_max' in config:
                 gis.SimulationConfig.H_MAX = float(config.get('sim_h_max'))

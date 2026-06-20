@@ -1555,13 +1555,15 @@ def export_maxwell():
     B_RD      = data.get('B_RD', [])
     H_TD      = data.get('H_TD')
     B_TD      = data.get('B_TD')
-    mat_name  = data.get('mat_name') or 'GO_Sim_%s' % datetime.now().strftime('%Y%m%d_%H%M%S')
-    thickness = float(data.get('thickness_mm', 0.35))
+    mat_name   = data.get('mat_name') or 'GO_Sim_%s' % datetime.now().strftime('%Y%m%d_%H%M%S')
+    thickness  = float(data.get('thickness_mm', 0.35))
+    si_content = float(data.get('Si_content', 3.0))
     try:
         mx = _get_mx()
         path = mx.export_from_bh_curves(
             H_RD, B_RD, H_TD, B_TD, mat_name=mat_name,
-            thickness_mm=thickness, source='analysis_api'
+            thickness_mm=thickness, source='analysis_api',
+            si_content=si_content
         )
         return send_file(
             path,

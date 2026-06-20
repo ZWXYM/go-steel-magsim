@@ -218,21 +218,26 @@ def export_from_bh_curves(rd_H: list, rd_B: list,
                            mat_name: str = None,
                            thickness_mm: float = 0.35,
                            export_dir: str = 'data/exports',
-                           source: str = None) -> str:
+                           source: str = None,
+                           si_content: float = 3.0) -> str:
     """
     从手动 B-H 数据生成并保存 .amat 文件，返回文件路径。
     mat_name 为 None 时自动生成时间戳命名。
+    si_content: 用于从参考数据库查找 Hc（影响 kh 估算）。
     """
+    from go_steel_reference import get_reference_hc
     if mat_name is None:
         mat_name = f'GO_Sim_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
     if td_H is None or td_B is None:
         td_H, td_B = rd_H, rd_B
+    ref_hc = get_reference_hc(si_content=si_content)
     pair = calibrate_material_pair(
         {'H': rd_H, 'B': rd_B, 'source': source or 'manual_export_RD'},
         {'H': td_H, 'B': td_B, 'source': source or 'manual_export_TD'},
     )
     content = generate_amat_content(mat_name, rd_H, rd_B, td_H, td_B,
-                                    thickness_mm=thickness_mm)
+                                    thickness_mm=thickness_mm,
+                                    reference_hc_am=ref_hc)
     metadata = {
         'material_name': mat_name,
         'source': source,
