@@ -230,7 +230,7 @@ pause
     with open(output_filename, 'w', encoding='gbk') as f:
         f.write(script)
 
-    print(f"✓ Windows批处理脚本已生成: {output_filename}")
+    print(f"[OK] Windows批处理脚本已生成: {output_filename}")
 
 
 # ========================================
@@ -420,7 +420,7 @@ if (-not $env:YUCE_NONINTERACTIVE) {{
     with open(output_filename, 'w', encoding='utf-8') as f:
         f.write(script)
 
-    print(f"✓ PowerShell脚本已生成: {output_filename}")
+    print(f"[OK] PowerShell脚本已生成: {output_filename}")
 
 
 # ========================================
@@ -642,7 +642,7 @@ read
     # 设置可执行权限
     os.chmod(output_filename, 0o755)
 
-    print(f"✓ Linux Bash脚本已生成: {output_filename}")
+    print(f"[OK] Linux Bash脚本已生成: {output_filename}")
     if mumax3_path != 'mumax3':
         print(f"  使用自定义mumax3路径: {mumax3_path}")
 
@@ -769,7 +769,7 @@ def get_mumax3_path():
         check_path = Path(path)
         if check_path.exists():
             if check_path.is_file():
-                print(f"✓ 已找到mumax3: {path}")
+                print(f"[OK] 已找到mumax3: {path}")
                 return path
             else:
                 print(f"错误: {path} 不是文件")
@@ -878,7 +878,7 @@ def main():
             generate_multi_config_bash_script(selected_configs, sh_file)
 
         print("\n" + "=" * 60)
-        print("✓ 脚本生成完成!")
+        print("[OK] 脚本生成完成!")
         print("=" * 60)
 
         print("\n运行说明:")

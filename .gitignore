@@ -28,4 +28,6 @@ scripts/*.sh
 # 临时文件与日志
 tmp/
 *.log
+data/.calib_state.json
+data/sim_bh/
 
