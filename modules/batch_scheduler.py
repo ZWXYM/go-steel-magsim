@@ -426,23 +426,25 @@ if (-not $env:YUCE_NONINTERACTIVE) {{
 # ========================================
 # Bash脚本生成(Linux) - 修改版本,支持自定义mumax3路径
 # ========================================
-def generate_multi_config_bash_script(selected_configs, output_filename, mumax3_path='mumax3'):
+def generate_multi_config_bash_script(selected_configs, output_filename, mumax3_path='mumax3', run_name=None):
     """生成支持多配置的Linux Bash脚本
 
     Args:
         selected_configs: 选中的配置列表
         output_filename: 输出文件名
         mumax3_path: mumax3可执行文件路径,默认为'mumax3'(已添加到PATH)
+        run_name: 输出目录名；None 时自动生成带时间戳的名称
     """
     timestamp = get_timestamp()
 
     # 构建运行目录名称
-    if len(selected_configs) == 1:
-        config_name = selected_configs[0][0]
-        angle_str = format_angle_list(selected_configs[0][2])
-        run_name = f"run_{config_name}_angles_{angle_str}_{timestamp}"
-    else:
-        run_name = f"run_multi_configs_{timestamp}"
+    if not run_name:
+        if len(selected_configs) == 1:
+            config_name = selected_configs[0][0]
+            angle_str = format_angle_list(selected_configs[0][2])
+            run_name = f"run_{config_name}_angles_{angle_str}_{timestamp}"
+        else:
+            run_name = f"run_multi_configs_{timestamp}"
 
     # 计算总任务数
     total_tasks = sum(

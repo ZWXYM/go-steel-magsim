@@ -337,12 +337,20 @@ class PipelineRunner:
             self._set_stage(pid, 'batch_gen')
             self._log(pid, '生成批处理脚本 (.ps1 / .sh)')
             configs_for_gpb = gis.get_configs_in_dir(f'grain_scripts/pipeline_{pid}')
+            # Strip the 'pipeline_{pid}/' prefix from output_name so results land at
+            # output/pipeline_{pid}/{config_shortname}/ (not the double-nested path
+            # output/pipeline_{pid}/pipeline_{pid}/{config_shortname}/).
+            _pfx = f'pipeline_{pid}'
+            configs_for_gpb = [
+                (cname, {**cdata, 'output_name': Path(cname.replace('\\', '/')).name}, angles)
+                for cname, cdata, angles in configs_for_gpb
+            ]
             Path('scripts').mkdir(exist_ok=True)
             batch_ps1 = f'scripts/run_pipeline_{pid}.ps1'
             batch_sh  = f'scripts/run_pipeline_{pid}.sh'
             with contextlib.redirect_stdout(io.StringIO()):
-                gpb.generate_multi_config_powershell_script(configs_for_gpb, batch_ps1)
-                gpb.generate_multi_config_bash_script(configs_for_gpb, batch_sh)
+                gpb.generate_multi_config_powershell_script(configs_for_gpb, batch_ps1, run_name=_pfx)
+                gpb.generate_multi_config_bash_script(configs_for_gpb, batch_sh, run_name=_pfx)
             s['results']['batch_script']    = batch_ps1
             s['results']['batch_script_sh'] = batch_sh
             self._log(pid, f'批处理脚本（Windows）: {batch_ps1}')
