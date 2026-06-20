@@ -535,30 +535,38 @@ select option{background:var(--bg-2)}
           </div>
         </div>
 
-        <div class="coll-hdr" onclick="toggleColl(this)"><span>⚙ 材料参数</span><span class="chevron">▼</span></div>
+        <div class="coll-hdr" onclick="toggleColl(this)"><span>⚙ 材料参数</span><span class="chevron">▲</span></div>
         <div class="coll-body">
           <div class="fr fr3">
-            <div class="fg"><label>Msat (A/m)</label><input type="number" id="p-msat" value="1520000" step="10000"></div>
-            <div class="fg"><label>Aex (J/m)</label><input type="number" id="p-aex" value="2.1e-11" step="1e-12"></div>
-            <div class="fg"><label>Gilbert α</label><input type="number" id="p-alpha" value="0.01" step="0.001" min="0.001"></div>
+            <div class="fg"><label>Msat (A/m)</label><input type="number" id="p-msat" value="1560000" step="10000" oninput="updatePhysicsHints()"><span class="hint">Fe-3%Si ≈ 1.56×10⁶</span></div>
+            <div class="fg"><label>Aex (J/m)</label><input type="number" id="p-aex" value="2.1e-11" step="1e-12"><span class="hint">交换常数</span></div>
+            <div class="fg"><label>Gilbert α</label><input type="number" id="p-alpha" value="0.01" step="0.001" min="0.001"><span class="hint">阻尼系数</span></div>
           </div>
           <div class="fr fr3">
-            <div class="fg"><label>Ku1 基准 (J/m³)</label><input type="number" id="p-ku1" value="48000" step="1000"></div>
-            <div class="fg"><label>Si含量 (%)</label><input type="number" id="p-si" value="3.0" step="0.1" min="0" max="10"></div>
-            <div class="fg"><label>H_max (A/m)</label><input type="number" id="p-hmax" value="7500" step="500"></div>
+            <div class="fg"><label>Ku1 基准 (J/m³) <span style="color:var(--t3);font-size:11px">Si=0%截距</span></label><input type="number" id="p-ku1" value="48000" step="1000" oninput="updatePhysicsHints()"><span class="hint">Moses 2012: 4.8×10⁴</span></div>
+            <div class="fg"><label>Si含量 (%)</label><input type="number" id="p-si" value="3.0" step="0.1" min="0" max="10" oninput="updatePhysicsHints()"><span class="hint">Fe-Si钢 2.5–3.5%</span></div>
+            <div class="fg"><label>H_max (A/m)</label><input type="number" id="p-hmax" value="50000" step="1000" oninput="updatePhysicsHints()"><span class="hint">需 &gt; H_k 才能翻转</span></div>
+          </div>
+          <!-- 实时物理参数显示 -->
+          <div id="physics-hints" style="display:flex;gap:12px;flex-wrap:wrap;padding:8px 10px;background:var(--bg-4);border-radius:6px;margin-top:4px;font-family:var(--font-mono);font-size:12px;color:var(--t2)">
+            <span>Ku1实际 = <b id="ph-ku1">—</b> J/m³</span>
+            <span>H_k = <b id="ph-hk">—</b> A/m</span>
+            <span>μ₀Msat = <b id="ph-bsat">—</b> T</span>
+            <span>H_max/H_k = <b id="ph-ratio">—</b>×</span>
           </div>
         </div>
 
-        <div class="coll-hdr" onclick="toggleColl(this)"><span>▦ 网格参数</span><span class="chevron">▼</span></div>
+        <div class="coll-hdr" onclick="toggleColl(this)"><span>▦ 网格参数</span><span class="chevron">▲</span></div>
         <div class="coll-body">
           <div class="fr fr4">
-            <div class="fg"><label>Grid X</label><input type="number" id="p-gx" value="4" min="1"></div>
-            <div class="fg"><label>Grid Y</label><input type="number" id="p-gy" value="4" min="1"></div>
-            <div class="fg"><label>Grid Z</label><input type="number" id="p-gz" value="1" min="1"></div>
-            <div class="fg"><label>单元 (nm)</label><input type="number" id="p-cell" value="4" step="0.5" min="0.5"></div>
+            <div class="fg"><label>Grid X</label><input type="number" id="p-gx" value="4" min="1" oninput="updateRVE()"></div>
+            <div class="fg"><label>Grid Y</label><input type="number" id="p-gy" value="4" min="1" oninput="updateRVE()"></div>
+            <div class="fg"><label>Grid Z</label><input type="number" id="p-gz" value="1" min="1" oninput="updateRVE()"></div>
+            <div class="fg"><label>单元 (nm)</label><input type="number" id="p-cell" value="4" step="0.5" min="0.5" oninput="updateRVE()"></div>
           </div>
-          <div class="fr fr2">
-            <div class="fg"><label>每段步数</label><input type="number" id="p-nstep" value="100" min="10" step="10"></div>
+          <div class="fr fr3">
+            <div class="fg"><label>每段步数 <span style="color:var(--t3);font-size:11px">×4段</span></label><input type="number" id="p-nstep" value="150" min="10" step="10"><span class="hint">150步×4段=600次minimize</span></div>
+            <div class="fg"><label>外场步进模式</label><select id="p-field-mode"><option value="linear">线性（默认）</option><option value="log">对数密集低场</option></select></div>
             <div class="fg"><label>RVE 预览</label><div style="font-family:var(--font-mono);font-size:11px;color:var(--t3);padding:8px 10px;background:var(--bg-4);border-radius:4px" id="rve-prev">—</div></div>
           </div>
         </div>
@@ -1066,6 +1074,29 @@ function updateRVE(){
   if(el) el.textContent=`${(gx*cell).toFixed(1)} × ${(gy*cell).toFixed(1)} × ${(gz*cell).toFixed(2)} nm`;
 }
 
+function updatePhysicsHints(){
+  const ku1Base=parseFloat(document.getElementById('p-ku1')?.value)||48000;
+  const si=parseFloat(document.getElementById('p-si')?.value)||3.0;
+  const msat=parseFloat(document.getElementById('p-msat')?.value)||1560000;
+  const hmax=parseFloat(document.getElementById('p-hmax')?.value)||50000;
+  const MU0=4*Math.PI*1e-7;
+  const ku1=ku1Base-0.4*si*1e4;
+  const hk=2*ku1/(MU0*msat);
+  const bsat=MU0*msat;
+  const ratio=hmax/hk;
+  const fmtK=v=>v>=1e4?(v/1e3).toFixed(1)+'k':v.toFixed(0);
+  const setEl=(id,txt,ok)=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.textContent=txt;
+    el.style.color=ok?'var(--green)':'var(--red,#e06c75)';
+  };
+  setEl('ph-ku1', fmtK(ku1), ku1>0);
+  setEl('ph-hk',  fmtK(hk),  hk>0);
+  setEl('ph-bsat',bsat.toFixed(3)+' T', true);
+  setEl('ph-ratio',ratio.toFixed(2)+'×', ratio>=1.2);
+}
+
 // ============================================================
 // TEXTURE: SINGLE
 // ============================================================
@@ -1368,6 +1399,7 @@ async function loadInputFiles(){
     document.getElementById('p-cell').value=d.cell_size_nm;
     document.getElementById('p-nstep').value=d.n_steps;
     updateRVE();
+    updatePhysicsHints();
   }
 }
 
@@ -4578,6 +4610,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>{ if(document.querySelector('.nav-item[data-page="taskmanager"].active')) checkEnv(); }, 500);
   ['p-gx','p-gy','p-gz','p-cell'].forEach(id=>{const el=document.getElementById(id);if(el) el.addEventListener('input',updateRVE);});
   updateRVE();
+  updatePhysicsHints();
   updateTaskDot();
   // ESC 关闭执行模态框和多角度对比模态框
   document.addEventListener('keydown',e=>{
