@@ -61,7 +61,9 @@ def _estimate_core_loss_params(H: list, B: list,
         idx_min = int(np.argmin(np.abs(B_v)))
         Hc_est = float(np.abs(H_v[idx_min])) if idx_min > 0 else float(H_v[0])
     kh = mu0 * max(Hc_est, 1.0) / (math.pi * max(Bm, 0.1))
-    kh = float(np.clip(kh, 1e-4, 0.05))
+    # GO 硅钢 Hc < 10 A/m → kh ~ 1e-6，旧下限 1e-4 会截断参考 Hc 的影响。
+    # 下限改为 1e-7（低于 GO 钢物理下限一个量级，留余量）。
+    kh = float(np.clip(kh, 1e-7, 0.05))
     # 涡流损耗系数：π²σd²/6
     d = thickness_mm * 1e-3
     kc = (math.pi ** 2) * conductivity * (d ** 2) / 6.0
