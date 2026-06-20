@@ -441,13 +441,20 @@ class PipelineRunner:
             s['results']['train_mape_avg'] = metrics.get('train_mape_avg')
             s['results']['metric_reliability'] = metrics.get('metric_reliability')
             s['results']['metric_warnings'] = metrics.get('metric_warnings', [])
-            self._log(pid, '开始候选模型交叉验证选择（direct_xgb / pca_xgb / extra_trees / pca_extra_trees）...')
+            n_actual = len(df)
+            self._log(pid, f'开始候选模型交叉验证选择（{", ".join(config.get("candidate_models") or ["direct_xgb","extra_trees","pca_xgb","pca_extra_trees"])}）...')
             try:
                 from paper_surrogate_trainer import PaperSurrogateTrainer, resolve_paper_training_config
                 paper_cfg = resolve_paper_training_config({
                     'preset': config.get('paper_training_preset') or config.get('preset_id') or config.get('preset') or 'lite',
                     'candidate_models': config.get('candidate_models'),
                 })
+                # Cap min_samples so multi-model selection always runs on available data.
+                # With n_actual samples we need at least 1 sample per fold in the test split;
+                # use n_actual // 4 as the effective minimum (leaves 75% for training).
+                effective_min = max(4, n_actual // 4)
+                effective_n_splits = min(int(paper_cfg.get('n_splits', 3)), max(2, n_actual // 6))
+                self._log(pid, f'  样本数={n_actual}，有效 min_samples={effective_min}，CV folds={effective_n_splits}')
                 paper_result = PaperSurrogateTrainer(
                     output_dir=config.get('paper_model_dir', 'data/paper_models'),
                     random_state=int(paper_cfg.get('random_state', 42)),
@@ -459,9 +466,9 @@ class PipelineRunner:
                 ).run(
                     ds_path,
                     target_scope=paper_cfg.get('target_scope', 'bh_only'),
-                    min_samples=int(paper_cfg.get('min_samples', 24)),
-                    test_size=float(paper_cfg.get('test_size', 0.2)),
-                    n_splits=int(paper_cfg.get('n_splits', 5)),
+                    min_samples=effective_min,
+                    test_size=float(paper_cfg.get('test_size', 0.25)),
+                    n_splits=effective_n_splits,
                     preset_id=paper_cfg.get('preset_id'),
                     preset_label=paper_cfg.get('preset_label'),
                 )

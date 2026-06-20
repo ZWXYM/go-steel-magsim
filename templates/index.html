@@ -979,7 +979,10 @@ function navigate(el){
   if(p==='mx3') loadInputFiles();
   if(p==='taskmanager'){loadTaskScripts();checkEnv();refreshJobStatuses();}
   if(p==='texture') loadFiles();
-  if(p==='analysis') scanOutput();        // 导航到分析页时自动扫描
+  if(p==='analysis') scanOutput();
+  if(p==='dataset') loadDatasetList();
+  if(p==='training'){loadDatasetListForTraining();loadPaperTrainingPresets();}
+  if(p==='prediction') loadModelListForPred();
 }
 
 function switchTab(btn,page,tabId){
@@ -4008,7 +4011,14 @@ function pipelineSetInput(id, value) {
 
 function pipelineEstimateText(est) {
   if (!est) return '未估算';
-  return `${est.mumax3_tasks} MuMax3 tasks | ${est.n_samples} samples x ${est.n_angles} angles x ${est.n_grains_est} grains | N_STEPS=${est.sim_n_steps}`;
+  // RTX 2060 实测基准：N_STEPS=40 时约 57s/task；按步数线性缩放
+  const nSteps = est.sim_n_steps || 40;
+  const secsPerTask = (nSteps / 40) * 57;
+  const totalSecs = Math.round((est.mumax3_tasks || 0) * secsPerTask);
+  const hh = Math.floor(totalSecs / 3600);
+  const mm = Math.floor((totalSecs % 3600) / 60);
+  const timeStr = hh > 0 ? `${hh}h ${mm}m` : `${mm}m`;
+  return `${est.mumax3_tasks} MuMax3 tasks | ${est.n_samples} samples x ${est.n_angles} angles x ${est.n_grains_est} grains | N_STEPS=${nSteps}   ≈ ${timeStr} (RTX 2060 基准)`;
 }
 
 function pipelineEstimateFromInputs(preset) {
@@ -4283,7 +4293,16 @@ function subscribePipeline(pid) {
       const warnings = (r.metric_warnings || []).map(x => `<div style="color:var(--amber)">${esc(x)}</div>`).join('');
       const paperLine = r.selected_candidate_model
         ? `<div>候选模型选择: <code>${esc(r.selected_candidate_model)}</code> · CV B-H RMSE=${fmt(r.cv_bh_rmse_T_mean)} T</div>`
-        : (r.paper_model_status ? `<div>候选模型选择: <code>${esc(r.paper_model_status)}</code></div>` : '');
+        : r.paper_model_status === 'insufficient_data'
+          ? `<div style="color:var(--amber)">候选模型选择: 未运行（样本不足，已保存 XGBoost 基线模型）</div>`
+          : (r.paper_model_status ? `<div>候选模型选择: <code>${esc(r.paper_model_status)}</code></div>` : '');
+      const r2Val = Number(r.r2_avg);
+      const r2Note = Number.isFinite(r2Val) && r2Val < -0.05
+        ? `<div style="color:var(--amber);border-left:3px solid var(--amber);padding-left:8px;margin-top:6px">
+             ⚠ 验证R²为负值（${r2Val.toFixed(3)}）：模型预测比直接预测训练集均值还差，通常是样本量过少（当前 ${r.n_samples || '?'} 个）导致严重过拟合。
+             建议使用 Standard 预设（64+ 样本）或 Max 预设（128+ 样本）重新训练。
+           </div>`
+        : '';
       document.getElementById('pipe-final-results').innerHTML =
         `<div>预设: <code>${esc(r.preset_label || r.preset_id || '手动')}</code></div>
          <div>数据集: <code>${esc(r.dataset_path || '—')}</code> (${r.n_samples || '?'} 个样本)</div>
@@ -4291,7 +4310,7 @@ function subscribePipeline(pid) {
          ${paperLine}
          <div style="color:${reliable ? 'var(--green)' : 'var(--amber)'}">指标可靠性: ${reliable ? 'holdout_validation' : esc(r.metric_reliability || 'exploratory_only')}</div>
          <div>${metricLines.join(' ｜ ')}</div>
-         ${warnings}`;
+         ${warnings}${r2Note}`;
       loadModelListForPred();
     }
     if (s.status === 'failed') {
