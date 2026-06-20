@@ -15,6 +15,8 @@
       "B50_RD_T": 1.839,
       "B800_RD_T": 1.965,
       "B800_TD_T": 1.7,
+      "Hc_RD_Am": 4.0,
+      "Hc_source": "IEC60404-8-7 / manufacturer datasheet estimate",
       "checkpoints_RD_count": 27,
       "checkpoints_TD_count": 21,
       "files": {
@@ -30,6 +32,8 @@
       "B50_RD_T": 1.829,
       "B800_RD_T": 1.95,
       "B800_TD_T": 1.68,
+      "Hc_RD_Am": 5.5,
+      "Hc_source": "IEC60404-8-7 / manufacturer datasheet estimate",
       "checkpoints_RD_count": 28,
       "checkpoints_TD_count": 21,
       "files": {
@@ -45,6 +49,8 @@
       "B50_RD_T": 1.776,
       "B800_RD_T": 1.925,
       "B800_TD_T": 1.65,
+      "Hc_RD_Am": 7.0,
+      "Hc_source": "IEC60404-8-7 / manufacturer datasheet estimate",
       "checkpoints_RD_count": 28,
       "checkpoints_TD_count": 21,
       "files": {
@@ -60,6 +66,8 @@
       "B50_RD_T": 1.741,
       "B800_RD_T": 1.901,
       "B800_TD_T": 1.6,
+      "Hc_RD_Am": 8.5,
+      "Hc_source": "IEC60404-8-7 / manufacturer datasheet estimate",
       "checkpoints_RD_count": 29,
       "checkpoints_TD_count": 21,
       "files": {

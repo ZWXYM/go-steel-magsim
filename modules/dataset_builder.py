@@ -23,6 +23,7 @@ from physics_calibrator import (
     validate_grain_curve,
     write_sidecar_report,
 )
+from go_steel_reference import get_reference_hc
 
 # 8 个标准化 H 采样节点（A/m），与 Maxwell B-H 数据范围对齐
 STANDARD_H_POINTS = [100, 200, 500, 1000, 2000, 3000, 5000, 7500]
@@ -138,7 +139,8 @@ def _representative_grain(valid_grains: list[dict], material_B: np.ndarray) -> d
     }
 
 
-def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.52e6) -> dict | None:
+def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.52e6,
+                          reference_hc: float = None) -> dict | None:
     """
     处理单个角度目录下所有晶粒文件，返回材料级代表 B-H 数据。
 
@@ -175,7 +177,9 @@ def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.52e6) -> dict | None:
             H_curve = np.array(results.get('H_curve', []))
             B_curve = np.array(results.get('B_curve', []))
             scalars_raw = {
-                'Hc': float(results.get('Hc', 0)),
+                # Hc from simulation (~36000 A/m, SW model limit) is overridden
+                # with reference database value if provided.
+                'Hc': reference_hc if reference_hc is not None else float(results.get('Hc', 0)),
                 'Mr': float(results.get('Mr', 0)),
                 'mu_max': float(results.get('mu_r_max_total', 1)),
             }
@@ -304,6 +308,7 @@ class DatasetBuilder:
     def build_material_representative_summary(self, config_path: str,
                                               target_angles: list = None,
                                               Msat: float = 1.52e6,
+                                              si_content: float = 3.0,
                                               write_report: bool = True) -> dict:
         """Return material-level representative curves for one config directory."""
         config_dir = Path(config_path)
@@ -314,12 +319,14 @@ class DatasetBuilder:
                 if m:
                     target_angles.append(int(m.group(1)))
 
+        ref_hc = get_reference_hc(si_content=si_content)
         summary = {
             'config_name': config_dir.name,
             'config_path': str(config_dir),
             'angles': {},
+            'Hc_reference_Am': ref_hc,
             'scalar_confidence': {
-                'Hc': 'low_due_to_mesh_limit',
+                'Hc': 'reference_value_go_steel_database',
                 'mu_max': 'low_due_to_mesh_limit',
                 'BH_curve': 'primary_for_export',
             },
@@ -329,7 +336,7 @@ class DatasetBuilder:
             if not angle_dir.exists():
                 summary['angles'][str(angle)] = {'status': 'missing'}
                 continue
-            bh = _extract_bh_one_angle(str(angle_dir), Msat=Msat)
+            bh = _extract_bh_one_angle(str(angle_dir), Msat=Msat, reference_hc=ref_hc)
             if bh is None:
                 summary['angles'][str(angle)] = {'status': 'invalid_or_empty'}
                 continue
@@ -361,13 +368,16 @@ class DatasetBuilder:
             'halfwidth_policy': params.get('halfwidth_policy', None),
         }
 
+        si_content = float(params.get('Si_content', 3.0))
+        ref_hc = get_reference_hc(si_content=si_content)
         has_any = False
         representative_summary = {
             'config_name': config_info['config_name'],
             'config_path': str(config_dir),
             'angles': {},
+            'Hc_reference_Am': ref_hc,
             'scalar_confidence': {
-                'Hc': 'low_due_to_mesh_limit',
+                'Hc': 'reference_value_go_steel_database',
                 'mu_max': 'low_due_to_mesh_limit',
                 'BH_curve': 'primary_for_export',
             },
@@ -385,7 +395,7 @@ class DatasetBuilder:
                 representative_summary['angles'][str(angle)] = {'status': 'missing'}
                 continue
 
-            bh = _extract_bh_one_angle(str(angle_dir), Msat=Msat)
+            bh = _extract_bh_one_angle(str(angle_dir), Msat=Msat, reference_hc=ref_hc)
             if bh is None:
                 for h in STANDARD_H_POINTS:
                     row[f'B_{angle}deg_H{h}'] = None
@@ -455,7 +465,7 @@ class DatasetBuilder:
             'target_policy': 'RD_TD_only_by_default',
             'standard_H_points': STANDARD_H_POINTS,
             'scalar_confidence': {
-                'Hc': 'low_due_to_mesh_limit',
+                'Hc': 'reference_value_go_steel_database',
                 'mu_max': 'low_due_to_mesh_limit',
                 'BH_curve': 'primary_for_export',
             },

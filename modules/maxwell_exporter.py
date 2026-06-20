@@ -34,10 +34,14 @@ def _format_points_aedt(H: list, B: list) -> str:
 
 def _estimate_core_loss_params(H: list, B: list,
                                 thickness_mm: float = 0.35,
-                                conductivity: float = 2.0e6) -> dict:
+                                conductivity: float = 2.0e6,
+                                reference_hc_am: float = None) -> dict:
     """
     从 B-H 曲线用 Steinmetz/Bertotti 先验估算铁损系数。
     EXPERIMENTAL — 仅供工程参考，非实测多频 B-P 数据。
+
+    reference_hc_am: 若提供，使用参考数据库 Hc 值（推荐），否则从 B~0 处外插
+                     （仿真 Hc ≈ 36000 A/m 会导致 kh 严重偏高）
     """
     import numpy as np
     import math
@@ -49,9 +53,13 @@ def _estimate_core_loss_params(H: list, B: list,
         return {'kh': 5e-4, 'kc': 2e-5, 'ke': 3e-3}
     H_v = H_arr[valid]; B_v = B_arr[valid]
     Bm = float(np.max(B_v))
-    # 磁滞损耗系数：μ₀·Hc/(π·Bm)，Hc 从 B~0 处外插
-    idx_min = int(np.argmin(np.abs(B_v)))
-    Hc_est = float(np.abs(H_v[idx_min])) if idx_min > 0 else float(H_v[0])
+    # 磁滞损耗系数：μ₀·Hc/(π·Bm)
+    # 优先使用参考数据库 Hc（< 10 A/m）；回退时从 B~0 外插（仿真值 ~36000 A/m，不可用）
+    if reference_hc_am is not None:
+        Hc_est = float(reference_hc_am)
+    else:
+        idx_min = int(np.argmin(np.abs(B_v)))
+        Hc_est = float(np.abs(H_v[idx_min])) if idx_min > 0 else float(H_v[0])
     kh = mu0 * max(Hc_est, 1.0) / (math.pi * max(Bm, 0.1))
     kh = float(np.clip(kh, 1e-4, 0.05))
     # 涡流损耗系数：π²σd²/6
@@ -94,13 +102,17 @@ def generate_amat_content(mat_name: str,
                            density_kg_m3: float = 7650.0,
                            thickness_mm: float = 0.35,
                            conductivity: float = 2.0e6,
-                           core_loss_override: dict = None) -> str:
+                           core_loss_override: dict = None,
+                           reference_hc_am: float = None) -> str:
     """
     生成 ANSYS Maxwell AEDT $begin 格式的完整 .amat 文件内容。
     格式与 go_steel_data/output/GO_Steel_B23R075.amat 完全兼容。
 
     td_H/td_B 为 None 时，TD 与 RD 相同（各向同性退化）。
     core_loss_override: 若提供 {'kh':…,'kc':…,'ke':…} 则覆盖估算值。
+    reference_hc_am: GO 钢参考矫顽力 [A/m]，用于计算 kh（磁滞损耗系数）。
+                     建议传入 go_steel_reference.get_reference_hc()；
+                     不传则回退到从 B-H 曲线外插（仿真值约 36000 A/m，kh 严重偏高）。
     """
     if td_H is None or td_B is None:
         td_H, td_B = rd_H, rd_B
@@ -109,7 +121,8 @@ def generate_amat_content(mat_name: str,
     td_H_c, td_B_c = _preprocess_bh(td_H, td_B)
 
     cl = core_loss_override or _estimate_core_loss_params(
-        rd_H_c, rd_B_c, thickness_mm=thickness_mm, conductivity=conductivity)
+        rd_H_c, rd_B_c, thickness_mm=thickness_mm, conductivity=conductivity,
+        reference_hc_am=reference_hc_am)
 
     rd_pts = _format_points_aedt(rd_H_c, rd_B_c)
     td_pts = _format_points_aedt(td_H_c, td_B_c)
@@ -237,8 +250,14 @@ def export_from_prediction(prediction_result: dict,
     从 BHPredictor.predict_bh() 的返回值直接生成 .amat。
     prediction_result 格式：{'RD': {'H':[...], 'B':[...]}, 'TD': {...}, ...}
     """
+    from go_steel_reference import get_reference_hc
     rd = prediction_result.get('RD', {})
     td = prediction_result.get('TD', {})
+    # 优先使用 predict_bh() 已嵌入的参考 Hc；否则按 Si_content 查表
+    ref_hc = prediction_result.get('Hc_reference_Am')
+    if ref_hc is None:
+        si_content = float((prediction_result.get('params_used') or {}).get('Si_content', 3.0))
+        ref_hc = get_reference_hc(si_content=si_content)
     pair = calibrate_material_pair(
         {'H': rd.get('H', []), 'B': rd.get('B', []), 'source': 'prediction_RD'},
         {'H': td.get('H', []), 'B': td.get('B', []), 'source': 'prediction_TD'},
@@ -247,7 +266,8 @@ def export_from_prediction(prediction_result: dict,
         mat_name,
         rd.get('H', []), rd.get('B', []),
         td.get('H', []), td.get('B', []),
-        thickness_mm=thickness_mm
+        thickness_mm=thickness_mm,
+        reference_hc_am=ref_hc,
     )
     metadata = {
         'material_name': mat_name,

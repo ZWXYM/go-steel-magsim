@@ -357,13 +357,26 @@ class BHPredictor:
                     scalars[col] = float(tgt[col])
         scalar_guard = calibrate_scalar_targets(scalars, source='ml_predictor')
         result['scalars'] = scalar_guard['values']
+
+        # Override predicted Hc with reference database value.
+        # MuMax3 SW model gives Hc ≈ 36,000 A/m; real GO steel Hc < 10 A/m.
+        from go_steel_reference import get_reference_properties
+        si_content = float(params.get('Si_content', 3.0))
+        ref_props = get_reference_properties(si_content=si_content)
+        ref_hc = ref_props['Hc_Am']
+        for key in list(result['scalars']):
+            if key.startswith('Hc_'):
+                result['scalars'][key] = ref_hc
+        result['Hc_reference_Am'] = ref_hc
+        result['Hc_reference_source'] = ref_props['Hc_source']
+
         result['full_direction'] = interpolate_full_direction(result['RD'], result['TD'])
         result['calibration_report'] = {
             'material_pair': pair['report'],
             'scalars': scalar_guard['report'],
         }
         result['scalar_confidence'] = self.metadata.get('scalar_confidence', {
-            'Hc': 'low_due_to_mesh_limit',
+            'Hc': 'reference_value_go_steel_database',
             'mu_max': 'low_due_to_mesh_limit',
             'BH_curve': 'primary_for_export',
         })
