@@ -1,0 +1,29 @@
+{
+  "name": "paper_grade_recommended_64x16_rdtd",
+  "description": "Recommended paper-grade MuMax3 data generation run for 3 wt% Si steel, fixed ODF halfwidth 10 deg, RD/TD B-H surrogate training.",
+  "n_samples": 64,
+  "angle_mode": "motor",
+  "f_Goss_range": [0.4, 0.9],
+  "theta_0_range": [0.0, 30.0],
+  "halfwidth_range": [10.0, 10.0],
+  "N_grains_range": [16, 16],
+  "Si_content": 3.0,
+  "sim_n_steps": 100,
+  "sim_h_max": 7500.0,
+  "test_size": 0.2,
+  "paper_trainer": {
+    "preset": "std",
+    "target_scope": "bh_only",
+    "selection_metric": "cross_validated_bh_rmse_T"
+  },
+  "xgb_params": {
+    "n_estimators": 400,
+    "max_depth": 3,
+    "learning_rate": 0.04,
+    "subsample": 0.9,
+    "colsample_bytree": 0.9,
+    "random_state": 42,
+    "eval_metric": "rmse",
+    "verbosity": 0
+  }
+}
