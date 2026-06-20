@@ -27,19 +27,25 @@ class SimulationConfig:
 
     # 材料参数
     SI_CONTENT = 3.0  # Si含量 (%)
-    MSAT = 1.52e6  # 饱和磁化强度 (A/m)
+    MSAT = 1.56e6  # 饱和磁化强度 (A/m)  文献值 Fe-3%Si: 1.56e6 A/m (μ₀Msat≈1.96T)
     AEX = 2.1e-11  # 有效交换常数 (J/m)
     ALPHA = 0.01  # Gilbert阻尼系数
-    KU1_BASE = 4.8e4  # 立方各向异性基准值 (J/m³)
+    KU1_BASE = 4.8e4  # 立方各向异性基准值 (J/m³)，用于 get_Ku1() 公式参考
 
     # 外场设置
-    H_MAX = 7500.0  # 最大外场 (A/m)
-    N_STEPS = 100  # 每段步数
+    # H_k = 2*Ku1/(μ₀*Msat) ≈ 36728 A/m for Fe-3%Si
+    # H_MAX 必须 > H_k 才能完成完整磁滞回线，建议 1.4× H_k ≈ 50000 A/m
+    H_MAX = 50000.0  # 最大外场 (A/m)
+    N_STEPS = 150  # 每段步数 (150步×4段=600次minimize，约85s/晶粒 RTX2060)
 
     @classmethod
     def get_Ku1(cls):
-        """计算立方各向异性常数"""
-        return cls.KU1_BASE * (1 - 0.05 * cls.SI_CONTENT)
+        """计算立方各向异性常数 K1 (J/m³)
+        公式来源: Moses 2012 综述, Fe-Si: K1(Si%) = (4.8 - 0.4*Si%) × 10^4 J/m³
+        @ 3%Si: K1 = 3.6e4 J/m³
+        注意: H_k = 2*K1/(μ₀*Msat) = 36728 A/m (不是 2*K1/Msat，单位为 T)
+        """
+        return (4.8 - 0.4 * cls.SI_CONTENT) * 1e4
 
     @classmethod
     def get_rve_size(cls):
@@ -677,7 +683,7 @@ Gilbert damping (alpha):               {alpha_value:.3f}
   Note: Increased from 0.01 to enhance convergence and approximate
         macroscopic quasi-static processes
 Cubic anisotropy (Ku1):                {Ku1_value:.2e} J/m³
-  Calculated from: {cfg.KU1_BASE:.2e} * (1 - 0.05 * {si_percent})
+  Calculated from: (4.8 - 0.4 * {si_percent}) × 1e4 J/m³  [Moses 2012 Si-dependence]
 
 Simulation Settings:
 {"-" * 60}
@@ -689,7 +695,7 @@ Cell-to-exchange ratio:                {cell_size_nm / lambda_ex:.2f} (cell_size
         meso-scale modeling. Each cell represents averaged behavior.
 
 Maximum applied field (H_max):         {H_max_value:.0f} A/m ({H_max_mT:.1f} mT, ~{H_max_Oe:.0f} Oe)
-  Note: Sufficient to saturate 3% Si steel (typical Hs ~ 100-150 kA/m)
+  Note: H_k = 2*Ku1/(mu0*Msat) ≈ 36728 A/m; H_max={H_max_value:.0f} > H_k ensures full magnetization reversal
 Steps per segment:                     {n_steps_value}
 Total data points per grain:           {total_points} (4 segments of hysteresis loop)
 Number of grains:                      {config_info['n_grains']}

@@ -90,7 +90,8 @@ PIPELINE_PRESETS = {
             "halfwidth_range": [DEFAULT_FIXED_HALFWIDTH_DEG, DEFAULT_FIXED_HALFWIDTH_DEG],
             "N_grains_range": [16, 16],
             "Si_content": 3.0,
-            "sim_n_steps": 100,
+            "sim_n_steps": 150,
+            "sim_h_max": 50000.0,
             "test_size": 0.20,
             "xgb_params": {
                 "n_estimators": 400,
@@ -117,7 +118,8 @@ PIPELINE_PRESETS = {
             "halfwidth_range": [DEFAULT_FIXED_HALFWIDTH_DEG, DEFAULT_FIXED_HALFWIDTH_DEG],
             "N_grains_range": [32, 32],
             "Si_content": 3.0,
-            "sim_n_steps": 120,
+            "sim_n_steps": 150,
+            "sim_h_max": 50000.0,
             "test_size": 0.20,
             "xgb_params": {
                 "n_estimators": 650,

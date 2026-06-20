@@ -8,8 +8,8 @@
   "halfwidth_range": [10.0, 10.0],
   "N_grains_range": [16, 16],
   "Si_content": 3.0,
-  "sim_n_steps": 100,
-  "sim_h_max": 7500.0,
+  "sim_n_steps": 150,
+  "sim_h_max": 50000.0,
   "test_size": 0.2,
   "paper_trainer": {
     "preset": "std",
