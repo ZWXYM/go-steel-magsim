@@ -253,28 +253,38 @@ def _get_delta_spline(grade: str, direction: str = 'RD') -> CubicSpline:
     return cs
 
 
-# ─── TD 方向参考插值 ──────────────────────────────────────────────────────────
+# ─── TD 方向参考数据插值 ──────────────────────────────────────────────────────
 def td_from_reference(H_pred: np.ndarray, odf_params: dict) -> np.ndarray:
     """
-    TD 方向 B-H 曲线：用 ODF 距离加权的参考数据替代仿真输出。
+    TD 方向 B-H 曲线：ODF 加权的参考数据插值（IDW，n=2）。
 
-    物理依据：TD 方向（硬轴）由 180° 畴壁运动主导，Stoner-Wohlfarth
-    单磁畴模型严重低估（ψ ≈ H/Hk 而实测已接近饱和）。仿真 δ_TD 高达
-    1.2-1.5T，对 ML 预测叠加会越界。正确做法是直接用实测 TD 曲线，
-    按 ODF 距离在各锚点参考曲线之间插值。
+    物理依据：
+      SW 模型的 ODF→TD 依赖关系与现实**完全相反**：
+        仿真: 强 Goss (f=0.95) → B_sim_TD(800) ≈ 0.12T （硬轴，相干旋转 m ≈ H/Hk）
+        现实: 强 Goss (f=0.95) → B_ref_TD(800) ≈ 1.70T  （畴壁运动，易轴不沿 TD
+              反而使 TD 方向 180° 畴壁更易于移动）
 
-    Args:
-        H_pred:     施加场强数组 [A/m]
-        odf_params: ODF 参数字典
+      因此仿真的 ODF 相对趋势对 TD 完全无参考价值，正确做法是
+      直接用实测参考曲线，按 ODF 距离加权插值。
+
+      4个锚点 B800_TD: B23R075=1.70T > B27R090=1.68T > B27R095=1.65T > B30P105=1.60T
+      物理 ODF 分辨率：span ≈ 0.10T（真实的跨等级差异即如此，非"坍塌"）。
+
+      采用 IDW n=2（距离平方倒数权重）比 n=1 有更强的 ODF 分辨率。
 
     Returns:
-        B_TD_ref [T]，ODF 加权的参考 TD 曲线，截断到 [0, 2.5]
+        B_TD_corrected [T]，截断到 [0, 2.5]
     """
-    odf     = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
-    weights = anchor_weights(odf)
-    H       = np.asarray(H_pred, dtype=float)
-    B_out   = np.zeros_like(H)
+    odf  = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
+    H    = np.asarray(H_pred, dtype=float)
 
+    # IDW with power=2 for sharper ODF discrimination
+    dists  = {g: odf_distance(odf, v) for g, v in ANCHOR_ODF.items()}
+    inv2   = {g: 1.0 / (d + 1e-4) ** 2 for g, d in dists.items()}
+    total  = sum(inv2.values())
+    weights = {g: w / total for g, w in inv2.items()}
+
+    B_out = np.zeros_like(H)
     for grade, w in weights.items():
         if w < 1e-6:
             continue
@@ -282,7 +292,7 @@ def td_from_reference(H_pred: np.ndarray, odf_params: dict) -> np.ndarray:
             H_ref, B_ref = load_reference_bh(grade, 'TD')
             B_out += w * np.interp(H, H_ref, B_ref, left=0.0, right=float(B_ref[-1]))
         except Exception as e:
-            print(f'[reference_corrector] 警告：{grade}/TD 参考加载失败: {e}', file=sys.stderr)
+            print(f'[reference_corrector] 警告：{grade}/TD 加载失败: {e}', file=sys.stderr)
 
     return np.clip(B_out, 0.0, 2.5)
 
@@ -321,7 +331,10 @@ def apply_reference_correction(H_pred:    np.ndarray,
     B = np.asarray(B_sim,  dtype=float).copy()
 
     if direction == 'TD':
-        # TD: reference interpolation (SW simulation is fundamentally wrong for hard axis)
+        # TD: ODF-weighted reference interpolation (IDW n=2).
+        # SW model ODF→B_TD is INVERTED vs reality (strong Goss → low SW, high real).
+        # Scale correction amplifies error (R up to 34×). Only reference data is usable.
+        # Physical TD span across grades is genuinely 0.10T — not a collapse.
         return td_from_reference(H, odf_params)
 
     if weight_cap <= 0.0:
