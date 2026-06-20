@@ -41,11 +41,11 @@ class SimulationConfig:
     @classmethod
     def get_Ku1(cls):
         """计算立方各向异性常数 K1 (J/m³)
-        公式来源: Moses 2012 综述, Fe-Si: K1(Si%) = (4.8 - 0.4*Si%) × 10^4 J/m³
-        @ 3%Si: K1 = 3.6e4 J/m³
+        公式来源: Moses 2012 综述, Fe-Si: K1(Si%) = (KU1_BASE - 0.4*Si%*1e4)
+        KU1_BASE = 4.8e4 → @ 3%Si: K1 = 48000 - 12000 = 36000 J/m³
         注意: H_k = 2*K1/(μ₀*Msat) = 36728 A/m (不是 2*K1/Msat，单位为 T)
         """
-        return (4.8 - 0.4 * cls.SI_CONTENT) * 1e4
+        return cls.KU1_BASE - 0.4 * cls.SI_CONTENT * 1e4
 
     @classmethod
     def get_rve_size(cls):
