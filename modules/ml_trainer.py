@@ -370,16 +370,45 @@ class BHPredictor:
         result['Hc_reference_Am'] = ref_hc
         result['Hc_reference_source'] = ref_props['Hc_source']
 
+        # Apply reference B-H correction (delta-correction method).
+        # Skipped when model was trained on already-corrected data.
+        bh_corrected = False
+        if not self.metadata.get('bh_reference_corrected', False):
+            try:
+                from physics_calibrator import correct_bh_with_reference
+                odf_params = {
+                    'f_Goss':         float(params.get('f_Goss', 0.82)),
+                    'theta_0_deg':    float(params.get('theta_0_deg', 6.0)),
+                    'halfwidth_deg':  float(params.get('halfwidth_deg', 8.0)),
+                }
+                for direction, key in [('RD', 'RD'), ('TD', 'TD')]:
+                    curve = result[key]
+                    corr = correct_bh_with_reference(
+                        curve['H'], curve['B'], odf_params,
+                        direction=direction, weight_cap=1.0,
+                    )
+                    result[key] = {
+                        'H':    corr['H'],
+                        'B':    [round(float(b), 6) for b in corr['B']],
+                        'unit': 'A/m, T',
+                    }
+                bh_corrected = True
+            except Exception as _corr_err:
+                import warnings
+                warnings.warn(f'reference_corrector 修正失败，使用原始仿真输出: {_corr_err}')
+
         result['full_direction'] = interpolate_full_direction(result['RD'], result['TD'])
         result['calibration_report'] = {
-            'material_pair': pair['report'],
-            'scalars': scalar_guard['report'],
+            'material_pair':        pair['report'],
+            'scalars':              scalar_guard['report'],
+            'bh_reference_corrected': bh_corrected,
         }
         result['scalar_confidence'] = self.metadata.get('scalar_confidence', {
-            'Hc': 'reference_value_go_steel_database',
-            'mu_max': 'low_due_to_mesh_limit',
-            'BH_curve': 'primary_for_export',
+            'Hc':      'reference_value_go_steel_database',
+            'mu_max':  'low_due_to_mesh_limit',
+            'BH_curve':'primary_for_export',
         })
+        result['bh_reference_corrected'] = bh_corrected
         result['params_used'] = params
         return result
 

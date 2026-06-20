@@ -213,6 +213,48 @@ def calibrate_material_pair(rd_curve: dict, td_curve: dict) -> dict:
     return {"RD": rd, "TD": td, "report": _jsonable(report)}
 
 
+def correct_bh_with_reference(H: list, B: list,
+                               odf_params: dict,
+                               direction: str = 'RD',
+                               weight_cap: float = 1.0) -> dict:
+    """
+    对仿真/ML 预测 B-H 曲线施加基准参考修正（差分校正法）。
+
+    先做物理守恒检查（calibrate_bh_curve），再调用 reference_corrector
+    应用多锚点加权 δ(H) 修正。
+
+    Args:
+        H, B:       B-H 数据
+        odf_params: ODF 参数字典（支持 ML 格式和锚点标准格式）
+        direction:  'RD' 或 'TD'
+        weight_cap: 修正力度 [0=不修正, 1=完全修正]
+
+    Returns:
+        {'H': [...], 'B': [...], 'correction_applied': bool, 'report': {...}}
+    """
+    from reference_corrector import apply_reference_correction
+    guarded = calibrate_bh_curve(H, B, direction=direction, source='ref_corrector_input')
+    H_arr = np.array(guarded['H'], dtype=float)
+    B_arr = np.array(guarded['B'], dtype=float)
+
+    if weight_cap > 0.0 and len(H_arr) > 0:
+        B_corr = apply_reference_correction(H_arr, B_arr, odf_params,
+                                             direction=direction,
+                                             weight_cap=weight_cap)
+    else:
+        B_corr = B_arr.copy()
+
+    final = calibrate_bh_curve(H_arr, B_corr, direction=direction,
+                                source='ref_corrector_output')
+    return {
+        'H':                  final['H'],
+        'B':                  final['B'],
+        'correction_applied': weight_cap > 0.0,
+        'report':             {'input_guard': guarded['report'],
+                               'output_guard': final['report']},
+    }
+
+
 def write_sidecar_report(path: str | Path, payload: dict) -> str:
     out = Path(path)
     out.parent.mkdir(parents=True, exist_ok=True)
