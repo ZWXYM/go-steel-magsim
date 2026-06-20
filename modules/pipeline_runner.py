@@ -278,7 +278,7 @@ class PipelineRunner:
         script_angles = FULL_ANGLES if angle_mode == 'full' else MOTOR_ANGLES
         train_angles = MOTOR_ANGLES
         n_samples = int(config.get('n_samples', 20))
-        Msat = float(config.get('Msat', 1.52e6))
+        Msat = float(config.get('Msat', 1.56e6))
 
         try:
             s['results']['preset_id'] = config.get('preset_id') or config.get('preset')

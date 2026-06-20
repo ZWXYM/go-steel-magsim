@@ -717,7 +717,7 @@ select option{background:var(--bg-2)}
             </div>
             <input type="file" id="fu" style="display:none" accept=".txt" onchange="handleFileSelect(event)">
             <div style="margin-top:14px">
-              <div class="fg"><label>Msat (A/m)</label><input type="number" id="a-msat" value="1520000" step="10000"><span class="hint">Fe-3%Si ≈ 1.52×10⁶</span></div>
+              <div class="fg"><label>Msat (A/m)</label><input type="number" id="a-msat" value="1560000" step="10000"><span class="hint">Fe-3%Si ≈ 1.56×10⁶</span></div>
             </div>
             <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
               <button class="btn btn-p" id="analyze-btn" onclick="runAnalysis()" disabled>◈ 分析</button>
@@ -765,7 +765,7 @@ select option{background:var(--bg-2)}
           <span class="card-title">扫描 output/ 文件夹</span>
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
             <label style="font-size:11px;color:var(--t3)">Msat</label>
-            <input type="number" id="o-msat" value="1520000" step="10000" placeholder="Msat (A/m)" style="width:130px">
+            <input type="number" id="o-msat" value="1560000" step="10000" placeholder="Msat (A/m)" style="width:130px">
             <button class="btn btn-g btn-sm" onclick="scanOutput()">🔄 扫描</button>
           </div>
         </div>
@@ -1948,7 +1948,7 @@ async function selectOutputFile(el, filepath){
   document.querySelectorAll('.angle-line').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
   selectedOutputFile=filepath;
-  const Msat=parseFloat(document.getElementById('o-msat').value)||1.52e6;
+  const Msat=parseFloat(document.getElementById('o-msat').value)||1.56e6;
   setOutputAdvancedVisible(true);
   setOutputChartTitles(false);
   document.getElementById('output-result-wrap').style.display='none';
@@ -2225,7 +2225,7 @@ async function showMaterialRepresentative(configPath){
   setOutputAdvancedVisible(false);
   setOutputChartTitles(true);
   document.getElementById('o-file-label').textContent=(configPath.split(/[\\/]/).pop()||configPath)+' · 材料级聚合';
-  const Msat=parseFloat(document.getElementById('o-msat').value)||1.52e6;
+  const Msat=parseFloat(document.getElementById('o-msat').value)||1.56e6;
   const summary=await api(`/api/analysis/material-representative?config_path=${encodeURIComponent(configPath)}&Msat=${encodeURIComponent(Msat)}`);
   if(summary.error){toast('材料级聚合失败: '+summary.error,'err');return;}
   const rd = materialAngle(summary, 0);
@@ -2283,7 +2283,7 @@ async function showFullDirection(configPath, options={}){
   if(wrap) wrap.style.display='block';
   if(fdWrap) fdWrap.style.display='block';
   if(!options.keepLabel) document.getElementById('o-file-label').textContent=(configPath.split(/[\\/]/).pop()||configPath)+' · 全向性能图';
-  const Msat=parseFloat(document.getElementById('o-msat').value)||1.52e6;
+  const Msat=parseFloat(document.getElementById('o-msat').value)||1.56e6;
   const r=await api(`/api/analysis/full-direction?config_path=${encodeURIComponent(configPath)}&Msat=${encodeURIComponent(Msat)}`);
   if(r.error){toast('全向图生成失败: '+r.error,'err');return;}
   renderFullDirectionCharts(r,'ofd-');
@@ -3108,11 +3108,12 @@ function datasetScan() {
 
 function datasetAggregate() {
   const mode = document.getElementById('ds-angle-mode').value;
+  const Msat = parseFloat(document.getElementById('p-msat')?.value) || 1560000;
   fetch('/api/dataset/aggregate', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({configs: _selectedConfigs.length ? _selectedConfigs : null,
-                          angle_mode: mode})
+                          angle_mode: mode, Msat})
   }).then(r => r.json()).then(d => {
     if (d.error) { alert(d.error); return; }
     pollTask(d.task_id, res => {
@@ -3293,10 +3294,11 @@ function datasetAggregate() {
   const mode = document.getElementById('ds-angle-mode').value;
   const configPaths = [..._selectedConfigPaths];
   if(!configPaths.length){ alert('请先扫描并勾选要聚合的材料配置。建议选择 run_ml_dataset_* 批次。'); return; }
+  const Msat = parseFloat(document.getElementById('p-msat')?.value) || 1560000;
   fetch('/api/dataset/aggregate', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({config_paths: configPaths, angle_mode: mode, tag: 'ml_selected'})
+    body: JSON.stringify({config_paths: configPaths, angle_mode: mode, tag: 'ml_selected', Msat})
   }).then(r => r.json()).then(d => {
     if (d.error) { alert(d.error); return; }
     pollTask(d.task_id, res => {
@@ -4454,7 +4456,7 @@ async function analyzeAngleAvg(filesJson, angleValue){
   const chartEl=document.getElementById('oc-bh');
   if(propEl) propEl.innerHTML=`<div style="padding:12px;color:var(--cyan)"><span class="spin"></span> 正在计算 ${angleValue}° 均值（${files.length} 晶粒）…</div>`;
 
-  const r=await api('/api/analysis/analyze-angle',{method:'POST',body:{filepaths:files,Msat:1.52e6}});
+  const r=await api('/api/analysis/analyze-angle',{method:'POST',body:{filepaths:files,Msat:1.56e6}});
   if(r.error){ if(propEl) propEl.innerHTML=`<div style="color:var(--red)">${esc(r.error)}</div>`; return; }
 
   // 保存全局结果供导出使用（兼容 exportOutputToMaxwell/exportFEMM2）
@@ -4536,7 +4538,7 @@ async function compareConfigAngles(anglesJson){
 
   // 并行请求所有角度的均值分析
   const results=await Promise.all(angles.map(a=>
-    api('/api/analysis/analyze-angle',{method:'POST',body:{filepaths:a.files||[],Msat:1.52e6}})
+    api('/api/analysis/analyze-angle',{method:'POST',body:{filepaths:a.files||[],Msat:1.56e6}})
       .then(r=>({angle:a.angle_value,...r}))
       .catch(e=>({angle:a.angle_value,error:String(e)}))
   ));

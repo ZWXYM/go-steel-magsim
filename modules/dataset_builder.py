@@ -139,7 +139,7 @@ def _representative_grain(valid_grains: list[dict], material_B: np.ndarray) -> d
     }
 
 
-def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.52e6,
+def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.56e6,
                           reference_hc: float = None) -> dict | None:
     """
     处理单个角度目录下所有晶粒文件，返回材料级代表 B-H 数据。
@@ -307,7 +307,7 @@ class DatasetBuilder:
 
     def build_material_representative_summary(self, config_path: str,
                                               target_angles: list = None,
-                                              Msat: float = 1.52e6,
+                                              Msat: float = 1.56e6,
                                               si_content: float = 3.0,
                                               write_report: bool = True) -> dict:
         """Return material-level representative curves for one config directory."""
@@ -349,7 +349,7 @@ class DatasetBuilder:
 
     def build_sample_row(self, config_info: dict,
                          target_angles: list = None,
-                         Msat: float = 1.52e6) -> dict | None:
+                         Msat: float = 1.56e6) -> dict | None:
         """
         对单个配置目录构建一行训练数据。
         target_angles: 期望的角度列表；None 则使用 config_info['available_angles']。
@@ -424,7 +424,7 @@ class DatasetBuilder:
     def build_dataset(self, configs: list[str] = None,
                       config_paths: list[str] = None,
                       target_angles: list = None,
-                      Msat: float = 1.52e6,
+                      Msat: float = 1.56e6,
                       progress_callback=None) -> pd.DataFrame:
         """
         批量聚合所有（或指定）配置，返回 DataFrame。

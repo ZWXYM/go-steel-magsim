@@ -14,12 +14,12 @@ def read_mumax_data(filename):
     return data
 
 
-def extract_magnetic_properties(data, Msat=1.52e6):
+def extract_magnetic_properties(data, Msat=1.56e6):
     """Extract magnetic properties with COMPLETE permeability curves
 
     Args:
         data: MuMax3 output table
-        Msat: Saturation magnetization in A/m (default: 1.52e6 for Fe-3%Si)
+        Msat: Saturation magnetization in A/m (default: 1.56e6 for Fe-3%Si, Moses 2012)
     """
 
     # Extract columns
@@ -553,7 +553,7 @@ def export_permeability_data(results, filename='permeability_curve.txt'):
 # ============== Main Program ==============
 if __name__ == "__main__":
     filename = "table.txt"
-    Msat = 1.52e6  # Fe-3%Si saturation magnetization (A/m)
+    Msat = 1.56e6  # Fe-3%Si saturation magnetization (A/m), Moses 2012
 
     print("=" * 75)
     print("     MuMax3 Magnetic Properties Extractor (FIXED VERSION)")

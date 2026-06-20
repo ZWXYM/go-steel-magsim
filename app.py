@@ -452,7 +452,7 @@ def analyze():
     if 'file' not in request.files:
         return jsonify({'error': '请上传文件'}), 400
     f = request.files['file']
-    Msat = float(request.form.get('Msat', 1.52e6))
+    Msat = float(request.form.get('Msat', 1.56e6))
     import tempfile
     fd, tmp = tempfile.mkstemp(suffix='.txt', prefix='mumax_')
     os.close(fd)
@@ -547,7 +547,7 @@ def _scan_run_dir(run_dir, run_info):
 def analyze_path():
     data = request.json
     raw_path = data.get('path', '').strip()
-    Msat = float(data.get('Msat', 1.52e6))
+    Msat = float(data.get('Msat', 1.56e6))
     # Paths are sent with forward slashes; normalize to OS-native separators
     filepath = os.path.normpath(raw_path)
     # Also try the raw path in case running on Linux where / is native
@@ -575,7 +575,7 @@ def analyze_angle_avg():
         except Exception:
             data = {}
     filepaths = data.get('filepaths', [])
-    Msat = float(data.get('Msat', 1.52e6))
+    Msat = float(data.get('Msat', 1.56e6))
     if not filepaths:
         return jsonify({'error': '未提供文件列表'}), 400
 
@@ -649,7 +649,7 @@ def analyze_angle_avg():
 @app.route('/api/analysis/material-representative', methods=['GET'])
 def material_representative():
     raw_path = request.args.get('config_path', '').strip()
-    Msat = float(request.args.get('Msat', 1.52e6))
+    Msat = float(request.args.get('Msat', 1.56e6))
     if not raw_path:
         return jsonify({'error': 'config_path is required'}), 400
     config_path = os.path.normpath(raw_path)
@@ -670,7 +670,7 @@ def material_representative():
 @app.route('/api/analysis/full-direction', methods=['GET'])
 def full_direction_analysis():
     raw_path = request.args.get('config_path', '').strip()
-    Msat = float(request.args.get('Msat', 1.52e6))
+    Msat = float(request.args.get('Msat', 1.56e6))
     if not raw_path:
         return jsonify({'error': 'config_path is required'}), 400
     config_path = os.path.normpath(raw_path)
@@ -1231,7 +1231,7 @@ def dataset_aggregate():
     configs = data.get('configs')
     config_paths = data.get('config_paths')
     mode    = data.get('angle_mode', 'motor')
-    Msat    = float(data.get('Msat', 1.52e6))
+    Msat    = float(data.get('Msat', 1.56e6))
     from dataset_builder import MOTOR_ANGLES, FULL_ANGLES
     target_angles = MOTOR_ANGLES if mode == 'motor' else FULL_ANGLES
     tag     = data.get('tag', mode)
