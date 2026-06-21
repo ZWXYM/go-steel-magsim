@@ -176,10 +176,15 @@ def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.56e6,
 
             H_curve = np.array(results.get('H_curve', []))
             B_curve = np.array(results.get('B_curve', []))
+            hc_sim = float(results.get('Hc', 0.0))
+
+            # 把 H 轴压缩到真实材料尺度：MuMax3 Hc 远大于真实 GO 钢（~5 A/m）。
+            # 缩放后，下升支零点（B=0）对齐到 Hc_ref，曲线形状保持不变。
+            if reference_hc is not None and hc_sim > reference_hc * 5:
+                H_curve = H_curve * (reference_hc / hc_sim)
+
             scalars_raw = {
-                # Hc from simulation (~36000 A/m, SW model limit) is overridden
-                # with reference database value if provided.
-                'Hc': reference_hc if reference_hc is not None else float(results.get('Hc', 0)),
+                'Hc': reference_hc if reference_hc is not None else hc_sim,
                 'Mr': float(results.get('Mr', 0)),
                 'mu_max': float(results.get('mu_r_max_total', 1)),
             }
@@ -413,28 +418,13 @@ class DatasetBuilder:
                 # 展示摘要始终保存原始仿真聚合值（供分析页面显示）
                 representative_summary['angles'][str(angle)] = {'status': 'ok', **bh}
 
-                # 训练特征：RD(0°)方向用 δ 修正后的 B 值，其余方向保持原始值
-                B_train = list(bh['B_at_std_H'])
-                if angle == 0 and row.get('f_Goss') is not None and row.get('theta_0_deg') is not None:
-                    try:
-                        from modules.reference_corrector import apply_reference_correction
-                        odf_p = {
-                            'f_Goss':        row['f_Goss'],
-                            'theta_0_deg':   row['theta_0_deg'],
-                            'halfwidth_deg': row.get('halfwidth_deg') or 8.0,
-                        }
-                        B_corr = apply_reference_correction(
-                            np.array(STANDARD_H_POINTS, dtype=float),
-                            np.array(B_train, dtype=float),
-                            odf_p, direction='RD',
-                        )
-                        B_train = B_corr.tolist()
-                        row['bh_reference_corrected'] = True
-                    except Exception as _e:
-                        warnings.warn(f'[dataset_builder] δ-correction 失败 {config_dir.name}/angle=0: {_e}')
-
+                # H 轴已在晶粒提取阶段按 Hc_ref/Hc_sim 压缩（物理对齐），
+                # 直接使用插值后的 B 值作为训练特征，无需额外 δ 修正
                 for i, h in enumerate(STANDARD_H_POINTS):
-                    row[f'B_{angle}deg_H{h}'] = B_train[i]
+                    row[f'B_{angle}deg_H{h}'] = bh['B_at_std_H'][i]
+                # ref_hc 有效时 H 轴已被缩放，标记无需 predict_bh 再做 δ 后处理
+                if angle == 0 and ref_hc is not None and ref_hc > 0:
+                    row['bh_reference_corrected'] = True
                 row[f'Hc_{angle}deg']     = bh['Hc']
                 row[f'Mr_{angle}deg']     = bh['Mr']
                 row[f'mu_max_{angle}deg'] = bh['mu_max']
