@@ -110,6 +110,8 @@ select option{background:var(--bg-2)}
 
 /* FILE LIST */
 .file-list{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto}
+.input-del-btn{flex-shrink:0;width:22px;height:22px;border:none;background:transparent;color:var(--t3);font-size:16px;line-height:1;padding:0;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-left:auto}
+.input-del-btn:hover{background:rgba(239,68,68,.15);color:#ef4444}
 .fi{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-3);
   border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .15s;user-select:none}
 .fi:hover{border-color:var(--border-hi);background:var(--bg-4)}
@@ -1376,6 +1378,18 @@ async function loadInputFiles(){
         else selectedInputFiles=selectedInputFiles.filter(x=>x.filename!==fi.filename);
       };
       div.className='fi mx3-item';
+      // Delete button for single input file
+      const delBtn=document.createElement('button');
+      delBtn.className='input-del-btn';delBtn.title='从 input/ 删除此文件';delBtn.textContent='×';
+      delBtn.onclick=async e=>{
+        e.stopPropagation();
+        const fi=JSON.parse(div.dataset.fileinfo);
+        if(!confirm(`删除 "${fi.filename}"？`)) return;
+        const r=await api('/api/input-item',{method:'DELETE',body:{path:fi.full_path}});
+        if(r.success){toast(`已删除 ${fi.filename}`,'ok');loadInputFiles();}
+        else toast(r.error||'删除失败','err');
+      };
+      div.appendChild(delBtn);
       listWrap.appendChild(div);
     } else if(item.item_type==='batch'){
       // Batch folder with expand + index filter
@@ -1416,7 +1430,8 @@ function makeMX3BatchItem(item){
         <div style="font-weight:600;font-size:13px;color:var(--t1)">${esc(item.folder_name)}</div>
         <div class="fi-meta"><span>${item.n_total} 个样本</span></div>
       </div>
-      <span class="batch-expand" style="margin-left:auto">▼</span>
+      <button class="input-del-btn" title="从 input/ 删除此文件夹" onclick="event.stopPropagation();deleteMX3InputFolder('${esc(item.folder_path)}','${esc(item.folder_name)}',${item.n_total})">×</button>
+      <span class="batch-expand">▼</span>
     </div>
     <div class="batch-folder-files">
       <div class="idx-filter">
@@ -1483,6 +1498,13 @@ function applyIdxFilter(batchId){
   // Re-trigger selection
   const chk=hdr.querySelector('.bf-chk[data-batch="'+batchId+'"]');
   if(chk){hdr.classList.remove('all-sel');toggleMX3Batch(chk,batchId);}
+}
+
+async function deleteMX3InputFolder(path, name, n){
+  if(!confirm(`删除文件夹 "${name}"（共 ${n} 个文件）？此操作不可撤销。`)) return;
+  const r=await api('/api/input-item',{method:'DELETE',body:{path}});
+  if(r.success){toast(`已删除 ${name}`,'ok');loadInputFiles();}
+  else toast(r.error||'删除失败','err');
 }
 
 function mx3SelectAll(sel){
