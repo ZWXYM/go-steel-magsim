@@ -809,6 +809,27 @@ select option{background:var(--bg-2)}
               </div>
             </div>
           </div>
+          <!-- 与真实材料对比（仅需 RD 即可，TD 可选） -->
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button class="btn btn-c btn-sm" onclick="exportBHAnalysis('material')">⬇️ 导出 .amat + BH对比报告</button>
+              <input id="ofd-mat-name" placeholder="材料名称 (留空自动生成)"
+                     style="font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);width:180px">
+              <span style="font-size:12px;color:var(--t3)">厚度</span>
+              <input id="ofd-thickness" value="0.35" type="number" step="0.01" min="0.1" max="1.0"
+                     style="font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);width:64px">
+              <span style="font-size:11px;color:var(--t3)">mm</span>
+            </div>
+            <div style="margin-top:6px">
+              <button onclick="toggleBHMatSelector('ofd-mat-sel')"
+                      style="font-size:11px;padding:2px 8px;border-radius:3px;border:1px solid var(--border);background:var(--bg-2);color:var(--t2);cursor:pointer">
+                ▼ 自选对比材料</button>
+              <div id="ofd-mat-sel" style="display:none;margin-top:6px;padding:10px;border:1px solid var(--border);border-radius:4px;background:var(--bg-3);max-height:220px;overflow-y:auto">
+                <span style="color:var(--t3);font-size:11px">正在加载材料列表…</span>
+              </div>
+            </div>
+            <div id="ofd-analysis-result" style="display:none;margin-top:12px"></div>
+          </div>
         </div>
         <div class="card" id="full-direction-wrap" style="display:none;margin-top:14px">
           <div class="card-hdr">
@@ -823,24 +844,6 @@ select option{background:var(--bg-2)}
           <div style="font-size:11px;color:var(--t3);line-height:1.6;margin-top:10px">
             基于 RD/TD 材料级代表曲线生成，已有中间角度仿真会作为对照点叠加。
           </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap">
-            <button class="btn btn-c btn-sm" onclick="exportBHAnalysis('material')">⬇️ 导出 .amat + BH分析报告</button>
-            <input id="ofd-mat-name" placeholder="材料名称 (留空自动生成)"
-                   style="font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);width:200px">
-            <span style="font-size:12px;color:var(--t3)">厚度</span>
-            <input id="ofd-thickness" value="0.35" type="number" step="0.01" min="0.1" max="1.0"
-                   style="font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);width:68px">
-            <span style="font-size:11px;color:var(--t3)">mm</span>
-          </div>
-          <div style="margin-top:8px">
-            <button onclick="toggleBHMatSelector('ofd-mat-sel')"
-                    style="font-size:11px;padding:2px 8px;border-radius:3px;border:1px solid var(--border);background:var(--bg-2);color:var(--t2);cursor:pointer">
-              ▼ 自选对比材料</button>
-            <div id="ofd-mat-sel" style="display:none;margin-top:6px;padding:10px;border:1px solid var(--border);border-radius:4px;background:var(--bg-3);max-height:260px;overflow-y:auto">
-              <span style="color:var(--t3);font-size:11px">正在加载材料列表…</span>
-            </div>
-          </div>
-          <div id="ofd-analysis-result" style="display:none;margin-top:14px"></div>
         </div>
       </div>
     </div>
@@ -3959,12 +3962,12 @@ async function exportBHAnalysis(source) {
     const angles = window.analysisData2?.material_summary?.angles || {};
     const rd = angles['0'];
     const td = angles['90'];
-    if (!rd?.H || !td?.H) {
-      toast('需要 0°（RD）和 90°（TD）方向的有效 B-H 曲线', 'err');
+    if (!rd?.H) {
+      toast('需要至少 0°（RD）方向的有效 B-H 曲线', 'err');
       return;
     }
     rd_H = rd.H; rd_B = rd.B;
-    td_H = td.H; td_B = td.B;
+    td_H = td?.H || rd.H; td_B = td?.B || rd.B;
     name = (document.getElementById('ofd-mat-name')?.value || '').trim()
         || ('GO_Sim_' + new Date().toISOString().slice(0,10).replace(/-/g,''));
     thickness_mm = parseFloat(document.getElementById('ofd-thickness')?.value) || 0.35;
