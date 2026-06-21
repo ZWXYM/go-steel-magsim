@@ -332,6 +332,7 @@ class DatasetBuilder:
             'f_Goss':        odf_params.get('f_Goss'),
             'theta_0_deg':   odf_params.get('theta_0_deg'),
             'halfwidth_deg': odf_params.get('halfwidth_deg'),
+            'Si_content':    si_content,
             'angles': {},
             'Hc_reference_Am': ref_hc,
             'scalar_confidence': {
@@ -432,6 +433,8 @@ class DatasetBuilder:
                             np.array(STANDARD_H_POINTS, dtype=float),
                             np.array(B_train, dtype=float),
                             odf_p, direction='RD',
+                            hc_sim=bh.get('hc_sim_median'),
+                            si_content=si_content,
                         )
                         B_train = B_corr.tolist()
                         row['bh_reference_corrected'] = True

@@ -307,75 +307,122 @@ def td_from_reference(H_pred: np.ndarray, odf_params: dict) -> np.ndarray:
     return np.clip(B_out, 0.0, 2.5)
 
 
+# ─── 辅助：从 B_sim 曲线估计仿真 Hc ─────────────────────────────────────────
+def _estimate_hc_sim_from_curve(H_sim: np.ndarray, B_sim: np.ndarray) -> float:
+    """
+    估计仿真 Hc：B_sim 首次超过 5%×Bmax 对应的 H（线性插值）。
+    用于 hc_sim 未提供时的退化估计。
+    """
+    B_arr = np.asarray(B_sim, dtype=float)
+    H_arr = np.asarray(H_sim, dtype=float)
+    B_max = float(np.max(B_arr)) if np.max(B_arr) > 0 else 2.0
+    threshold = max(0.05 * B_max, 1e-6)
+    for i in range(len(B_arr) - 1):
+        if B_arr[i] <= threshold < B_arr[i + 1]:
+            t = (threshold - B_arr[i]) / (B_arr[i + 1] - B_arr[i])
+            return float(H_arr[i] + t * (H_arr[i + 1] - H_arr[i]))
+    mask = B_arr > threshold
+    if mask.any():
+        return float(H_arr[np.argmax(mask)])
+    return float(H_arr[len(H_arr) // 2])
+
+
 # ─── 主校正接口 ──────────────────────────────────────────────────────────────
-def apply_reference_correction(H_pred:    np.ndarray,
-                                B_sim:     np.ndarray,
+def apply_reference_correction(H_pred:     np.ndarray,
+                                B_sim:      np.ndarray,
                                 odf_params: dict,
                                 direction:  str   = 'RD',
-                                weight_cap: float = 1.0) -> np.ndarray:
+                                weight_cap: float = 1.0,
+                                hc_sim:     float = None,
+                                si_content: float = 3.0) -> np.ndarray:
     """
-    对仿真/ML 预测 B-H 曲线施加基准参考修正。
+    重设计版 δ(H) 修正 — 三段合成法（RD 方向）。
 
-    RD 方向：delta 修正法
-        B_corrected = B_sim + Σ_k w_k × δ_k(H)
-        δ_k(H) = B_ref_k(H) - B_sim_anchor_k(H)    [SW 物理估算或真实仿真]
+    核心思路：
+        MuMax3 仿真下支路在 H_sim < Hc_sim 段 B 值为负，被 calibrate_bh_curve
+        裁剪为 0，导致 B_sim 在前段全为零（缺失"缓慢初始磁化"阶段）。
 
-    TD 方向：参考数据直接加权插值
-        B_corrected = Σ_k w_k × B_ref_k_TD(H)
-        原因：SW 模型对 TD 硬轴完全失效（B_sim_TD ≈ 0.04T at H=100 vs 实测 0.79T），
-              δ_TD 高达 1.3T，对任何有意义的 ML 预测叠加均导致越界。
+        Stage 1（H_real < H_onset，仿真 B 近零区）：
+            用参考初始磁化曲线的 B 值填充（IDW 加权，与真实材料一致）。
+            H_real[i] = H_sim[i] × (Hc_ref / hc_sim)  映射到真实 H 空间后插值。
+
+        Stage 2+（H_real ≥ H_onset，仿真 B 已上升区）：
+            直接保留 B_sim，仿真曲线的 S 形上升段形状已正确。
+
+    TD 方向：不变，继续使用 IDW 参考曲线直接插值。
 
     Args:
-        H_pred:     施加场强数组 [A/m]，要求 H > 0
-        B_sim:      仿真/ML 预测 B [T]（TD 方向此值被替换）
-        odf_params: ODF 参数字典，支持以下两种格式：
-                      ML predictor 格式: {'f_Goss', 'theta_0_deg', 'halfwidth_deg'}
-                      锚点标准格式:      {'f_Goss', 'theta_mean_deg', 'sigma_deg'}
+        H_pred:     仿真/预测 H 数组 [A/m]（STANDARD_H_POINTS 或任意正 H）
+        B_sim:      对应仿真 B [T]
+        odf_params: ODF 参数字典（支持 'theta_0_deg' 或 'theta_mean_deg' 键名）
         direction:  'RD' 或 'TD'
-        weight_cap: 全局权重上限 [0, 1]；1.0 = 完全修正，0 = 不修正（仅 RD）
+        weight_cap: 0 = 不修正；1 = 完全修正（新版 RD 方向沿用此开关）
+        hc_sim:     仿真晶粒 Hc 中位数 [A/m]（由 _extract_bh_one_angle 提供）
+                    若为 None 则从 B_sim 形状自动估计
+        si_content: Si 含量 wt.%（用于计算 Hc_ref 和 B_0）
 
     Returns:
-        B_corrected [T]，截断到 [0, 2.5]
+        B_corrected [T]，截断到 [0, μ₀(H+Msat)]
     """
     H = np.asarray(H_pred, dtype=float)
     B = np.asarray(B_sim,  dtype=float).copy()
 
     if direction == 'TD':
-        # TD: ODF-weighted reference interpolation (IDW n=2).
-        # SW model ODF→B_TD is INVERTED vs reality (strong Goss → low SW, high real).
-        # Scale correction amplifies error (R up to 34×). Only reference data is usable.
-        # Physical TD span across grades is genuinely 0.10T — not a collapse.
         return td_from_reference(H, odf_params)
 
     if weight_cap <= 0.0:
         return B
 
-    # RD: delta correction
-    odf        = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
-    weights    = anchor_weights(odf)
-    correction = np.zeros_like(H)
+    # ── 参数准备 ───────────────────────────────────────────────────────────────
+    try:
+        from go_steel_reference import get_reference_hc
+        Hc_ref = get_reference_hc(si_content=si_content)
+    except Exception:
+        Hc_ref = 2.0 * si_content  # 退化估计：Hc_ref ≈ 2×Si% A/m
 
+    if hc_sim is None or float(hc_sim) <= 0:
+        hc_sim = _estimate_hc_sim_from_curve(H, B)
+    hc_sim = float(hc_sim)
+
+    scale  = Hc_ref / hc_sim
+    H_real = H * scale  # STANDARD_H_POINTS → 真实 H [A/m]
+
+    # ── 确定 onset 点（B_sim 从零开始上升的首个点） ──────────────────────────
+    B_0 = si_content * 0.015  # 材料极低场下的起始 B，≈0.045 T for 3% Si
+    onset_idx = len(H)
+    for i, b in enumerate(B):
+        if b > B_0:
+            onset_idx = i
+            break
+
+    if onset_idx == 0:
+        # 仿真第一个点已有效，无需 Stage 1
+        return np.clip(B, 0.0, _MU0 * (H + _MSAT))
+
+    # ── Stage 1：从参考 CSV 插值（IDW 加权，与真实材料一致） ─────────────────
+    odf     = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
+    weights = anchor_weights(odf)
+
+    B_ref_s1 = np.zeros(onset_idx)
     for grade, w in weights.items():
         if w < 1e-6:
             continue
         try:
-            cs    = _get_delta_spline(grade, 'RD')
-            delta = cs(H)
-            H_min, H_max = _H_GRID[0], _H_GRID[-1]
-            if (H < H_min).any():
-                delta[H < H_min] = float(cs(H_min))
-            if (H > H_max).any():
-                delta[H > H_max] = float(cs(H_max))
-            delta = np.where(np.isfinite(delta), delta, 0.0)
-            correction += w * delta
+            H_ref_raw, B_ref_raw = load_reference_bh(grade, 'RD')
+            B_ref_s1 += w * np.interp(
+                H_real[:onset_idx], H_ref_raw, B_ref_raw,
+                left=0.0, right=float(B_ref_raw[-1])
+            )
         except Exception as e:
-            print(f'[reference_corrector] 警告：{grade}/RD 修正失败: {e}', file=sys.stderr)
+            print(f'[reference_corrector] 警告：{grade}/RD 参考加载失败: {e}',
+                  file=sys.stderr)
 
-    correction *= float(weight_cap)
-    B_out = B + correction
-    # 物理上限：B ≤ μ₀(H + Msat)；替换原来固定截断 2.5 T
+    # ── 合并：Stage 1 用参考值，Stage 2+ 保留仿真值 ──────────────────────────
+    B_corrected = B.copy()
+    B_corrected[:onset_idx] = B_ref_s1
+
     B_max = _MU0 * (H + _MSAT)
-    return np.clip(B_out, 0.0, B_max)
+    return np.clip(B_corrected, 0.0, B_max)
 
 
 # ─── 便利函数：初始化所有锚点校准 ────────────────────────────────────────────

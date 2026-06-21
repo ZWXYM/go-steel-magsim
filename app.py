@@ -1671,9 +1671,15 @@ def api_apply_delta_correction():
         'theta_0_deg':   float(data.get('theta_0_deg', 6.0)),
         'halfwidth_deg': float(data.get('halfwidth_deg', 8.0)),
     }
-    weight_cap = float(data.get('weight_cap', 1.0))
+    weight_cap  = float(data.get('weight_cap', 1.0))
+    si_content  = float(data.get('si_content', 3.0))
+    hc_sim_raw  = data.get('hc_sim_median', None)
+    hc_sim      = float(hc_sim_raw) if hc_sim_raw is not None else None
     try:
-        B_corr = apply_reference_correction(H, B, odf, direction='RD', weight_cap=weight_cap)
+        B_corr = apply_reference_correction(
+            H, B, odf, direction='RD', weight_cap=weight_cap,
+            hc_sim=hc_sim, si_content=si_content,
+        )
         return jsonify({'H': H.tolist(), 'B_corrected': B_corr.tolist()})
     except Exception as e:
         return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
