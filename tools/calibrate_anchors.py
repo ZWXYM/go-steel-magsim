@@ -64,10 +64,10 @@ RUN_NAME = 'anchors'
 # 锚点参数（与 reference_corrector.py 中的 ANCHOR_ODF 对应）
 # ─────────────────────────────────────────────────────────────────────────────
 ANCHOR_CONFIGS = {
-    'B23R075': {'f_Goss': 0.92, 'theta_0': 3.0,  'halfwidth': 6.0,  'N_grains': 100},
-    'B27R090': {'f_Goss': 0.82, 'theta_0': 6.0,  'halfwidth': 8.0,  'N_grains': 100},
-    'B27R095': {'f_Goss': 0.70, 'theta_0': 9.0,  'halfwidth': 10.0, 'N_grains': 100},
-    'B30P105': {'f_Goss': 0.65, 'theta_0': 11.0, 'halfwidth': 11.0, 'N_grains': 100},
+    'B23R075': {'f_Goss': 0.92, 'theta_0': 3.0,  'halfwidth': 6.0,  'N_grains': 50},
+    'B27R090': {'f_Goss': 0.82, 'theta_0': 6.0,  'halfwidth': 8.0,  'N_grains': 50},
+    'B27R095': {'f_Goss': 0.70, 'theta_0': 9.0,  'halfwidth': 10.0, 'N_grains': 50},
+    'B30P105': {'f_Goss': 0.65, 'theta_0': 11.0, 'halfwidth': 11.0, 'N_grains': 50},
 }
 
 MSAT              = 1.56e6
