@@ -320,9 +320,13 @@ class DatasetBuilder:
                     target_angles.append(int(m.group(1)))
 
         ref_hc = get_reference_hc(si_content=si_content)
+        odf_params = _parse_config_name(config_dir.name)
         summary = {
-            'config_name': config_dir.name,
-            'config_path': str(config_dir),
+            'config_name':   config_dir.name,
+            'config_path':   str(config_dir),
+            'f_Goss':        odf_params.get('f_Goss'),
+            'theta_0_deg':   odf_params.get('theta_0_deg'),
+            'halfwidth_deg': odf_params.get('halfwidth_deg'),
             'angles': {},
             'Hc_reference_Am': ref_hc,
             'scalar_confidence': {
