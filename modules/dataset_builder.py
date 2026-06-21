@@ -360,10 +360,12 @@ class DatasetBuilder:
                     from modules.reference_corrector import apply_reference_correction, get_td_scale
                     H_std = np.array(STANDARD_H_POINTS, dtype=float)
                     B_raw = np.array(bh['B_at_std_H'], dtype=float)
+                    # 用 is-not-None 代替 dict.get(key, default)，避免已存在 None 值的 key 绕过默认值
+                    def _nn(v, d): return v if v is not None else d
                     odf_p = {
-                        'f_Goss':        odf_params.get('f_Goss', 0.82),
-                        'theta_0_deg':   odf_params.get('theta_0_deg', 6.0),
-                        'halfwidth_deg': odf_params.get('halfwidth_deg', 8.0),
+                        'f_Goss':        _nn(odf_params.get('f_Goss'), 0.82),
+                        'theta_0_deg':   _nn(odf_params.get('theta_0_deg'), 6.0),
+                        'halfwidth_deg': _nn(odf_params.get('halfwidth_deg'), 8.0),
                     }
                     B_corr = apply_reference_correction(
                         H_std, B_raw, odf_p, direction='TD', weight_cap=1.0,

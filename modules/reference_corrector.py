@@ -70,11 +70,14 @@ def odf_distance(p1: dict, p2: dict) -> float:
 
 
 def _odf_from_params(params: dict) -> dict:
-    """将 predict_bh 的 params 转为标准 ODF 字典。"""
+    """将 predict_bh 的 params 转为标准 ODF 字典。None 值用默认值替代。"""
+    def _v(key: str, default: float) -> float:
+        val = params.get(key)
+        return float(val if val is not None else default)
     return {
-        'f_Goss':        float(params.get('f_Goss', 0.82)),
-        'theta_mean_deg':float(params.get('theta_0_deg', 6.0)),
-        'sigma_deg':     float(params.get('halfwidth_deg', 8.0)),
+        'f_Goss':        _v('f_Goss',      0.82),
+        'theta_mean_deg':_v('theta_0_deg', 6.0),
+        'sigma_deg':     _v('halfwidth_deg', 8.0),
     }
 
 

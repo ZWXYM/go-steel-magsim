@@ -2280,9 +2280,7 @@ function renderMaterialRepresentativeCharts(summary){
   const datasets = okAngles.map(([angle,item]) => {
     const color = colorForAngle(angle);
     const name = Number(angle)===0 ? 'RD' : Number(angle)===90 ? 'TD' : `${angle}°`;
-    // TD 方向使用修正后的 B 值（B_corrected_td），若无则回退到原始 B
-    const B_display = (Number(angle) === 90 && item.B_corrected_td) ? item.B_corrected_td : item.B || [];
-    return bhDataset(`${name} material (${item.n_grains_valid}/${item.n_grains_total})`, applyHScale(item, angle), B_display, color, {
+    return bhDataset(`${name} material (${item.n_grains_valid}/${item.n_grains_total})`, applyHScale(item, angle), item.B || [], color, {
       pointRadius:2,
       tension:.18,
     });
@@ -4074,6 +4072,37 @@ async function toggleDeltaCorr(enabled) {
     borderWidth: 2, borderDash: [6, 3],
     pointRadius: 0, tension: 0.12, fill: false,
   });
+
+  // TD 方向同步修正（Hk 驱动的 H 轴缩放 + 参考曲线插值）
+  const td = summary?.angles?.['90'];
+  if (td?.H?.length && td?.B?.length) {
+    try {
+      const r_td = await api('/api/analyze/apply-delta-correction', {
+        method: 'POST',
+        body: {
+          H: td.H, B: td.B,
+          direction:     'TD',
+          f_goss:        summary.f_Goss,
+          theta_0_deg:   summary.theta_0_deg  ?? 6.0,
+          halfwidth_deg: summary.halfwidth_deg ?? 8.0,
+          weight_cap:    weight,
+          si_content:    summary.Si_content   ?? 3.0,
+        }
+      });
+      if (!r_td.error && r_td.scale_td) {
+        chart.data.datasets.push({
+          _delta_corr: true,
+          label: `TD 参考修正 (α=${weight.toFixed(2)})`,
+          data: r_td.H.map((h, i) => ({x: h * r_td.scale_td, y: r_td.B_corrected[i]})),
+          showLine: true, parsing: false,
+          borderColor: '#f87171', backgroundColor: 'transparent',
+          borderWidth: 2, borderDash: [6, 3],
+          pointRadius: 0, tension: 0.12, fill: false,
+        });
+      }
+    } catch(_e) { /* TD 修正失败时静默，不影响 RD 修正显示 */ }
+  }
+
   chart.update('none');
 
   const B0 = interpYAtX(rd.H, rd.B, 800);
