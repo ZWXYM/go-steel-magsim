@@ -449,7 +449,7 @@ select option{background:var(--bg-2)}
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
             <button class="btn btn-g btn-sm" onclick="loadFiles()">🔄 刷新</button>
             <button class="btn btn-p btn-sm" onclick="moveSelToInput()">📂 移至 input/</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteSelectedPreinput()">✕ 删除选中</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSelected()">✕ 删除选中</button>
           </div>
         </div>
         <p style="font-size:11px;color:var(--t3);margin-bottom:10px">勾选左侧文件，点击"移至 input/"确认后方可生成 MX3 脚本。</p>
@@ -976,6 +976,8 @@ select option{background:var(--bg-2)}
 const DEFAULT_ANGLES = [0,30,45,60,90,120,135,150,180];
 let selectedPreinput = new Set(); // full_path of single files
 let selectedPreinputFolders = new Set(); // folder_path of batch folders
+let selectedInput = new Set(); // full_path of single files in input/
+let selectedInputFolders = new Set(); // folder_path of batch folders in input/
 let selectedInputFiles = []; // flat array of config_info (for MX3 generation)
 let batchConfigs = {};
 let batchConfigSel = {}; // config_name -> Set of angle codes
@@ -1338,51 +1340,50 @@ async function loadSamples(){
 
 function renderSampleFolder(items,containerId){
   const c=document.getElementById(containerId);
-  const canDelete=(containerId==='samples-input');
+  if(!c) return;
+  const isInput=(containerId==='samples-input');
   if(!items.length){c.innerHTML='<div class="empty" style="padding:20px"><p>空</p></div>';return;}
   c.innerHTML='';
+  if(isInput){selectedInput.clear();selectedInputFolders.clear();}
   items.forEach(item=>{
     if(item.type==='single'){
       const div=document.createElement('div');
-      div.className='fi';div.style.cursor='default';
+      div.className='fi si-single-item';div.style.cursor=isInput?'pointer':'default';
       const meta=[item.f_goss!==undefined?`f_Goss=${item.f_goss}`:'',
                   item.theta_0!==undefined?`θ=${item.theta_0}°`:'',
                   item.n_grains?`N=${item.n_grains}`:''].filter(Boolean).join(' · ');
-      div.innerHTML=`<span style="opacity:.5;font-size:14px">📄</span>
+      const chkHtml=isInput?'<div class="fi-chk"></div>':'<span style="opacity:.5;font-size:14px">📄</span>';
+      div.innerHTML=`${chkHtml}
         <div class="fi-info"><div class="fi-name">${esc(item.filename||item.full_path.split(/[\\/]/).pop())}</div>
         ${meta?`<div class="fi-meta"><span>${meta}</span></div>`:''}</div>`;
-      if(canDelete){
-        const btn=document.createElement('button');
-        btn.className='input-del-btn';btn.title='从 input/ 删除';btn.textContent='×';
-        btn.onclick=async e=>{
-          e.stopPropagation();
-          const name=item.filename||item.full_path.split(/[\\/]/).pop();
-          if(!confirm(`删除 "${name}"？`)) return;
-          const r=await api('/api/input-item',{method:'DELETE',body:{path:item.full_path}});
-          if(r.success){toast(`已删除 ${name}`,'ok');loadFiles();}
-          else toast(r.error||'删除失败','err');
+      if(isInput){
+        div.dataset.fp=item.full_path;
+        div.onclick=()=>{
+          div.classList.toggle('sel');
+          div.querySelector('.fi-chk').classList.toggle('sel');
+          if(div.classList.contains('sel')) selectedInput.add(item.full_path);
+          else selectedInput.delete(item.full_path);
         };
-        div.appendChild(btn);
       }
       c.appendChild(div);
     } else {
-      const div=document.createElement('div');div.className='fi';div.style.cursor='default';
-      div.innerHTML=`<span style="opacity:.7;font-size:15px">📁</span>
+      const div=document.createElement('div');div.className='fi si-folder-item';div.style.cursor=isInput?'pointer':'default';
+      const chkHtml=isInput?'<div class="fi-chk"></div>':'<span style="opacity:.7;font-size:15px">📁</span>';
+      div.innerHTML=`${chkHtml}
+        <span style="font-size:15px">📁</span>
         <div class="fi-info">
           <div class="fi-name" style="color:var(--amber)">${esc(item.folder_name)}</div>
           <div class="fi-meta"><span>${item.n_total} 个样本</span></div>
         </div>`;
-      if(canDelete){
-        const btn=document.createElement('button');
-        btn.className='input-del-btn';btn.title='从 input/ 删除文件夹';btn.textContent='×';
-        btn.onclick=async e=>{
-          e.stopPropagation();
-          if(!confirm(`删除文件夹 "${item.folder_name}"（${item.n_total} 个文件）？`)) return;
-          const r=await api('/api/input-item',{method:'DELETE',body:{path:item.folder_path||item.full_path}});
-          if(r.success){toast(`已删除 ${item.folder_name}`,'ok');loadFiles();}
-          else toast(r.error||'删除失败','err');
+      if(isInput){
+        const fp=item.folder_path||item.full_path;
+        div.dataset.fp=fp;
+        div.onclick=()=>{
+          div.classList.toggle('sel');
+          div.querySelector('.fi-chk').classList.toggle('sel');
+          if(div.classList.contains('sel')) selectedInputFolders.add(fp);
+          else selectedInputFolders.delete(fp);
         };
-        div.appendChild(btn);
       }
       c.appendChild(div);
     }
@@ -1847,22 +1848,38 @@ async function delScript(name){
   } else toast(r.error||'删除失败','err');
 }
 
-async function deleteSelectedPreinput(){
-  const files=[...selectedPreinput];
-  const folders=[...selectedPreinputFolders];
-  if(!files.length && !folders.length){toast('请先选择文件或文件夹','err');return;}
-  const total=files.length+folders.length;
+async function deleteSelected(){
+  const piFiles=[...selectedPreinput];
+  const piFolders=[...selectedPreinputFolders];
+  const inFiles=[...selectedInput];
+  const inFolders=[...selectedInputFolders];
+  const total=piFiles.length+piFolders.length+inFiles.length+inFolders.length;
+  if(!total){toast('请先勾选文件或文件夹','err');return;}
   if(!confirm(`确定永久删除选中的 ${total} 项？此操作不可撤销。`)) return;
   let cnt=0;
-  for(const p of files){
+  for(const p of piFiles){
     try{const r=await api('/api/preinput-item',{method:'DELETE',body:{path:p,type:'file'}});if(r.success)cnt++;}catch(e){}
   }
-  for(const p of folders){
+  for(const p of piFolders){
     try{const r=await api('/api/preinput-item',{method:'DELETE',body:{path:p,type:'folder'}});if(r.success)cnt++;}catch(e){}
   }
+  for(const p of inFiles){
+    try{const r=await api('/api/input-item',{method:'DELETE',body:{path:p}});if(r.success)cnt++;}catch(e){}
+  }
+  for(const p of inFolders){
+    try{const r=await api('/api/input-item',{method:'DELETE',body:{path:p}});if(r.success)cnt++;}catch(e){}
+  }
   selectedPreinput.clear();selectedPreinputFolders.clear();
+  selectedInput.clear();selectedInputFolders.clear();
   toast(`已删除 ${cnt} 项`,'ok');
   loadFiles();
+}
+
+async function deleteOutputConfig(path, name){
+  if(!confirm(`确定永久删除 output/ 配置 "${name}"？\n（包含所有角度和晶粒仿真结果，此操作不可撤销）`)) return;
+  const r=await api('/api/output-item',{method:'DELETE',body:{path}});
+  if(r.success){toast(`已删除 ${name}`,'ok');scanOutput();}
+  else toast(r.error||'删除失败','err');
 }
 
 async function deleteGrainConfig(name){
@@ -1971,6 +1988,7 @@ async function scanOutput(){
             <span style="font-size:11px;color:var(--t3)">${cfg.angles.length} 角度</span>
             <button class="btn btn-p btn-sm" data-config-path="${esc(cfg.path||'')}" onclick="event.stopPropagation();showMaterialRepresentative(this.dataset.configPath)" style="margin-left:auto">材料级聚合分析</button>
             ${cfg.angles.length>1?`<button class="btn btn-g btn-sm" onclick="event.stopPropagation();compareConfigAngles('${anglesDataEsc}')" style="margin-left:auto">📊 中间角验证</button>`:''}
+            <button class="btn btn-sm" style="background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)" onclick="event.stopPropagation();deleteOutputConfig('${esc(cfg.path||'')}','${esc(cfg.name||'')}')">✕</button>
           </div>
           ${cfg.angles.map(a=>{
             const filesEsc=esc(JSON.stringify(a.files||[]));
@@ -2205,12 +2223,14 @@ function renderMaterialProps(summary){
   const grid = document.getElementById('o-props-grid');
   if (!grid) return;
   const okAngles = materialOkAngles(summary);
+  const _hcRefP = summary.Hc_reference_Am || 6;
+  function _scaleHP(item){ const s=item.hc_sim_median; return (s&&s>_hcRefP*3)?(item.H||[]).map(h=>h*(_hcRefP/s)):(item.H||[]); }
   const primary = okAngles.find(([a])=>Number(a)===0)
     || okAngles.find(([a])=>Number(a)===180)
     || okAngles.find(([a])=>Number(a)===90)
     || okAngles[0];
   const angleLabel = primary ? `${Number(primary[0])}° (${primary[1].n_grains_valid || 0}/${primary[1].n_grains_total || 0})` : '—';
-  const H = primary?.[1]?.H || [];
+  const H = primary ? _scaleHP(primary[1]) : [];
   const B = primary?.[1]?.B || [];
   const m = curveMetricsFromBH(H, B);
   const card = (label, value, unit='', cls='pc-c') => `
@@ -2222,8 +2242,8 @@ function renderMaterialProps(summary){
   // Per-direction B values for anisotropy display
   const rdItem = okAngles.find(([k])=>Number(k)===0);
   const tdItem = okAngles.find(([k])=>Number(k)===90);
-  const m_rd = rdItem ? curveMetricsFromBH(rdItem[1].H||[], rdItem[1].B||[]) : null;
-  const m_td = tdItem ? curveMetricsFromBH(tdItem[1].H||[], tdItem[1].B||[]) : null;
+  const m_rd = rdItem ? curveMetricsFromBH(_scaleHP(rdItem[1]), rdItem[1].B||[]) : null;
+  const m_td = tdItem ? curveMetricsFromBH(_scaleHP(tdItem[1]), tdItem[1].B||[]) : null;
   const rd800=m_rd?.B800, td800=m_td?.B800;
   const rd1000=m_rd?.B1000, td1000=m_td?.B1000;
   const aniso = Number.isFinite(rd800)&&Number.isFinite(td800)&&td800>0
@@ -2245,10 +2265,17 @@ function renderMaterialRepresentativeCharts(summary){
   if (typeof Chart === 'undefined') return;
   const okAngles = materialOkAngles(summary);
   const colorForAngle = a => Number(a)===0 ? '#38bdf8' : Number(a)===90 ? '#f87171' : Number(a)===180 ? '#a78bfa' : '#34d399';
+  const hcRef = summary.Hc_reference_Am || 6;
+  // 将仿真 H 轴按 Hc_ref/Hc_sim 缩放（仅显示，不改训练数据）
+  function applyHScale(item){
+    const hcSim = item.hc_sim_median;
+    if(!hcSim || hcSim <= hcRef * 3) return item.H || [];
+    return (item.H || []).map(h => h * (hcRef / hcSim));
+  }
   const datasets = okAngles.map(([angle,item]) => {
     const color = colorForAngle(angle);
     const name = Number(angle)===0 ? 'RD' : Number(angle)===90 ? 'TD' : `${angle}°`;
-    return bhDataset(`${name} material (${item.n_grains_valid}/${item.n_grains_total})`, item.H || [], item.B || [], color, {
+    return bhDataset(`${name} material (${item.n_grains_valid}/${item.n_grains_total})`, applyHScale(item), item.B || [], color, {
       pointRadius:2,
       tension:.18,
     });
@@ -2267,8 +2294,8 @@ function renderMaterialRepresentativeCharts(summary){
   if (mh) {
     destroyChartById('oc-mh');
     const labels=okAngles.map(([a])=>`${a}°`);
-    const b800=okAngles.map(([,x])=>curveMetricsFromBH(x.H, x.B).B800);
-    const mu800=okAngles.map(([,x])=>curveMetricsFromBH(x.H, x.B).mu800);
+    const b800=okAngles.map(([,x])=>curveMetricsFromBH(applyHScale(x), x.B).B800);
+    const mu800=okAngles.map(([,x])=>curveMetricsFromBH(applyHScale(x), x.B).mu800);
     charts['oc-mh'] = new Chart(mh.getContext('2d'), {
       type:'bar',
       data:{labels,datasets:[
@@ -4024,10 +4051,15 @@ async function toggleDeltaCorr(enabled) {
   });
   if (r.error) { toast('δ修正失败: ' + r.error, 'err'); return; }
 
+  // 与原曲线保持一致，对 H 轴应用相同的 Hc_ref/Hc_sim 缩放
+  const _hcRefDC = summary.Hc_reference_Am || 6;
+  const _hcSimDC = rd.hc_sim_median;
+  const _hcScaleDC = (_hcSimDC && _hcSimDC > _hcRefDC * 3) ? (_hcRefDC / _hcSimDC) : 1.0;
+
   chart.data.datasets.push({
     _delta_corr: true,
     label: `RD δ修正 (α=${weight.toFixed(2)})`,
-    data: r.H.map((h, i) => ({x: h, y: r.B_corrected[i]})),
+    data: r.H.map((h, i) => ({x: h * _hcScaleDC, y: r.B_corrected[i]})),
     showLine: true, parsing: false,
     borderColor: '#f59e0b', backgroundColor: 'transparent',
     borderWidth: 2, borderDash: [6, 3],
@@ -4049,15 +4081,30 @@ async function exportBHAnalysis(source) {
   let name, rd_H, rd_B, td_H, td_B, thickness_mm, resultEl;
 
   if (source === 'material') {
-    const angles = window.analysisData2?.material_summary?.angles || {};
+    const matSum = window.analysisData2?.material_summary || {};
+    const angles = matSum.angles || {};
     const rd = angles['0'];
     const td = angles['90'];
     if (!rd?.H) {
       toast('需要至少 0°（RD）方向的有效 B-H 曲线', 'err');
       return;
     }
-    rd_H = rd.H; rd_B = rd.B;
-    td_H = td?.H || rd.H; td_B = td?.B || rd.B;
+    // 应用与图表相同的 Hc_ref/Hc_sim H 轴缩放
+    const _hcRefExp = matSum.Hc_reference_Am || 6;
+    function _expScale(H, hcSim){ return (hcSim && hcSim > _hcRefExp*3) ? H.map(h=>h*(_hcRefExp/hcSim)) : H; }
+    rd_H = _expScale(rd.H, rd.hc_sim_median);
+    rd_B = rd.B;
+    td_H = _expScale(td?.H || rd.H, td?.hc_sim_median || rd.hc_sim_median);
+    td_B = td?.B || rd.B;
+    // 若 δ 修正开关已勾选，改用修正后的 RD 曲线
+    const deltaTog = document.getElementById('delta-corr-toggle');
+    if (deltaTog?.checked) {
+      const corrDs = charts['oc-bh']?.data?.datasets?.find(d => d._delta_corr);
+      if (corrDs?.data?.length) {
+        rd_H = corrDs.data.map(p => p.x);
+        rd_B = corrDs.data.map(p => p.y);
+      }
+    }
     name = (document.getElementById('ofd-mat-name')?.value || '').trim()
         || ('GO_Sim_' + new Date().toISOString().slice(0,10).replace(/-/g,''));
     thickness_mm = parseFloat(document.getElementById('ofd-thickness')?.value) || 0.35;

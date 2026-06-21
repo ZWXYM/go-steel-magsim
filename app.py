@@ -452,6 +452,25 @@ def delete_input_item():
     return jsonify({'success': True, 'deleted': _posix(p)})
 
 
+@app.route('/api/output-item', methods=['DELETE'])
+def delete_output_item():
+    import shutil as _shutil
+    data = request.json or {}
+    raw = data.get('path', '').replace('\\', '/')
+    p = Path(raw)
+    try:
+        p.resolve().relative_to(Path('output').resolve())
+    except ValueError:
+        return jsonify({'error': '路径不在 output/ 目录内'}), 403
+    if not p.exists():
+        return jsonify({'error': '路径不存在'}), 404
+    if p.is_dir():
+        _shutil.rmtree(p)
+    else:
+        p.unlink()
+    return jsonify({'success': True, 'deleted': _posix(p)})
+
+
 @app.route('/api/task-scripts/<path:filename>/preview', methods=['GET'])
 def preview_task_script(filename):
     p = Path(filename)

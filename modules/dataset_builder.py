@@ -204,6 +204,7 @@ def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.56e6,
                 'scalars': scalars,
                 'validation': validation,
                 'calibration_report': guarded['report'],
+                'hc_sim_raw': float(results.get('Hc', 0.0)),  # 仿真原始 Hc（未被参考值覆盖）
             })
 
         except Exception as exc:
@@ -225,6 +226,9 @@ def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.56e6,
     Hc_vals = [g['scalars'].get('Hc', 0.0) for g in valid_grains]
     Mr_vals = [g['scalars'].get('Mr', 0.0) for g in valid_grains]
     mu_vals = [g['scalars'].get('mu_max', 1.0) for g in valid_grains]
+    # 仿真原始 Hc 中位数（用于分析页面 H 轴显示缩放）
+    hc_sim_vals = [g['hc_sim_raw'] for g in valid_grains if g.get('hc_sim_raw', 0) > 0]
+    hc_sim_median = float(np.median(hc_sim_vals)) if hc_sim_vals else None
 
     quality_report = {
         'angle_dir': str(angle_dir),
@@ -247,6 +251,7 @@ def _extract_bh_one_angle(angle_dir: str, Msat: float = 1.56e6,
         'Hc': float(np.median(Hc_vals)),
         'Mr': float(np.median(Mr_vals)),
         'mu_max': float(np.median(mu_vals)),
+        'hc_sim_median': hc_sim_median,  # 仿真 Hc（未覆盖），供显示端 H 轴缩放
         'n_grains_total': len(grain_files),
         'n_grains_valid': len(valid_grains),
         'n_grains_rejected': len(grain_files) - len(valid_grains),
