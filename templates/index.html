@@ -2266,8 +2266,13 @@ function renderMaterialRepresentativeCharts(summary){
   const okAngles = materialOkAngles(summary);
   const colorForAngle = a => Number(a)===0 ? '#38bdf8' : Number(a)===90 ? '#f87171' : Number(a)===180 ? '#a78bfa' : '#34d399';
   const hcRef = summary.Hc_reference_Am || 6;
-  // 将仿真 H 轴按 Hc_ref/Hc_sim 缩放（仅显示，不改训练数据）
-  function applyHScale(item){
+  // 将仿真 H 轴按物理缩放因子映射到真实 H（仅显示，不改训练数据）
+  // RD：scale_RD = Hc_ref/Hc_sim（畴壁运动主导，Hc_sim >> Hc_ref）
+  // TD：scale_TD 来自 summary.scale_td = Hk_ref/Hk_sim（相干旋转主导）
+  function applyHScale(item, angle){
+    if (Number(angle) === 90 && summary.scale_td) {
+      return (item.H || []).map(h => h * summary.scale_td);
+    }
     const hcSim = item.hc_sim_median;
     if(!hcSim || hcSim <= hcRef * 3) return item.H || [];
     return (item.H || []).map(h => h * (hcRef / hcSim));
@@ -2275,7 +2280,9 @@ function renderMaterialRepresentativeCharts(summary){
   const datasets = okAngles.map(([angle,item]) => {
     const color = colorForAngle(angle);
     const name = Number(angle)===0 ? 'RD' : Number(angle)===90 ? 'TD' : `${angle}°`;
-    return bhDataset(`${name} material (${item.n_grains_valid}/${item.n_grains_total})`, applyHScale(item), item.B || [], color, {
+    // TD 方向使用修正后的 B 值（B_corrected_td），若无则回退到原始 B
+    const B_display = (Number(angle) === 90 && item.B_corrected_td) ? item.B_corrected_td : item.B || [];
+    return bhDataset(`${name} material (${item.n_grains_valid}/${item.n_grains_total})`, applyHScale(item, angle), B_display, color, {
       pointRadius:2,
       tension:.18,
     });
@@ -2294,8 +2301,8 @@ function renderMaterialRepresentativeCharts(summary){
   if (mh) {
     destroyChartById('oc-mh');
     const labels=okAngles.map(([a])=>`${a}°`);
-    const b800=okAngles.map(([,x])=>curveMetricsFromBH(applyHScale(x), x.B).B800);
-    const mu800=okAngles.map(([,x])=>curveMetricsFromBH(applyHScale(x), x.B).mu800);
+    const b800=okAngles.map(([a,x])=>curveMetricsFromBH(applyHScale(x,a), x.B).B800);
+    const mu800=okAngles.map(([a,x])=>curveMetricsFromBH(applyHScale(x,a), x.B).mu800);
     charts['oc-mh'] = new Chart(mh.getContext('2d'), {
       type:'bar',
       data:{labels,datasets:[
@@ -4091,13 +4098,15 @@ async function exportBHAnalysis(source) {
       toast('需要至少 0°（RD）方向的有效 B-H 曲线', 'err');
       return;
     }
-    // 应用与图表相同的 Hc_ref/Hc_sim H 轴缩放
+    // RD：Hc_ref/Hc_sim 缩放；TD：使用 scale_td（Hk_ref/Hk_sim，物理上不同）
     const _hcRefExp = matSum.Hc_reference_Am || 6;
     function _expScale(H, hcSim){ return (hcSim && hcSim > _hcRefExp*3) ? H.map(h=>h*(_hcRefExp/hcSim)) : H; }
     rd_H = _expScale(rd.H, rd.hc_sim_median);
     rd_B = rd.B;
-    td_H = _expScale(td?.H || rd.H, td?.hc_sim_median || rd.hc_sim_median);
-    td_B = td?.B || rd.B;
+    const _tdScaleExp = matSum.scale_td;
+    td_H = _tdScaleExp ? (td?.H || rd.H).map(h => h * _tdScaleExp)
+                       : _expScale(td?.H || rd.H, td?.hc_sim_median || rd.hc_sim_median);
+    td_B = td?.B_corrected_td || td?.B || rd.B;
     // 若 δ 修正开关已勾选，改用修正后的 RD 曲线
     const deltaTog = document.getElementById('delta-corr-toggle');
     if (deltaTog?.checked) {

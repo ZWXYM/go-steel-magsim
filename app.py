@@ -1660,10 +1660,11 @@ def bh_analysis_reference_list():
 
 @app.route('/api/analyze/apply-delta-correction', methods=['POST'])
 def api_apply_delta_correction():
-    """对原始仿真聚合 B-H 曲线施加 δ(H) 参考修正（RD 方向）。"""
+    """对原始仿真聚合 B-H 曲线施加参考修正（RD/TD 方向均支持）。"""
     import numpy as np
-    from modules.reference_corrector import apply_reference_correction
+    from modules.reference_corrector import apply_reference_correction, get_td_scale
     data = request.json or {}
+    direction = data.get('direction', 'RD').upper()
     H   = np.array(data.get('H', []),  dtype=float)
     B   = np.array(data.get('B', []),  dtype=float)
     odf = {
@@ -1677,10 +1678,13 @@ def api_apply_delta_correction():
     hc_sim      = float(hc_sim_raw) if hc_sim_raw is not None else None
     try:
         B_corr = apply_reference_correction(
-            H, B, odf, direction='RD', weight_cap=weight_cap,
+            H, B, odf, direction=direction, weight_cap=weight_cap,
             hc_sim=hc_sim, si_content=si_content,
         )
-        return jsonify({'H': H.tolist(), 'B_corrected': B_corr.tolist()})
+        resp = {'H': H.tolist(), 'B_corrected': B_corr.tolist()}
+        if direction == 'TD':
+            resp['scale_td'] = round(get_td_scale(H, B, odf), 6)
+        return jsonify(resp)
     except Exception as e:
         return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
 

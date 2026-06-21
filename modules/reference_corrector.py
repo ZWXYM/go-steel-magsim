@@ -263,37 +263,78 @@ def _get_delta_spline(grade: str, direction: str = 'RD') -> CubicSpline:
     return cs
 
 
-# ─── TD 方向参考数据插值 ──────────────────────────────────────────────────────
+# ─── TD 方向辅助函数 ──────────────────────────────────────────────────────────
+def _estimate_hk_sim_td(H_sim: np.ndarray, B_sim_td: np.ndarray) -> float:
+    """
+    估计仿真 TD 各向异性场 Hk_sim_td：B_sim_td 首次达到 50%×Bmax 对应的 H_sim。
+
+    物理含义：TD 方向磁化由相干旋转主导，Hk_sim 对应仿真晶粒集合的有效各向异性场。
+    """
+    B = np.asarray(B_sim_td, dtype=float)
+    H = np.asarray(H_sim, dtype=float)
+    B_max = float(np.max(B)) if float(np.max(B)) > 1e-6 else 1.42
+    threshold = 0.5 * B_max
+    for i in range(len(B) - 1):
+        if B[i] <= threshold < B[i + 1]:
+            t = (threshold - B[i]) / (B[i + 1] - B[i])
+            return float(H[i] + t * (H[i + 1] - H[i]))
+    mask = B > threshold
+    if mask.any():
+        return float(H[np.argmax(mask)])
+    return float(H[len(H) // 2])
+
+
+def _get_hk_ref_td(odf_params: dict) -> float:
+    """
+    计算 IDW 加权参考材料 TD 各向异性场 Hk_ref_td：
+    参考 BH 曲线中 B 首次达到 50%×Bmax 对应的 H（A/m）。
+    """
+    odf = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
+    weights = anchor_weights(odf)
+    Hk_total = 0.0
+    for grade, w in weights.items():
+        if w < 1e-6:
+            continue
+        try:
+            H_r, B_r = load_reference_bh(grade, 'TD')
+            B_max = float(B_r[-1]) if len(B_r) > 0 else 2.0
+            threshold = 0.5 * B_max
+            for i in range(len(B_r) - 1):
+                if B_r[i] <= threshold < B_r[i + 1]:
+                    t_frac = (threshold - float(B_r[i])) / (float(B_r[i + 1]) - float(B_r[i]))
+                    Hk_total += w * float(H_r[i] + t_frac * (float(H_r[i + 1]) - float(H_r[i])))
+                    break
+        except Exception as e:
+            print(f'[reference_corrector] 警告：{grade}/TD Hk 估计失败: {e}', file=sys.stderr)
+    return max(Hk_total, 10.0)
+
+
+def get_td_scale(H_sim: np.ndarray, B_sim_td: np.ndarray, odf_params: dict) -> float:
+    """
+    计算 TD H 轴缩放因子：scale_TD = Hk_ref_TD / Hk_sim_TD。
+
+    使用方法：
+        H_real_TD = H_sim × scale_TD    （用于显示或参考插值）
+
+    物理背景：
+        RD: Hc_sim >> Hc_ref（单畴壁运动被高估），scale_RD ≈ 0.005
+        TD: Hk_sim > Hk_ref（晶粒间相互作用使实际 Hk 偏低），scale_TD ≈ 0.1-0.3
+    """
+    Hk_sim = _estimate_hk_sim_td(H_sim, B_sim_td)
+    Hk_ref = _get_hk_ref_td(odf_params)
+    if Hk_sim <= 0:
+        return 0.15
+    return float(Hk_ref / Hk_sim)
+
+
 def td_from_reference(H_pred: np.ndarray, odf_params: dict) -> np.ndarray:
     """
-    TD 方向 B-H 曲线：ODF 加权的参考数据插值（IDW，n=2）。
-
-    物理依据：
-      SW 模型的 ODF→TD 依赖关系与现实**完全相反**：
-        仿真: 强 Goss (f=0.95) → B_sim_TD(800) ≈ 0.12T （硬轴，相干旋转 m ≈ H/Hk）
-        现实: 强 Goss (f=0.95) → B_ref_TD(800) ≈ 1.70T  （畴壁运动，易轴不沿 TD
-              反而使 TD 方向 180° 畴壁更易于移动）
-
-      因此仿真的 ODF 相对趋势对 TD 完全无参考价值，正确做法是
-      直接用实测参考曲线，按 ODF 距离加权插值。
-
-      4个锚点 B800_TD: B23R075=1.70T > B27R090=1.68T > B27R095=1.65T > B30P105=1.60T
-      物理 ODF 分辨率：span ≈ 0.10T（真实的跨等级差异即如此，非"坍塌"）。
-
-      采用 IDW n=2（距离平方倒数权重）比 n=1 有更强的 ODF 分辨率。
-
-    Returns:
-        B_TD_corrected [T]，截断到 [0, 2.5]
+    TD 方向参考曲线直接插值（H_pred 视为真实 H，单位 A/m）。
+    保留以兼容旧调用；apply_reference_correction 内部现已使用带 scale 的新路径。
     """
-    odf  = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
-    H    = np.asarray(H_pred, dtype=float)
-
-    # IDW with power=2 for sharper ODF discrimination
-    dists  = {g: odf_distance(odf, v) for g, v in ANCHOR_ODF.items()}
-    inv2   = {g: 1.0 / (d + 1e-4) ** 2 for g, d in dists.items()}
-    total  = sum(inv2.values())
-    weights = {g: w / total for g, w in inv2.items()}
-
+    odf = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
+    H   = np.asarray(H_pred, dtype=float)
+    weights = anchor_weights(odf)
     B_out = np.zeros_like(H)
     for grade, w in weights.items():
         if w < 1e-6:
@@ -303,7 +344,6 @@ def td_from_reference(H_pred: np.ndarray, odf_params: dict) -> np.ndarray:
             B_out += w * np.interp(H, H_ref, B_ref, left=0.0, right=float(B_ref[-1]))
         except Exception as e:
             print(f'[reference_corrector] 警告：{grade}/TD 加载失败: {e}', file=sys.stderr)
-
     return np.clip(B_out, 0.0, 2.5)
 
 
@@ -358,7 +398,32 @@ def apply_reference_correction(H_pred:     np.ndarray,
     B = np.asarray(B_sim,  dtype=float).copy()
 
     if direction == 'TD':
-        return td_from_reference(H, odf_params)
+        # TD 修正：用 Hk 驱动的 H 轴缩放将 H_sim 映射到真实 TD H 域，再插值参考曲线
+        # 物理依据：TD 磁化由相干旋转主导（非畴壁运动），scale_TD = Hk_ref/Hk_sim ≈ 0.1-0.3
+        #   比 RD 的 scale_RD ≈ 0.005 大约 30-50 倍
+        odf_td   = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
+        Hk_sim_td = _estimate_hk_sim_td(H, B)
+        Hk_ref_td = _get_hk_ref_td(odf_params)
+        scale_td  = Hk_ref_td / max(Hk_sim_td, 1.0)
+        H_real_td = H * scale_td          # H_sim → 真实 TD H（A/m）
+
+        wts_td  = anchor_weights(odf_td)
+        B_ref_td = np.zeros(len(H))
+        for _grade, _w in wts_td.items():
+            if _w < 1e-6:
+                continue
+            try:
+                H_r, B_r = load_reference_bh(_grade, 'TD')
+                B_ref_td += _w * np.interp(
+                    H_real_td, H_r, B_r, left=0.0, right=float(B_r[-1])
+                )
+            except Exception as _e:
+                print(f'[reference_corrector] 警告：{_grade}/TD 加载失败: {_e}',
+                      file=sys.stderr)
+
+        # weight_cap：0=纯仿真，1=纯参考（参考 B_ref_td 在整个 H_sim 范围都是物理正确值）
+        B_corrected = (1.0 - float(weight_cap)) * B + float(weight_cap) * B_ref_td
+        return np.clip(B_corrected, 0.0, _MU0 * (H + _MSAT))
 
     if weight_cap <= 0.0:
         return B

@@ -350,7 +350,33 @@ class DatasetBuilder:
             if bh is None:
                 summary['angles'][str(angle)] = {'status': 'invalid_or_empty'}
                 continue
-            summary['angles'][str(angle)] = {'status': 'ok', **bh}
+            entry = {'status': 'ok', **bh}
+
+            # TD(90°)：计算 scale_td 并存储修正后的 B 值供前端显示和导出使用
+            if (angle == 90
+                    and odf_params.get('f_Goss') is not None
+                    and odf_params.get('theta_0_deg') is not None):
+                try:
+                    from modules.reference_corrector import apply_reference_correction, get_td_scale
+                    H_std = np.array(STANDARD_H_POINTS, dtype=float)
+                    B_raw = np.array(bh['B_at_std_H'], dtype=float)
+                    odf_p = {
+                        'f_Goss':        odf_params.get('f_Goss', 0.82),
+                        'theta_0_deg':   odf_params.get('theta_0_deg', 6.0),
+                        'halfwidth_deg': odf_params.get('halfwidth_deg', 8.0),
+                    }
+                    B_corr = apply_reference_correction(
+                        H_std, B_raw, odf_p, direction='TD', weight_cap=1.0,
+                        si_content=si_content,
+                    )
+                    s_td = get_td_scale(H_std, B_raw, odf_p)
+                    entry['B_corrected_td'] = B_corr.tolist()
+                    entry['scale_td'] = round(s_td, 6)
+                    summary['scale_td'] = round(s_td, 6)
+                except Exception as _e:
+                    warnings.warn(f'[dataset_builder] TD summary correction 失败: {_e}')
+
+            summary['angles'][str(angle)] = entry
 
         if write_report:
             sidecar = config_dir / 'material_representative_summary.json'
@@ -419,16 +445,16 @@ class DatasetBuilder:
                 # 展示摘要始终保存原始仿真聚合值（供分析页面显示）
                 representative_summary['angles'][str(angle)] = {'status': 'ok', **bh}
 
-                # 训练特征：RD(0°)方向用 δ 修正后的 B 值，其余方向保持原始值
+                # 训练特征：RD(0°)和 TD(90°)方向均使用参考曲线修正后的 B 值
                 B_train = list(bh['B_at_std_H'])
+                odf_p = {
+                    'f_Goss':        row.get('f_Goss') or 0.82,
+                    'theta_0_deg':   row.get('theta_0_deg') or 6.0,
+                    'halfwidth_deg': row.get('halfwidth_deg') or 8.0,
+                }
                 if angle == 0 and row.get('f_Goss') is not None and row.get('theta_0_deg') is not None:
                     try:
                         from modules.reference_corrector import apply_reference_correction
-                        odf_p = {
-                            'f_Goss':        row['f_Goss'],
-                            'theta_0_deg':   row['theta_0_deg'],
-                            'halfwidth_deg': row.get('halfwidth_deg') or 8.0,
-                        }
                         B_corr = apply_reference_correction(
                             np.array(STANDARD_H_POINTS, dtype=float),
                             np.array(B_train, dtype=float),
@@ -439,7 +465,24 @@ class DatasetBuilder:
                         B_train = B_corr.tolist()
                         row['bh_reference_corrected'] = True
                     except Exception as _e:
-                        warnings.warn(f'[dataset_builder] δ-correction 失败 {config_dir.name}/angle=0: {_e}')
+                        warnings.warn(f'[dataset_builder] RD δ-correction 失败 {config_dir.name}/angle=0: {_e}')
+
+                elif angle == 90 and row.get('f_Goss') is not None and row.get('theta_0_deg') is not None:
+                    try:
+                        from modules.reference_corrector import apply_reference_correction, get_td_scale
+                        H_std = np.array(STANDARD_H_POINTS, dtype=float)
+                        B_raw = np.array(B_train, dtype=float)
+                        B_corr = apply_reference_correction(
+                            H_std, B_raw, odf_p, direction='TD', weight_cap=1.0,
+                            si_content=si_content,
+                        )
+                        B_train = B_corr.tolist()
+                        s_td = get_td_scale(H_std, B_raw, odf_p)
+                        row['scale_td'] = round(s_td, 6)
+                        representative_summary['scale_td'] = round(s_td, 6)
+                        row['bh_reference_corrected'] = True
+                    except Exception as _e:
+                        warnings.warn(f'[dataset_builder] TD correction 失败 {config_dir.name}/angle=90: {_e}')
 
                 for i, h in enumerate(STANDARD_H_POINTS):
                     row[f'B_{angle}deg_H{h}'] = B_train[i]
