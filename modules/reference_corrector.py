@@ -133,30 +133,40 @@ def _sw_aggregate_b(H_arr: np.ndarray,
     """
     Stoner-Wohlfarth 上支路聚合 B(H)，向量化 Newton 迭代求解。
 
-    Args:
-        H_arr:             施加场强数组 [A/m]，shape (N_H,)
-        theta_samples_deg: 每个晶粒易轴与施加场的夹角 [°]，shape (N_grains,)
-
-    Returns:
-        B_arr [T]，shape (N_H,)
+    初始化修正：原代码用 ψ=0 作为所有晶粒初始猜测，导致硬轴晶粒
+    (θ≈90°) 在 H>>Hk 时收敛到能量极大点 (m_H≈−1)。
+    修正方案：Newton 从 ψ=0 求解；对 H>Hk 的区间额外与高场解析近似
+    m_H ≈ 1 − sin²(θ)·Hk/(2H) 做加权混合，强制物理收敛。
     """
     theta = np.radians(np.asarray(theta_samples_deg, dtype=float))  # (N_g,)
-    H     = np.asarray(H_arr, dtype=float)[:, None]                 # (N_H, 1)
+    H_val = np.asarray(H_arr, dtype=float)                          # (N_H,)
+    H     = H_val[:, None]                                           # (N_H, 1)
     t     = theta[None, :]                                           # (1, N_g)
 
-    # 初始猜测：ψ=0（上支路从饱和态出发）
+    # Newton 迭代（ψ=0 初始化，适用于 H < Hk 区间）
     psi = np.zeros((len(H_arr), len(theta_samples_deg)))
-
-    for _ in range(14):
+    for _ in range(20):
         f  = Hk / 2.0 * np.sin(2 * psi) - H * np.sin(psi - t)
         df = Hk * np.cos(2 * psi)        - H * np.cos(psi - t)
         df = np.where(np.abs(df) < 1e-9, 1e-9 * np.sign(df + 1e-30), df)
         psi = psi - f / df
-        psi = np.clip(psi, -np.pi / 2.0, np.pi / 2.0)  # 保持上支路
+        psi = np.clip(psi, -np.pi / 2.0, np.pi / 2.0)
 
-    m_H = np.cos(psi - t)                      # 投影到施加场方向
-    B   = _MU0 * (H.squeeze(1) + Msat * m_H.mean(axis=1))
-    return np.clip(B, 0.0, 2.5)
+    m_H_newton = np.cos(psi - t)   # (N_H, N_g)
+
+    # 高场解析近似：H >> Hk 时所有晶粒趋向与外场对齐，m_H → 1
+    # 领先阶修正：m_H ≈ 1 − sin²(θ)·Hk/(2H)
+    H_norm    = np.maximum(H_val, 1e-9) / Hk              # (N_H,)
+    sin2_t    = np.sin(theta) ** 2                         # (N_g,)
+    m_H_high  = np.clip(1.0 - sin2_t[None, :] / (2.0 * H_norm[:, None]), 0.0, 1.0)
+
+    # 混合权重：H < 0.2·Hk → 全用 Newton；H > 0.6·Hk → 全用解析
+    # Newton 在 H >> Hk 对硬轴晶粒收敛至能量极大点，解析式更可靠
+    blend = np.clip((H_norm - 0.2) / 0.4, 0.0, 1.0)[:, None]  # (N_H, 1)
+    m_H = (1.0 - blend) * m_H_newton + blend * m_H_high
+
+    B = _MU0 * (H_val + Msat * m_H.mean(axis=1))
+    return np.clip(B, 0.0, _MU0 * (H_val + Msat))  # 物理上限
 
 
 def _estimate_sim_bh(grade: str, H_grid: np.ndarray,
@@ -362,7 +372,10 @@ def apply_reference_correction(H_pred:    np.ndarray,
             print(f'[reference_corrector] 警告：{grade}/RD 修正失败: {e}', file=sys.stderr)
 
     correction *= float(weight_cap)
-    return np.clip(B + correction, 0.0, 2.5)
+    B_out = B + correction
+    # 物理上限：B ≤ μ₀(H + Msat)；替换原来固定截断 2.5 T
+    B_max = _MU0 * (H + _MSAT)
+    return np.clip(B_out, 0.0, B_max)
 
 
 # ─── 便利函数：初始化所有锚点校准 ────────────────────────────────────────────

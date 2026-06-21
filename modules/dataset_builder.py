@@ -370,6 +370,7 @@ class DatasetBuilder:
             'N_grains':       params.get('N_grains', config_info.get('n_grains', None)),
             'Si_content':     params.get('Si_content', 3.0),
             'halfwidth_policy': params.get('halfwidth_policy', None),
+            'bh_reference_corrected': False,  # 有 RD 数据且 f_Goss 已知时会被置 True
         }
 
         si_content = float(params.get('Si_content', 3.0))
@@ -409,14 +410,36 @@ class DatasetBuilder:
                 representative_summary['angles'][str(angle)] = {'status': 'invalid_or_empty'}
             else:
                 has_any = True
+                # 展示摘要始终保存原始仿真聚合值（供分析页面显示）
+                representative_summary['angles'][str(angle)] = {'status': 'ok', **bh}
+
+                # 训练特征：RD(0°)方向用 δ 修正后的 B 值，其余方向保持原始值
+                B_train = list(bh['B_at_std_H'])
+                if angle == 0 and row.get('f_Goss') is not None and row.get('theta_0_deg') is not None:
+                    try:
+                        from modules.reference_corrector import apply_reference_correction
+                        odf_p = {
+                            'f_Goss':        row['f_Goss'],
+                            'theta_0_deg':   row['theta_0_deg'],
+                            'halfwidth_deg': row.get('halfwidth_deg') or 8.0,
+                        }
+                        B_corr = apply_reference_correction(
+                            np.array(STANDARD_H_POINTS, dtype=float),
+                            np.array(B_train, dtype=float),
+                            odf_p, direction='RD',
+                        )
+                        B_train = B_corr.tolist()
+                        row['bh_reference_corrected'] = True
+                    except Exception as _e:
+                        warnings.warn(f'[dataset_builder] δ-correction 失败 {config_dir.name}/angle=0: {_e}')
+
                 for i, h in enumerate(STANDARD_H_POINTS):
-                    row[f'B_{angle}deg_H{h}'] = bh['B_at_std_H'][i]
+                    row[f'B_{angle}deg_H{h}'] = B_train[i]
                 row[f'Hc_{angle}deg']     = bh['Hc']
                 row[f'Mr_{angle}deg']     = bh['Mr']
                 row[f'mu_max_{angle}deg'] = bh['mu_max']
                 row[f'n_grains_valid_{angle}deg'] = bh['n_grains_valid']
                 row[f'representative_grain_{angle}deg'] = bh.get('representative_grain_file')
-                representative_summary['angles'][str(angle)] = {'status': 'ok', **bh}
 
         if representative_summary['angles']:
             sidecar = config_dir / 'material_representative_summary.json'

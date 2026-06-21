@@ -235,6 +235,16 @@ class BHPredictor:
         with open(save_dir / 'model.pkl', 'wb')    as f: pickle.dump(model, f)
         with open(save_dir / 'scaler_X.pkl', 'wb') as f: pickle.dump(scaler, f)
 
+        # 检测训练集是否使用了 δ 修正后的 RD BH 数据
+        _bh_corr_col = 'bh_reference_corrected'
+        bh_corrected_in_training = False
+        if _bh_corr_col in df.columns:
+            try:
+                frac = df[_bh_corr_col].astype(bool).mean()
+                bh_corrected_in_training = float(frac) > 0.5
+            except Exception:
+                pass
+
         config = {
             'model_id':       model_id,
             'model_type':     model_type,
@@ -252,6 +262,7 @@ class BHPredictor:
             'target_policy':  'RD_TD_only',
             'metric_reliability': metric_reliability,
             'metric_warnings': warnings_list,
+            'bh_reference_corrected': bh_corrected_in_training,
             'scalar_confidence': {
                 'Hc': 'low_due_to_mesh_limit',
                 'mu_max': 'low_due_to_mesh_limit',
@@ -371,9 +382,10 @@ class BHPredictor:
         result['Hc_reference_source'] = ref_props['Hc_source']
 
         # Apply reference B-H correction (delta-correction method).
-        # Skipped when model was trained on already-corrected data.
+        # Skipped when model was trained on already-corrected data (prevents double-correction).
+        training_already_corrected = self.metadata.get('bh_reference_corrected', False)
         bh_corrected = False
-        if not self.metadata.get('bh_reference_corrected', False):
+        if not training_already_corrected:
             try:
                 from physics_calibrator import correct_bh_with_reference
                 odf_params = {
@@ -396,6 +408,9 @@ class BHPredictor:
             except Exception as _corr_err:
                 import warnings
                 warnings.warn(f'reference_corrector 修正失败，使用原始仿真输出: {_corr_err}')
+        else:
+            # 训练数据已用修正后的 RD BH，预测输出已内含参考修正
+            bh_corrected = True
 
         result['full_direction'] = interpolate_full_direction(result['RD'], result['TD'])
         result['calibration_report'] = {
