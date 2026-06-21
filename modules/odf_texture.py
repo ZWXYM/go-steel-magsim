@@ -16,6 +16,8 @@ import platform
 import matplotlib
 
 matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
+# 添加支持 Unicode 下标字符 (₀₁₂) 的字体；SimSun 不含这些字形
+matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'SimSun', 'DejaVu Sans']
 
 
 # 根据操作系统选择合适的中文字体
@@ -799,7 +801,7 @@ class AdvancedTextureGenerator:
         filename = f'odf_3d{title_suffix.replace(" ", "_")}.png'
         plt.savefig(filename, dpi=150, bbox_inches='tight')
         print(f'✓ ODF 3D图已保存到文件:{filename}')
-        plt.show()
+        plt.close('all')
 
         return filename
 
@@ -871,8 +873,8 @@ class AdvancedTextureGenerator:
             ax.set_ylim(0, 180)
             ax.grid(True, alpha=0.3)
 
-            # 添加 colorbar
-            cbar = plt.colorbar(contourf, ax=ax)
+            # 添加 colorbar（必须用 fig.colorbar 而非 plt.colorbar，避免跨图错误）
+            cbar = fig.colorbar(contourf, ax=ax)
             cbar.set_label('ODF强度', fontsize=9)
 
         # 隐藏多余的子图
@@ -887,7 +889,7 @@ class AdvancedTextureGenerator:
         filename = f'odf_phi2_sections{title_suffix.replace(" ", "_")}.png'
         plt.savefig(filename, dpi=150, bbox_inches='tight')
         print(f'✓ φ2截面图已保存到文件:{filename}')
-        plt.show()
+        plt.close('all')
 
         return filename
 

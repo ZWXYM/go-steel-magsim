@@ -1319,6 +1319,7 @@ async function loadSamples(){
 
 function renderSampleFolder(items,containerId){
   const c=document.getElementById(containerId);
+  const canDelete=(containerId==='samples-input');
   if(!items.length){c.innerHTML='<div class="empty" style="padding:20px"><p>空</p></div>';return;}
   c.innerHTML='';
   items.forEach(item=>{
@@ -1331,6 +1332,19 @@ function renderSampleFolder(items,containerId){
       div.innerHTML=`<span style="opacity:.5;font-size:14px">📄</span>
         <div class="fi-info"><div class="fi-name">${esc(item.filename||item.full_path.split(/[\\/]/).pop())}</div>
         ${meta?`<div class="fi-meta"><span>${meta}</span></div>`:''}</div>`;
+      if(canDelete){
+        const btn=document.createElement('button');
+        btn.className='input-del-btn';btn.title='从 input/ 删除';btn.textContent='×';
+        btn.onclick=async e=>{
+          e.stopPropagation();
+          const name=item.filename||item.full_path.split(/[\\/]/).pop();
+          if(!confirm(`删除 "${name}"？`)) return;
+          const r=await api('/api/input-item',{method:'DELETE',body:{path:item.full_path}});
+          if(r.success){toast(`已删除 ${name}`,'ok');loadFiles();}
+          else toast(r.error||'删除失败','err');
+        };
+        div.appendChild(btn);
+      }
       c.appendChild(div);
     } else {
       const div=document.createElement('div');div.className='fi';div.style.cursor='default';
@@ -1339,6 +1353,18 @@ function renderSampleFolder(items,containerId){
           <div class="fi-name" style="color:var(--amber)">${esc(item.folder_name)}</div>
           <div class="fi-meta"><span>${item.n_total} 个样本</span></div>
         </div>`;
+      if(canDelete){
+        const btn=document.createElement('button');
+        btn.className='input-del-btn';btn.title='从 input/ 删除文件夹';btn.textContent='×';
+        btn.onclick=async e=>{
+          e.stopPropagation();
+          if(!confirm(`删除文件夹 "${item.folder_name}"（${item.n_total} 个文件）？`)) return;
+          const r=await api('/api/input-item',{method:'DELETE',body:{path:item.folder_path||item.full_path}});
+          if(r.success){toast(`已删除 ${item.folder_name}`,'ok');loadFiles();}
+          else toast(r.error||'删除失败','err');
+        };
+        div.appendChild(btn);
+      }
       c.appendChild(div);
     }
   });
