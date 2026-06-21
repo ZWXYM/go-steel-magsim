@@ -1639,6 +1639,27 @@ def bh_analysis_reference_list():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/analyze/apply-delta-correction', methods=['POST'])
+def api_apply_delta_correction():
+    """对原始仿真聚合 B-H 曲线施加 δ(H) 参考修正（RD 方向）。"""
+    import numpy as np
+    from modules.reference_corrector import apply_reference_correction
+    data = request.json or {}
+    H   = np.array(data.get('H', []),  dtype=float)
+    B   = np.array(data.get('B', []),  dtype=float)
+    odf = {
+        'f_Goss':        float(data.get('f_goss',      0.8)),
+        'theta_0_deg':   float(data.get('theta_0_deg', 6.0)),
+        'halfwidth_deg': float(data.get('halfwidth_deg', 8.0)),
+    }
+    weight_cap = float(data.get('weight_cap', 1.0))
+    try:
+        B_corr = apply_reference_correction(H, B, odf, direction='RD', weight_cap=weight_cap)
+        return jsonify({'H': H.tolist(), 'B_corrected': B_corr.tolist()})
+    except Exception as e:
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+
 @app.route('/api/analyze/export-bh-analysis', methods=['POST'])
 def export_bh_analysis():
     """

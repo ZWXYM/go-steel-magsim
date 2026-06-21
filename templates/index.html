@@ -800,6 +800,22 @@ select option{background:var(--bg-2)}
                 <div class="chart-card"><h4>B-H 曲线</h4><canvas id="oc-bh" height="200"></canvas></div>
                 <div class="chart-card"><h4>M-H 磁滞回线</h4><canvas id="oc-mh" height="200"></canvas></div>
               </div>
+              <!-- δ(H) 修正开关（仅材料级聚合后显示） -->
+              <div id="delta-corr-bar" style="display:none;margin-top:8px;padding:7px 12px;
+                   background:var(--bg-3);border-radius:6px;border:1px solid var(--border);
+                   display:none;align-items:center;gap:10px;flex-wrap:wrap">
+                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;font-weight:600;color:var(--amber);white-space:nowrap">
+                  <input type="checkbox" id="delta-corr-toggle" onchange="toggleDeltaCorr(this.checked)" style="cursor:pointer">
+                  δ(H) 修正
+                </label>
+                <span style="font-size:11px;color:var(--t3)">强度 α</span>
+                <input type="range" id="delta-weight-slider" min="0" max="1" step="0.05" value="1"
+                       oninput="document.getElementById('delta-weight-val').textContent=Number(this.value).toFixed(2);
+                                if(document.getElementById('delta-corr-toggle').checked) toggleDeltaCorr(true)"
+                       style="width:80px;cursor:pointer;accent-color:var(--amber)">
+                <span id="delta-weight-val" style="font-size:11px;font-family:var(--font-mono);color:var(--t2);min-width:28px">1.00</span>
+                <span id="delta-corr-result" style="font-size:11px;color:var(--t3);margin-left:4px"></span>
+              </div>
               <div class="coll-hdr" onclick="toggleColl(this)" style="margin-top:8px"><span>📈 高级图表</span><span class="chevron">▼</span></div>
               <div class="coll-body">
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:8px">
@@ -2012,6 +2028,9 @@ async function selectOutputFile(el, filepath){
   showProps(d.properties,d.curves,'o-props-grid');
   renderCharts(d.properties,d.curves,'oc-');
   document.getElementById('output-result-wrap').style.display='block';
+  // 单晶粒无 ODF 参数，隐藏 δ 修正栏
+  const dbar=document.getElementById('delta-corr-bar');
+  if(dbar) dbar.style.display='none';
   toast(`分析完成 · ${d.data_points} 数据点`,'ok');
 }
 
@@ -2264,6 +2283,20 @@ function renderMaterialRepresentativeCharts(summary){
           y1:{beginAtZero:true,position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'μr',color:'#94a3b8'},ticks:{color:'#64748b'}}
         }}
     });
+  }
+
+  // 显示/初始化 δ(H) 修正开关栏（需要有 RD 曲线和 f_Goss）
+  const hasDelta = summary?.f_Goss != null && summary?.angles?.['0']?.status === 'ok';
+  const dbar = document.getElementById('delta-corr-bar');
+  if (dbar) {
+    dbar.style.display = hasDelta ? 'flex' : 'none';
+    // 重置开关和修正结果
+    const tog = document.getElementById('delta-corr-toggle');
+    if (tog) tog.checked = false;
+    const res = document.getElementById('delta-corr-result');
+    if (res) res.textContent = '';
+    const slider = document.getElementById('delta-weight-slider');
+    if (slider) { slider.value = '1'; document.getElementById('delta-weight-val').textContent = '1.00'; }
   }
 }
 
@@ -3952,6 +3985,63 @@ function _getBHIncludeNames(targetId) {
   if (!checks.length) return null;
   const names = Array.from(checks).filter(c => c.checked).map(c => c.dataset.matName);
   return names.length ? names : null;
+}
+
+// ── δ(H) 修正开关（结果分析页 · 材料级聚合 RD 曲线） ───────────────────
+async function toggleDeltaCorr(enabled) {
+  const chart = charts['oc-bh'];
+  if (!chart) return;
+
+  // 移除已有修正曲线
+  chart.data.datasets = chart.data.datasets.filter(d => !d._delta_corr);
+
+  if (!enabled) {
+    chart.update('none');
+    const res = document.getElementById('delta-corr-result');
+    if (res) res.textContent = '';
+    return;
+  }
+
+  const summary = window.analysisData2?.material_summary;
+  const rd = summary?.angles?.['0'];
+  if (!rd?.H?.length || summary?.f_Goss == null) {
+    toast('需要 RD(0°) 曲线和 f_Goss 参数', 'err');
+    const tog = document.getElementById('delta-corr-toggle');
+    if (tog) tog.checked = false;
+    return;
+  }
+
+  const weight = parseFloat(document.getElementById('delta-weight-slider')?.value ?? 1);
+  const r = await api('/api/analyze/apply-delta-correction', {
+    method: 'POST',
+    body: {
+      H: rd.H, B: rd.B,
+      f_goss:       summary.f_Goss,
+      theta_0_deg:  summary.theta_0_deg  ?? 6.0,
+      halfwidth_deg: summary.halfwidth_deg ?? 8.0,
+      weight_cap:   weight,
+    }
+  });
+  if (r.error) { toast('δ修正失败: ' + r.error, 'err'); return; }
+
+  chart.data.datasets.push({
+    _delta_corr: true,
+    label: `RD δ修正 (α=${weight.toFixed(2)})`,
+    data: r.H.map((h, i) => ({x: h, y: r.B_corrected[i]})),
+    showLine: true, parsing: false,
+    borderColor: '#f59e0b', backgroundColor: 'transparent',
+    borderWidth: 2, borderDash: [6, 3],
+    pointRadius: 0, tension: 0.12, fill: false,
+  });
+  chart.update('none');
+
+  const B0 = interpYAtX(rd.H, rd.B, 800);
+  const Bc = interpYAtX(r.H, r.B_corrected, 800);
+  const res = document.getElementById('delta-corr-result');
+  if (res && B0 != null && Bc != null) {
+    const d = Bc - B0;
+    res.textContent = `B@800: ${B0.toFixed(3)} → ${Bc.toFixed(3)} T (${d>=0?'+':''}${d.toFixed(3)} T)`;
+  }
 }
 
 // ── BH 分析报告导出（材料代表性分析 + 快速预测） ─────────────────────────
