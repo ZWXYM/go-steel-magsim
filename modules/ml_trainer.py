@@ -381,36 +381,10 @@ class BHPredictor:
         result['Hc_reference_Am'] = ref_hc
         result['Hc_reference_source'] = ref_props['Hc_source']
 
-        # Apply reference B-H correction (delta-correction method).
-        # Skipped when model was trained on already-corrected data (prevents double-correction).
-        training_already_corrected = self.metadata.get('bh_reference_corrected', False)
-        bh_corrected = False
-        if not training_already_corrected:
-            try:
-                from physics_calibrator import correct_bh_with_reference
-                odf_params = {
-                    'f_Goss':         float(params.get('f_Goss', 0.82)),
-                    'theta_0_deg':    float(params.get('theta_0_deg', 6.0)),
-                    'halfwidth_deg':  float(params.get('halfwidth_deg', 8.0)),
-                }
-                for direction, key in [('RD', 'RD'), ('TD', 'TD')]:
-                    curve = result[key]
-                    corr = correct_bh_with_reference(
-                        curve['H'], curve['B'], odf_params,
-                        direction=direction, weight_cap=1.0,
-                    )
-                    result[key] = {
-                        'H':    corr['H'],
-                        'B':    [round(float(b), 6) for b in corr['B']],
-                        'unit': 'A/m, T',
-                    }
-                bh_corrected = True
-            except Exception as _corr_err:
-                import warnings
-                warnings.warn(f'reference_corrector 修正失败，使用原始仿真输出: {_corr_err}')
-        else:
-            # 训练数据已用修正后的 RD BH，预测输出已内含参考修正
-            bh_corrected = True
+        # 训练数据在 dataset_builder 阶段已完成参考曲线修正（RD + TD），
+        # XGBoost 预测输出已处于修正空间，此处只保留物理守恒检查
+        # （calibrate_material_pair 已在上方执行单调性/上限裁剪）。
+        bh_corrected = self.metadata.get('bh_reference_corrected', False)
 
         result['full_direction'] = interpolate_full_direction(result['RD'], result['TD'])
         result['calibration_report'] = {

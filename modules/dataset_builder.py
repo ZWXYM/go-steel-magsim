@@ -375,6 +375,24 @@ class DatasetBuilder:
                     entry['B_corrected_td'] = B_corr.tolist()
                     entry['scale_td'] = round(s_td, 6)
                     summary['scale_td'] = round(s_td, 6)
+                    # 为导出对比图延伸到高 H（H_real_TD 截止于 ~662 A/m 否则平台化）
+                    H_real_td = H_std * s_td
+                    H_ext = np.array([700., 800., 1000., 1500., 2000., 3000., 5000., 10000., 50000.])
+                    B_ext = np.zeros(len(H_ext))
+                    try:
+                        from modules.reference_corrector import anchor_weights, load_reference_bh
+                        _odf_std = {
+                            'f_Goss':         odf_p['f_Goss'],
+                            'theta_mean_deg': odf_p['theta_0_deg'],
+                            'sigma_deg':      odf_p['halfwidth_deg'],
+                        }
+                        for _g, _w in anchor_weights(_odf_std).items():
+                            if _w < 1e-6: continue
+                            _Hr, _Br = load_reference_bh(_g, 'TD')
+                            B_ext += _w * np.interp(H_ext, _Hr, _Br, left=0.0, right=float(_Br[-1]))
+                    except Exception: pass
+                    entry['H_td_full'] = np.concatenate([H_real_td, H_ext]).tolist()
+                    entry['B_td_full'] = np.concatenate([B_corr, B_ext]).tolist()
                 except Exception as _e:
                     warnings.warn(f'[dataset_builder] TD summary correction 失败: {_e}')
 
@@ -449,10 +467,11 @@ class DatasetBuilder:
 
                 # 训练特征：RD(0°)和 TD(90°)方向均使用参考曲线修正后的 B 值
                 B_train = list(bh['B_at_std_H'])
+                def _nn(v, d): return v if v is not None else d
                 odf_p = {
-                    'f_Goss':        row.get('f_Goss') or 0.82,
-                    'theta_0_deg':   row.get('theta_0_deg') or 6.0,
-                    'halfwidth_deg': row.get('halfwidth_deg') or 8.0,
+                    'f_Goss':        _nn(row.get('f_Goss'),       0.82),
+                    'theta_0_deg':   _nn(row.get('theta_0_deg'),  6.0),
+                    'halfwidth_deg': _nn(row.get('halfwidth_deg'), 8.0),
                 }
                 if angle == 0 and row.get('f_Goss') is not None and row.get('theta_0_deg') is not None:
                     try:

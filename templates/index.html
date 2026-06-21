@@ -4132,10 +4132,16 @@ async function exportBHAnalysis(source) {
     function _expScale(H, hcSim){ return (hcSim && hcSim > _hcRefExp*3) ? H.map(h=>h*(_hcRefExp/hcSim)) : H; }
     rd_H = _expScale(rd.H, rd.hc_sim_median);
     rd_B = rd.B;
-    const _tdScaleExp = matSum.scale_td;
-    td_H = _tdScaleExp ? (td?.H || rd.H).map(h => h * _tdScaleExp)
-                       : _expScale(td?.H || rd.H, td?.hc_sim_median || rd.hc_sim_median);
-    td_B = td?.B_corrected_td || td?.B || rd.B;
+    if (td?.H_td_full?.length) {
+      // 优先使用含高 H 延伸的完整参考 TD 曲线（避免 H>662 A/m 平台化）
+      td_H = td.H_td_full;
+      td_B = td.B_td_full;
+    } else {
+      const _tdScaleExp = matSum.scale_td;
+      td_H = _tdScaleExp ? (td?.H || rd.H).map(h => h * _tdScaleExp)
+                         : _expScale(td?.H || rd.H, td?.hc_sim_median || rd.hc_sim_median);
+      td_B = td?.B_corrected_td || td?.B || rd.B;
+    }
     // 若 δ 修正开关已勾选，改用修正后的 RD 曲线
     const deltaTog = document.getElementById('delta-corr-toggle');
     if (deltaTog?.checked) {
