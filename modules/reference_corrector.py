@@ -336,33 +336,23 @@ def apply_reference_correction(H_pred:     np.ndarray,
                                 hc_sim:     float = None,
                                 si_content: float = 3.0) -> np.ndarray:
     """
-    重设计版 δ(H) 修正 — 三段合成法（RD 方向）。
+    重设计版 δ(H) 修正 — log(H_real) 平滑混合法（RD 方向）。
 
     核心思路：
-        MuMax3 仿真下支路在 H_sim < Hc_sim 段 B 值为负，被 calibrate_bh_curve
-        裁剪为 0，导致 B_sim 在前段全为零（缺失"缓慢初始磁化"阶段）。
+        仿真 BH 曲线缺失真实材料的"初始缓慢磁化"阶段（B_sim 在 H_sim < Hc_sim
+        区间被裁剪为 0），且中间上升段斜率过高、膝部过于尖锐。
 
-        Stage 1（H_real < H_onset，仿真 B 近零区）：
-            用参考初始磁化曲线的 B 值填充（IDW 加权，与真实材料一致）。
-            H_real[i] = H_sim[i] × (Hc_ref / hc_sim)  映射到真实 H 空间后插值。
+        修正方式：在真实 H 域（H_real = H_sim × Hc_ref/hc_sim）对参考数据和仿真
+        数据做平滑混合（smoothstep），混合比例随 log(H_real) 单调从 1（纯参考）
+        过渡到 0（纯仿真）：
 
-        Stage 2+（H_real ≥ H_onset，仿真 B 已上升区）：
-            直接保留 B_sim，仿真曲线的 S 形上升段形状已正确。
+            • H_real < H_lo (≈ 0.5×Hc_ref)  → 完全用参考数据（正确的初始磁化形状）
+            • H_lo ≤ H_real ≤ H_hi (≈ 10×Hc_ref) → 平滑混合（斜率和膝部圆润）
+            • H_real > H_hi                  → 主要用仿真数据（保留饱和特性）
+
+        weight_cap 控制混合强度：0 = 不修正（纯仿真），1 = 完全混合。
 
     TD 方向：不变，继续使用 IDW 参考曲线直接插值。
-
-    Args:
-        H_pred:     仿真/预测 H 数组 [A/m]（STANDARD_H_POINTS 或任意正 H）
-        B_sim:      对应仿真 B [T]
-        odf_params: ODF 参数字典（支持 'theta_0_deg' 或 'theta_mean_deg' 键名）
-        direction:  'RD' 或 'TD'
-        weight_cap: 0 = 不修正；1 = 完全修正（新版 RD 方向沿用此开关）
-        hc_sim:     仿真晶粒 Hc 中位数 [A/m]（由 _extract_bh_one_angle 提供）
-                    若为 None 则从 B_sim 形状自动估计
-        si_content: Si 含量 wt.%（用于计算 Hc_ref 和 B_0）
-
-    Returns:
-        B_corrected [T]，截断到 [0, μ₀(H+Msat)]
     """
     H = np.asarray(H_pred, dtype=float)
     B = np.asarray(B_sim,  dtype=float).copy()
@@ -387,39 +377,39 @@ def apply_reference_correction(H_pred:     np.ndarray,
     scale  = Hc_ref / hc_sim
     H_real = H * scale  # STANDARD_H_POINTS → 真实 H [A/m]
 
-    # ── 确定 onset 点（B_sim 从零开始上升的首个点） ──────────────────────────
-    B_0 = si_content * 0.015  # 材料极低场下的起始 B，≈0.045 T for 3% Si
-    onset_idx = len(H)
-    for i, b in enumerate(B):
-        if b > B_0:
-            onset_idx = i
-            break
-
-    if onset_idx == 0:
-        # 仿真第一个点已有效，无需 Stage 1
-        return np.clip(B, 0.0, _MU0 * (H + _MSAT))
-
-    # ── Stage 1：从参考 CSV 插值（IDW 加权，与真实材料一致） ─────────────────
+    # ── 从参考 CSV 插值得到全段参考 B ─────────────────────────────────────────
     odf     = _odf_from_params(odf_params) if 'theta_0_deg' in odf_params else odf_params
     weights = anchor_weights(odf)
 
-    B_ref_s1 = np.zeros(onset_idx)
+    B_ref_all = np.zeros(len(H))
     for grade, w in weights.items():
         if w < 1e-6:
             continue
         try:
             H_ref_raw, B_ref_raw = load_reference_bh(grade, 'RD')
-            B_ref_s1 += w * np.interp(
-                H_real[:onset_idx], H_ref_raw, B_ref_raw,
+            B_ref_all += w * np.interp(
+                H_real, H_ref_raw, B_ref_raw,
                 left=0.0, right=float(B_ref_raw[-1])
             )
         except Exception as e:
             print(f'[reference_corrector] 警告：{grade}/RD 参考加载失败: {e}',
                   file=sys.stderr)
 
-    # ── 合并：Stage 1 用参考值，Stage 2+ 保留仿真值 ──────────────────────────
-    B_corrected = B.copy()
-    B_corrected[:onset_idx] = B_ref_s1
+    # ── Smoothstep 混合权重（在 log H_real 域连续过渡） ──────────────────────
+    # H_lo：低于此 H_real，完全用参考（≈ 0.5×Hc_ref，约 3 A/m for Si=3%）
+    # H_hi：高于此 H_real，主要用仿真（≈ 10×Hc_ref，约 60 A/m for Si=3%）
+    H_lo = 0.5  * Hc_ref
+    H_hi = 10.0 * Hc_ref
+
+    # alpha_sim：对仿真数据的权重（0 = 全参考，1 = 全仿真）
+    log_t      = np.log(np.maximum(H_real, 1e-9) / H_lo) / np.log(H_hi / H_lo)
+    t          = np.clip(log_t, 0.0, 1.0)
+    alpha_sim  = t * t * (3.0 - 2.0 * t)   # cubic smoothstep
+
+    # weight_cap 控制修正强度：0=不修正，1=完全混合
+    # alpha_ref = 参考数据的比例 = (1 - alpha_sim) × weight_cap
+    alpha_ref  = (1.0 - alpha_sim) * float(weight_cap)
+    B_corrected = (1.0 - alpha_ref) * B + alpha_ref * B_ref_all
 
     B_max = _MU0 * (H + _MSAT)
     return np.clip(B_corrected, 0.0, B_max)
