@@ -65,6 +65,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;
 .b-amber{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
 .b-green{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3)}
 .b-purple{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
+.b-red{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
 
 /* FORM */
 .fr{display:grid;gap:12px;margin-bottom:12px}
@@ -355,6 +356,8 @@ select option{background:var(--bg-2)}
   <div class="nav-item" data-page="training" onclick="navigate(this)"><span class="nav-icon">🤖</span>模型训练</div>
   <div class="nav-item" data-page="prediction" onclick="navigate(this)"><span class="nav-icon">⚡</span>快速预测</div>
   <div class="nav-item" data-page="pipeline" onclick="navigate(this)"><span class="nav-icon">🔄</span>自动流水线</div>
+  <div class="nav-sec">工具</div>
+  <div class="nav-item" data-page="compare" onclick="navigate(this)"><span class="nav-icon">📈</span>材料对比导出</div>
   <div class="sb-footer">
     <div style="color:var(--t3);font-size:10px;text-transform:uppercase;letter-spacing:1px">工作目录</div>
     <div class="ws-disp" id="ws-disp" onclick="changeWorkspace()">Loading...</div>
@@ -800,22 +803,6 @@ select option{background:var(--bg-2)}
                 <div class="chart-card"><h4>B-H 曲线</h4><canvas id="oc-bh" height="200"></canvas></div>
                 <div class="chart-card"><h4>M-H 磁滞回线</h4><canvas id="oc-mh" height="200"></canvas></div>
               </div>
-              <!-- δ(H) 修正开关（仅材料级聚合后显示） -->
-              <div id="delta-corr-bar" style="display:none;margin-top:8px;padding:7px 12px;
-                   background:var(--bg-3);border-radius:6px;border:1px solid var(--border);
-                   display:none;align-items:center;gap:10px;flex-wrap:wrap">
-                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;font-weight:600;color:var(--amber);white-space:nowrap">
-                  <input type="checkbox" id="delta-corr-toggle" onchange="toggleDeltaCorr(this.checked)" style="cursor:pointer">
-                  δ(H) 修正
-                </label>
-                <span style="font-size:11px;color:var(--t3)">强度 α</span>
-                <input type="range" id="delta-weight-slider" min="0" max="1" step="0.05" value="1"
-                       oninput="document.getElementById('delta-weight-val').textContent=Number(this.value).toFixed(2);
-                                if(document.getElementById('delta-corr-toggle').checked) toggleDeltaCorr(true)"
-                       style="width:80px;cursor:pointer;accent-color:var(--amber)">
-                <span id="delta-weight-val" style="font-size:11px;font-family:var(--font-mono);color:var(--t2);min-width:28px">1.00</span>
-                <span id="delta-corr-result" style="font-size:11px;color:var(--t3);margin-left:4px"></span>
-              </div>
               <div class="coll-hdr" onclick="toggleColl(this)" style="margin-top:8px"><span>📈 高级图表</span><span class="chevron">▼</span></div>
               <div class="coll-body">
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:8px">
@@ -829,6 +816,11 @@ select option{background:var(--bg-2)}
           <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
               <button class="btn btn-c btn-sm" onclick="exportBHAnalysis('material')">⬇️ 导出 .amat + BH对比报告</button>
+              <button class="btn btn-g btn-sm" onclick="saveMaterialToComparison('material')" title="将当前材料保存到历史仿真导出列表，供后续对比使用">💾 保存到自选对比材料</button>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t2);cursor:pointer;white-space:nowrap">
+                <input type="checkbox" id="ofd-include-raw-bh" style="cursor:pointer;accent-color:var(--cyan)">
+                报告图中叠加修正前曲线
+              </label>
               <input id="ofd-mat-name" placeholder="材料名称 (留空自动生成)"
                      style="font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);width:180px">
               <span style="font-size:12px;color:var(--t3)">厚度</span>
@@ -998,14 +990,15 @@ function navigate(el){
   const titles={texture:'织构生成',mx3:'MX3 脚本生成',batchscripts:'批处理脚本生成',
                 taskmanager:'运行仿真',analysis:'结果分析',
                 dataset:'数据集管理',training:'模型训练',
-                prediction:'快速预测',pipeline:'自动训练流水线'};
+                prediction:'快速预测',pipeline:'自动训练流水线',
+                compare:'材料对比导出'};
   document.getElementById('tb-title').textContent=titles[p]||p;
 
   // 更新步骤 Pill
   const stepMap={texture:'STEP 1 / 5',mx3:'STEP 2 / 5',batchscripts:'STEP 3 / 5',
                  taskmanager:'STEP 4 / 5',analysis:'STEP 5 / 5'};
   const stepEl=document.getElementById('tb-step');
-  if(stepEl){stepEl.textContent=stepMap[p]||'ML';stepEl.style.opacity=stepMap[p]?'1':'.55';}
+  if(stepEl){stepEl.textContent=stepMap[p]||'工具';stepEl.style.opacity=stepMap[p]?'1':'.55';}
 
   if(p==='mx3') loadInputFiles();
   if(p==='taskmanager'){loadTaskScripts();checkEnv();refreshJobStatuses();}
@@ -1014,6 +1007,8 @@ function navigate(el){
   if(p==='dataset') loadDatasetList();
   if(p==='training'){loadDatasetListForTraining();loadPaperTrainingPresets();}
   if(p==='prediction') loadModelListForPred();
+  if(p==='pipeline') loadPipelineQueue();
+  if(p==='compare') loadCmpMatList();
 }
 
 function switchTab(btn,page,tabId){
@@ -1882,6 +1877,13 @@ async function deleteOutputConfig(path, name){
   else toast(r.error||'删除失败','err');
 }
 
+async function deleteOutputRun(path, name){
+  if(!confirm(`确定永久删除结果目录 "${name}"？\n其中所有配置、角度和晶粒仿真文件都会删除。`)) return;
+  const r=await api('/api/output-item',{method:'DELETE',body:{path}});
+  if(r.success){toast(`结果目录已删除: ${name}`,'ok');scanOutput();}
+  else toast(r.error||'删除失败','err');
+}
+
 async function deleteGrainConfig(name){
   if(!confirm(`确定永久删除仿真配置 "${name}"？\n（grain_scripts/${name}/ 目录将被删除，此操作不可撤销）`)) return;
   const encoded=name.split('/').map(encodeURIComponent).join('/');
@@ -1975,6 +1977,7 @@ async function scanOutput(){
             ${allAngles.length?`<span style="font-size:11px;color:var(--t3)">·</span><span style="font-size:11px;color:var(--amber)">角度: ${allAngles.join('°, ')}°</span>`:''}
           </div>
         </div>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteOutputRun('${esc(run.path||'')}','${esc(run.name||'')}')">删除结果目录</button>
         <span class="chevron" style="color:var(--t3);font-size:10px;transition:transform .18s">▼</span>
       </div>
       <div class="run-body" style="display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;background:var(--bg-2);padding:10px 14px">
@@ -2046,9 +2049,6 @@ async function selectOutputFile(el, filepath){
   showProps(d.properties,d.curves,'o-props-grid');
   renderCharts(d.properties,d.curves,'oc-');
   document.getElementById('output-result-wrap').style.display='block';
-  // 单晶粒无 ODF 参数，隐藏 δ 修正栏
-  const dbar=document.getElementById('delta-corr-bar');
-  if(dbar) dbar.style.display='none';
   toast(`分析完成 · ${d.data_points} 数据点`,'ok');
 }
 
@@ -2317,19 +2317,6 @@ function renderMaterialRepresentativeCharts(summary){
     });
   }
 
-  // 显示/初始化 δ(H) 修正开关栏（需要有 RD 曲线和 f_Goss）
-  const hasDelta = summary?.f_Goss != null && summary?.angles?.['0']?.status === 'ok';
-  const dbar = document.getElementById('delta-corr-bar');
-  if (dbar) {
-    dbar.style.display = hasDelta ? 'flex' : 'none';
-    // 重置开关和修正结果
-    const tog = document.getElementById('delta-corr-toggle');
-    if (tog) tog.checked = false;
-    const res = document.getElementById('delta-corr-result');
-    if (res) res.textContent = '';
-    const slider = document.getElementById('delta-weight-slider');
-    if (slider) { slider.value = '1'; document.getElementById('delta-weight-val').textContent = '1.00'; }
-  }
 }
 
 async function showMaterialRepresentative(configPath){
@@ -3196,6 +3183,7 @@ let _bhChartInstance = null;
 let _fiChartInstance = null;
 let _currentPredResult = null;
 let _currentPipelineId = null;
+let _pipelineEventSource = null;
 let _pipelinePresets = {};
 let _mlDatasetPresets = {};
 let _paperTrainingPresets = {};
@@ -3433,6 +3421,36 @@ function loadDatasetListForTraining() {
   });
 }
 
+function loadDatasetList() {
+  fetch('/api/dataset/list').then(r => r.json()).then(d => {
+    const ds = d.datasets || [];
+    const box = document.getElementById('ds-list');
+    if (!box) return;
+    box.innerHTML = ds.length === 0
+      ? '<p style="color:var(--t3)">暂无数据集</p>'
+      : ds.map(x => `<div style="display:flex;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--border);font-size:13px">
+           <span style="flex:1;font-family:var(--font-mono);font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis">${esc(x.name)}</span>
+           <span style="color:var(--t2)">${x.rows} rows</span>
+           <span style="color:var(--t3)">${x.cols} cols</span>
+           <span style="color:var(--t3);font-size:11px">${esc(x.created || '')}</span>
+           <button class="btn btn-danger btn-sm" data-path="${esc(x.path)}" data-name="${esc(x.name)}"
+                   onclick="deleteDatasetFile(this.dataset.path,this.dataset.name)">删除</button>
+         </div>`).join('');
+  });
+}
+
+async function deleteDatasetFile(path, name) {
+  if (!confirm(`确定永久删除数据集 "${name}"？\n同名 metadata 文件也会一起删除。`)) return;
+  const r = await api('/api/dataset/delete', {method:'DELETE', body:{path}});
+  if (r.success) {
+    toast('数据集已删除', 'ok');
+    loadDatasetList();
+    loadDatasetListForTraining();
+  } else {
+    toast(r.error || '删除失败', 'err');
+  }
+}
+
 function currentPaperTrainingPreset() {
   const sel = document.getElementById('paper-preset');
   return sel ? (_paperTrainingPresets[sel.value] || null) : null;
@@ -3482,13 +3500,78 @@ function toggleTrainingMode() {
   if (paperBox) paperBox.style.display = mode === 'paper' ? 'grid' : 'none';
 }
 
+const _ML_TRAIN_PRESETS_META = {
+  gaussian_process: {model_type:'gaussian_process', xgb_fields:false},
+  ridge_poly:       {model_type:'ridge_poly',       xgb_fields:false},
+  lite:             {model_type:'direct_xgb', n_estimators:100, max_depth:3, learning_rate:0.1, subsample:0.8, xgb_fields:true},
+  std:              {model_type:'direct_xgb', n_estimators:200, max_depth:4, learning_rate:0.05, subsample:0.8, xgb_fields:true},
+  extra_trees:      {model_type:'extra_trees', n_estimators:200, max_depth:4, learning_rate:0.1, subsample:0.8, xgb_fields:true},
+};
+function applyMlTrainPreset() {
+  const key = document.getElementById('ml-train-preset')?.value;
+  const p = _ML_TRAIN_PRESETS_META[key];
+  if (!p) return;
+  const xgbFields = p.xgb_fields;
+  ['xgb-n-est-grp','xgb-depth-grp','xgb-lr-grp','xgb-sub-grp'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = xgbFields ? '' : 'none';
+  });
+  if (xgbFields) {
+    if (p.n_estimators) document.getElementById('xgb-n-est').value = p.n_estimators;
+    if (p.max_depth)    document.getElementById('xgb-depth').value = p.max_depth;
+    if (p.learning_rate) document.getElementById('xgb-lr').value = p.learning_rate;
+    if (p.subsample)    document.getElementById('xgb-sub').value = p.subsample;
+  }
+}
+
+function startSingleModelTraining() {
+  const ds = document.getElementById('train-dataset').value;
+  if (!ds) { alert('请先选择数据集'); return; }
+  const key = document.getElementById('ml-train-preset')?.value || 'gaussian_process';
+  const p = _ML_TRAIN_PRESETS_META[key] || {model_type:'gaussian_process'};
+  const body = {dataset_path: ds, model_type: p.model_type,
+                 test_size: parseFloat(document.getElementById('train-test-size').value)};
+  if (p.xgb_fields) {
+    body.xgb_params = {
+      n_estimators:  parseInt(document.getElementById('xgb-n-est').value),
+      max_depth:     parseInt(document.getElementById('xgb-depth').value),
+      learning_rate: parseFloat(document.getElementById('xgb-lr').value),
+      subsample:     parseFloat(document.getElementById('xgb-sub').value),
+    };
+  }
+  document.getElementById('train-status').textContent = '训练中，请稍候...';
+  document.getElementById('train-results').style.display = 'none';
+  const fiCanvas = document.getElementById('fi-chart');
+  if (fiCanvas) fiCanvas.style.display = p.xgb_fields ? 'block' : 'none';
+  fetch('/api/ml/train', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
+    .then(r=>r.json()).then(d => {
+      if (d.error) { alert(d.error); return; }
+      pollTask(d.task_id, res => {
+        const exploratory = res.metric_reliability === 'exploratory_only';
+        document.getElementById('train-status').textContent = exploratory
+          ? '训练完成：探索模型，样本不足，未发布正式验证指标。'
+          : '训练完成！';
+        document.getElementById('res-r2').textContent = res.r2_avg != null
+          ? res.r2_avg.toFixed(4)
+          : (res.train_r2_avg != null ? '训练 ' + res.train_r2_avg.toFixed(4) : '—');
+        document.getElementById('res-mape').textContent = res.mape_avg != null
+          ? (res.mape_avg * 100).toFixed(2) + '%'
+          : (res.train_mape_avg != null ? '训练 ' + (res.train_mape_avg * 100).toFixed(2) + '%' : '—');
+        document.getElementById('res-model-id').textContent = res.model_id || '—';
+        document.getElementById('train-results').style.display = 'block';
+        renderFeatureImportance(res.feature_importance || {});
+        loadModelList();
+      });
+    }).catch(e => { alert('训练请求失败: ' + e.message); });
+}
+
 function renderPaperTrainingResult(res) {
   document.getElementById('train-results').style.display = 'block';
   const fiCanvas = document.getElementById('fi-chart');
   if (fiCanvas) fiCanvas.style.display = 'none';
   const ranking = res.ranking || [];
   if (res.status === 'insufficient_data') {
-    document.getElementById('train-status').textContent = `样本不足：${res.n_samples} / ${res.min_samples}，未生成论文级模型。`;
+    document.getElementById('train-status').textContent = `样本不足：${res.n_samples} / ${res.min_samples}，未生成候选模型对比结果。`;
     document.getElementById('res-r2').textContent = '样本不足';
     document.getElementById('res-mape').textContent = '—';
     document.getElementById('res-model-id').textContent = '—';
@@ -3496,7 +3579,7 @@ function renderPaperTrainingResult(res) {
     return;
   }
   const best = ranking[0] || {};
-  document.getElementById('train-status').textContent = `论文级模型选择完成：${res.selected_model}（按 CV B-H RMSE 最小选择）。`;
+  document.getElementById('train-status').textContent = `候选模型选择完成：${res.selected_model}（按 CV B-H RMSE 最小选择）。`;
   document.getElementById('res-r2').textContent = res.selected_model || '—';
   document.getElementById('res-mape').textContent = best.bh_rmse_T_mean != null ? Number(best.bh_rmse_T_mean).toFixed(5) + ' T' : '—';
   document.getElementById('res-model-id').textContent = res.model_id || '—';
@@ -3522,7 +3605,7 @@ function startTraining() {
   document.getElementById('paper-ranking').innerHTML = '';
   if (mode === 'paper') {
     const preset = document.getElementById('paper-preset')?.value || 'lite';
-    document.getElementById('train-status').textContent = '论文级候选模型比较中，请稍候...';
+    document.getElementById('train-status').textContent = '候选模型比较中，请稍候...';
     document.getElementById('train-results').style.display = 'none';
     fetch('/api/ml/paper-train', {
       method: 'POST',
@@ -3966,19 +4049,22 @@ async function loadBHMatSelector(targetId) {
   const sims = _bhMatData.filter(m => m.source === 'simulation');
   const cls  = `bh-mat-check-${targetId}`;
 
-  const group = (title, color, items) => {
+  const group = (title, color, items, defaultChecked = true, deletable = false) => {
     if (!items.length) return '';
     return `<div style="margin-bottom:10px">
       <div style="font-size:11px;font-weight:600;color:${color};margin-bottom:4px">${title}</div>
       ${items.map(m => `
         <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t1);margin-bottom:3px;cursor:pointer">
-          <input type="checkbox" data-mat-name="${m.name}" class="${cls}" checked>
+          <input type="checkbox" data-mat-name="${m.name}" class="${cls}" ${defaultChecked ? 'checked' : ''}>
           <span style="font-family:var(--font-mono)">${m.short_name || m.name}</span>
           <span style="color:var(--t3);font-size:10px">
             RD=${m.B800_RD != null ? m.B800_RD.toFixed(3) : 'n/a'}T
             TD=${m.B800_TD != null ? m.B800_TD.toFixed(3) : 'n/a'}T
           </span>
           ${m.has_loss_pts ? '<span style="color:var(--cyan);font-size:10px">·损耗</span>' : ''}
+          ${deletable ? `<button onclick="event.preventDefault();deleteBHSim('${m.source_file}','${targetId}')"
+            style="margin-left:auto;padding:0 5px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--red);cursor:pointer;font-size:11px;line-height:16px"
+            title="删除此导出文件">✕</button>` : ''}
         </label>`).join('')}
     </div>`;
   };
@@ -3989,12 +4075,24 @@ async function loadBHMatSelector(targetId) {
               style="padding:1px 7px;border-radius:3px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);cursor:pointer;font-size:11px">全选</button>
       <button onclick="setBHMatAll('${targetId}',false)"
               style="padding:1px 7px;border-radius:3px;border:1px solid var(--border);background:var(--bg-2);color:var(--t1);cursor:pointer;font-size:11px">清空</button>
-      <span style="font-size:10px;color:var(--t3)">不勾选任何项 = 使用全部参考等级（默认）</span>
+      <span style="font-size:10px;color:var(--t3)">参考等级默认选中；历史仿真默认不选。清空后不对比任何材料。</span>
     </div>
-    ${group('参考等级 (go_steel_data)', 'var(--t2)', refs)}
-    ${group('历史仿真导出', 'var(--purple)', sims)}
+    ${group('参考等级 (go_steel_data)', 'var(--t2)', refs, true, false)}
+    ${group('历史仿真导出', 'var(--purple)', sims, false, true)}
     ${!refs.length && !sims.length ? '<span style="color:var(--t3);font-size:11px">暂无材料数据</span>' : ''}
   `;
+}
+
+async function deleteBHSim(sourceFile, targetId) {
+  if (!confirm(`确认删除 ${sourceFile}？此操作不可撤销。`)) return;
+  try {
+    const r = await fetch(`/api/bh-analysis/export/${encodeURIComponent(sourceFile)}`, { method: 'DELETE' });
+    const j = await r.json();
+    if (!r.ok) { toast(j.error || '删除失败', 'err'); return; }
+    toast('已删除 ' + sourceFile, 'ok');
+    _bhMatData = null;  // 清除缓存，下次重新加载
+    loadBHMatSelector(targetId);
+  } catch(e) { toast('删除失败: ' + e.message, 'err'); }
 }
 
 function toggleBHMatSelector(targetId) {
@@ -4014,109 +4112,21 @@ function setBHMatAll(targetId, checked) {
 
 function _getBHIncludeNames(targetId) {
   const checks = document.querySelectorAll(`.bh-mat-check-${targetId}`);
-  if (!checks.length) return null;
-  const names = Array.from(checks).filter(c => c.checked).map(c => c.dataset.matName);
-  return names.length ? names : null;
-}
-
-// ── δ(H) 修正开关（结果分析页 · 材料级聚合 RD 曲线） ───────────────────
-async function toggleDeltaCorr(enabled) {
-  const chart = charts['oc-bh'];
-  if (!chart) return;
-
-  // 移除已有修正曲线
-  chart.data.datasets = chart.data.datasets.filter(d => !d._delta_corr);
-
-  if (!enabled) {
-    chart.update('none');
-    const res = document.getElementById('delta-corr-result');
-    if (res) res.textContent = '';
-    return;
-  }
-
-  const summary = window.analysisData2?.material_summary;
-  const rd = summary?.angles?.['0'];
-  if (!rd?.H?.length || summary?.f_Goss == null) {
-    toast('需要 RD(0°) 曲线和 f_Goss 参数', 'err');
-    const tog = document.getElementById('delta-corr-toggle');
-    if (tog) tog.checked = false;
-    return;
-  }
-
-  const weight = parseFloat(document.getElementById('delta-weight-slider')?.value ?? 1);
-  const r = await api('/api/analyze/apply-delta-correction', {
-    method: 'POST',
-    body: {
-      H: rd.H, B: rd.B,
-      f_goss:        summary.f_Goss,
-      theta_0_deg:   summary.theta_0_deg  ?? 6.0,
-      halfwidth_deg: summary.halfwidth_deg ?? 8.0,
-      weight_cap:    weight,
-      si_content:    summary.Si_content   ?? 3.0,
-      hc_sim_median: rd.hc_sim_median     ?? null,
+  if (!checks.length) {
+    if (_bhMatData) {
+      const refNames = _bhMatData.filter(m => m.source === 'reference').map(m => m.name);
+      return refNames.length ? refNames : null;
     }
-  });
-  if (r.error) { toast('δ修正失败: ' + r.error, 'err'); return; }
-
-  // 与原曲线保持一致，对 H 轴应用相同的 Hc_ref/Hc_sim 缩放
-  const _hcRefDC = summary.Hc_reference_Am || 6;
-  const _hcSimDC = rd.hc_sim_median;
-  const _hcScaleDC = (_hcSimDC && _hcSimDC > _hcRefDC * 3) ? (_hcRefDC / _hcSimDC) : 1.0;
-
-  chart.data.datasets.push({
-    _delta_corr: true,
-    label: `RD δ修正 (α=${weight.toFixed(2)})`,
-    data: r.H.map((h, i) => ({x: h * _hcScaleDC, y: r.B_corrected[i]})),
-    showLine: true, parsing: false,
-    borderColor: '#f59e0b', backgroundColor: 'transparent',
-    borderWidth: 2, borderDash: [6, 3],
-    pointRadius: 0, tension: 0.12, fill: false,
-  });
-
-  // TD 方向同步修正（Hk 驱动的 H 轴缩放 + 参考曲线插值）
-  const td = summary?.angles?.['90'];
-  if (td?.H?.length && td?.B?.length) {
-    try {
-      const r_td = await api('/api/analyze/apply-delta-correction', {
-        method: 'POST',
-        body: {
-          H: td.H, B: td.B,
-          direction:     'TD',
-          f_goss:        summary.f_Goss,
-          theta_0_deg:   summary.theta_0_deg  ?? 6.0,
-          halfwidth_deg: summary.halfwidth_deg ?? 8.0,
-          weight_cap:    weight,
-          si_content:    summary.Si_content   ?? 3.0,
-        }
-      });
-      if (!r_td.error && r_td.scale_td) {
-        chart.data.datasets.push({
-          _delta_corr: true,
-          label: `TD 参考修正 (α=${weight.toFixed(2)})`,
-          data: r_td.H.map((h, i) => ({x: h * r_td.scale_td, y: r_td.B_corrected[i]})),
-          showLine: true, parsing: false,
-          borderColor: '#f87171', backgroundColor: 'transparent',
-          borderWidth: 2, borderDash: [6, 3],
-          pointRadius: 0, tension: 0.12, fill: false,
-        });
-      }
-    } catch(_e) { /* TD 修正失败时静默，不影响 RD 修正显示 */ }
+    return null;
   }
-
-  chart.update('none');
-
-  const B0 = interpYAtX(rd.H, rd.B, 800);
-  const Bc = interpYAtX(r.H, r.B_corrected, 800);
-  const res = document.getElementById('delta-corr-result');
-  if (res && B0 != null && Bc != null) {
-    const d = Bc - B0;
-    res.textContent = `B@800: ${B0.toFixed(3)} → ${Bc.toFixed(3)} T (${d>=0?'+':''}${d.toFixed(3)} T)`;
-  }
+  const names = Array.from(checks).filter(c => c.checked).map(c => c.dataset.matName);
+  return names;
 }
 
 // ── BH 分析报告导出（材料代表性分析 + 快速预测） ─────────────────────────
 async function exportBHAnalysis(source) {
   let name, rd_H, rd_B, td_H, td_B, thickness_mm, resultEl;
+  let raw_rd_H = null, raw_rd_B = null, raw_td_H = null, raw_td_B = null;
 
   if (source === 'material') {
     const matSum = window.analysisData2?.material_summary || {};
@@ -4131,7 +4141,7 @@ async function exportBHAnalysis(source) {
     const _hcRefExp = matSum.Hc_reference_Am || 6;
     function _expScale(H, hcSim){ return (hcSim && hcSim > _hcRefExp*3) ? H.map(h=>h*(_hcRefExp/hcSim)) : H; }
     rd_H = _expScale(rd.H, rd.hc_sim_median);
-    rd_B = rd.B;
+    rd_B = rd.B_corrected || rd.B;
     if (td?.H_td_full?.length) {
       // 优先使用含高 H 延伸的完整参考 TD 曲线（避免 H>662 A/m 平台化）
       td_H = td.H_td_full;
@@ -4140,19 +4150,31 @@ async function exportBHAnalysis(source) {
       const _tdScaleExp = matSum.scale_td;
       td_H = _tdScaleExp ? (td?.H || rd.H).map(h => h * _tdScaleExp)
                          : _expScale(td?.H || rd.H, td?.hc_sim_median || rd.hc_sim_median);
-      td_B = td?.B_corrected_td || td?.B || rd.B;
+      td_B = td?.B_corrected_td || td?.B || rd_B;
     }
-    // 若 δ 修正开关已勾选，改用修正后的 RD 曲线
-    const deltaTog = document.getElementById('delta-corr-toggle');
-    if (deltaTog?.checked) {
-      const corrDs = charts['oc-bh']?.data?.datasets?.find(d => d._delta_corr);
-      if (corrDs?.data?.length) {
-        rd_H = corrDs.data.map(p => p.x);
-        rd_B = corrDs.data.map(p => p.y);
+
+    if (document.getElementById('ofd-include-raw-bh')?.checked) {
+      const rdRaw = Array.isArray(rd.B_raw) && rd.B_raw.length ? rd.B_raw : null;
+      const tdRaw = Array.isArray(td?.B_raw) && td.B_raw.length ? td.B_raw : null;
+      if (rdRaw) {
+        raw_rd_H = rd_H;
+        raw_rd_B = rdRaw;
+      }
+      if (tdRaw) {
+        const _tdScaleExp = matSum.scale_td;
+        raw_td_H = _tdScaleExp ? (td?.H || rd.H).map(h => h * _tdScaleExp)
+                               : _expScale(td?.H || rd.H, td?.hc_sim_median || rd.hc_sim_median);
+        raw_td_B = tdRaw;
+      } else if (rdRaw) {
+        raw_td_H = raw_rd_H;
+        raw_td_B = raw_rd_B;
+      }
+      if (!(raw_rd_H?.length && raw_rd_B?.length && raw_td_H?.length && raw_td_B?.length)) {
+        raw_rd_H = raw_rd_B = raw_td_H = raw_td_B = null;
       }
     }
     name = (document.getElementById('ofd-mat-name')?.value || '').trim()
-        || ('GO_Sim_' + new Date().toISOString().slice(0,10).replace(/-/g,''));
+        || ('GO_Sim_' + new Date().toISOString().slice(0,19).replace(/[-:T]/g,''));
     thickness_mm = parseFloat(document.getElementById('ofd-thickness')?.value) || 0.35;
     resultEl = document.getElementById('ofd-analysis-result');
   } else {
@@ -4161,24 +4183,28 @@ async function exportBHAnalysis(source) {
     rd_H = pr.RD.H; rd_B = pr.RD.B;
     td_H = (pr.TD || pr.RD).H; td_B = (pr.TD || pr.RD).B;
     name = (document.getElementById('pred-mat-name')?.value || '').trim()
-        || ('GO_Pred_' + new Date().toISOString().slice(0,10).replace(/-/g,''));
+        || ('GO_Pred_' + new Date().toISOString().slice(0,19).replace(/[-:T]/g,''));
     thickness_mm = parseFloat(document.getElementById('pred-thickness')?.value) || 0.35;
     resultEl = document.getElementById('pred-analysis-result');
   }
 
   const selectorId = source === 'material' ? 'ofd-mat-sel' : 'pred-mat-sel';
   const include_names = _getBHIncludeNames(selectorId);
-  const nSel = include_names ? include_names.length : null;
+  const nSel = include_names == null ? null : include_names.length;
 
   resultEl.style.display = 'block';
-  resultEl.innerHTML = `<div style="color:var(--t3);padding:10px 0;font-size:13px">正在生成对比分析图（${nSel != null ? `已选 ${nSel} 个材料` : '含全部参考等级'}）…</div>`;
+  resultEl.innerHTML = `<div style="color:var(--t3);padding:10px 0;font-size:13px">正在生成对比分析图（${nSel === 0 ? '无对比材料' : nSel != null ? `已选 ${nSel} 个材料` : '默认参考等级'}）...</div>`;
 
   let r;
   try {
+    const payload = { name, rd_H, rd_B, td_H, td_B, thickness_mm, include_names };
+    if (raw_rd_H?.length && raw_rd_B?.length && raw_td_H?.length && raw_td_B?.length) {
+      Object.assign(payload, { raw_rd_H, raw_rd_B, raw_td_H, raw_td_B });
+    }
     r = await fetch('/api/analyze/export-bh-analysis', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ name, rd_H, rd_B, td_H, td_B, thickness_mm, include_names })
+      body: JSON.stringify(payload)
     }).then(x => x.json());
   } catch(e) {
     toast('请求失败: ' + e.message, 'err');
@@ -4192,6 +4218,45 @@ async function exportBHAnalysis(source) {
   }
   resultEl.innerHTML = _renderBHAnalysisResult(r);
   toast('BH 分析报告已生成', 'ok');
+}
+
+async function saveMaterialToComparison(source) {
+  let name, rd_H, rd_B, td_H, td_B, thickness_mm;
+  if (source === 'material') {
+    const matSum = window.analysisData2?.material_summary || {};
+    const angles = matSum.angles || {};
+    const rd = angles['0'];
+    if (!rd?.H) { toast('需要至少 0°（RD）方向的有效 B-H 曲线', 'err'); return; }
+    const _hcRefExp = matSum.Hc_reference_Am || 6;
+    function _expScale(H, hcSim){ return (hcSim && hcSim > _hcRefExp*3) ? H.map(h=>h*(_hcRefExp/hcSim)) : H; }
+    rd_H = _expScale(rd.H, rd.hc_sim_median);
+    rd_B = rd.B_corrected || rd.B;
+    const td = angles['90'];
+    if (td?.H_td_full?.length) { td_H = td.H_td_full; td_B = td.B_td_full; }
+    else {
+      const _s = matSum.scale_td;
+      td_H = _s ? (td?.H || rd.H).map(h=>h*_s) : _expScale(td?.H || rd.H, td?.hc_sim_median || rd.hc_sim_median);
+      td_B = td?.B_corrected_td || td?.B || rd_B;
+    }
+    name = (document.getElementById('ofd-mat-name')?.value || '').trim()
+        || ('GO_Sim_' + new Date().toISOString().slice(0,19).replace(/[-:T]/g,''));
+    thickness_mm = parseFloat(document.getElementById('ofd-thickness')?.value) || 0.35;
+  } else {
+    let pr;
+    try { pr = await _fetchPredBH(); } catch(e) { toast(e.message || '请先运行预测', 'err'); return; }
+    rd_H = pr.RD.H; rd_B = pr.RD.B;
+    td_H = (pr.TD || pr.RD).H; td_B = (pr.TD || pr.RD).B;
+    name = (document.getElementById('pred-mat-name')?.value || '').trim()
+        || ('GO_Pred_' + new Date().toISOString().slice(0,19).replace(/[-:T]/g,''));
+    thickness_mm = parseFloat(document.getElementById('pred-thickness')?.value) || 0.35;
+  }
+  const r = await fetch('/api/bh-analysis/save-material', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name, rd_H, rd_B, td_H, td_B, thickness_mm})
+  }).then(x => x.json());
+  if (r.error) { toast('保存失败: ' + r.error, 'err'); return; }
+  toast(`已保存 ${r.filename} 到自选对比材料`, 'ok');
+  _bhMatData = null;  // 清除缓存让下次加载看到新文件
 }
 
 function _renderBHAnalysisResult(r) {
@@ -4211,9 +4276,16 @@ function _renderBHAnalysisResult(r) {
          <td style="padding:3px 10px;text-align:center;font-family:var(--font-mono);color:var(--purple)">${vtd}</td>
          <td style="padding:3px 10px;color:var(--t3);font-size:11px">${unit}</td></tr>`;
 
-  const dlLink = r.amat_web_path
-    ? `<a href="${r.amat_web_path}" download="${r.amat_filename}"
-          class="btn btn-p btn-sm" style="text-decoration:none">⬇️ ${r.amat_filename}</a>` : '';
+  let dlLink = '';
+  if (r.amat_b64 && r.amat_filename) {
+    const blob = new Blob([atob(r.amat_b64)], {type: 'text/plain'});
+    const burl = URL.createObjectURL(blob);
+    dlLink = `<a href="${burl}" download="${r.amat_filename}"
+        class="btn btn-p btn-sm" style="text-decoration:none">⬇️ ${r.amat_filename}</a>`;
+  } else if (r.amat_web_path) {
+    dlLink = `<a href="${r.amat_web_path}" download="${r.amat_filename}"
+        class="btn btn-p btn-sm" style="text-decoration:none">⬇️ ${r.amat_filename}</a>`;
+  }
 
   const csvLink = r.csv_web_path
     ? `<a href="${r.csv_web_path}" target="_blank"
@@ -4330,10 +4402,10 @@ function currentPipelinePreset() {
 
 function datasetPresetLabel(key, preset){
   return {
-    smoke:'Dataset Smoke / 冒烟数据集',
-    lite:'Dataset Lite / 轻量数据集',
-    std:'Dataset Std / 标准数据集',
-    max:'Dataset Max / 全量数据集',
+    smoke:'快速检查数据集',
+    lite:'小规模数据集',
+    std:'标准规模数据集',
+    max:'大规模数据集',
   }[key] || preset?.label || key;
 }
 
@@ -4507,14 +4579,23 @@ function startPipeline() {
     document.getElementById('pipeline-panel').style.display = 'block';
     document.getElementById('pipeline-complete').style.display = 'none';
     subscribePipeline(d.pipeline_id);
+    loadPipelineQueue();
   });
 }
 
 function subscribePipeline(pid) {
+  if (_pipelineEventSource) {
+    _pipelineEventSource.close();
+    _pipelineEventSource = null;
+  }
+  _currentPipelineId = pid;
   const logEl = document.getElementById('pipe-log');
   const stagesEl = document.getElementById('pipeline-stages');
   const waitEl   = document.getElementById('pipeline-sim-wait');
   const doneEl   = document.getElementById('pipeline-complete');
+  const stopBtn  = document.getElementById('pipeline-stop-btn');
+  if (logEl) logEl.style.color = '#22ff55';
+  if (stopBtn) stopBtn.disabled = false;
 
   const stageNames = {
     texture_gen: '织构生成', script_gen: 'MX3脚本',
@@ -4524,6 +4605,7 @@ function subscribePipeline(pid) {
   const STAGES = ['texture_gen','script_gen','batch_gen','wait_sim','analyze','train'];
 
   const es = new EventSource(`/api/pipeline/${pid}/stream`);
+  _pipelineEventSource = es;
   es.onmessage = e => {
     const s = JSON.parse(e.data);
     if (s.error && !s.stage) { alert('流水线错误: ' + s.error); es.close(); return; }
@@ -4550,6 +4632,9 @@ function subscribePipeline(pid) {
     } else {
       waitEl.style.display = 'none';
     }
+
+    const activeStatus = ['running','running_sim','waiting_sim','stopping'].includes(s.status);
+    if (stopBtn) stopBtn.disabled = !activeStatus;
 
     if (s.log && s.log.length) {
       logEl.innerHTML = s.log.slice(-80).map(l =>
@@ -4598,10 +4683,19 @@ function subscribePipeline(pid) {
          <div>${metricLines.join(' ｜ ')}</div>
          ${warnings}${r2Note}`;
       loadModelListForPred();
+      loadPipelineQueue();
     }
     if (s.status === 'failed') {
       es.close();
       logEl.style.color = 'var(--red)';
+      if (stopBtn) stopBtn.disabled = true;
+      loadPipelineQueue();
+    }
+    if (s.status === 'cancelled' || s.status === 'interrupted') {
+      es.close();
+      if (stopBtn) stopBtn.disabled = true;
+      logEl.style.color = 'var(--amber)';
+      loadPipelineQueue();
     }
   };
 }
@@ -4613,6 +4707,117 @@ function resumePipeline() {
       if (!d.success) alert(d.error || '无法继续');
       document.getElementById('pipeline-sim-wait').style.display = 'none';
     });
+}
+
+async function terminatePipeline() {
+  if (!_currentPipelineId) return;
+  if (!confirm('确定要终止当前流水线吗？\n正在运行的仿真/训练会被中断。')) return;
+  if (!confirm('二次确认：终止后需要从任务队列断点重跑或重新启动。继续终止？')) return;
+  const r = await api(`/api/pipeline/${_currentPipelineId}/terminate`, {method:'POST'});
+  if (r.success) {
+    toast('已发送终止请求', 'ok');
+    const btn = document.getElementById('pipeline-stop-btn');
+    if (btn) btn.disabled = true;
+    loadPipelineQueue();
+  } else {
+    toast(r.error || '终止失败', 'err');
+  }
+}
+
+function pipelineStatusLabel(status) {
+  const map = {
+    running:'运行中', running_sim:'仿真中', waiting_sim:'等待仿真',
+    stopping:'终止中', completed:'已完成', failed:'失败',
+    cancelled:'已终止', interrupted:'已中断'
+  };
+  return map[status] || status || '未知';
+}
+
+function pipelineCanStop(status) {
+  return ['running','running_sim','waiting_sim','stopping'].includes(status);
+}
+
+async function loadPipelineQueue() {
+  const box = document.getElementById('pipeline-queue-wrap');
+  if (!box) return;
+  const r = await api('/api/pipeline/list');
+  const items = r.pipelines || [];
+  if (!items.length) {
+    box.innerHTML = '<div class="empty"><div class="ei">↻</div><p>暂无流水线历史任务</p></div>';
+    return;
+  }
+  box.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">
+    ${items.map(p => {
+      const res = p.results || {};
+      const cfg = p.config || {};
+      const active = pipelineCanStop(p.status);
+      const title = res.preset_label || cfg.preset_label || cfg.preset_id || 'manual';
+      return `<div style="border:1px solid var(--border);border-radius:8px;background:var(--bg-2);padding:10px 12px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <code style="color:var(--cyan)">${esc(p.id)}</code>
+          <span class="badge ${p.status==='completed'?'b-green':active?'b-cyan':p.status==='failed'?'b-red':'b-amber'}">${esc(pipelineStatusLabel(p.status))}</span>
+          <span style="color:var(--t2);font-size:12px">${esc(title)}</span>
+          <span style="color:var(--t3);font-size:11px;margin-left:auto">${esc((p.updated_at || p.created_at || '').replace('T',' ').slice(0,19))}</span>
+        </div>
+        <div style="margin-top:6px;display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--t3)">
+          <span>阶段: <code>${esc(p.stage || '-')}</code></span>
+          <span>进度: ${p.progress_pct ?? 0}%</span>
+          ${res.dataset_path ? `<span>数据集: <code>${esc(res.dataset_path)}</code></span>` : ''}
+          ${res.model_id ? `<span>模型: <code>${esc(res.model_id)}</code></span>` : ''}
+          ${p.error ? `<span style="color:var(--red)">错误: ${esc(p.error).slice(0,120)}</span>` : ''}
+        </div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-g btn-sm" onclick="viewPipelineHistory('${esc(p.id)}')">查看</button>
+          ${active ? `<button class="btn btn-danger btn-sm" onclick="terminatePipelineHistory('${esc(p.id)}')">终止</button>` : ''}
+          <button class="btn btn-p btn-sm" onclick="rerunPipelineHistory('${esc(p.id)}')">断点重跑</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePipelineHistory('${esc(p.id)}')">删除</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function viewPipelineHistory(pid) {
+  _currentPipelineId = pid;
+  document.getElementById('pipeline-panel').style.display = 'block';
+  document.getElementById('pipeline-complete').style.display = 'none';
+  subscribePipeline(pid);
+}
+
+async function terminatePipelineHistory(pid) {
+  _currentPipelineId = pid;
+  await terminatePipeline();
+}
+
+async function rerunPipelineHistory(pid) {
+  const r = await api(`/api/pipeline/${pid}/rerun`, {method:'POST'});
+  if (r.success) {
+    toast(r.mode === 'from_results' ? '已从仿真结果断点重跑' : '未找到结果，已全量重跑', 'ok');
+    _currentPipelineId = r.pipeline_id;
+    document.getElementById('pipeline-panel').style.display = 'block';
+    document.getElementById('pipeline-complete').style.display = 'none';
+    subscribePipeline(r.pipeline_id);
+    loadPipelineQueue();
+  } else {
+    toast(r.error || '断点重跑失败', 'err');
+  }
+}
+
+async function deletePipelineHistory(pid) {
+  if (!confirm(`确定删除流水线任务 ${pid}？\n会同时删除 preinput、grain_scripts、scripts、output 以及该任务生成的数据集/模型。`)) return;
+  const r = await api(`/api/pipeline/${pid}`, {method:'DELETE'});
+  if (r.success) {
+    toast(`流水线任务已删除（${(r.deleted || []).length} 项）`, 'ok');
+    if (_currentPipelineId === pid) _currentPipelineId = null;
+    loadPipelineQueue();
+    scanOutput();
+    loadDatasetList();
+    loadDatasetListForTraining();
+    loadModelList();
+    loadModelListForPred();
+  } else {
+    toast(r.error || '删除失败', 'err');
+  }
 }
 
 function switchToTab(pageId) {
@@ -4841,6 +5046,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadMlDatasetPresets();
   bindPipelinePresetInputs();
   loadPipelinePresets();
+  loadPipelineQueue();
   toggleTrainingMode();
   // Auto env check after slight delay
   setTimeout(()=>{ if(document.querySelector('.nav-item[data-page="taskmanager"].active')) checkEnv(); }, 500);
@@ -5110,7 +5316,7 @@ function showODFLightbox(url){
     <div class="fr fr2" style="margin-bottom:12px">
       <div class="fg"><label>生成预设</label>
         <select id="ml-gen-preset" onchange="applyMlDatasetPreset()">
-          <option value="lite">Lite / 轻量数据集</option>
+          <option value="lite">小规模数据集</option>
         </select>
       </div>
       <div class="fg"><label>ML 数据集批次名</label><input id="ml-ds-run-name" placeholder="ml_dataset_YYYYMMDD_HHMMSS"></div>
@@ -5163,24 +5369,33 @@ function showODFLightbox(url){
     <div class="card-hdr"><span class="card-title">多模型训练配置</span></div>
     <div class="fr fr2" style="margin-bottom:12px">
       <div class="fg"><label>数据集</label><select id="train-dataset"></select></div>
+      <div class="fg"><label>单模型训练预设</label>
+        <select id="ml-train-preset" onchange="applyMlTrainPreset()">
+          <option value="gaussian_process">高斯过程（推荐 &lt;50 样本）</option>
+          <option value="ridge_poly">二次多项式 Ridge</option>
+          <option value="lite">小规模 XGBoost</option>
+          <option value="std">标准 XGBoost</option>
+          <option value="extra_trees">ExtraTrees</option>
+        </select>
+      </div>
       <div class="fg" style="display:none"><label>训练模式</label>
         <select id="train-mode" onchange="toggleTrainingMode()">
-          <option value="xgb">单模型 XGBoost</option>
-          <option value="paper" selected>论文级候选模型选择</option>
+          <option value="xgb">单模型</option>
+          <option value="paper" selected>候选模型选择</option>
         </select>
       </div>
     </div>
     <div class="fr fr2" id="xgb-param-grid" style="display:none;margin-bottom:16px">
       <div class="fg"><label>测试集比例</label><input type="number" id="train-test-size" value="0.2" min="0.1" max="0.4" step="0.05"></div>
-      <div class="fg"><label>n_estimators</label><input type="number" id="xgb-n-est" value="300"></div>
-      <div class="fg"><label>max_depth</label><input type="number" id="xgb-depth" value="6"></div>
-      <div class="fg"><label>learning_rate</label><input type="number" id="xgb-lr" value="0.05" step="0.005"></div>
-      <div class="fg"><label>subsample</label><input type="number" id="xgb-sub" value="0.8" step="0.05"></div>
+      <div class="fg" id="xgb-n-est-grp"><label>n_estimators</label><input type="number" id="xgb-n-est" value="100"></div>
+      <div class="fg" id="xgb-depth-grp"><label>max_depth</label><input type="number" id="xgb-depth" value="3"></div>
+      <div class="fg" id="xgb-lr-grp"><label>learning_rate</label><input type="number" id="xgb-lr" value="0.1" step="0.005"></div>
+      <div class="fg" id="xgb-sub-grp"><label>subsample</label><input type="number" id="xgb-sub" value="0.8" step="0.05"></div>
     </div>
     <div class="fr fr2" id="paper-param-grid" style="margin-bottom:16px">
-      <div class="fg"><label>论文级预设</label>
+      <div class="fg"><label>训练预设</label>
         <select id="paper-preset" onchange="applyPaperTrainingPreset()">
-          <option value="lite">Lite / 轻量模型选择</option>
+          <option value="lite">小规模候选模型选择</option>
         </select>
       </div>
       <div id="paper-preset-summary" style="font-size:12px;color:var(--t2);line-height:1.7;padding:8px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px">
@@ -5198,8 +5413,9 @@ function showODFLightbox(url){
         公平的 CV B-H RMSE 选型应只比较同一数据集、同一划分策略下训练出的模型；跨数据集模型只能作为趋势参考，不能直接排名。
       </div>
     </div>
-    <div style="display:flex;gap:10px;margin-bottom:16px">
-      <button class="btn btn-p" onclick="startTraining()">🚀 开始训练</button>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="startSingleModelTraining()">🔬 单模型训练</button>
+      <button class="btn btn-p" onclick="startTraining()">🚀 候选模型选择</button>
       <button class="btn btn-g" onclick="loadDatasetListForTraining()">🔄 刷新数据集</button>
     </div>
     <div id="train-status" style="margin-bottom:16px;color:var(--t2)"></div>
@@ -5252,7 +5468,7 @@ function showODFLightbox(url){
       <div class="fg"><label>f_Goss (0.4-0.9)</label><input type="number" id="pred-fgoss" value="0.70" min="0.4" max="0.9" step="0.01"></div>
       <div class="fg"><label>θ₀ [°] (1-30)</label><input type="number" id="pred-theta" value="15" min="1" max="30" step="1"></div>
       <div class="fg"><label>半宽 σ [°] (5-15)</label><input type="number" id="pred-hw" value="10" min="5" max="15" step="1"></div>
-      <div class="fg"><label>Si 含量 [%]</label><input type="number" id="pred-si" value="3.0" min="2.5" max="3.5" step="0.1"></div>
+      <div class="fg"><label>Si 含量 [%]</label><input type="number" id="pred-si" value="6.0" min="2.5" max="6.0" step="0.1"></div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px">
       <button class="btn btn-p" onclick="runPrediction()">⚡ 立即预测</button>
@@ -5278,6 +5494,7 @@ function showODFLightbox(url){
           <div class="pred-actions">
             <button class="btn btn-p" onclick="exportMaxwellFromPred()">⬇️ 导出 .amat</button>
             <button class="btn btn-c" onclick="exportBHAnalysis('prediction')">⬇️ 导出 .amat + BH分析报告</button>
+            <button class="btn btn-g" onclick="saveMaterialToComparison('prediction')" title="将当前预测材料保存到历史仿真导出列表，供后续对比使用">💾 保存到自选对比材料</button>
             <button class="btn btn-g" onclick="copyBHData()">📋 复制 B-H (TSV)</button>
           </div>
           <div style="margin-top:8px">
@@ -5335,12 +5552,12 @@ function showODFLightbox(url){
     <div class="fr fr2" style="margin-bottom:8px">
       <div class="fg"><label>数据集预设</label>
         <select id="pipe-preset" onchange="applyPipelinePreset();pipeCheckCustomDataset()">
-          <option value="lite">Dataset Lite / 轻量数据集</option>
+          <option value="lite">小规模数据集</option>
         </select>
       </div>
       <div class="fg"><label>训练预设</label>
         <select id="pipe-training-preset" onchange="pipeCheckCustomTraining()">
-          <option value="lite">Lite / 轻量训练</option>
+          <option value="lite">小规模训练</option>
         </select>
       </div>
     </div>
@@ -5418,7 +5635,7 @@ function showODFLightbox(url){
       </div>
       <div id="pipe-model-list" class="model-check-grid">
         <label class="model-check"><input type="checkbox" class="pipe-model-check" value="direct_xgb" checked>
-          <div><strong>Direct XGBoost</strong><span><code>direct_xgb</code> · 直接多输出 · XGBRegressor</span><span>直接预测 B-H 节点，训练快，适合冒烟验证</span></div>
+          <div><strong>Direct XGBoost</strong><span><code>direct_xgb</code> · 直接多输出 · XGBRegressor</span><span>直接预测 B-H 节点，训练快，适合快速检查</span></div>
         </label>
         <label class="model-check"><input type="checkbox" class="pipe-model-check" value="extra_trees" checked>
           <div><strong>ExtraTrees</strong><span><code>extra_trees</code> · 直接多输出 · ExtraTreesRegressor</span><span>极随机森林，泛化能力强，不需学习率调参</span></div>
@@ -5432,7 +5649,10 @@ function showODFLightbox(url){
       </div>
     </div>
 
-    <button class="btn btn-p" onclick="startPipeline()" style="margin-bottom:16px">▶ 启动流水线</button>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+      <button class="btn btn-p" onclick="startPipeline()">▶ 启动流水线</button>
+      <button class="btn btn-danger" id="pipeline-stop-btn" onclick="terminatePipeline()" disabled>终止流水线</button>
+    </div>
     <div id="pipeline-panel" style="display:none">
       <div id="pipeline-stages" style="margin-bottom:14px"></div>
       <div id="pipeline-sim-wait" style="display:none;background:rgba(245,158,11,.1);
@@ -5452,9 +5672,136 @@ function showODFLightbox(url){
       </div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">流水线任务队列</span>
+      <button class="btn btn-g btn-sm" onclick="loadPipelineQueue()" style="margin-left:auto">刷新</button>
+    </div>
+    <div id="pipeline-queue-wrap">
+      <div class="empty"><div class="ei">↻</div><p>暂无流水线历史任务</p></div>
+    </div>
+  </div>
 </div><!-- /page-pipeline -->
+
+<!-- ═══════════════════ 材料对比导出页 ═══════════════════ -->
+<div class="page" id="page-compare">
+  <div class="wf-guide">
+    <div class="wf-guide-icon">📈</div>
+    <div class="wf-guide-body">
+      <div class="wf-guide-title">独立材料对比导出</div>
+      <div class="wf-guide-desc">从参考等级和历史仿真导出中任意选择材料，直接生成三张对比图，无需当前仿真数据。</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">选择对比材料</span></div>
+    <div style="margin-bottom:10px;font-size:12px;color:var(--t2)">勾选需要对比的参考等级和历史仿真材料（至少 2 个）：</div>
+    <div id="cmp-mat-wrap" style="border:1px solid var(--border);border-radius:4px;padding:10px;background:var(--bg-3);max-height:320px;overflow-y:auto">
+      <span style="color:var(--t3);font-size:11px">正在加载材料列表…</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-c" onclick="runCompareExport()">📊 生成对比图</button>
+      <button class="btn btn-sm" style="font-size:11px" onclick="cmpSelectAll(true)">全选</button>
+      <button class="btn btn-sm" style="font-size:11px" onclick="cmpSelectAll(false)">全不选</button>
+      <span id="cmp-status" style="font-size:11px;color:var(--t3)"></span>
+    </div>
+  </div>
+  <div id="cmp-result-wrap" style="margin-top:0"></div>
+</div><!-- /page-compare -->
 
   </div><!-- content -->
 </div><!-- main -->
+
+<script>
+// ── 独立材料对比导出 ────────────────────────────────────────────────────────
+
+async function loadCmpMatList() {
+  const wrap = document.getElementById('cmp-mat-wrap');
+  if (!wrap) return;
+  // 复用已有缓存
+  if (!_bhMatData) {
+    wrap.innerHTML = '<span style="color:var(--t3);font-size:11px">正在加载…</span>';
+    try {
+      const r = await fetch('/api/bh-analysis/reference-list').then(x => x.json());
+      _bhMatData = r.materials || [];
+    } catch(e) {
+      wrap.innerHTML = `<span style="color:var(--red);font-size:11px">加载失败: ${e.message}</span>`;
+      return;
+    }
+  }
+  const refs = _bhMatData.filter(m => m.source === 'reference');
+  const sims = _bhMatData.filter(m => m.source === 'simulation');
+
+  const mkGroup = (title, color, items, checked) => {
+    if (!items.length) return '';
+    const rows = items.map(m => `
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 0;cursor:pointer">
+        <input type="checkbox" class="cmp-mat-ck" value="${m.name}" ${checked ? 'checked' : ''}
+               style="accent-color:${color};cursor:pointer">
+        <span style="color:var(--t1)">${m.short_name}</span>
+        ${m.b800_rd != null ? `<span style="color:var(--t3);font-size:10px">B₈₀₀=${m.b800_rd.toFixed(3)} T</span>` : ''}
+      </label>`).join('');
+    return `<div style="margin-bottom:10px">
+      <div style="font-size:10px;font-weight:600;color:${color};text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">${title}</div>
+      ${rows}
+    </div>`;
+  };
+
+  wrap.innerHTML =
+    mkGroup('参考等级', 'var(--cyan)', refs, true) +
+    mkGroup('历史仿真导出', 'var(--green)', sims, true);
+}
+
+function cmpSelectAll(state) {
+  document.querySelectorAll('.cmp-mat-ck').forEach(c => c.checked = state);
+}
+
+async function runCompareExport() {
+  const checks = [...document.querySelectorAll('.cmp-mat-ck:checked')].map(c => c.value);
+  if (checks.length < 2) { toast('至少需要勾选 2 个材料', 'err'); return; }
+
+  const statusEl = document.getElementById('cmp-status');
+  const resultWrap = document.getElementById('cmp-result-wrap');
+  statusEl.textContent = '生成中…';
+  resultWrap.innerHTML = '';
+
+  try {
+    const r = await fetch('/api/bh-analysis/compare-only', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ include_names: checks })
+    }).then(x => x.json());
+
+    if (r.error) { toast('生成失败: ' + r.error, 'err'); statusEl.textContent = ''; return; }
+
+    statusEl.textContent = `已生成 ${r.n_materials} 个材料的对比图`;
+
+    const plotLabels = { bh_all: 'BH全览', rd_analysis: 'RD分析', td_anisotropy: 'TD各向异性' };
+    const dlBtns = Object.entries(r.plots).map(([k, b64]) => {
+      const url = 'data:image/png;base64,' + b64;
+      return `<a href="${url}" download="compare_${k}.png"
+               class="btn btn-g btn-sm" style="text-decoration:none">⬇️ ${plotLabels[k]}</a>`;
+    }).join('');
+
+    const imgs = Object.entries(r.plots).map(([k, b64]) =>
+      `<div style="margin-bottom:16px">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:4px">${plotLabels[k]}</div>
+        <img src="data:image/png;base64,${b64}"
+             style="max-width:100%;border-radius:4px;border:1px solid var(--border);display:block">
+      </div>`
+    ).join('');
+
+    resultWrap.innerHTML = `
+      <div class="card" style="margin-top:12px">
+        <div class="card-hdr">
+          <span class="card-title">对比图结果</span>
+          <div style="display:flex;gap:6px;margin-left:auto">${dlBtns}</div>
+        </div>
+        ${imgs}
+      </div>`;
+  } catch(e) {
+    toast('请求失败: ' + e.message, 'err');
+    statusEl.textContent = '';
+  }
+}
+</script>
 </body>
 </html>

@@ -71,7 +71,7 @@ PAPER_MODEL_CANDIDATES = {
 
 PAPER_TRAINING_PRESETS = {
     "smoke": {
-        "label": "测试级别 / 冒烟模型选择",
+        "label": "快速检查候选模型选择",
         "description": "快速验证候选模型、CV 报告和保存链路。",
         "config": {
             "min_samples": 8,
@@ -101,7 +101,7 @@ PAPER_TRAINING_PRESETS = {
         },
     },
     "lite": {
-        "label": "Lite / 轻量模型选择",
+        "label": "小规模候选模型选择",
         "description": "面向 24+ 样本的小规模正式候选比较。",
         "config": {
             "min_samples": MIN_RELIABLE_EVAL_SAMPLES,
@@ -131,7 +131,7 @@ PAPER_TRAINING_PRESETS = {
         },
     },
     "std": {
-        "label": "Std / 标准论文级模型选择",
+        "label": "标准规模候选模型选择",
         "description": "面向 48+ 样本的标准交叉验证候选比较。",
         "config": {
             "min_samples": 48,
@@ -161,7 +161,7 @@ PAPER_TRAINING_PRESETS = {
         },
     },
     "max": {
-        "label": "Max / 全量论文级模型选择",
+        "label": "大规模候选模型选择",
         "description": "面向 96+ 样本的高成本候选比较，用于最终模型报告。",
         "config": {
             "min_samples": 96,
@@ -334,6 +334,17 @@ def prepare_dataset(dataset_path: str, target_scope: str = "bh_only") -> Prepare
     )
 
 
+def dataset_bh_reference_corrected(dataset_path: str) -> bool:
+    """Return True when most rows declare that B-H targets are reference-corrected."""
+    try:
+        df = pd.read_csv(dataset_path, usecols=lambda c: c == "bh_reference_corrected")
+        if "bh_reference_corrected" not in df.columns or df.empty:
+            return False
+        return float(df["bh_reference_corrected"].astype(bool).mean()) > 0.5
+    except Exception:
+        return False
+
+
 def bh_error_metrics(y_true: np.ndarray, y_pred: np.ndarray, target_cols: list[str]) -> dict:
     bundle = _metric_bundle(y_true, y_pred, target_cols)
     primary_idx = [i for i, col in enumerate(target_cols) if col.startswith("B_")]
@@ -429,7 +440,7 @@ class PaperSurrogateTrainer:
                 "dropped_constant_features": data.dropped_constant_features,
                 "preset_id": preset_id,
                 "preset_label": preset_label,
-                "message": f"需要至少 {min_samples} 个有效样本才能生成论文级模型对比报告。",
+                "message": f"需要至少 {min_samples} 个有效样本才能生成候选模型对比报告。",
             }
 
         X_train, X_holdout, y_train, y_holdout = train_test_split(
@@ -510,6 +521,7 @@ class PaperSurrogateTrainer:
             "pca_max_components": self.pca_max_components,
             "candidate_models": self.candidate_models,
             "candidate_model_relationships": PAPER_MODEL_CANDIDATES,
+            "bh_reference_corrected": dataset_bh_reference_corrected(dataset_path),
             "created": datetime.now().isoformat(),
         }
         metrics = {

@@ -23,7 +23,7 @@ app = Flask(__name__)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 确保运行时数据目录存在（新机器克隆后自动创建）
-for _d in ['data/exports', 'data/datasets', 'data/models', 'input', 'output', 'preinput']:
+for _d in ['data/exports', 'data/datasets', 'data/models', 'data/pipelines', 'input', 'output', 'preinput']:
     Path(os.path.join(SCRIPT_DIR, _d)).mkdir(parents=True, exist_ok=True)
 MODULES_DIR = os.path.join(SCRIPT_DIR, 'modules')
 sys.path.insert(0, SCRIPT_DIR)
@@ -536,8 +536,9 @@ def scan_output():
         return jsonify({'runs': [], 'error': 'output/ 目录不存在'})
     runs = []
     for run_dir in sorted(output_base.iterdir(), reverse=True):
-        if not run_dir.is_dir() or not run_dir.name.startswith('run_'): continue
-        run_info = {'name': run_dir.name, 'path': str(run_dir), 'configs': []}
+        if not run_dir.is_dir() or not (run_dir.name.startswith('run_') or run_dir.name.startswith('pipeline_')):
+            continue
+        run_info = {'name': run_dir.name, 'path': _posix(run_dir), 'configs': []}
         _scan_run_dir(run_dir, run_info)
         if run_info['configs']:
             runs.append(run_info)
@@ -1264,6 +1265,68 @@ def dataset_list():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/dataset/delete', methods=['POST', 'DELETE'])
+def dataset_delete():
+    data = request.get_json(silent=True) or {}
+    raw_values = [data.get('path'), data.get('name')]
+    if not any(str(v or '').strip() for v in raw_values):
+        return jsonify({'error': 'dataset path is required'}), 400
+
+    base = Path('data/datasets').resolve()
+    candidates = []
+    seen = set()
+    target_names = set()
+
+    for raw_value in raw_values:
+        raw = str(raw_value or '').strip()
+        if not raw:
+            continue
+        p = Path(raw.replace('\\', '/'))
+        if p.name:
+            target_names.add(p.name.lower())
+            if p.suffix.lower() != '.csv':
+                target_names.add((p.name + '.csv').lower())
+        for cand in (p, base / p.name):
+            if not cand.name:
+                continue
+            key = str(cand)
+            if key not in seen:
+                candidates.append(cand)
+                seen.add(key)
+
+    candidate = None
+    outside_candidate_seen = False
+    for cand in candidates:
+        resolved = cand.resolve()
+        try:
+            resolved.relative_to(base)
+        except ValueError:
+            outside_candidate_seen = True
+            continue
+        if resolved.exists() and resolved.suffix.lower() == '.csv':
+            candidate = resolved
+            break
+
+    if candidate is None and target_names:
+        for cand in base.glob('*.csv'):
+            if cand.name.lower() in target_names:
+                candidate = cand.resolve()
+                break
+
+    if candidate is None:
+        if outside_candidate_seen and not target_names:
+            return jsonify({'error': 'dataset path is outside data/datasets'}), 403
+        return jsonify({'error': 'dataset file not found'}), 404
+
+    deleted = []
+    candidate.unlink()
+    deleted.append(_posix(candidate))
+    meta = candidate.with_suffix('.metadata.json')
+    if meta.exists():
+        meta.unlink()
+        deleted.append(_posix(meta))
+    return jsonify({'success': True, 'deleted': deleted})
+
 @app.route('/api/dataset/aggregate', methods=['POST'])
 def dataset_aggregate():
     data    = request.json or {}
@@ -1376,10 +1439,10 @@ def ml_dataset_presets():
         for key, preset in presets.items():
             item = dict(preset)
             item['label'] = {
-                'smoke': 'Dataset Smoke / 冒烟数据集',
-                'lite': 'Dataset Lite / 轻量数据集',
-                'std': 'Dataset Std / 标准数据集',
-                'max': 'Dataset Max / 全量数据集',
+                'smoke': '快速检查数据集',
+                'lite': '小规模数据集',
+                'std': '标准规模数据集',
+                'max': '大规模数据集',
             }.get(key, preset.get('label', key))
             item['kind'] = 'dataset_generation'
             item['description'] = '仅控制 ML 专用仿真数据集规模、角度、晶粒数与仿真步数；不控制模型训练超参数。'
@@ -1393,10 +1456,10 @@ def ml_dataset_presets():
             'max': {'n_samples': 128, 'n_grains': 32, 'sim_n_steps': 120},
         }
         labels = {
-            'smoke': 'Dataset Smoke / 冒烟数据集',
-            'lite': 'Dataset Lite / 轻量数据集',
-            'std': 'Dataset Std / 标准数据集',
-            'max': 'Dataset Max / 全量数据集',
+            'smoke': '快速检查数据集',
+            'lite': '小规模数据集',
+            'std': '标准规模数据集',
+            'max': '大规模数据集',
         }
         presets = {}
         for key, cfg in fallback.items():
@@ -1433,22 +1496,24 @@ def ml_dataset_presets():
 
 DATASET_PRESETS = {
     'smoke': {'n_samples': 4,   'f_Goss_range': [0.5, 0.8], 'theta_0_range': [0, 30],
-              'N_grains': 5, 'halfwidth': 10, 'label': 'Smoke (4 样本)'},
+              'N_grains': 5, 'halfwidth': 10, 'label': '快速检查 (4 样本)'},
     'lite':  {'n_samples': 20,  'f_Goss_range': [0.35, 0.95], 'theta_0_range': [0, 45],
-              'N_grains': 5, 'halfwidth': 10, 'label': 'Lite (20 样本)'},
+              'N_grains': 5, 'halfwidth': 10, 'label': '小规模 (20 样本)'},
     'std':   {'n_samples': 60,  'f_Goss_range': [0.35, 0.95], 'theta_0_range': [0, 45],
-              'N_grains': 5, 'halfwidth': 10, 'label': 'Std (60 样本)'},
+              'N_grains': 5, 'halfwidth': 10, 'label': '标准规模 (60 样本)'},
     'max':   {'n_samples': 150, 'f_Goss_range': [0.35, 0.95], 'theta_0_range': [0, 45],
-              'N_grains': 5, 'halfwidth': 10, 'label': 'Max (150 样本)'},
+              'N_grains': 5, 'halfwidth': 10, 'label': '大规模 (150 样本)'},
 }
 
 ML_TRAIN_PRESETS = {
-    'smoke':       {'model_type': 'direct_xgb', 'n_estimators': 50,  'label': 'Smoke'},
-    'lite':        {'model_type': 'direct_xgb', 'n_estimators': 150, 'label': 'Lite'},
-    'std':         {'model_type': 'direct_xgb', 'n_estimators': 300, 'label': 'Std ⭐'},
-    'max':         {'model_type': 'direct_xgb', 'n_estimators': 600, 'label': 'Max'},
-    'extra_trees': {'model_type': 'extra_trees','n_estimators': 300, 'label': 'ExtraTrees'},
-    'custom':      {'model_type': 'direct_xgb', 'n_estimators': 300, 'label': 'Custom'},
+    'gaussian_process': {'model_type': 'gaussian_process', 'label': '高斯过程（推荐 <50 样本）'},
+    'ridge_poly':       {'model_type': 'ridge_poly',       'degree': 2, 'alpha': 1.0, 'label': '二次多项式 Ridge'},
+    'smoke':            {'model_type': 'direct_xgb', 'n_estimators': 50,  'label': '快速检查'},
+    'lite':             {'model_type': 'direct_xgb', 'n_estimators': 100, 'label': '小规模 XGBoost'},
+    'std':              {'model_type': 'direct_xgb', 'n_estimators': 200, 'label': '标准 XGBoost'},
+    'max':              {'model_type': 'direct_xgb', 'n_estimators': 400, 'label': '大规模 XGBoost'},
+    'extra_trees':      {'model_type': 'extra_trees','n_estimators': 200, 'label': 'ExtraTrees'},
+    'custom':           {'model_type': 'direct_xgb', 'n_estimators': 100, 'label': 'Custom'},
 }
 
 @app.route('/api/dataset/presets', methods=['GET'])
@@ -1658,6 +1723,25 @@ def bh_analysis_reference_list():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/bh-analysis/export/<path:filename>', methods=['DELETE'])
+def bh_export_delete(filename):
+    """删除 data/exports/ 下的指定 .amat 文件。"""
+    try:
+        # Reject any path traversal attempt
+        if '/' in filename or '\\' in filename or '..' in filename:
+            return jsonify({'error': '非法文件名'}), 400
+        export_dir = Path(os.path.join(SCRIPT_DIR, 'data', 'exports'))
+        target = (export_dir / filename).resolve()
+        if not str(target).startswith(str(export_dir.resolve())):
+            return jsonify({'error': '非法路径'}), 400
+        if not target.exists():
+            return jsonify({'error': f'文件不存在: {filename}'}), 404
+        target.unlink()
+        return jsonify({'ok': True, 'deleted': filename})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/analyze/apply-delta-correction', methods=['POST'])
 def api_apply_delta_correction():
     """对原始仿真聚合 B-H 曲线施加参考修正（RD/TD 方向均支持）。"""
@@ -1692,9 +1776,9 @@ def api_apply_delta_correction():
 @app.route('/api/analyze/export-bh-analysis', methods=['POST'])
 def export_bh_analysis():
     """
-    生成 .amat 文件（AEDT 格式）并运行 BH 曲线宏观参数分析，
-    对比 go_steel_data/output/ 中的参考等级，生成三张对比图。
-    返回 JSON 包含 metrics / core_loss / plot 路径。
+    生成 BH 曲线宏观参数分析报告（三张对比图 + 指标）。
+    不再自动保存 .amat 到 exports 目录；改用 /api/bh-analysis/save-material 显式保存。
+    .amat 内容以 base64 形式嵌入响应供前端直接下载。
     """
     data         = request.json or {}
     name         = data.get('name') or 'GO_Sim_%s' % datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -1704,19 +1788,25 @@ def export_bh_analysis():
     td_B         = data.get('td_B') or rd_B
     thickness_mm = float(data.get('thickness_mm', 0.35))
     include_names = data.get('include_names')  # list[str] | None
+    raw_rd_H     = data.get('raw_rd_H')
+    raw_rd_B     = data.get('raw_rd_B')
+    raw_td_H     = data.get('raw_td_H')
+    raw_td_B     = data.get('raw_td_B')
     try:
         import bh_curve_analyzer as bhca
+        import base64
 
         mx = _get_mx()
         amat_content = mx.generate_amat_content(
             name, rd_H, rd_B, td_H, td_B, thickness_mm=thickness_mm)
-        amat_path = mx.save_amat_file(amat_content, name)
 
         export_dir = os.path.join(os.getcwd(), 'data', 'exports')
         analysis   = bhca.analyze_bh_pair(
             name, rd_H, rd_B, td_H, td_B,
             save_dir=export_dir, thickness_mm=thickness_mm,
             include_names=include_names,
+            raw_rd_H=raw_rd_H, raw_rd_B=raw_rd_B,
+            raw_td_H=raw_td_H, raw_td_B=raw_td_B,
         )
 
         def to_web(abs_path):
@@ -1725,7 +1815,7 @@ def export_bh_analysis():
 
         return jsonify({
             'amat_filename':  '%s.amat' % name,
-            'amat_web_path':  '/data/exports/%s.amat' % name,
+            'amat_b64':       base64.b64encode(amat_content.encode('utf-8')).decode('ascii'),
             'plots': {k: to_web(v) for k, v in analysis['plots'].items()},
             'metrics_rd':  analysis['metrics_rd'],
             'metrics_td':  analysis['metrics_td'],
@@ -1733,9 +1823,82 @@ def export_bh_analysis():
             'csv_web_path':  to_web(analysis['csv_path']),
             'json_web_path': to_web(analysis['json_path']),
             'n_reference_materials': analysis.get('n_reference_materials', 0),
+            'n_simulation_materials': analysis.get('n_simulation_materials', 0),
+            'n_raw_overlay_materials': analysis.get('n_raw_overlay_materials', 0),
         })
     except Exception as e:
         return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
+
+
+@app.route('/api/bh-analysis/save-material', methods=['POST'])
+def bh_analysis_save_material():
+    """显式保存 .amat 到 data/exports/（加入"历史仿真导出"对比列表）。"""
+    try:
+        data         = request.json or {}
+        name         = (data.get('name') or '').strip()
+        if not name:
+            name = 'GO_Sim_%s' % datetime.now().strftime('%Y%m%d%H%M%S')
+        rd_H         = data.get('rd_H', [])
+        rd_B         = data.get('rd_B', [])
+        td_H         = data.get('td_H') or rd_H
+        td_B         = data.get('td_B') or rd_B
+        thickness_mm = float(data.get('thickness_mm', 0.35))
+
+        mx = _get_mx()
+        amat_content = mx.generate_amat_content(
+            name, rd_H, rd_B, td_H, td_B, thickness_mm=thickness_mm)
+        export_dir = os.path.join(SCRIPT_DIR, 'data', 'exports')
+        amat_path = mx.save_amat_file(amat_content, name, export_dir=export_dir)
+        return jsonify({'ok': True, 'filename': '%s.amat' % name,
+                        'amat_web_path': '/data/exports/%s.amat' % name})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/bh-analysis/compare-only', methods=['POST'])
+def bh_compare_only():
+    """不依赖当前仿真，仅从已保存材料中选取并生成三张对比图。"""
+    try:
+        import base64, tempfile
+        import bh_curve_analyzer as bhca
+        data          = request.json or {}
+        include_names = data.get('include_names')  # list[str] | None
+
+        refs = bhca.load_reference_materials()
+        export_dir = os.path.join(SCRIPT_DIR, 'data', 'exports')
+        sims = bhca.load_simulation_materials(export_dir)
+
+        all_mats = refs + sims
+        if include_names is not None:
+            inc = set(include_names)
+            all_mats = [m for m in all_mats if m.name in inc]
+
+        if len(all_mats) < 2:
+            return jsonify({'error': '至少需要选择 2 个材料'}), 400
+
+        tmp = Path(tempfile.mkdtemp())
+        p_all = tmp / 'compare_bh_all.png'
+        p_rd  = tmp / 'compare_bh_rd.png'
+        p_td  = tmp / 'compare_bh_td.png'
+
+        bhca.make_all_bh_plot(all_mats, p_all, highlight_name=None)
+        bhca.make_rd_analysis_plot(all_mats, p_rd, highlight_name=None)
+        bhca.make_td_anisotropy_plot(all_mats, p_td, highlight_name=None)
+
+        def _b64(p):
+            return base64.b64encode(p.read_bytes()).decode('ascii')
+
+        return jsonify({
+            'ok': True,
+            'n_materials': len(all_mats),
+            'plots': {
+                'bh_all':       _b64(p_all),
+                'rd_analysis':  _b64(p_rd),
+                'td_anisotropy': _b64(p_td),
+            },
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/data/exports/<path:filename>')
@@ -1782,6 +1945,27 @@ def pipeline_resume(pid):
     return jsonify({'success': ok,
                     'error': None if ok else 'pipeline not in waiting_sim state'})
 
+@app.route('/api/pipeline/<pid>/terminate', methods=['POST'])
+def pipeline_terminate(pid):
+    ok = _get_pr().terminate(pid)
+    return jsonify({'success': ok,
+                    'error': None if ok else 'pipeline is not running or not found'})
+
+@app.route('/api/pipeline/<pid>/rerun', methods=['POST'])
+def pipeline_rerun(pid):
+    result = _get_pr().rerun_from_checkpoint(pid)
+    if result is None:
+        return jsonify({'error': 'pipeline not found'}), 404
+    return jsonify({'success': True, **result})
+
+@app.route('/api/pipeline/<pid>', methods=['DELETE'])
+def pipeline_delete(pid):
+    cascade = request.args.get('cascade', 'true').lower() != 'false'
+    result = _get_pr().delete(pid, cascade=cascade)
+    if result is None:
+        return jsonify({'error': 'pipeline not found'}), 404
+    return jsonify({'success': True, **result})
+
 @app.route('/api/pipeline/list', methods=['GET'])
 def pipeline_list():
     return jsonify({'pipelines': _get_pr().list_pipelines()})
@@ -1793,4 +1977,4 @@ if __name__ == '__main__':
     print("Workspace: %s" % os.getcwd())
     print("URL: http://127.0.0.1:5000")
     print("="*60)
-    app.run(debug=True, port=5000, threaded=True)
+    app.run(debug=False, use_reloader=False, port=5000, threaded=True)

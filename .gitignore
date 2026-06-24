@@ -11,6 +11,8 @@ __pycache__/
 /output/
 data/datasets/
 data/models/
+data/paper_models/
+data/pipelines/
 data/exports/
 
 # 批处理脚本（scripts/ 下的运行文件，但保留目录本身）

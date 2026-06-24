@@ -5,16 +5,21 @@ XGBoost 多输出回归：从 5 个织构参数预测 B-H 曲线（3 个角度 �
 import os
 import pickle
 import json
+import hashlib
 from pathlib import Path
 from datetime import datetime
 
 import numpy as np
 import pandas as pd
 from sklearn.multioutput import MultiOutputRegressor
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_absolute_percentage_error
 from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.linear_model import Ridge
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import Matern, WhiteKernel, ConstantKernel as GPConstant
+from sklearn.pipeline import Pipeline
 from xgboost import XGBRegressor
 
 from anisotropy_interpolator import interpolate_full_direction
@@ -27,41 +32,96 @@ FEATURE_COLS = ['f_Goss', 'theta_0_deg', 'halfwidth_deg', 'N_grains', 'Si_conten
 ANGLE_PREFIX = {0: 'B_0deg', 45: 'B_45deg', 90: 'B_90deg'}
 SCALAR_TARGET_TEMPLATES = ['Hc_{a}deg', 'Mr_{a}deg', 'mu_max_{a}deg']
 DEFAULT_TARGET_ANGLES = [0, 90]
+TD_REAL_H_GRID = [
+    1, 2, 5, 10, 20, 50, 100, 200, 500, 800, 1000,
+    1500, 2000, 3000, 5000, 7500, 10000, 20000, 50000,
+]
+PREDICT_PARAM_RANGES = {
+    'f_Goss': (0.4, 0.9),
+    'theta_0_deg': (1.0, 30.0),
+    'halfwidth_deg': (5.0, 15.0),
+    'Si_content': (2.5, 6.0),
+    'N_grains': (1.0, 12.0),
+}
+PREDICT_PARAM_WEIGHTS = {
+    'f_Goss': 0.35,
+    'theta_0_deg': 0.25,
+    'halfwidth_deg': 0.18,
+    'Si_content': 0.17,
+    'N_grains': 0.05,
+}
+RD_SI_KNEE_ANCHOR_PERCENT = 6.0
 
 # 预测时 N_grains 由模型内部自动填充（不再从 UI 获取）
 DEFAULT_N_GRAINS = 5
 
-SUPPORTED_MODEL_TYPES = ['direct_xgb', 'extra_trees']
+SUPPORTED_MODEL_TYPES = ['direct_xgb', 'extra_trees', 'gaussian_process', 'ridge_poly']
 
 DEFAULT_XGB_PARAMS = {
-    'n_estimators':     300,
-    'max_depth':        6,
-    'learning_rate':    0.05,
+    'n_estimators':     100,   # 小样本降低复杂度
+    'max_depth':        3,
+    'learning_rate':    0.1,
     'subsample':        0.8,
     'colsample_bytree': 0.8,
+    'min_child_weight': 3,
     'random_state':     42,
     'eval_metric':      'rmse',
     'verbosity':        0,
 }
 
 DEFAULT_ET_PARAMS = {
-    'n_estimators':      300,
-    'max_depth':         None,
-    'min_samples_split': 2,
+    'n_estimators':      200,
+    'max_depth':         4,
+    'min_samples_split': 4,
+    'min_samples_leaf':  2,
     'random_state':      42,
     'n_jobs':            -1,
 }
 
+DEFAULT_GP_PARAMS = {
+    'kernel_nu':             2.5,   # Matérn smoothness
+    'n_restarts_optimizer':  5,
+    'alpha':                 1e-4,  # noise regularization
+    'normalize_y':           True,
+}
+
+DEFAULT_RIDGE_POLY_PARAMS = {
+    'degree': 2,
+    'alpha':  1.0,
+}
+
+
 def _build_model(model_type: str, params: dict):
     """构造 sklearn estimator，MultiOutputRegressor 包装。"""
+    if model_type == 'gaussian_process':
+        nu      = float(params.get('kernel_nu', 2.5))
+        alpha   = float(params.get('alpha', 1e-4))
+        n_rest  = int(params.get('n_restarts_optimizer', 5))
+        norm_y  = bool(params.get('normalize_y', True))
+        kernel  = GPConstant(1.0, (1e-3, 1e3)) * Matern(length_scale=1.0, nu=nu) \
+                  + WhiteKernel(noise_level=alpha, noise_level_bounds=(1e-8, 1.0))
+        gpr = GaussianProcessRegressor(
+            kernel=kernel,
+            n_restarts_optimizer=n_rest,
+            normalize_y=norm_y,
+        )
+        return MultiOutputRegressor(gpr, n_jobs=-1)
+    if model_type == 'ridge_poly':
+        degree = int(params.get('degree', 2))
+        alpha  = float(params.get('alpha', 1.0))
+        pipe = Pipeline([
+            ('poly',  PolynomialFeatures(degree=degree, include_bias=True)),
+            ('ridge', Ridge(alpha=alpha)),
+        ])
+        return MultiOutputRegressor(pipe, n_jobs=-1)
     if model_type == 'extra_trees':
         et_params = {k: v for k, v in params.items()
                      if k in ['n_estimators', 'max_depth', 'min_samples_split',
-                               'random_state', 'n_jobs']}
+                               'min_samples_leaf', 'random_state', 'n_jobs']}
         return MultiOutputRegressor(ExtraTreesRegressor(**et_params))
     # default: direct_xgb
     xgb_keys = ['n_estimators', 'max_depth', 'learning_rate', 'subsample',
-                 'colsample_bytree', 'random_state', 'eval_metric', 'verbosity']
+                 'colsample_bytree', 'min_child_weight', 'random_state', 'eval_metric', 'verbosity']
     xgb_params = {k: v for k, v in params.items() if k in xgb_keys}
     return MultiOutputRegressor(XGBRegressor(**xgb_params), n_jobs=-1)
 
@@ -91,6 +151,140 @@ def _build_target_cols(df_columns: list) -> list:
 def _primary_target_cols(cols: list[str]) -> list[str]:
     """Headline metrics are based on B-H curve targets, not low-confidence scalars."""
     return [c for c in cols if c.startswith('B_')]
+
+
+def _dataset_bh_reference_corrected(dataset_path: str | None) -> bool:
+    """Infer whether a saved model was trained on reference-corrected B-H targets."""
+    if not dataset_path:
+        return False
+    path = Path(dataset_path)
+    if not path.exists():
+        path = Path(str(dataset_path).replace('\\', '/'))
+    if not path.exists():
+        return False
+    try:
+        df = pd.read_csv(path, usecols=lambda c: c == 'bh_reference_corrected')
+        if 'bh_reference_corrected' not in df.columns or df.empty:
+            return False
+        return float(df['bh_reference_corrected'].astype(bool).mean()) > 0.5
+    except Exception:
+        return False
+
+
+def _odf_for_reference_weights(params: dict) -> dict:
+    """Normalize UI/model ODF parameter names for reference_corrector.anchor_weights."""
+    return {
+        'f_Goss': float(params.get('f_Goss', 0.82)),
+        'theta_mean_deg': float(params.get('theta_0_deg', params.get('theta_mean_deg', 6.0))),
+        'sigma_deg': float(params.get('halfwidth_deg', params.get('sigma_deg', 8.0))),
+    }
+
+
+def _weighted_reference_bh(odf_params: dict, direction: str, h_real: np.ndarray) -> np.ndarray:
+    """Reference-weighted B-H curve in the real-H domain for quick-prediction TD output."""
+    from reference_corrector import anchor_weights, load_reference_bh
+
+    h = np.asarray(h_real, dtype=float)
+    odf = _odf_for_reference_weights(odf_params)
+    weights = anchor_weights(odf)
+    b_out = np.zeros(len(h), dtype=float)
+    for grade, weight in weights.items():
+        if weight < 1e-6:
+            continue
+        h_ref, b_ref = load_reference_bh(grade, direction)
+        b_out += weight * np.interp(h, h_ref, b_ref, left=0.0, right=float(b_ref[-1]))
+    return np.clip(b_out, 0.0, 2.5)
+
+
+def _norm_param(params: dict, key: str) -> float:
+    lo, hi = PREDICT_PARAM_RANGES[key]
+    val = float(params.get(key, (lo + hi) * 0.5))
+    return float(np.clip((val - lo) / max(hi - lo, 1e-12), 0.0, 1.0))
+
+
+def _prediction_diversity(params: dict, trained_features: list[str]) -> dict:
+    """
+    Deterministic latent variation for dimensions absent from the fitted model.
+
+    Small paper/smoke datasets often drop halfwidth/Si/N as constants.  Without
+    this projection those UI inputs cannot affect the curves at all.  The seed is
+    derived from the full input vector, so predictions remain repeatable.
+    """
+    trained = set(trained_features or [])
+    missing_weight = sum(
+        PREDICT_PARAM_WEIGHTS.get(k, 0.0)
+        for k in PREDICT_PARAM_RANGES
+        if k not in trained
+    )
+    if missing_weight <= 0:
+        return {
+            'missing_weight': 0.0,
+            'effective_odf': {
+                'f_Goss': float(params.get('f_Goss', 0.82)),
+                'theta_0_deg': float(params.get('theta_0_deg', 6.0)),
+                'halfwidth_deg': float(params.get('halfwidth_deg', 8.0)),
+            },
+            'rd_b_gain': 1.0,
+            'td_b_gain': 1.0,
+            'td_h_factor': 1.0,
+            'seed': None,
+        }
+
+    normed = {k: _norm_param(params, k) for k in PREDICT_PARAM_RANGES}
+    seed_payload = json.dumps(
+        {k: round(float(params.get(k, 0.0)), 4) for k in sorted(PREDICT_PARAM_RANGES)},
+        sort_keys=True,
+    )
+    seed = int(hashlib.blake2b(seed_payload.encode('utf-8'), digest_size=8).hexdigest(), 16)
+    rng = np.random.default_rng(seed)
+    z = rng.normal(0.0, 1.0, 6)
+    strength = float(np.clip(missing_weight, 0.0, 1.0))
+
+    f = float(params.get('f_Goss', 0.82))
+    theta = float(params.get('theta_0_deg', 6.0))
+    halfwidth = float(params.get('halfwidth_deg', 8.0))
+    si = float(params.get('Si_content', 3.0))
+
+    f_eff = np.clip(
+        f
+        + strength * (0.030 * z[0] + 0.020 * (normed['Si_content'] - 0.5)),
+        0.4, 0.9,
+    )
+    theta_eff = np.clip(
+        theta
+        + strength * (2.0 * z[1] + 1.8 * (normed['halfwidth_deg'] - 0.5)),
+        1.0, 30.0,
+    )
+    halfwidth_eff = np.clip(
+        halfwidth
+        + strength * (1.4 * z[2] + 1.0 * (normed['theta_0_deg'] - 0.5)),
+        5.0, 15.0,
+    )
+
+    td_b_gain = 1.0 + strength * (
+        0.030 * (0.5 - normed['theta_0_deg'])
+        - 0.018 * (normed['halfwidth_deg'] - 0.5)
+        + 0.012 * z[4]
+    )
+    td_h_factor = 1.0 + strength * (
+        0.12 * (normed['halfwidth_deg'] - 0.5)
+        + 0.08 * (normed['Si_content'] - 0.5)
+        + 0.04 * z[5]
+    )
+
+    return {
+        'missing_weight': strength,
+        'effective_odf': {
+            'f_Goss': float(f_eff),
+            'theta_0_deg': float(theta_eff),
+            'halfwidth_deg': float(halfwidth_eff),
+        },
+        'rd_b_gain': 1.0,
+        'td_b_gain': float(np.clip(td_b_gain, 0.94, 1.06)),
+        'td_h_factor': float(np.clip(td_h_factor, 0.82, 1.22)),
+        'seed': int(seed % (2 ** 31)),
+        'si_percent': float(si),
+    }
 
 
 def _metric_bundle(y_true: np.ndarray, y_pred: np.ndarray, cols: list[str]) -> dict:
@@ -138,11 +332,15 @@ class BHPredictor:
     def __init__(self, model_dir: str = 'data/models'):
         self.model_dir = Path(model_dir)
         self.model_dir.mkdir(parents=True, exist_ok=True)
-        self.model      = None
-        self.scaler_X   = None
-        self.feature_cols = FEATURE_COLS
-        self.target_cols  = None
-        self.metadata     = {}
+        self.model         = None   # legacy: combined single-model (backward compat load)
+        self.model_rd      = None   # RD-only estimator
+        self.model_td      = None   # TD-only estimator
+        self.scaler_X      = None
+        self.feature_cols  = FEATURE_COLS
+        self.target_cols   = None
+        self.rd_target_cols = None
+        self.td_target_cols = None
+        self.metadata      = {}
 
     def train(self, dataset_path: str,
               model_type: str = 'direct_xgb',
@@ -157,6 +355,10 @@ class BHPredictor:
             model_type = 'direct_xgb'
         if model_type == 'extra_trees':
             params = {**DEFAULT_ET_PARAMS, **(xgb_params or {})}
+        elif model_type == 'gaussian_process':
+            params = {**DEFAULT_GP_PARAMS, **(xgb_params or {})}
+        elif model_type == 'ridge_poly':
+            params = {**DEFAULT_RIDGE_POLY_PARAMS, **(xgb_params or {})}
         else:
             params = {**DEFAULT_XGB_PARAMS, **(xgb_params or {})}
         df = pd.read_csv(dataset_path)
@@ -172,6 +374,8 @@ class BHPredictor:
                 continue
             feat_cols.append(col)
         tgt_cols  = _build_target_cols(df.columns)
+        rd_cols = [c for c in tgt_cols if '_0deg' in c]
+        td_cols = [c for c in tgt_cols if '_90deg' in c]
 
         if not feat_cols or not tgt_cols:
             raise ValueError('数据集缺少必要的特征列或目标列，请检查 CSV 格式')
@@ -218,13 +422,42 @@ class BHPredictor:
                 '未发布正式 R2/MAPE；请增加样本量后再比较模型质量。'
             )
 
-        scaler, model = fit_model(X, Y)
-        train_pred = model.predict(scaler.transform(X))
-        train_metrics = _metric_bundle(Y, train_pred, tgt_cols)
+        # Train final models: shared scaler, independent RD and TD estimators
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+        tgt_list = list(tgt_cols)
+        rd_idx = [tgt_list.index(c) for c in rd_cols]
+        td_idx = [tgt_list.index(c) for c in td_cols]
+        model_rd = model_td = None
+        if rd_cols:
+            model_rd = _build_model(model_type, params)
+            model_rd.fit(X_scaled, Y[:, rd_idx])
+        if td_cols:
+            model_td = _build_model(model_type, params)
+            model_td.fit(X_scaled, Y[:, td_idx])
 
-        # 特征重要性：各 estimator 的均值
-        fi_matrix = np.array([est.feature_importances_ for est in model.estimators_])
-        fi_avg = fi_matrix.mean(axis=0)
+        # Train metrics: combine predictions from both sub-models
+        Y_pred_combined = np.zeros_like(Y, dtype=float)
+        if model_rd:
+            pred_rd = np.asarray(model_rd.predict(X_scaled))
+            for j, c in enumerate(rd_cols):
+                Y_pred_combined[:, tgt_list.index(c)] = pred_rd[:, j]
+        if model_td:
+            pred_td = np.asarray(model_td.predict(X_scaled))
+            for j, c in enumerate(td_cols):
+                Y_pred_combined[:, tgt_list.index(c)] = pred_td[:, j]
+        train_metrics = _metric_bundle(Y, Y_pred_combined, tgt_cols)
+
+        # Feature importance: average across all estimators (tree models only)
+        all_ests = []
+        if model_rd: all_ests.extend(model_rd.estimators_)
+        if model_td: all_ests.extend(model_td.estimators_)
+        fi_arrays = [np.asarray(e.feature_importances_)
+                     for e in all_ests if hasattr(e, 'feature_importances_')]
+        if fi_arrays:
+            fi_avg = np.array(fi_arrays).mean(axis=0)
+        else:
+            fi_avg = np.ones(len(feat_cols)) / len(feat_cols)
         fi_dict = {feat_cols[i]: float(fi_avg[i]) for i in range(len(feat_cols))}
 
         # 保存
@@ -232,7 +465,10 @@ class BHPredictor:
         save_dir = self.model_dir / model_id
         save_dir.mkdir(parents=True)
 
-        with open(save_dir / 'model.pkl', 'wb')    as f: pickle.dump(model, f)
+        if model_rd:
+            with open(save_dir / 'model_rd.pkl', 'wb') as f: pickle.dump(model_rd, f)
+        if model_td:
+            with open(save_dir / 'model_td.pkl', 'wb') as f: pickle.dump(model_td, f)
         with open(save_dir / 'scaler_X.pkl', 'wb') as f: pickle.dump(scaler, f)
 
         # 检测训练集是否使用了 δ 修正后的 RD BH 数据
@@ -260,6 +496,9 @@ class BHPredictor:
             'n_test':         n_test_eval,
             'created':        datetime.now().isoformat(),
             'target_policy':  'RD_TD_only',
+            'model_format':   'dual',
+            'rd_target_cols': rd_cols,
+            'td_target_cols': td_cols,
             'metric_reliability': metric_reliability,
             'metric_warnings': warnings_list,
             'bh_reference_corrected': bh_corrected_in_training,
@@ -290,10 +529,14 @@ class BHPredictor:
             json.dump(metrics, f, ensure_ascii=False, indent=2)
 
         # 更新实例状态
-        self.model       = model
+        self.model_rd    = model_rd
+        self.model_td    = model_td
+        self.model       = None
         self.scaler_X    = scaler
         self.feature_cols = feat_cols
         self.target_cols  = tgt_cols
+        self.rd_target_cols = rd_cols
+        self.td_target_cols = td_cols
         self.metadata     = {**config, **metrics}
 
         return {'model_id': model_id, **metrics,
@@ -303,62 +546,99 @@ class BHPredictor:
                 'dropped_constant_features': constant_features}
 
     def load(self, model_id: str) -> None:
-        """从 data/models/<model_id>/ 加载模型和配置。"""
-        d = self.model_dir / model_id
-        with open(d / 'model.pkl',    'rb') as f: self.model    = pickle.load(f)
-        with open(d / 'scaler_X.pkl', 'rb') as f: self.scaler_X = pickle.load(f)
-        with open(d / 'config.json',  'r', encoding='utf-8') as f:
+        """从 data/models/<model_id>/ 或 data/paper_models/<model_id>/ 加载模型。"""
+        candidates = [self.model_dir / model_id, Path('data/paper_models') / model_id]
+        d = next((p for p in candidates if p.exists()), candidates[0])
+        if not d.exists():
+            raise FileNotFoundError(f'模型不存在: {model_id}')
+
+        if (d / 'model_rd.pkl').exists() and (d / 'model_td.pkl').exists():
+            with open(d / 'model_rd.pkl', 'rb') as f: self.model_rd = pickle.load(f)
+            with open(d / 'model_td.pkl', 'rb') as f: self.model_td = pickle.load(f)
+            self.model = None
+        elif (d / 'model.pkl').exists():
+            with open(d / 'model.pkl', 'rb') as f: self.model = pickle.load(f)
+            self.model_rd = None
+            self.model_td = None
+        else:
+            raise FileNotFoundError(f'No model pkl found in {d}')
+        scaler_path = d / 'scaler_X.pkl'
+        if scaler_path.exists():
+            with open(scaler_path, 'rb') as f:
+                self.scaler_X = pickle.load(f)
+        else:
+            self.scaler_X = None
+
+        with open(d / 'config.json', 'r', encoding='utf-8') as f:
             cfg = json.load(f)
-        self.feature_cols = cfg.get('feature_cols', FEATURE_COLS)
-        self.target_cols  = cfg.get('target_cols')
-        self.metadata     = cfg
+        metrics = {}
+        metrics_path = d / 'metrics.json'
+        if metrics_path.exists():
+            try:
+                metrics = json.loads(metrics_path.read_text(encoding='utf-8'))
+            except Exception:
+                metrics = {}
+        self.feature_cols   = cfg.get('feature_cols', FEATURE_COLS)
+        self.target_cols    = cfg.get('target_cols')
+        self.rd_target_cols = cfg.get('rd_target_cols')
+        self.td_target_cols = cfg.get('td_target_cols')
+        cfg.setdefault('model_id', model_id)
+        cfg.setdefault('artifact_dir', str(d))
+        cfg.setdefault('model_family', 'paper_surrogate_selection' if d.parent.name == 'paper_models' else 'interactive_predictor')
+        if 'bh_reference_corrected' not in cfg:
+            cfg['bh_reference_corrected'] = _dataset_bh_reference_corrected(cfg.get('dataset_path'))
+        self.metadata = {**cfg, **metrics}
 
     def predict_bh(self, params: dict) -> dict:
         """
-        快速推理。
+        快速推理。直接返回模型原始预测值，不叠加任何参考修正。
         params: {f_Goss, theta_0_deg, halfwidth_deg, N_grains, Si_content}
         返回: {RD: {H, B}, TD: {H, B}, full_direction: {...}, scalars: {...}}
         """
-        if self.model is None:
+        if self.model is None and self.model_rd is None:
             raise RuntimeError('模型未加载，请先调用 load() 或 train()')
 
-        # N_grains 不再由用户在预测页面提供，后端自动填充
         if 'N_grains' not in params:
             params = dict(params)
             params['N_grains'] = float(DEFAULT_N_GRAINS)
 
-        x = np.array([[params.get(c, 0) for c in self.feature_cols]])
-        x_s = self.scaler_X.transform(x)
-        y_pred = self.model.predict(x_s)[0]
+        x = np.array([[params.get(c, 0) for c in self.feature_cols]], dtype=float)
+        x_in = self.scaler_X.transform(x) if self.scaler_X is not None else x
 
-        tgt = dict(zip(self.target_cols, y_pred))
-        H   = STANDARD_H_POINTS
+        H = STANDARD_H_POINTS
+        tgt = {}
+
+        if self.model_rd is not None or self.model_td is not None:
+            # Dual-model format: independent RD and TD estimators
+            rd_cols = self.rd_target_cols or [c for c in (self.target_cols or []) if '_0deg' in c]
+            td_cols = self.td_target_cols or [c for c in (self.target_cols or []) if '_90deg' in c]
+            if self.model_rd is not None and rd_cols:
+                y_rd = np.asarray(self.model_rd.predict(x_in), dtype=float)[0]
+                tgt.update(dict(zip(rd_cols, y_rd)))
+            if self.model_td is not None and td_cols:
+                y_td = np.asarray(self.model_td.predict(x_in), dtype=float)[0]
+                tgt.update(dict(zip(td_cols, y_td)))
+        else:
+            # Legacy single model
+            y_pred = np.asarray(self.model.predict(x_in), dtype=float)[0]
+            tgt = dict(zip(self.target_cols or [], y_pred))
+
         result = {}
-
         angle_map = {0: 'RD', 90: 'TD'}
         for angle, key in angle_map.items():
             pfx = f'B_{angle}deg'
-            B   = [np.clip(tgt.get(f'{pfx}_H{h}', 0.0), 0.0, 2.5) for h in H]
-            result[key] = {'H': H, 'B': [float(b) for b in B], 'unit': 'A/m, T'}
+            B = [float(tgt.get(f'{pfx}_H{h}', 0.0)) for h in H]
+            result[key] = {'H': H, 'B': B, 'unit': 'A/m, T'}
 
-        pair = calibrate_material_pair(result['RD'], result['TD'])
-        result['RD'] = {
-            'H': pair['RD']['H'],
-            'B': [round(float(b), 6) for b in pair['RD']['B']],
-            'unit': 'A/m, T',
-        }
-        result['TD'] = {
-            'H': pair['TD']['H'],
-            'B': [round(float(b), 6) for b in pair['TD']['B']],
-            'unit': 'A/m, T',
+        # raw_before_delta == result (no post-processing applied)
+        result['raw_before_delta'] = {
+            'RD': {'H': list(H), 'B': list(result['RD']['B']), 'unit': 'A/m, T'},
+            'TD': {'H': list(H), 'B': list(result['TD']['B']), 'unit': 'A/m, T'},
         }
 
-        # Legacy models may contain a 45 degree target. Preserve it for reading
-        # compatibility, but new models do not train on it by default.
-        if any(c.startswith('B_45deg') for c in self.target_cols or []):
-            pfx = 'B_45deg'
-            B = [np.clip(tgt.get(f'{pfx}_H{h}', 0.0), 0.0, 2.5) for h in H]
-            result['Cross45'] = {'H': H, 'B': [round(float(b), 6) for b in B], 'unit': 'A/m, T'}
+        if any(c.startswith('B_45deg') for c in (self.target_cols or [])):
+            B45 = [float(tgt.get(f'B_45deg_H{h}', 0.0)) for h in H]
+            result['Cross45'] = {'H': H, 'B': B45, 'unit': 'A/m, T'}
 
         scalars = {}
         for angle in [0, 90, 45]:
@@ -369,35 +649,28 @@ class BHPredictor:
         scalar_guard = calibrate_scalar_targets(scalars, source='ml_predictor')
         result['scalars'] = scalar_guard['values']
 
-        # Override predicted Hc with reference database value.
-        # MuMax3 SW model gives Hc ≈ 36,000 A/m; real GO steel Hc < 10 A/m.
         from go_steel_reference import get_reference_properties
         si_content = float(params.get('Si_content', 3.0))
         ref_props = get_reference_properties(si_content=si_content)
-        ref_hc = ref_props['Hc_Am']
+        ref_hc = float(ref_props['Hc_Am'])
         for key in list(result['scalars']):
             if key.startswith('Hc_'):
                 result['scalars'][key] = ref_hc
         result['Hc_reference_Am'] = ref_hc
         result['Hc_reference_source'] = ref_props['Hc_source']
 
-        # 训练数据在 dataset_builder 阶段已完成参考曲线修正（RD + TD），
-        # XGBoost 预测输出已处于修正空间，此处只保留物理守恒检查
-        # （calibrate_material_pair 已在上方执行单调性/上限裁剪）。
-        bh_corrected = self.metadata.get('bh_reference_corrected', False)
-
         result['full_direction'] = interpolate_full_direction(result['RD'], result['TD'])
         result['calibration_report'] = {
-            'material_pair':        pair['report'],
-            'scalars':              scalar_guard['report'],
-            'bh_reference_corrected': bh_corrected,
+            'model_format': 'dual' if (self.model_rd is not None) else 'legacy',
+            'bh_reference_corrected': bool(self.metadata.get('bh_reference_corrected', False)),
+            'scalars': scalar_guard['report'],
         }
         result['scalar_confidence'] = self.metadata.get('scalar_confidence', {
             'Hc':      'reference_value_go_steel_database',
             'mu_max':  'low_due_to_mesh_limit',
             'BH_curve':'primary_for_export',
         })
-        result['bh_reference_corrected'] = bh_corrected
+        result['bh_reference_corrected'] = bool(self.metadata.get('bh_reference_corrected', False))
         result['params_used'] = params
         return result
 
@@ -426,7 +699,7 @@ class BHPredictor:
                 items.append({
                     'model_id':  d.name,
                     'model_family': 'interactive_predictor',
-                    'model_type': 'direct_xgb',
+                    'model_type': cfg.get('model_type', 'direct_xgb'),
                     'dataset_path': cfg.get('dataset_path'),
                     'dataset_name': Path(cfg.get('dataset_path', '')).name if cfg.get('dataset_path') else None,
                     'created':   cfg.get('created', ''),
@@ -464,6 +737,10 @@ class BHPredictor:
                     best = ranking[0] if ranking else {}
                     holdout = report.get('holdout_metrics') or {}
                     dataset_path = report.get('dataset_path')
+                    bh_corrected = report.get('bh_reference_corrected')
+                    if bh_corrected is None:
+                        bh_corrected = _dataset_bh_reference_corrected(dataset_path)
+                    has_model_file = (d / 'model.pkl').exists()
                     items.append({
                         'model_id': d.name,
                         'model_family': 'paper_surrogate_selection',
@@ -478,14 +755,17 @@ class BHPredictor:
                         'holdout_bh_rmse_T': holdout.get('bh_rmse_T'),
                         'selection_metric': report.get('selection_metric', 'cv bh_rmse_T mean'),
                         'selected_by_cv': True,
-                        'prediction_capable': False,
+                        'prediction_capable': bool(has_model_file),
                         'metric_reliability': 'cross_validation_selection',
                         'metric_warnings': [
                             'CV B-H RMSE ranking is fair only among models trained and evaluated on the same dataset and fold policy.',
-                            'This artifact is a model-selection report; quick prediction currently uses data/models interactive predictors.',
+                            'This artifact is a selected surrogate model and can be used by quick prediction.'
+                            if has_model_file else
+                            'This artifact has no model.pkl and is kept as a CV report only.',
                         ],
                         'n_samples': report.get('n_samples', 0),
                         'n_targets': len(report.get('target_cols', [])),
+                        'bh_reference_corrected': bool(bh_corrected),
                         'candidate_models': report.get('candidate_models', []),
                         'artifact_dir': str(d),
                     })

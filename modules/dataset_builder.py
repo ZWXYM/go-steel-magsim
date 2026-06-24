@@ -352,6 +352,31 @@ class DatasetBuilder:
                 continue
             entry = {'status': 'ok', **bh}
 
+            if (angle == 0
+                    and odf_params.get('f_Goss') is not None
+                    and odf_params.get('theta_0_deg') is not None):
+                try:
+                    from modules.reference_corrector import apply_reference_correction
+                    H_std = np.array(STANDARD_H_POINTS, dtype=float)
+                    B_raw = np.array(bh['B_at_std_H'], dtype=float)
+                    def _nn(v, d): return v if v is not None else d
+                    odf_p = {
+                        'f_Goss':        _nn(odf_params.get('f_Goss'), 0.82),
+                        'theta_0_deg':   _nn(odf_params.get('theta_0_deg'), 6.0),
+                        'halfwidth_deg': _nn(odf_params.get('halfwidth_deg'), 8.0),
+                    }
+                    B_corr = apply_reference_correction(
+                        H_std, B_raw, odf_p, direction='RD',
+                        hc_sim=bh.get('hc_sim_median'),
+                        si_content=si_content,
+                    )
+                    entry['B_raw'] = list(entry.get('B') or [])
+                    entry['B_corrected'] = B_corr.tolist()
+                    entry['B'] = B_corr.tolist()
+                    entry['bh_reference_corrected'] = True
+                except Exception as _e:
+                    warnings.warn(f'[dataset_builder] RD summary correction 失败: {_e}')
+
             # TD(90°)：计算 scale_td 并存储修正后的 B 值供前端显示和导出使用
             if (angle == 90
                     and odf_params.get('f_Goss') is not None
@@ -372,7 +397,9 @@ class DatasetBuilder:
                         si_content=si_content,
                     )
                     s_td = get_td_scale(H_std, B_raw, odf_p)
+                    entry['B_raw'] = list(entry.get('B') or [])
                     entry['B_corrected_td'] = B_corr.tolist()
+                    entry['B'] = B_corr.tolist()
                     entry['scale_td'] = round(s_td, 6)
                     summary['scale_td'] = round(s_td, 6)
                     # 为导出对比图延伸到高 H（H_real_TD 截止于 ~662 A/m 否则平台化）
@@ -439,6 +466,18 @@ class DatasetBuilder:
                 'BH_curve': 'primary_for_export',
             },
         }
+        # Auto-detect RD/TD: the direction with higher B at low H is RD
+        _rd_is_angle0 = True  # default: angle 0 = RD, angle 90 = TD
+        if 0 in angles and 90 in angles:
+            _dir0  = config_dir / 'angle_000'
+            _dir90 = config_dir / 'angle_090'
+            if _dir0.exists() and _dir90.exists():
+                _bh0  = _extract_bh_one_angle(str(_dir0),  Msat=Msat, reference_hc=ref_hc)
+                _bh90 = _extract_bh_one_angle(str(_dir90), Msat=Msat, reference_hc=ref_hc)
+                if _bh0 is not None and _bh90 is not None:
+                    _rd_is_angle0 = (_bh0['B_at_std_H'][0] >= _bh90['B_at_std_H'][0])
+        row['rd_was_swapped'] = not _rd_is_angle0
+
         for angle in angles:
             angle_str = f'angle_{angle:03d}'
             angle_dir = config_dir / angle_str
@@ -473,7 +512,17 @@ class DatasetBuilder:
                     'theta_0_deg':   _nn(row.get('theta_0_deg'),  6.0),
                     'halfwidth_deg': _nn(row.get('halfwidth_deg'), 8.0),
                 }
-                if angle == 0 and row.get('f_Goss') is not None and row.get('theta_0_deg') is not None:
+                # Determine semantic direction (RD/TD) and target column angle
+                _sem_dir = None
+                if angle == 0:
+                    _sem_dir = 'RD' if _rd_is_angle0 else 'TD'
+                elif angle == 90:
+                    _sem_dir = 'TD' if _rd_is_angle0 else 'RD'
+                # RD data always stored in B_0deg_* columns, TD in B_90deg_*
+                _col_angle = 0 if _sem_dir == 'RD' else (90 if _sem_dir == 'TD' else angle)
+
+                _odf_ok = row.get('f_Goss') is not None and row.get('theta_0_deg') is not None
+                if _sem_dir == 'RD' and _odf_ok:
                     try:
                         from modules.reference_corrector import apply_reference_correction
                         B_corr = apply_reference_correction(
@@ -486,9 +535,9 @@ class DatasetBuilder:
                         B_train = B_corr.tolist()
                         row['bh_reference_corrected'] = True
                     except Exception as _e:
-                        warnings.warn(f'[dataset_builder] RD δ-correction 失败 {config_dir.name}/angle=0: {_e}')
+                        warnings.warn(f'[dataset_builder] RD δ-correction 失败 {config_dir.name}/angle={angle}: {_e}')
 
-                elif angle == 90 and row.get('f_Goss') is not None and row.get('theta_0_deg') is not None:
+                elif _sem_dir == 'TD' and _odf_ok:
                     try:
                         from modules.reference_corrector import apply_reference_correction, get_td_scale
                         H_std = np.array(STANDARD_H_POINTS, dtype=float)
@@ -503,15 +552,15 @@ class DatasetBuilder:
                         representative_summary['scale_td'] = round(s_td, 6)
                         row['bh_reference_corrected'] = True
                     except Exception as _e:
-                        warnings.warn(f'[dataset_builder] TD correction 失败 {config_dir.name}/angle=90: {_e}')
+                        warnings.warn(f'[dataset_builder] TD correction 失败 {config_dir.name}/angle={angle}: {_e}')
 
                 for i, h in enumerate(STANDARD_H_POINTS):
-                    row[f'B_{angle}deg_H{h}'] = B_train[i]
-                row[f'Hc_{angle}deg']     = bh['Hc']
-                row[f'Mr_{angle}deg']     = bh['Mr']
-                row[f'mu_max_{angle}deg'] = bh['mu_max']
-                row[f'n_grains_valid_{angle}deg'] = bh['n_grains_valid']
-                row[f'representative_grain_{angle}deg'] = bh.get('representative_grain_file')
+                    row[f'B_{_col_angle}deg_H{h}'] = B_train[i]
+                row[f'Hc_{_col_angle}deg']     = bh['Hc']
+                row[f'Mr_{_col_angle}deg']     = bh['Mr']
+                row[f'mu_max_{_col_angle}deg'] = bh['mu_max']
+                row[f'n_grains_valid_{_col_angle}deg'] = bh['n_grains_valid']
+                row[f'representative_grain_{_col_angle}deg'] = bh.get('representative_grain_file')
 
         if representative_summary['angles']:
             sidecar = config_dir / 'material_representative_summary.json'

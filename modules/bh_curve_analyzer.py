@@ -33,7 +33,7 @@ from scipy.interpolate import PchipInterpolator
 from scipy.optimize import nnls
 
 # Reference GO steel data directory (relative to this module's location)
-_GODATA_OUTPUT = Path(__file__).resolve().parents[2] / 'go_steel_data' / 'output'
+_GODATA_OUTPUT = Path(__file__).resolve().parents[1] / 'go_steel_data' / 'output'
 # Simulation exports directory (data/exports/ at project root)
 _EXPORTS_DIR   = Path(__file__).resolve().parents[1] / 'data' / 'exports'
 
@@ -166,8 +166,8 @@ def _parse_points_from_component(block: str, component_name: str) -> list[tuple[
 
 
 def _iter_material_blocks(text: str) -> Iterable[tuple[str, str]]:
-    # Match GO_Steel_ (reference grades) + GO_Sim_ / GO_Pred_ (simulation exports)
-    start_re = re.compile(r"^\$begin '(GO_(?:Steel|Sim|Pred)_[^']+)'", re.M)
+    # Match any top-level $begin 'name' (no leading whitespace = not a nested block)
+    start_re = re.compile(r"^\$begin '([^']+)'", re.M)
     matches = list(start_re.finditer(text))
     for idx, match in enumerate(matches):
         name  = match.group(1)
@@ -228,7 +228,7 @@ def load_simulation_materials(exports_dir: Path | str | None = None) -> list[Mat
         return []
     materials: list[Material] = []
     seen: set[str] = set()
-    for path in sorted(d.glob('GO_*.amat'), reverse=True):  # newest first
+    for path in sorted(d.glob('*.amat'), reverse=True):  # newest first
         try:
             text = path.read_text(encoding='utf-8', errors='replace')
             for name, block in _iter_material_blocks(text):
@@ -482,18 +482,62 @@ def estimate_core_loss(mat: Material) -> dict[str, object]:
 
 # ── Plotting ───────────────────────────────────────────────────────────────
 
+# 12 visually distinct colors (ColorBrewer Set1 + Dark2 blend)
+_PALETTE = [
+    '#e41a1c',  # red
+    '#377eb8',  # blue
+    '#4daf4a',  # green
+    '#984ea3',  # purple
+    '#ff7f00',  # orange
+    '#a65628',  # brown
+    '#17becf',  # cyan
+    '#e7298a',  # magenta
+    '#1b9e77',  # dark teal
+    '#7570b3',  # periwinkle
+    '#66a61e',  # olive green
+    '#e6ab02',  # gold
+]
+
+# Marker positions: indices in H_PLOT nearest to these H values (log-spaced, visible range)
+_MARK_IDX = [int(np.searchsorted(H_PLOT, h)) for h in [5, 40, 400, 4000]]
+
+# One marker shape per grade; strips vendor prefixes and _sim/_pred suffixes
+_GRADE_MARKERS  = ['o', 's', '^', 'D', 'v', 'P', 'X', 'h', '8', 'p']
+_GRADE_KEY_RE   = re.compile(r'^(?:Baosteel_|IEC_)?(.+?)(?:_(?:sim|pred))?(?:_\d{8,})?$', re.I)
+
+
+def _grade_key(short_name: str) -> str:
+    m = _GRADE_KEY_RE.match(short_name)
+    return (m.group(1) if m else short_name).upper()
+
+
+def _marker_map(materials: list[Material]) -> dict[str, str]:
+    grade_to_mk: dict[str, str] = {}
+    idx = 0
+    result: dict[str, str] = {}
+    for mat in materials:
+        key = _grade_key(mat.short_name)
+        if key not in grade_to_mk:
+            grade_to_mk[key] = _GRADE_MARKERS[idx % len(_GRADE_MARKERS)]
+            idx += 1
+        result[mat.name] = grade_to_mk[key]
+    return result
+
+
 def _color_map(materials: list[Material], highlight_name: str | None = None) -> dict[str, tuple]:
-    """Assign colors. Highlighted material gets bright orange; references get tab20."""
-    cmap = plt.get_cmap('tab20')
+    """Assign colors. Highlighted material gets bright orange; references get 12-color distinct palette."""
     colors: dict[str, tuple] = {}
     ref_idx = 0
     for mat in materials:
         if mat.name == highlight_name:
             colors[mat.name] = (0.976, 0.451, 0.086, 1.0)  # orange
         else:
-            colors[mat.name] = cmap(ref_idx % 20)
+            hex_c = _PALETTE[ref_idx % len(_PALETTE)]
+            r, g, b = int(hex_c[1:3], 16)/255, int(hex_c[3:5], 16)/255, int(hex_c[5:7], 16)/255
+            colors[mat.name] = (r, g, b, 1.0)
             ref_idx += 1
     return colors
+
 
 
 def make_all_bh_plot(
@@ -502,8 +546,9 @@ def make_all_bh_plot(
     highlight_name: str | None = None,
 ) -> None:
     """All-grades B-H overlay (RD solid / TD dashed). Highlighted material drawn last."""
-    colors = _color_map(materials, highlight_name)
-    fig, ax = plt.subplots(figsize=(13, 8))
+    colors  = _color_map(materials, highlight_name)
+    markers = _marker_map(materials)
+    fig, ax = plt.subplots(figsize=(15, 8.5))
 
     refs     = [m for m in materials if m.name != highlight_name]
     sim_mats = [m for m in materials if m.name == highlight_name]
@@ -511,26 +556,34 @@ def make_all_bh_plot(
     for mat in refs + sim_mats:
         b_rd = curve_eval(mat.rd, H_DENSE)[1:]
         b_td = curve_eval(mat.td, H_DENSE)[1:]
-        color = colors[mat.name]
+        color  = colors[mat.name]
+        mk     = markers[mat.name]
         is_sim = (mat.name == highlight_name)
-        lw_rd  = 2.5 if is_sim else 1.5
-        lw_td  = 1.8 if is_sim else 1.0
+        lw_rd  = 2.8 if is_sim else 1.8
+        lw_td  = 2.0 if is_sim else 1.2
+        ms     = 7   if is_sim else 5
         zo     = 10  if is_sim else 1
-        label  = f'★ {mat.short_name} RD' if is_sim else f'{mat.short_name} RD'
-        ax.semilogx(H_PLOT, b_rd, color=color, lw=lw_rd, zorder=zo, label=label)
-        ax.semilogx(H_PLOT, b_td, color=color, lw=lw_td, ls='--', alpha=0.75, zorder=zo)
+        label  = f'★ {mat.short_name}' if is_sim else mat.short_name
+        # RD solid: filled marker; TD dashed: no marker (avoid clutter)
+        ax.semilogx(H_PLOT, b_rd, color=color, lw=lw_rd, zorder=zo, label=label,
+                    marker=mk, markersize=ms, markevery=_MARK_IDX, markeredgewidth=0)
+        ax.semilogx(H_PLOT, b_td, color=color, lw=lw_td, ls='--', alpha=0.80, zorder=zo)
 
     ax.axhline(2.03, color='0.35', ls=':', lw=1.2, label='Js approx. 2.03 T')
     ax.axvline(800,  color='0.15', ls=':', lw=1.0, alpha=0.6)
-    ax.text(830, 0.05, 'H=800 A/m', rotation=90, color='0.25', fontsize=8)
-    title_note = f' (★ = Sim: {highlight_name})' if highlight_name else ''
-    ax.set_title(f'GO Steel BH Curves (RD solid / TD dashed){title_note}', fontsize=13, weight='bold')
-    ax.set_xlabel('Magnetic field strength H (A/m)')
-    ax.set_ylabel('Magnetic flux density B (T)')
+    ax.text(830, 0.05, 'H=800 A/m', rotation=90, color='0.25', fontsize=9)
+    title_note = f'  (★ = Sim: {highlight_name})' if highlight_name else ''
+    ax.set_title(
+        f'GO Steel BH Curves (RD solid / TD dashed){title_note}',
+        fontsize=13, weight='bold'
+    )
+    ax.set_xlabel('Magnetic field strength H (A/m)', fontsize=11)
+    ax.set_ylabel('Magnetic flux density B (T)', fontsize=11)
     ax.set_xlim(1, 50_000)
     ax.set_ylim(0, 2.1)
+    ax.tick_params(labelsize=10)
     ax.grid(True, which='both', ls=':', alpha=0.35)
-    ax.legend(loc='lower right', fontsize=7, ncol=2)
+    ax.legend(loc='lower right', fontsize=13, framealpha=0.9, edgecolor='0.7', ncol=2)
     fig.tight_layout()
     fig.savefig(save_path, dpi=170)
     plt.close(fig)
@@ -542,8 +595,9 @@ def make_rd_analysis_plot(
     highlight_name: str | None = None,
 ) -> None:
     """RD comparison (full log range + knee-region zoom with B800 markers)."""
-    colors = _color_map(materials, highlight_name)
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6.6))
+    colors  = _color_map(materials, highlight_name)
+    markers = _marker_map(materials)
+    fig, axes = plt.subplots(1, 2, figsize=(16, 7.5))
     ax, ax2 = axes
     h_zoom = np.linspace(5, 2000, 800)
 
@@ -552,33 +606,37 @@ def make_rd_analysis_plot(
 
     for mat in refs + sim_mats:
         color  = colors[mat.name]
+        mk     = markers[mat.name]
         is_sim = (mat.name == highlight_name)
-        lw     = 2.5 if is_sim else 1.8
+        lw     = 2.8 if is_sim else 1.8
+        ms     = 7   if is_sim else 5
         zo     = 10  if is_sim else 1
         label  = f'★ {mat.short_name}' if is_sim else mat.short_name
         b_rd   = curve_eval(mat.rd, H_DENSE)[1:]
-        ax.semilogx(H_PLOT, b_rd, color=color, lw=lw, label=label, zorder=zo)
+        ax.semilogx(H_PLOT, b_rd, color=color, lw=lw, label=label, zorder=zo,
+                    marker=mk, markersize=ms, markevery=_MARK_IDX, markeredgewidth=0)
         ax2.plot(h_zoom, curve_eval(mat.rd, h_zoom), color=color, lw=lw, label=label, zorder=zo)
-        ms = 50 if is_sim else 20
-        mk = '*' if is_sim else 'o'
-        ax2.scatter([800], [b_at_h(mat.rd, 800)], color=color, s=ms, zorder=zo + 1, marker=mk)
+        sc_ms = 80 if is_sim else 30
+        sc_mk = '*' if is_sim else mk
+        ax2.scatter([800], [b_at_h(mat.rd, 800)], color=color, s=sc_ms, zorder=zo + 1, marker=sc_mk)
 
     for axis in axes:
         axis.grid(True, ls=':', alpha=0.35)
         axis.axvline(800, color='0.2', ls=':', lw=1.0, alpha=0.55)
+        axis.tick_params(labelsize=10)
     ax.axhline(2.03, color='0.4', ls=':', lw=1.0, alpha=0.65)
-    ax.set_title('Rolling Direction BH Curves (log H)')
-    ax.set_xlabel('H (A/m)')
-    ax.set_ylabel('B (T)')
+    ax.set_title('Rolling Direction BH Curves (log H)', fontsize=11)
+    ax.set_xlabel('H (A/m)', fontsize=11)
+    ax.set_ylabel('B (T)', fontsize=11)
     ax.set_xlim(1, 50_000)
     ax.set_ylim(0, 2.1)
-    ax.legend(loc='lower right', fontsize=7, ncol=2)
-    ax2.set_title('Knee Region and B800 Markers')
-    ax2.set_xlabel('H (A/m)')
-    ax2.set_ylabel('B (T)')
+    ax2.set_title('Knee Region and B800 Markers', fontsize=11)
+    ax2.set_xlabel('H (A/m)', fontsize=11)
+    ax2.set_ylabel('B (T)', fontsize=11)
     ax2.set_xlim(5, 2000)
     ax2.set_ylim(1.35, 2.04)
-    ax2.legend(loc='lower right', fontsize=7, ncol=2)
+    ax.legend(loc='lower right', fontsize=13, framealpha=0.9, edgecolor='0.7')
+    ax2.legend(loc='lower right', fontsize=13, framealpha=0.9, edgecolor='0.7')
     fig.suptitle('GO Steel — Rolling Direction Analysis', fontsize=13, weight='bold')
     fig.tight_layout()
     fig.savefig(save_path, dpi=170)
@@ -591,8 +649,9 @@ def make_td_anisotropy_plot(
     highlight_name: str | None = None,
 ) -> None:
     """TD curves + anisotropy heatmap (B_TD/B_RD at each H_KEY)."""
-    colors = _color_map(materials, highlight_name)
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6.8), gridspec_kw={'width_ratios': [1.05, 1.25]})
+    colors  = _color_map(materials, highlight_name)
+    markers = _marker_map(materials)
+    fig, axes = plt.subplots(1, 2, figsize=(16, 7.5), gridspec_kw={'width_ratios': [1.0, 1.3]})
     ax, ax2 = axes
 
     refs     = [m for m in materials if m.name != highlight_name]
@@ -600,21 +659,24 @@ def make_td_anisotropy_plot(
 
     for mat in refs + sim_mats:
         color  = colors[mat.name]
+        mk     = markers[mat.name]
         is_sim = (mat.name == highlight_name)
-        lw     = 2.5 if is_sim else 1.8
+        lw     = 2.8 if is_sim else 1.8
+        ms     = 7   if is_sim else 5
         zo     = 10  if is_sim else 1
         label  = f'★ {mat.short_name}' if is_sim else mat.short_name
         b_td   = curve_eval(mat.td, H_DENSE)[1:]
-        ax.semilogx(H_PLOT, b_td, color=color, lw=lw, label=label, zorder=zo)
+        ax.semilogx(H_PLOT, b_td, color=color, lw=lw, label=label, zorder=zo,
+                    marker=mk, markersize=ms, markevery=_MARK_IDX, markeredgewidth=0)
 
     ax.axhline(2.03, color='0.4', ls=':', lw=1.0, alpha=0.65)
-    ax.set_title('Transverse Direction BH Curves')
-    ax.set_xlabel('H (A/m)')
-    ax.set_ylabel('B (T)')
+    ax.set_title('Transverse Direction BH Curves', fontsize=11)
+    ax.set_xlabel('H (A/m)', fontsize=11)
+    ax.set_ylabel('B (T)', fontsize=11)
     ax.set_xlim(1, 50_000)
     ax.set_ylim(0, 2.1)
+    ax.tick_params(labelsize=10)
     ax.grid(True, which='both', ls=':', alpha=0.35)
-    ax.legend(loc='lower right', fontsize=7, ncol=2)
 
     all_mats = refs + sim_mats
     ratios: list[list[float]] = []
@@ -630,23 +692,24 @@ def make_td_anisotropy_plot(
 
     ratio_arr = np.array(ratios, dtype=float)
     image = ax2.imshow(ratio_arr, aspect='auto', cmap='viridis', vmin=0.0, vmax=1.05)
-    ax2.set_title('Anisotropy Ratio B_TD / B_RD')
-    ax2.set_xticks(np.arange(len(H_KEY)), [str(h) for h in H_KEY])
-    ax2.set_yticks(np.arange(len(y_labels)), y_labels, fontsize=8)
-    ax2.set_xlabel('H (A/m)')
+    ax2.set_title('Anisotropy Ratio B_TD / B_RD', fontsize=11)
+    ax2.set_xticks(np.arange(len(H_KEY)), [str(h) for h in H_KEY], fontsize=10)
+    ax2.set_yticks(np.arange(len(y_labels)), y_labels, fontsize=10)
+    ax2.set_xlabel('H (A/m)', fontsize=11)
     for i in range(ratio_arr.shape[0]):
         for j in range(ratio_arr.shape[1]):
             val = ratio_arr[i, j]
             if not math.isfinite(val):
                 continue
             text_color = 'white' if val < 0.55 else 'black'
-            # Bold for highlighted material
             weight = 'bold' if y_labels[i].startswith('★') else 'normal'
             ax2.text(j, i, f'{val:.2f}', ha='center', va='center',
-                     fontsize=7, color=text_color, weight=weight)
+                     fontsize=9, color=text_color, weight=weight)
     cbar = fig.colorbar(image, ax=ax2, fraction=0.046, pad=0.04)
-    cbar.set_label('B_TD / B_RD')
+    cbar.set_label('B_TD / B_RD', fontsize=10)
+    cbar.ax.tick_params(labelsize=9)
     fig.suptitle('GO Steel — Transverse Direction Analysis', fontsize=13, weight='bold')
+    ax.legend(loc='lower right', fontsize=13, framealpha=0.9, edgecolor='0.7')
     fig.tight_layout()
     fig.savefig(save_path, dpi=170)
     plt.close(fig)
@@ -694,6 +757,10 @@ def analyze_bh_pair(
     density_kg_m3: float = DEFAULT_DENSITY,
     conductivity_s_m: float = DEFAULT_CONDUCTIVITY,
     include_names: list[str] | None = None,
+    raw_rd_H: list | None = None,
+    raw_rd_B: list | None = None,
+    raw_td_H: list | None = None,
+    raw_td_B: list | None = None,
 ) -> dict:
     """
     Analyze a simulated RD/TD B-H pair against selected comparison materials.
@@ -713,8 +780,22 @@ def analyze_bh_pair(
     save_dir = Path(save_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
 
-    rd_pts = [(float(h), float(b)) for h, b in zip(rd_H, rd_B) if h > 0]
-    td_pts = [(float(h), float(b)) for h, b in zip(td_H, td_B) if h > 0]
+    def _points(xs: list | None, ys: list | None) -> list[tuple[float, float]]:
+        if xs is None or ys is None:
+            return []
+        pts: list[tuple[float, float]] = []
+        for h, b in zip(xs, ys):
+            try:
+                hf = float(h)
+                bf = float(b)
+            except (TypeError, ValueError):
+                continue
+            if hf > 0 and math.isfinite(hf) and math.isfinite(bf):
+                pts.append((hf, bf))
+        return pts
+
+    rd_pts = _points(rd_H, rd_B)
+    td_pts = _points(td_H, td_B)
 
     sim_mat = Material(
         name=name,
@@ -728,6 +809,20 @@ def analyze_bh_pair(
 
     refs = load_reference_materials()
     sims = load_simulation_materials(save_dir)  # exports from same dir
+    raw_mats: list[Material] = []
+
+    raw_rd_pts = _points(raw_rd_H, raw_rd_B)
+    raw_td_pts = _points(raw_td_H, raw_td_B)
+    if len(raw_rd_pts) >= 2 and len(raw_td_pts) >= 2:
+        raw_mats.append(Material(
+            name=f'{name}_raw_before_correction',
+            source_file='raw_before_correction',
+            rd=raw_rd_pts,
+            td=raw_td_pts,
+            conductivity_s_m=conductivity_s_m,
+            density_kg_m3=density_kg_m3,
+            thickness_m=thickness_mm * 1e-3,
+        ))
 
     if include_names is not None:
         inc = set(include_names)
@@ -736,7 +831,7 @@ def analyze_bh_pair(
     else:
         sims = []  # default: no simulation exports in plot (current material only)
 
-    all_mats = refs + sims + [sim_mat]
+    all_mats = refs + sims + raw_mats + [sim_mat]
 
     plot_all = save_dir / f'{name}_bh_all.png'
     plot_rd  = save_dir / f'{name}_bh_rd.png'
@@ -765,6 +860,7 @@ def analyze_bh_pair(
                 'Without measured points, coefficients are not identifiable from BH alone.'
             ),
             'reference_grades': f'{len(refs)} GO steel grades from go_steel_data/output/',
+            'raw_before_correction_overlay': bool(raw_mats),
         },
         'metrics_RD': metrics_rd,
         'metrics_TD': metrics_td,
@@ -785,6 +881,7 @@ def analyze_bh_pair(
         'json_path': str(json_path),
         'n_reference_materials':  len(refs),
         'n_simulation_materials': len(sims),
+        'n_raw_overlay_materials': len(raw_mats),
     }
 
 
