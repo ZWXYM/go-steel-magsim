@@ -88,6 +88,8 @@ def prepare(run_dir, n_grains, seed):
                 'status': 'experimental_pilot', 'H_axis': 'physical_A_per_m',
                 'n_grains': n_grains, 'seed': seed, 'H_grid': H_GRID.tolist(),
                 'registry_sha256': file_hash(registry_path), 'materials': [], 'jobs': []}
+    manifest['texture_sampling_version'] = 'legacy_multi_peak_importance_v1'
+    manifest['texture_module_sha256'] = file_hash(PROJECT / 'modules/odf_texture.py')
     original_si = SimulationConfig.SI_CONTENT
     try:
         for idx, grade in enumerate(GRADES):
@@ -160,7 +162,7 @@ def resolve_mumax(explicit=None):
     raise FileNotFoundError('Set --mumax or MUMAX3_EXE, or add mumax3 to PATH')
 
 
-def run_jobs(run_dir, manifest, max_jobs=None, mumax=None):
+def run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, only_direction=None):
     mumax = resolve_mumax(mumax)
     runtime = {'mumax_binary_sha256': file_hash(mumax),
                'mumax_version_query': subprocess.run([str(mumax), '-v'],
@@ -168,10 +170,17 @@ def run_jobs(run_dir, manifest, max_jobs=None, mumax=None):
                'jobs': []}
     status_path = run_dir / 'run_status.json'
     if status_path.exists():
-        runtime['jobs'] = json.loads(status_path.read_text(encoding='utf-8'))['jobs']
+        previous_runtime = json.loads(status_path.read_text(encoding='utf-8'))
+        if previous_runtime['mumax_binary_sha256'] != runtime['mumax_binary_sha256']:
+            raise ValueError('MuMax3 binary changed; use a new run directory')
+        runtime['jobs'] = previous_runtime['jobs']
     done = {j['script']: j for j in runtime['jobs'] if j['exit_code'] == 0}
     executed = 0
     for idx, job in enumerate(manifest['jobs'], 1):
+        if only_grade and job['grade'] != only_grade:
+            continue
+        if only_direction and job['direction'] != only_direction:
+            continue
         output = run_dir / job['output']
         table = output / 'table.txt'
         if job['script'] in done:
@@ -377,13 +386,16 @@ def main():
     parser.add_argument('--analyze', action='store_true')
     parser.add_argument('--max-jobs', type=int)
     parser.add_argument('--mumax', type=Path, help='MuMax3 executable (or use MUMAX3_EXE/PATH)')
+    parser.add_argument('--only-grade', choices=GRADES, help='Run only this grade; manifest stays complete')
+    parser.add_argument('--only-direction', choices=['RD', 'TD'], help='Run only this direction')
     args = parser.parse_args()
     if args.n_grains < 2:
         parser.error('At least two grains are required for the pilot')
     manifest = prepare(args.run_dir.resolve(), args.n_grains, args.seed)
     print(f'Prepared {len(manifest["jobs"])} jobs in {args.run_dir}', flush=True)
     if args.run:
-        run_jobs(args.run_dir.resolve(), manifest, args.max_jobs, args.mumax)
+        run_jobs(args.run_dir.resolve(), manifest, args.max_jobs, args.mumax,
+                 args.only_grade, args.only_direction)
     if args.analyze:
         analyze(args.run_dir.resolve(), manifest)
 

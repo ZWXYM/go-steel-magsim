@@ -1,0 +1,152 @@
+{
+  "status": "exploratory_sampling_diagnostic_not_convergence_certification",
+  "analysis_protocol": "grain_sampling_sensitivity_v1",
+  "analysis_source_sha256": "64cb8f5c8bdd2e38f37c5afbcb5dc46f37416e366625e9a39a73d325e3f2e899",
+  "grade": "B30P105",
+  "direction": "TD",
+  "H_axis": "physical_A_per_m",
+  "curve_definition": "guarded_major_loop_midpoint_proxy",
+  "source": {
+    "seed": 20261004,
+    "n_grains": 8,
+    "params": {
+      "f_Goss": 0.79,
+      "theta_0_deg": 6.0,
+      "halfwidth_deg": 8.0,
+      "Si_content": 3.0
+    },
+    "manifest_sha256": "19415a3ca74bee055b2aadc8cbd0a475d33b1bfebf46761f6bee1cc36733b626",
+    "orientations_sha256": "75826657c23fb66a89c3440088cde7bac2c54eda57423e15050319968cea696e",
+    "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+    "jobs": [
+      {
+        "grain_id": 1,
+        "table_sha256": "9b39add05fbb2376c61a680aba5ec21c6a776b1428ee3bdfb8a6e74c1fe62df9",
+        "script_sha256": "c18c1304767244dfc32522b0974c24952374005f69965123076f36cf9e25d854"
+      },
+      {
+        "grain_id": 2,
+        "table_sha256": "5752c6c5e446dbeab2b13ae339b6ed1abc544b497c43c7a98cbb1898d1f5c131",
+        "script_sha256": "00fe71151541f3f4b975f8212d3ca6b472dbb31f3dd8cd5ab799207926f3e600"
+      },
+      {
+        "grain_id": 3,
+        "table_sha256": "f8466adf545c7bf298fee2492344532d392d28d0b67ef2c3fb35d296678c3d99",
+        "script_sha256": "ce7d9b852bcf749055f3cbcadf67a18d9568a12e7305427db1b7f76b1ce792f7"
+      },
+      {
+        "grain_id": 4,
+        "table_sha256": "425e3db8d58dad9850d21929504a87b679497c36b5c1435d53c4afcd1b982097",
+        "script_sha256": "c5d63d519f0414ffdd997eb04b0586acc513c776fc28cd26cdc8c40c1881882a"
+      },
+      {
+        "grain_id": 5,
+        "table_sha256": "2a179480ab5a9122fca2c0a55a70afa0b115d059a5d58b53f7886fbbba48aaa4",
+        "script_sha256": "635727a1fb12efd6c73eff47bb103b6c5828b4238e25ed4a9902c9f1fec03e76"
+      },
+      {
+        "grain_id": 6,
+        "table_sha256": "bb8642213966b176244b06b29054d34e4750cb636568790680c88b042f58821e",
+        "script_sha256": "31fffa87b050a3d80236ad31552b42953afe79ec1087722129cf9ce8e0506465"
+      },
+      {
+        "grain_id": 7,
+        "table_sha256": "a53aa0db9080679bbd988659e9138a5c873b7e1b2666f08939c7d69c0d1eb01b",
+        "script_sha256": "e5c4270d71be6c4ad47c3aee99b3be4b26ad19fbcf9202951ee29f04a8709b4c"
+      },
+      {
+        "grain_id": 8,
+        "table_sha256": "81f32fd5201222c31d5bcd4c78c0a61b7098fff190bf416d94c2f62c2b6e49b5",
+        "script_sha256": "c18f421327eaa165798178d83ec6501d92f858ffb3e5a93d918a55a40e03c27f"
+      }
+    ]
+  },
+  "prefix_comparison": [
+    {
+      "n_grains": 4,
+      "B800_raw_mean_T": 0.004525948274092001,
+      "B800_grain_std_T": 0.005603455734840478,
+      "delta_B800_vs_largest_N_T": -0.0013633845312186477,
+      "max_curve_delta_vs_largest_N_T": 0.4805580417535025,
+      "largest_N": 8,
+      "comparison_role": "nested_prefix_not_independent_validation"
+    },
+    {
+      "n_grains": 8,
+      "B800_raw_mean_T": 0.005889332805310649,
+      "B800_grain_std_T": 0.005482564991209529,
+      "delta_B800_vs_largest_N_T": 0.0,
+      "max_curve_delta_vs_largest_N_T": 0.0,
+      "largest_N": 8,
+      "comparison_role": "nested_prefix_not_independent_validation"
+    }
+  ],
+  "limitations": [
+    "Largest N is a finite comparison, not ground truth",
+    "Grain standard deviation is not an experimental confidence interval",
+    "Legacy random component uses five broad peaks; changing seed changes that approximate ODF",
+    "One direction/material does not validate a complete calibration bank"
+  ],
+  "baseline_comparison": {
+    "baseline_source": {
+      "seed": 20261003,
+      "n_grains": 8,
+      "params": {
+        "f_Goss": 0.79,
+        "theta_0_deg": 6.0,
+        "halfwidth_deg": 8.0,
+        "Si_content": 3.0
+      },
+      "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+      "orientations_sha256": "ee2f74e5a18f302541ee05e7bd1ad44a037c039c52c2a6a1cff205f247d33586",
+      "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+      "jobs": [
+        {
+          "grain_id": 1,
+          "table_sha256": "0a32c4c514f1962f567524665a5985717385dbd41e9f4fdea7591122de8fb3b6",
+          "script_sha256": "d13ea3dffe38909245362e322f079de91eb2e46d71e2ac86bec4ca6847b71c80"
+        },
+        {
+          "grain_id": 2,
+          "table_sha256": "c5bf3d01d671d91b170af174a15151bb99215affdbb80320b4dd42426a0e6800",
+          "script_sha256": "b5886b8131c40db490bd3e474b4c30c51748d2cb7d3bc7dfaab52157ce2a8efc"
+        },
+        {
+          "grain_id": 3,
+          "table_sha256": "84952338c79247bc63c8d838ea24c4c211c885b47aa05786ede91db7263cf76d",
+          "script_sha256": "631d6e3ddfe63fca2959257ee2b7f620c6c3577d4a0099a09a9c1f12d756c325"
+        },
+        {
+          "grain_id": 4,
+          "table_sha256": "00c52111e56170a601e6d6c05a9a2a31326c2459fc3d231bcc73c2512f40c827",
+          "script_sha256": "ec518616137861d9587856797ccb4d51a52fd3bed3faba5f5de8407c6b0b57f1"
+        },
+        {
+          "grain_id": 5,
+          "table_sha256": "fa5a707577e663180e0c81eb14eec2187e2a0c1cb1760fdfee12f9c5b94c6748",
+          "script_sha256": "98e0fc89a9c6c1b8368e377253967c414c89349f966076680e6282bff26b10b1"
+        },
+        {
+          "grain_id": 6,
+          "table_sha256": "070d98ead36b4302ef31b55ddd22a33dbcc737e13617cc6ae4f35035ec96d4f9",
+          "script_sha256": "2c025fe2372e53888e03b6ffbdfae3ea0d138fbe2f8aef8a86d2ad01124bd619"
+        },
+        {
+          "grain_id": 7,
+          "table_sha256": "29194f0ccf9afd103ab17391afb13079acfb7eb95234e9656f9c00b2c524400e",
+          "script_sha256": "a861adf7617dba917ce7a6c22125e5da3f72e526e11dd8453bad7bcf323e6e66"
+        },
+        {
+          "grain_id": 8,
+          "table_sha256": "808ec4156b30fa1b0e321a9a5f00ab32831a7dd28af7524991ff06fde6f1a985",
+          "script_sha256": "c596517933112dafa1e7f41c3e0052665c3f14328ec288a7618c8fd4ae372393"
+        }
+      ]
+    },
+    "delta_B800_raw_mean_T": -0.12175153589749407,
+    "max_curve_delta_T": 0.37249793167593936,
+    "role": "separate_ensembles_not_nested_in_old_n8",
+    "same_seed": false,
+    "same_seed_does_not_imply_same_samples": true
+  }
+}

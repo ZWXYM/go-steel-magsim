@@ -1,0 +1,290 @@
+{
+  "status": "exploratory_sampling_diagnostic_not_convergence_certification",
+  "analysis_protocol": "grain_sampling_sensitivity_v1",
+  "analysis_source_sha256": "64cb8f5c8bdd2e38f37c5afbcb5dc46f37416e366625e9a39a73d325e3f2e899",
+  "grade": "B30P105",
+  "direction": "RD",
+  "H_axis": "physical_A_per_m",
+  "curve_definition": "guarded_major_loop_midpoint_proxy",
+  "source": {
+    "seed": 20261003,
+    "n_grains": 32,
+    "params": {
+      "f_Goss": 0.79,
+      "theta_0_deg": 6.0,
+      "halfwidth_deg": 8.0,
+      "Si_content": 3.0
+    },
+    "manifest_sha256": "1e3259907931c299ac7c3b7a9c8efa5c10094934a6949fbb91a6c4ce5f42a230",
+    "orientations_sha256": "d66cb7aec79229b91861da9298cd2435796dc870e4c6a83a94b4b6297f780fa1",
+    "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+    "jobs": [
+      {
+        "grain_id": 1,
+        "table_sha256": "819842d84b02fb32e7a78a48500f857ad8dbb644e259ea92f7105d75f815067f",
+        "script_sha256": "e061a335dd82e978014949625f4594426c69e2bb05511372f037f108071fad2a"
+      },
+      {
+        "grain_id": 2,
+        "table_sha256": "c039f16dab98ca3c462f1c99424b58944c6f837e715f87749c26294a8ac5e60d",
+        "script_sha256": "2d9b31bc81f37be8518963f8fc9da2347804132828c7407a262fbe0b6f9d13fd"
+      },
+      {
+        "grain_id": 3,
+        "table_sha256": "af21e11450257b5be90386085737e8cd396bd6866d4f4c83a972a26a3157165e",
+        "script_sha256": "f17b53f1c931d72f2e96673fe96407736e54b8a5ce7729575982e12ac4288a3a"
+      },
+      {
+        "grain_id": 4,
+        "table_sha256": "12cb781a7040d1b29a2bd2bf506f0fa8037d51cac8cb7320c822c05dd68d1154",
+        "script_sha256": "9701bb750c85144984c3c95d5fd890461aa6a19faa9019aad9ae2c2e0d2bf9a5"
+      },
+      {
+        "grain_id": 5,
+        "table_sha256": "b19d3dcb5e6d98585b5e3b2c3af6b4190fc33a190b064ec9adb9e93d352ffc4e",
+        "script_sha256": "0e9ba189e688ea4b8253009c96effce2d9d7756c5edd075465f7cf2ec7da25bf"
+      },
+      {
+        "grain_id": 6,
+        "table_sha256": "3fa3be3344b1c4772b1d31c046bb780948f88e3eae64862ebea6bded15df0977",
+        "script_sha256": "1d8c11ee3a6825171ce196f2ab11654fb5473e2ca7c42cdaa7f7ef8651fa6deb"
+      },
+      {
+        "grain_id": 7,
+        "table_sha256": "ffdc02eb802db5d9fd4082e07eb02cd5e85a3ee7a7bc1446a6f4b84acf2f76fd",
+        "script_sha256": "6be28fdb5bfd0089135e7f40ec42afb5bb9a34eec04ea7346c2b85902e0dd5e9"
+      },
+      {
+        "grain_id": 8,
+        "table_sha256": "432de316a82fad2288e2205aee56a6c5b2295e5d3dcfe4233d7e7028bf228670",
+        "script_sha256": "948fff5b7e852811d6381d6e721b09d1bab757956643d88d446c6b16eae4a84a"
+      },
+      {
+        "grain_id": 9,
+        "table_sha256": "1b8a9ace233d7390d89a37ecf55b2ce3d69caa48f38da404763c3eea1138f541",
+        "script_sha256": "9e912e6613db04f0edd52fde7a09ace933f595a7aaf6ae75f32cedaf69a13cf5"
+      },
+      {
+        "grain_id": 10,
+        "table_sha256": "cd760b228c53dd0cebab0c5a02afd9539c18d4261b4f6af684a44cc9abf13453",
+        "script_sha256": "eb84597e68b5050420e99d294edbd5bcd460609ec1c762edb1bc4ca9a7403309"
+      },
+      {
+        "grain_id": 11,
+        "table_sha256": "357f10344062a59d721c1bcf048d4bde289bd7480e85fdbf6a32a12544c9143d",
+        "script_sha256": "9c67a27216e66d0215fb2eebf970721a747263cd4eac0f6dc7c0ac0cd2c6ccf4"
+      },
+      {
+        "grain_id": 12,
+        "table_sha256": "69d9797a5495c291c7b8189c2ffb4cd9e4ef2a2678d65d9493d3adb437cf9b16",
+        "script_sha256": "a9e57ef2a6eaa8614f55d80ea45965fb941063a2f81748b3ce35c6351ca4eb12"
+      },
+      {
+        "grain_id": 13,
+        "table_sha256": "1a534ac5d52fc2e9c812d03eaa9a36872ca353bfb7367766fa8038ce30363914",
+        "script_sha256": "acf2ccf11584c7e9ef63492842d6c77068f5bb8b3b8964470966e4a348c3ffa3"
+      },
+      {
+        "grain_id": 14,
+        "table_sha256": "10ce36cc271235fb310c250c3363ba2c13cfbffe276f440ac23a2b58a1778a8b",
+        "script_sha256": "5dff301999d24d6b14eb40a7f43e15148d23cda3362dd84e812593b27338a811"
+      },
+      {
+        "grain_id": 15,
+        "table_sha256": "4e655815cbc76d6f21660ab7bf119c16652182a903e9cf255707d973a4257073",
+        "script_sha256": "98fb34a952301f0d41d3ef2387858c38c8dbc2fae23758c62f89e717f05db84f"
+      },
+      {
+        "grain_id": 16,
+        "table_sha256": "3bc7868dadab124bb8674a68c41318eeb6aaf7869b669e837b4aa2b0df819ae3",
+        "script_sha256": "2eede279dafba9faff3c0fe17ca6ad95c24325d9fbb8406c7882faadd7eb12b4"
+      },
+      {
+        "grain_id": 17,
+        "table_sha256": "7028e2500100787c47b6398d7d95bae96eb12ece6ed25941979d6a55b7a3e39a",
+        "script_sha256": "1650ae8fcfbed13026af9162c24b3fee4f3d0281877a2f7971e9ddf0afd9be56"
+      },
+      {
+        "grain_id": 18,
+        "table_sha256": "f4d254aaabe97a31e43e18b28ef44fdcae632ad8487934b973fa52f452398d5e",
+        "script_sha256": "f557f19e5fc8aa2d8c06dc1d65f302fc6d9a71c4b20cb8f23c2924286cd7c487"
+      },
+      {
+        "grain_id": 19,
+        "table_sha256": "774831ba4c1c3783bc1b98340b69eddf3b9f57b06a40b3a393294b5c9128bd2a",
+        "script_sha256": "a888b952d8ce89f67d4df495a49893a575da559e0171bf3786f5f77ea55c77a5"
+      },
+      {
+        "grain_id": 20,
+        "table_sha256": "b7dd6ba09043b220af3fbe7823c6e782f622cc81c54b476e326d353e1d06b680",
+        "script_sha256": "0066cb42345e0199131750d977cf9ba8c1db8e66be65b10cfe832a6f481b244f"
+      },
+      {
+        "grain_id": 21,
+        "table_sha256": "c3ff6315baf445c86325e0f55c83901429892670da18849340fd75a2752823f0",
+        "script_sha256": "e7ed81c19a96293deba1b34c67455dac1198d242de0dc77718de6d077b062aef"
+      },
+      {
+        "grain_id": 22,
+        "table_sha256": "4e51327f6780302b7d7e82e36bb92299a80a22a6183b9ce9c8906f1bf6aadb9f",
+        "script_sha256": "258777b17d1c707d5a282fc70e750de4795c2ff6df64897d98b92be4fbc24c85"
+      },
+      {
+        "grain_id": 23,
+        "table_sha256": "705f3ecd92b70eeb2d1439ff1f1dc96b9579da6ac8c23cc09aa07bdb48f11092",
+        "script_sha256": "dddbf4d9d846880e56b47b2c1445557180851c803c2967e5368857e8515a6902"
+      },
+      {
+        "grain_id": 24,
+        "table_sha256": "f2c542458f321c4e9eb96a74116bade2476fed9e47fcc2951b0ae3a91ef1d7b4",
+        "script_sha256": "c7bf58241a3296289287b7deebf5baeb3acc52ee1717d23c223c1a78b21d6c7f"
+      },
+      {
+        "grain_id": 25,
+        "table_sha256": "5141c5ca73db5019baa1724a2116cec19ab0a66c98648bac36f94abbc0c9a557",
+        "script_sha256": "d8af6d57565daceaff220488c614424c9b5084d060fe97e23e1a9db923b136eb"
+      },
+      {
+        "grain_id": 26,
+        "table_sha256": "86f5495b8a741a023d9f9e5e0ff8b0817732def2ed2606a95a1d5014a0503df2",
+        "script_sha256": "fd496f43ab16efa4c803a4354c6ced992cc7c975fa9a805fe2a2de3e9ec9c7c2"
+      },
+      {
+        "grain_id": 27,
+        "table_sha256": "a67a5ee254568e9f1762e3de194831688be4bf92884dd6682256be39519e1d15",
+        "script_sha256": "d7648670b3534b558df5cd010f304712d25347d334ea36084f405def88b1b39b"
+      },
+      {
+        "grain_id": 28,
+        "table_sha256": "8313140d869053caa86d9725726340c2aec60b264012b7888a2e9eef71d56ffe",
+        "script_sha256": "a8b0a6dd4e0e5ff66af21b58641c4b775ad5e4583df16529e6c95b03cbc43029"
+      },
+      {
+        "grain_id": 29,
+        "table_sha256": "2e8e083ca7726babc81a2b293154042496034ee7201f852e9b43e3b5bec5fae1",
+        "script_sha256": "36d6168540d892a6da5a3db9613bb600aa2fc58076ce7c4c454719dcb8cdd1a3"
+      },
+      {
+        "grain_id": 30,
+        "table_sha256": "998213224b4bfaf8a38ebb990fd9b47b8bc82373c2e878e3d3e2b4b5e300978f",
+        "script_sha256": "ed76bb9add9d8c83482f401a8fc111ce036787969bb070b46259796a04f1bea6"
+      },
+      {
+        "grain_id": 31,
+        "table_sha256": "efdc91f3d764dd7bbd9d6a3e676fd86bf32bf65da1e76c10c846c24b41670e72",
+        "script_sha256": "a0efeb50a8fc48437c24e9e0b73e9e5636ac885f14b03d3ab0e36c2bd5d07fde"
+      },
+      {
+        "grain_id": 32,
+        "table_sha256": "338402bed4f7d50c253da6c3d910383faea8587cba117c5f9c614e69c8d3cba9",
+        "script_sha256": "2982b6c8c6460f64ec249b4eb311cbed900f99251c603b71603e935a45dd1cde"
+      }
+    ]
+  },
+  "prefix_comparison": [
+    {
+      "n_grains": 4,
+      "B800_raw_mean_T": 0.0024991655031664506,
+      "B800_grain_std_T": 0.00200462482748355,
+      "delta_B800_vs_largest_N_T": -0.044509023347108684,
+      "max_curve_delta_vs_largest_N_T": 0.44264924146791385,
+      "largest_N": 32,
+      "comparison_role": "nested_prefix_not_independent_validation"
+    },
+    {
+      "n_grains": 8,
+      "B800_raw_mean_T": 0.007286829976535583,
+      "B800_grain_std_T": 0.008238767712824193,
+      "delta_B800_vs_largest_N_T": -0.03972135887373955,
+      "max_curve_delta_vs_largest_N_T": 0.4671407062949169,
+      "largest_N": 32,
+      "comparison_role": "nested_prefix_not_independent_validation"
+    },
+    {
+      "n_grains": 16,
+      "B800_raw_mean_T": 0.09207654102585952,
+      "B800_grain_std_T": 0.25819713535624134,
+      "delta_B800_vs_largest_N_T": 0.045068352175584386,
+      "max_curve_delta_vs_largest_N_T": 0.31109741481031106,
+      "largest_N": 32,
+      "comparison_role": "nested_prefix_not_independent_validation"
+    },
+    {
+      "n_grains": 32,
+      "B800_raw_mean_T": 0.047008188850275134,
+      "B800_grain_std_T": 0.18535061390376645,
+      "delta_B800_vs_largest_N_T": 0.0,
+      "max_curve_delta_vs_largest_N_T": 0.0,
+      "largest_N": 32,
+      "comparison_role": "nested_prefix_not_independent_validation"
+    }
+  ],
+  "limitations": [
+    "Largest N is a finite comparison, not ground truth",
+    "Grain standard deviation is not an experimental confidence interval",
+    "Legacy random component uses five broad peaks; changing seed changes that approximate ODF",
+    "One direction/material does not validate a complete calibration bank"
+  ],
+  "baseline_comparison": {
+    "baseline_source": {
+      "seed": 20261003,
+      "n_grains": 8,
+      "params": {
+        "f_Goss": 0.79,
+        "theta_0_deg": 6.0,
+        "halfwidth_deg": 8.0,
+        "Si_content": 3.0
+      },
+      "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+      "orientations_sha256": "ee2f74e5a18f302541ee05e7bd1ad44a037c039c52c2a6a1cff205f247d33586",
+      "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+      "jobs": [
+        {
+          "grain_id": 1,
+          "table_sha256": "302f4816c3d793949e81568abed6bc5e5ab55ffc27a103e9c836b174ef37c5e3",
+          "script_sha256": "0b5fc82f6e4efb0fa2047b86c86ddb887323919a26a3e7fd58a0d298759f447e"
+        },
+        {
+          "grain_id": 2,
+          "table_sha256": "081834a8e450416f2538b05422bf08e27b8a09b23802b037ad9a19ab7ef7dc11",
+          "script_sha256": "69cd855e9b34f0b1ed68eb3294747299e2eef903a127d38a436f3369c4651ded"
+        },
+        {
+          "grain_id": 3,
+          "table_sha256": "1106925f79d9d3498db8fce64be57b41b733208e8a58fab3b3322b9db2edd00e",
+          "script_sha256": "a1bb9b151203dca16fe51abf5810c1c72893783cb9e9881ee53c96edd214049a"
+        },
+        {
+          "grain_id": 4,
+          "table_sha256": "8d757b5bd2ec291dfdd6ad9930198ac3b50cd1bf6640e78e5a3dfbab95ae059e",
+          "script_sha256": "248a006d60886864cd685ce3d50407932092f2107e2ce51fb293e3d355b6f012"
+        },
+        {
+          "grain_id": 5,
+          "table_sha256": "662757152dee64e45ac23868c71e8c1c8afec9e8d26c3db09371e5e828beaf93",
+          "script_sha256": "a62deea5843174bbb7aff651111dc8cb3762b0fdae712cfd37f74e7e0230e566"
+        },
+        {
+          "grain_id": 6,
+          "table_sha256": "acdd6c6da677f255b10b5110179e48c258322fd8a81c860c522c692c4f6939f1",
+          "script_sha256": "04f143f3acab4aae693cc07a1ef1d11367ce4647f5383aeef724e8a50f14d17f"
+        },
+        {
+          "grain_id": 7,
+          "table_sha256": "9da152e60c742e6e45adcfc4d3cb8dc2f06d13bf91b179205c6544a5d73c331e",
+          "script_sha256": "6df5f1f3b88763db9e1d7a19621931dad9911c9716c93c771e0e3e951c4e507a"
+        },
+        {
+          "grain_id": 8,
+          "table_sha256": "1a3969b91e3206b154d032bbfcc93d19fc10b2e987c4fd5d4554a6ceb93f3e72",
+          "script_sha256": "761110683cc5d1fd0afd4b779d320683ed62f91f44c609321a401a89c4a66ca9"
+        }
+      ]
+    },
+    "delta_B800_raw_mean_T": -0.07872575199128809,
+    "max_curve_delta_T": 0.33261513671232756,
+    "role": "separate_ensembles_not_nested_in_old_n8",
+    "same_seed": true,
+    "same_seed_does_not_imply_same_samples": true
+  }
+}

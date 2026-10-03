@@ -1,0 +1,3 @@
+﻿n_grains,B800_raw_mean_T,B800_grain_std_T,delta_B800_vs_largest_N_T,max_curve_delta_vs_largest_N_T,largest_N,comparison_role
+4,0.004525948274092001,0.005603455734840478,-0.0013633845312186477,0.4805580417535025,8,nested_prefix_not_independent_validation
+8,0.005889332805310649,0.005482564991209529,0.0,0.0,8,nested_prefix_not_independent_validation

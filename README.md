@@ -4,6 +4,8 @@ ODF 取向采样 → MuMax3 单晶仿真 → RD/TD 曲线聚合 → 校准与独
 
 ## 当前阶段（2026-10-04）
 
+首轮自动推进新增 B30P105 的 n32 双方向及第二 seed 的 n8 双方向，共 80 次原生仿真，合同测试扩展为 23 项。发现显著采样敏感性及“随机背景”随 seed 改变近似 ODF 的问题，见 [参考与采样诊断](docs/reference_and_sampling_20261004.md)。这些数据保留为诊断，尚未生成新的全材料校准 bank。
+
 已修复立方各向异性参数和样品坐标系，新增 `cubic_sample_frame_v2` / `fixed_h_delta_v1` 协议，并保存四牌号 × RD/TD × 8 晶粒的 64 次 GPU 仿真证据。校准、预测 JSON 和 `.amat` 使用同一物理 H（A/m），无需 H 轴缩放。旧平台和历史模型仍走历史修正链；新版校准的独立入口是下方 CLI。
 
 | 验证口径 | 平均 RMSE（T） | B800 最大绝对误差（T） |
@@ -38,7 +40,7 @@ python tools/predict_calibrated_material.py --bank calibration/pilot_20261003_n8
 若重新运行原生求解，另行安装 MuMax3 和兼容 NVIDIA/CUDA 环境。可使用 `--mumax`、`MUMAX3_EXE` 或 PATH 指定可执行文件；校准脚本也支持论文整理工作区的 `.runtime/mumax3/`。
 
 ```powershell
-python tools/run_calibration_pilot.py --run-dir calibration/runs/n32_seed20261003 --n-grains 32 --seed 20261003 --run --mumax "D:\mumax3.11.1_windows_cuda12.6\mumax3.exe" --max-jobs 16
+python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004/n32_seed20261003 --n-grains 32 --seed 20261003 --run --only-grade B30P105 --only-direction TD --mumax "D:\mumax3.11.1_windows_cuda12.6\mumax3.exe" --max-jobs 16
 ```
 
 每次复用同一目录/参数可以继续未完成任务；已完成脚本和 table 的 SHA256 不一致时停止。完整完成后增加 `--analyze`。扩大 N 或更换 seed 使用新目录，保留 n8 基线。重分析会更新派生文件及分析代码哈希，原始 table 保持不变。
@@ -51,7 +53,7 @@ python tools/run_calibration_pilot.py --run-dir calibration/runs/n32_seed2026100
 |---|---|
 | `modules/` | ODF、脚本、提取/聚合、历史修正、新版 bank、训练和材料导出 |
 | `tools/` | 校准试验的准备/续跑/分析、显式 bank 预测、绘图和历史工具 |
-| `calibration/` | 来源登记、冻结输入、64 次原始 table、拟合/留出 bank、误差表和试验材料 |
+| `calibration/` | 来源登记、冻结输入、64 次基线与 80 次新增采样诊断 table、拟合/留出 bank、误差表和试验材料 |
 | `go_steel_data/` | 既有处理参考曲线和材料库，保持其参考/估计身份 |
 | `tests/` | 科学合同、便携运行路径与平台烟雾验证 |
 | `docs/` | 当前验证记录、研究边界和历史说明 |
