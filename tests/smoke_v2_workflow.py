@@ -28,11 +28,12 @@ from pipeline_runner import DEFAULT_FIXED_HALFWIDTH_DEG, get_pipeline_presets, r
 
 
 def _copy_existing_grains(dst_config: Path) -> None:
-    src_files = sorted((ROOT / "output").glob("**/grain_*.txt"))
-    if not src_files:
-        raise RuntimeError("No existing grain_*.txt files available for fixture seeding")
-
     for angle in (0, 90):
+        # Use versioned fixtures so a clean clone needs no private output tree.
+        source = ROOT / "tests" / "fixtures" / "output_minimal" / "F70_T15_N10"
+        src_files = sorted((source / f"angle_{angle:03d}").glob("grain_*.txt"))
+        if len(src_files) < 2:
+            raise RuntimeError(f"Missing versioned grain fixtures for angle {angle}")
         angle_dir = dst_config / f"angle_{angle:03d}"
         angle_dir.mkdir(parents=True, exist_ok=True)
         for i, src in enumerate(src_files[:2], start=1):
@@ -40,7 +41,7 @@ def _copy_existing_grains(dst_config: Path) -> None:
 
 
 def make_fixture() -> Path:
-    out_root = ROOT / "tests" / "fixtures" / "output_minimal"
+    out_root = ROOT / "tests" / "tmp" / "output_minimal"
     config = out_root / "F70_T15_N10"
     if config.exists():
         shutil.rmtree(config)
@@ -153,7 +154,7 @@ def test_flask_full_direction_api() -> None:
     from app import app
 
     client = app.test_client()
-    config_path = ROOT / "tests" / "fixtures" / "output_minimal" / "F70_T15_N10"
+    config_path = ROOT / "tests" / "tmp" / "output_minimal" / "F70_T15_N10"
     response = client.get("/api/analysis/full-direction", query_string={
         "config_path": str(config_path),
         "Msat": "1520000",
@@ -190,7 +191,7 @@ def test_pipeline_presets_and_api() -> None:
     response = app.test_client().get("/api/pipeline/presets")
     assert response.status_code == 200
     data = response.get_json()
-    assert data["presets"]["std"]["config"]["sim_n_steps"] == 100
+    assert data["presets"]["std"]["config"]["sim_n_steps"] == 150
 
 
 def test_ml_dataset_script_generation_api() -> None:
@@ -300,9 +301,14 @@ def test_training_prediction_and_export() -> None:
     meta = amat.with_suffix(".metadata.json")
     assert meta.exists()
     text = amat.read_text(encoding="utf-8")
-    for prop in ("BH_Data_X", "BH_Data_Y"):
-        section = text.split(f'name="{prop}"', 1)[1].split("</MatProperty>", 1)[0]
-        points = [tuple(map(float, m)) for m in re.findall(r'X="([^"]+)" Y="([^"]+)"', section)]
+    for prop in ("component1", "component2"):
+        section = text.split(f"$begin '{prop}'", 1)[1].split(f"$end '{prop}'", 1)[0]
+        match = re.search(r'Points\[(\d+): ([^]]+)\]', section)
+        assert match is not None
+        values = [float(v.strip()) for v in match.group(2).split(',')]
+        assert int(match.group(1)) == len(values)
+        points = list(zip(values[::2], values[1::2]))
+        assert len(points) >= 3
         assert all(points[i][0] <= points[i + 1][0] for i in range(len(points) - 1))
         assert all(points[i][1] <= points[i + 1][1] + 1e-12 for i in range(len(points) - 1))
 

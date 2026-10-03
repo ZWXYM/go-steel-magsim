@@ -362,6 +362,8 @@ class BHPredictor:
         else:
             params = {**DEFAULT_XGB_PARAMS, **(xgb_params or {})}
         df = pd.read_csv(dataset_path)
+        from dataset_contract import dataset_contract
+        provenance = dataset_contract(df, dataset_path)
 
         # 只保留特征列和有效目标列
         feat_cols = []
@@ -482,6 +484,7 @@ class BHPredictor:
                 pass
 
         config = {
+            **provenance,
             'model_id':       model_id,
             'model_type':     model_type,
             'dataset_path':   dataset_path,
@@ -672,6 +675,9 @@ class BHPredictor:
         })
         result['bh_reference_corrected'] = bool(self.metadata.get('bh_reference_corrected', False))
         result['params_used'] = params
+        for key in ('simulation_physics_version', 'reference_correction_version',
+                    'H_axis', 'calibration_sha256', 'dataset_sha256'):
+            result[key] = self.metadata.get(key, 'legacy_unspecified')
         return result
 
     def list_models(self) -> list[dict]:

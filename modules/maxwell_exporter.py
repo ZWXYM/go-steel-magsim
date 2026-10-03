@@ -28,7 +28,7 @@ def _format_points_aedt(H: list, B: list) -> str:
     """
     pairs = [(0.0, 0.0)] + [(float(h), float(b)) for h, b in zip(H, B) if h > 0]
     n = 2 * len(pairs)
-    vals = ', '.join(f'{h:g}, {b:g}' for h, b in pairs)
+    vals = ', '.join(f'{h:.12g}, {b:.12g}' for h, b in pairs)
     return f'Points[{n}: {vals}]'
 
 
@@ -283,8 +283,59 @@ def export_from_prediction(prediction_result: dict,
         'full_direction_generated': bool(prediction_result.get('full_direction')),
         'interpolation_model': MODEL_NAME,
         'exported_directions': ['RD', 'TD'],
+        **{key: prediction_result.get(key, 'legacy_unspecified') for key in
+           ('simulation_physics_version', 'reference_correction_version',
+            'H_axis', 'calibration_sha256', 'dataset_sha256')},
     }
     return save_amat_file(content, mat_name, export_dir, metadata=metadata)
+
+
+def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
+                           thickness_mm: float, export_dir: str) -> str:
+    """Export a fixed-H experimental B-H pair with zero, uncalibrated loss.
+
+    This artifact tests constitutive-curve transport. It is not a validated
+    iron-loss material and must not be used to claim motor efficiency.
+    """
+    import re
+    import numpy as np
+    from modules.material_calibration import VERSION, PHYSICS_VERSION, validated_curve
+    for curve in (rd, td):
+        if (curve.get('calibration_version') != VERSION
+                or curve.get('physics_version') != PHYSICS_VERSION
+                or curve.get('H_axis') != 'physical_A_per_m'
+                or curve.get('H_scale') != 1.0):
+            raise ValueError('Export requires a compatible fixed-physical-H calibrated pair')
+        h, b = validated_curve(curve['H'], curve['B'])
+        if np.any(np.diff(b) < -1e-12) or np.any(b < 0):
+            raise ValueError('Export requires monotone nonnegative B')
+    if rd['calibration_sha256'] != td['calibration_sha256']:
+        raise ValueError('RD and TD must come from the same calibration bank')
+    content = generate_amat_content(mat_name, rd['H'], rd['B'], td['H'], td['B'],
+        thickness_mm=thickness_mm, core_loss_override={'kh': 0, 'kc': 0, 'ke': 0})
+    content = ('# EXPERIMENTAL B-H ONLY: loss coefficients are zero placeholders.\n'
+               '# No validated iron-loss or motor-efficiency prediction.\n' + content)
+    # Verify the actual native Points representation before saving it.
+    points = re.findall(r'Points\[(\d+): ([^]]+)\]', content)
+    for curve, (count, values) in zip((rd, td), points):
+        coords = np.array([float(v) for v in values.split(',')]).reshape(-1, 2)
+        expected = [(0., 0.)] + [(h, b) for h, b in zip(curve['H'], curve['B']) if h > 0]
+        if int(count) != 2 * len(expected) or coords.shape != np.shape(expected):
+            raise ValueError('Native export changed the curve grid')
+        if not np.allclose(coords, expected, rtol=1e-10, atol=2e-7):
+            raise ValueError('Native export altered calibrated H/B values')
+    if len(points) != 2:
+        raise ValueError('Expected native RD/TD Points blocks')
+    metadata = {'material_name': mat_name, 'status': 'experimental_BH_only',
+        'core_loss_status': 'uncalibrated_zero_placeholders', 'motor_validation': 'not_run',
+        'simulation_physics_version': PHYSICS_VERSION, 'reference_correction_version': VERSION,
+        'calibration_sha256': rd['calibration_sha256'], 'H_axis': 'physical_A_per_m',
+        'H_scale': 1.0, 'thickness_mm': thickness_mm,
+        'RD_anchor_weights': rd['anchor_weights'], 'TD_anchor_weights': td['anchor_weights'],
+        'excluded_grades': rd['excluded_grades'], 'exported_directions': ['RD', 'TD'],
+        'ND_status': 'scalar_prior_1000_not_measured',
+        'outside_feature_box': rd['outside_feature_box'] or td['outside_feature_box']}
+    return save_amat_file(content, mat_name, export_dir, metadata)
 
 
 def list_exports(export_dir: str = 'data/exports') -> list[dict]:

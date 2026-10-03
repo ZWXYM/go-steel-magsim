@@ -77,6 +77,9 @@ def _parse_param_file(param_file: str) -> dict:
         policy = re.search(r'halfwidth[_\s]?policy\s*[=:]\s*([A-Za-z0-9_\-]+)', text, re.IGNORECASE)
         if policy:
             result['halfwidth_policy'] = policy.group(1)
+        version = re.search(r'Physics version\s*:\s*([A-Za-z0-9_\-]+)', text)
+        if version:
+            result['simulation_physics_version'] = version.group(1)
     except Exception:
         pass
     return result
@@ -450,6 +453,9 @@ class DatasetBuilder:
             'Si_content':     params.get('Si_content', 3.0),
             'halfwidth_policy': params.get('halfwidth_policy', None),
             'bh_reference_corrected': False,  # 有 RD 数据且 f_Goss 已知时会被置 True
+            'simulation_physics_version': params.get('simulation_physics_version', 'legacy_unspecified'),
+            'reference_correction_version': 'legacy_scaled_mix_v1',
+            'H_axis': 'legacy_simulation_grid_with_internal_reference_rescaling',
         }
 
         si_content = float(params.get('Si_content', 3.0))
@@ -598,6 +604,9 @@ class DatasetBuilder:
                 rows.append(row)
 
         df = pd.DataFrame(rows)
+        if not df.empty:
+            from dataset_contract import dataset_contract
+            dataset_contract(df)
         return df
 
     def save_dataset(self, df: pd.DataFrame, tag: str = '') -> str:
@@ -605,6 +614,9 @@ class DatasetBuilder:
         ts = datetime.now().strftime('%Y%m%d_%H%M%S')
         name = f'dataset_{ts}{"_" + tag if tag else ""}.csv'
         path = self.dataset_dir / name
+        from dataset_contract import dataset_contract
+        if not df.empty:
+            dataset_contract(df)
         df.to_csv(path, index=False, encoding='utf-8-sig')
         metadata = {
             'dataset_path': str(path),
@@ -618,6 +630,9 @@ class DatasetBuilder:
                 'BH_curve': 'primary_for_export',
             },
         }
+        if not df.empty:
+            from dataset_contract import dataset_contract
+            metadata.update(dataset_contract(df, str(path)))
         if 'halfwidth_deg' in df.columns and df['halfwidth_deg'].dropna().nunique() == 1:
             metadata['halfwidth_policy'] = 'fixed_for_pipeline'
             metadata['halfwidth_deg'] = float(df['halfwidth_deg'].dropna().iloc[0])

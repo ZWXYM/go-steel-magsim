@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-10-04T01:22:14.341822",
+  "amat_path": "D:\\Project\\go-steel-magsim-public\\calibration\\pilot_20261003_n8\\exports\\PILOT_B23R075_holdout.amat",
+  "material_name": "PILOT_B23R075_holdout",
+  "status": "experimental_BH_only",
+  "core_loss_status": "uncalibrated_zero_placeholders",
+  "motor_validation": "not_run",
+  "simulation_physics_version": "cubic_sample_frame_v2",
+  "reference_correction_version": "fixed_h_delta_v1",
+  "calibration_sha256": "86b5046a72229277666ae92a475ed33e621d1431c58a7089fe41a46a101ba479",
+  "H_axis": "physical_A_per_m",
+  "H_scale": 1.0,
+  "thickness_mm": 0.23,
+  "RD_anchor_weights": {
+    "B27R090": 0.5722375713223244,
+    "B27R095": 0.29461079975794235,
+    "B30P105": 0.1331516289197332
+  },
+  "TD_anchor_weights": {
+    "B27R090": 0.5722375713223244,
+    "B27R095": 0.29461079975794235,
+    "B30P105": 0.1331516289197332
+  },
+  "excluded_grades": [
+    "B23R075"
+  ],
+  "exported_directions": [
+    "RD",
+    "TD"
+  ],
+  "ND_status": "scalar_prior_1000_not_measured",
+  "outside_feature_box": true
+}

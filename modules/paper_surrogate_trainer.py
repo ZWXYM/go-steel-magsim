@@ -21,6 +21,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from dataset_contract import dataset_contract
 from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.decomposition import PCA
 from sklearn.ensemble import ExtraTreesRegressor
@@ -305,6 +306,7 @@ class PreparedDataset:
 
 def prepare_dataset(dataset_path: str, target_scope: str = "bh_only") -> PreparedDataset:
     df = pd.read_csv(dataset_path)
+    dataset_contract(df, dataset_path)
 
     feature_cols = []
     dropped = []
@@ -522,6 +524,7 @@ class PaperSurrogateTrainer:
             "candidate_models": self.candidate_models,
             "candidate_model_relationships": PAPER_MODEL_CANDIDATES,
             "bh_reference_corrected": dataset_bh_reference_corrected(dataset_path),
+            **dataset_contract(pd.read_csv(dataset_path), dataset_path),
             "created": datetime.now().isoformat(),
         }
         metrics = {

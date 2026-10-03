@@ -1,0 +1,26 @@
+{
+  "cubic_energy_probe": {
+    "exit_code": 0,
+    "measured_E_anis_J": [
+      0.0,
+      4.6080006e-21,
+      6.144002e-21
+    ],
+    "analytic_E_anis_J": [
+      0.0,
+      4.608000000000001e-21,
+      6.1440000000000014e-21
+    ],
+    "passed": true
+  },
+  "multi_two_steps": {
+    "exit_code": 0,
+    "rows": 24,
+    "columns": 12,
+    "angles_deg": [
+      0.0,
+      90.0
+    ],
+    "passed": true
+  }
+}

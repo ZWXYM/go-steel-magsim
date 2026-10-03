@@ -377,7 +377,10 @@ def apply_reference_correction(H_pred:     np.ndarray,
                                 direction:  str   = 'RD',
                                 weight_cap: float = 1.0,
                                 hc_sim:     float = None,
-                                si_content: float = 3.0) -> np.ndarray:
+                                si_content: float = 3.0,
+                                calibration_path: Optional[str] = None,
+                                exclude_grades: tuple = (),
+                                physics_version: Optional[str] = None) -> np.ndarray:
     """
     重设计版 δ(H) 修正 — log(H_real) 平滑混合法（RD 方向）。
 
@@ -397,6 +400,18 @@ def apply_reference_correction(H_pred:     np.ndarray,
 
     TD 方向：不变，继续使用 IDW 参考曲线直接插值。
     """
+    # Explicit bank selects the versioned, fixed-H protocol. Legacy saved
+    # models keep their historical behavior unless a bank is supplied.
+    if calibration_path is not None:
+        from modules.material_calibration import CalibrationBank
+        if physics_version is None:
+            raise ValueError('physics_version is required for a calibrated bank')
+        params = dict(odf_params)
+        params.setdefault('Si_content', si_content)
+        result = CalibrationBank.load(calibration_path).correct(
+            H_pred, B_sim, params, direction=direction, weight_cap=weight_cap,
+            exclude_grades=exclude_grades, physics_version=physics_version)
+        return np.asarray(result['B'], dtype=float)
     H = np.asarray(H_pred, dtype=float)
     B = np.asarray(B_sim,  dtype=float).copy()
 

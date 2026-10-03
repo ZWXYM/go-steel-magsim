@@ -1,4 +1,11 @@
 __pycache__/
+.venv/
+.runtime/
+.claude/
+.pytest_cache/
+tests/tmp/
+calibration/runs/
+calibration/pilot_20261003_n8/cli_check/
 *.pyc
 *.pyo
 *.egg-info/

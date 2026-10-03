@@ -1,0 +1,730 @@
+{
+  "created_utc": "2026-10-03T07:15:47.245248+00:00",
+  "calibration_version": "fixed_h_delta_v1",
+  "physics_version": "cubic_sample_frame_v2",
+  "status": "experimental_pilot",
+  "H_axis": "physical_A_per_m",
+  "n_grains": 8,
+  "seed": 20261003,
+  "H_grid": [
+    0.0,
+    0.1,
+    0.2,
+    0.5,
+    1.0,
+    2.0,
+    5.0,
+    10.0,
+    20.0,
+    50.0,
+    100.0,
+    200.0,
+    500.0,
+    800.0,
+    1000.0,
+    1500.0,
+    2000.0,
+    3000.0,
+    5000.0,
+    7500.0,
+    10000.0,
+    15000.0,
+    20000.0,
+    30000.0,
+    40000.0,
+    50000.0
+  ],
+  "registry_sha256": "0a1f7af3d13e9923baad9d564b04117a04d5c95ea793e0112afd7fbe42e3aed9",
+  "materials": [
+    {
+      "grade": "B23R075",
+      "params": {
+        "f_Goss": 0.91,
+        "theta_0_deg": 3.0,
+        "halfwidth_deg": 5.0,
+        "Si_content": 3.1
+      },
+      "seed": 20261003,
+      "thickness_mm": 0.23,
+      "Si_status": "report_nominal_unverified_batch_composition",
+      "ODF_status": "report_estimated_not_independent_EBSD",
+      "orientations_sha256": "c5c14da014675943cb12dacbfc34942dd987172b38c8b459d597a9b474cebb85",
+      "references": {
+        "RD": {
+          "path": "B23R075/reference_RD.csv",
+          "sha256": "b9d0c3b389d1e8ef73b6c7b792d2b4ed69cdf9b6ecf7a9a9d12ad624b8c46de6",
+          "source": "magsim/go_steel_data/output/B23R075_RD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        },
+        "TD": {
+          "path": "B23R075/reference_TD.csv",
+          "sha256": "8aa3ed5195fd867d5cbe3f501646c1a6e0fa131cdb23f14fff29d6edbd746587",
+          "source": "magsim/go_steel_data/output/B23R075_TD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        }
+      }
+    },
+    {
+      "grade": "B27R090",
+      "params": {
+        "f_Goss": 0.87,
+        "theta_0_deg": 4.0,
+        "halfwidth_deg": 6.0,
+        "Si_content": 3.1
+      },
+      "seed": 20261004,
+      "thickness_mm": 0.27,
+      "Si_status": "report_nominal_unverified_batch_composition",
+      "ODF_status": "report_estimated_not_independent_EBSD",
+      "orientations_sha256": "59565bfa6d8865ed05a403364ed1a768d8521d0f80795f68dda6be1ff5d52af6",
+      "references": {
+        "RD": {
+          "path": "B27R090/reference_RD.csv",
+          "sha256": "ebdf372b05bb2027d79241445f95f08f9538b5f8281f97ec571a1de591a6e69a",
+          "source": "magsim/go_steel_data/output/B27R090_RD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        },
+        "TD": {
+          "path": "B27R090/reference_TD.csv",
+          "sha256": "f23c9ce0cfdc7dca83c13c7681fb251d6c62dbfc0ac0f80474545dd66d751ea9",
+          "source": "magsim/go_steel_data/output/B27R090_TD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        }
+      }
+    },
+    {
+      "grade": "B27R095",
+      "params": {
+        "f_Goss": 0.84,
+        "theta_0_deg": 5.0,
+        "halfwidth_deg": 7.0,
+        "Si_content": 3.1
+      },
+      "seed": 20261005,
+      "thickness_mm": 0.27,
+      "Si_status": "report_nominal_unverified_batch_composition",
+      "ODF_status": "report_estimated_not_independent_EBSD",
+      "orientations_sha256": "a00716d86fac5fe34509dac581f133958f8bed0e41f2aa98137027ff20df7b02",
+      "references": {
+        "RD": {
+          "path": "B27R095/reference_RD.csv",
+          "sha256": "670dada7b858ec1f05c13cb5dc5ae13ef59db612f4ef67d890f413590db73faa",
+          "source": "magsim/go_steel_data/output/B27R095_RD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        },
+        "TD": {
+          "path": "B27R095/reference_TD.csv",
+          "sha256": "0c205e74f6c3ce538c302feccb23b80e6c41e961f79dd7f8ee059af9c51e9741",
+          "source": "magsim/go_steel_data/output/B27R095_TD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        }
+      }
+    },
+    {
+      "grade": "B30P105",
+      "params": {
+        "f_Goss": 0.79,
+        "theta_0_deg": 6.0,
+        "halfwidth_deg": 8.0,
+        "Si_content": 3.0
+      },
+      "seed": 20261006,
+      "thickness_mm": 0.3,
+      "Si_status": "report_nominal_unverified_batch_composition",
+      "ODF_status": "report_estimated_not_independent_EBSD",
+      "orientations_sha256": "ee2f74e5a18f302541ee05e7bd1ad44a037c039c52c2a6a1cff205f247d33586",
+      "references": {
+        "RD": {
+          "path": "B30P105/reference_RD.csv",
+          "sha256": "2794c946d6573a7bb00fd4100f3c5e8fd1eb4a0446304d722dd58a91ded8eccc",
+          "source": "magsim/go_steel_data/output/B30P105_RD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        },
+        "TD": {
+          "path": "B30P105/reference_TD.csv",
+          "sha256": "c8b6ed93137c70feb08ec85b9a0a770c97f48c6bc0a60baa4847dc10928af0e3",
+          "source": "magsim/go_steel_data/output/B30P105_TD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        }
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 1,
+      "script": "B23R075/RD/scripts/grain_001.mx3",
+      "script_sha256": "9cecf6ed77b697d4f5e1e4c11322c4df62232d27490b6997e31d50644d665c46",
+      "output": "B23R075/RD/raw/grain_001.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 2,
+      "script": "B23R075/RD/scripts/grain_002.mx3",
+      "script_sha256": "f7e1d0822f508085d73ec899202a78b01d403df6e31c6a3849fd5aed6be6c5df",
+      "output": "B23R075/RD/raw/grain_002.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 3,
+      "script": "B23R075/RD/scripts/grain_003.mx3",
+      "script_sha256": "bb78a4a46f3dcef81df8dd2065a24b3941ea07d6ac20e24f9c1d3871c2419472",
+      "output": "B23R075/RD/raw/grain_003.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 4,
+      "script": "B23R075/RD/scripts/grain_004.mx3",
+      "script_sha256": "0c409e3fedaa18ba3eaa3ec37d9c8aa7f0c3a0333ef044c4172dd06df8770f23",
+      "output": "B23R075/RD/raw/grain_004.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 5,
+      "script": "B23R075/RD/scripts/grain_005.mx3",
+      "script_sha256": "dcd7222c3162417b77fdda03e850b21786876dd6f77182bef506ce49d9002ebe",
+      "output": "B23R075/RD/raw/grain_005.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 6,
+      "script": "B23R075/RD/scripts/grain_006.mx3",
+      "script_sha256": "92355836c68ed4153aa4047431fc547ca46faf0e1c8bdad215818d08cb379fda",
+      "output": "B23R075/RD/raw/grain_006.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "script": "B23R075/RD/scripts/grain_007.mx3",
+      "script_sha256": "b0ef7ba60da7606188e453f9adce4db294ed1b800ea50229f93ca19d10b76c52",
+      "output": "B23R075/RD/raw/grain_007.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "script": "B23R075/RD/scripts/grain_008.mx3",
+      "script_sha256": "fff807be30f332a694ffb249dff1d68b1bffae5454edd1a42013374ffef819e1",
+      "output": "B23R075/RD/raw/grain_008.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 1,
+      "script": "B23R075/TD/scripts/grain_001.mx3",
+      "script_sha256": "2608b0a115f9b653561c2681d4698cef8ae6ba1ac4a1b1c6409c4ed14858a270",
+      "output": "B23R075/TD/raw/grain_001.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "script": "B23R075/TD/scripts/grain_002.mx3",
+      "script_sha256": "f329fa96bcb7be209a9eaa27f17b499004aff0daaee94475f7e8988f61a79c04",
+      "output": "B23R075/TD/raw/grain_002.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 3,
+      "script": "B23R075/TD/scripts/grain_003.mx3",
+      "script_sha256": "12ae65647a13069511a820a5407197b79ad69fae6ba6e60c1751b7863a6d3ccc",
+      "output": "B23R075/TD/raw/grain_003.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 4,
+      "script": "B23R075/TD/scripts/grain_004.mx3",
+      "script_sha256": "417ca39fc74c2fbb07a73be08da1ce233c39f581b98b92f541b6a0147a2ae57a",
+      "output": "B23R075/TD/raw/grain_004.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "script": "B23R075/TD/scripts/grain_005.mx3",
+      "script_sha256": "55d435a71a529454809ef3927eaf37b364b0c60f3387b2aced287d3bd67deb30",
+      "output": "B23R075/TD/raw/grain_005.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 6,
+      "script": "B23R075/TD/scripts/grain_006.mx3",
+      "script_sha256": "b6fc84f4495b35004461ea0d6cb6771dc3628fcc0d0d705b9e5f3a44a3cfb7a9",
+      "output": "B23R075/TD/raw/grain_006.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 7,
+      "script": "B23R075/TD/scripts/grain_007.mx3",
+      "script_sha256": "d07db41810f645f5c99b7a5ca9a26d46ac7d9d05a133d214b55c1206fcca21d6",
+      "output": "B23R075/TD/raw/grain_007.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 8,
+      "script": "B23R075/TD/scripts/grain_008.mx3",
+      "script_sha256": "0a9295f1637e2600caa41b4633d4e722ddb60fc2fed575a9412ac9bfdaec397e",
+      "output": "B23R075/TD/raw/grain_008.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 1,
+      "script": "B27R090/RD/scripts/grain_001.mx3",
+      "script_sha256": "9d54f02099d45be85932d3ead77cc43ddb7fc4b0a6618409294231b558446713",
+      "output": "B27R090/RD/raw/grain_001.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 2,
+      "script": "B27R090/RD/scripts/grain_002.mx3",
+      "script_sha256": "e77aa7e417c00bf299130e2baf4761aa60553fdda860119f8d59461082c00c2a",
+      "output": "B27R090/RD/raw/grain_002.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 3,
+      "script": "B27R090/RD/scripts/grain_003.mx3",
+      "script_sha256": "7551e932610648d9fe69acd30cc08263284933db1d1a180c803b71ad0504a2b2",
+      "output": "B27R090/RD/raw/grain_003.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 4,
+      "script": "B27R090/RD/scripts/grain_004.mx3",
+      "script_sha256": "46efe8bea26b3fa74f22791f38d0c274913d8c0eb111f32726eadbcf20bc7f66",
+      "output": "B27R090/RD/raw/grain_004.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 5,
+      "script": "B27R090/RD/scripts/grain_005.mx3",
+      "script_sha256": "89b0bdc9c8f68ceadf99fdb40a4b493761d7a4b477b3eabad33118ca7c04bc14",
+      "output": "B27R090/RD/raw/grain_005.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 6,
+      "script": "B27R090/RD/scripts/grain_006.mx3",
+      "script_sha256": "f789ebb8e037ce281d9c8fb08440d35fe65ddf5853f0fee62e93a7a0f3b778d0",
+      "output": "B27R090/RD/raw/grain_006.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "script": "B27R090/RD/scripts/grain_007.mx3",
+      "script_sha256": "1d50ce1e4c17c6874c339c9db5bd784f19964f9030fff6c25d94d7ef52bd4884",
+      "output": "B27R090/RD/raw/grain_007.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "script": "B27R090/RD/scripts/grain_008.mx3",
+      "script_sha256": "192757f52ba22a1d1e0acebab30ce09a4614159f235bbada5295e48d26aa3cc4",
+      "output": "B27R090/RD/raw/grain_008.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 1,
+      "script": "B27R090/TD/scripts/grain_001.mx3",
+      "script_sha256": "5a6e50c16a59560c64de368d9525399f134426daf286c4c1da18b423277a33aa",
+      "output": "B27R090/TD/raw/grain_001.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "script": "B27R090/TD/scripts/grain_002.mx3",
+      "script_sha256": "b0ff5f3c8d8000ae154ca23a91c0faf6754c4deb5826b1b62734a39566eb43ac",
+      "output": "B27R090/TD/raw/grain_002.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 3,
+      "script": "B27R090/TD/scripts/grain_003.mx3",
+      "script_sha256": "25d660397f0df750d67a37c6f1b070aee6ec7f079972e4ba77d3c2e2df121476",
+      "output": "B27R090/TD/raw/grain_003.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 4,
+      "script": "B27R090/TD/scripts/grain_004.mx3",
+      "script_sha256": "22e838777daa73e795e568781525907aa0d7185cb968052236238e64f96b992c",
+      "output": "B27R090/TD/raw/grain_004.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "script": "B27R090/TD/scripts/grain_005.mx3",
+      "script_sha256": "cfbc055fc8ea58e6ef3628701dd1fc9aea50c052c50807ac39b0ecd2a3ed8a55",
+      "output": "B27R090/TD/raw/grain_005.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 6,
+      "script": "B27R090/TD/scripts/grain_006.mx3",
+      "script_sha256": "d0cc4cb242c10ae6fe276542094e1b79b0018eff00885cacd40a54fd6a8afa80",
+      "output": "B27R090/TD/raw/grain_006.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 7,
+      "script": "B27R090/TD/scripts/grain_007.mx3",
+      "script_sha256": "b380b1f71f580c4fa325f7cd186da0fc8ca56831852bf1077f55493287407523",
+      "output": "B27R090/TD/raw/grain_007.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 8,
+      "script": "B27R090/TD/scripts/grain_008.mx3",
+      "script_sha256": "1fd3930382fb36c2d136329a79c5aa0d749eb93abef52fc26cfbc20ee8fc555b",
+      "output": "B27R090/TD/raw/grain_008.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 1,
+      "script": "B27R095/RD/scripts/grain_001.mx3",
+      "script_sha256": "803d92ae42727c449797998fb4ffc30250179dfedd870810d4622f6946bd1dd8",
+      "output": "B27R095/RD/raw/grain_001.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 2,
+      "script": "B27R095/RD/scripts/grain_002.mx3",
+      "script_sha256": "feb48e940988370c701326a0a484f0d44ec33cb6024711807a0870d26fcab404",
+      "output": "B27R095/RD/raw/grain_002.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 3,
+      "script": "B27R095/RD/scripts/grain_003.mx3",
+      "script_sha256": "c5467756a7df52cb5db4740370a3b89e869db824620c86dd08eb6eb0f74c96cc",
+      "output": "B27R095/RD/raw/grain_003.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 4,
+      "script": "B27R095/RD/scripts/grain_004.mx3",
+      "script_sha256": "42170a27dd26370218e47912d2fb0d837c731d17b29b3f12b0498fd76a677a7f",
+      "output": "B27R095/RD/raw/grain_004.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 5,
+      "script": "B27R095/RD/scripts/grain_005.mx3",
+      "script_sha256": "2d5547814600419408a9c1f503c991b607043bf09230ea71d8ab9ababc13af5f",
+      "output": "B27R095/RD/raw/grain_005.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 6,
+      "script": "B27R095/RD/scripts/grain_006.mx3",
+      "script_sha256": "6c1976e62fea91ffc1d3e5f936e2ee14848440dc7a0ddfe24a9f9c93a7638786",
+      "output": "B27R095/RD/raw/grain_006.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "script": "B27R095/RD/scripts/grain_007.mx3",
+      "script_sha256": "94e6ab9820a45c7a1b32969940a317447a0f191b126e6d5b093a91af9cb2e8ef",
+      "output": "B27R095/RD/raw/grain_007.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "script": "B27R095/RD/scripts/grain_008.mx3",
+      "script_sha256": "feeda40ee228d888593a2d8cfbf3e524709eb4e9cba31020c682e63a0835cd46",
+      "output": "B27R095/RD/raw/grain_008.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 1,
+      "script": "B27R095/TD/scripts/grain_001.mx3",
+      "script_sha256": "fbce3d162c7b1e8cfde309614df845c43ac0c1a5a2b3190b866347a12f667a79",
+      "output": "B27R095/TD/raw/grain_001.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "script": "B27R095/TD/scripts/grain_002.mx3",
+      "script_sha256": "32622730b8fd16562236de1b29fb18dbf6952b197c8dfc9642785fa52a6889f4",
+      "output": "B27R095/TD/raw/grain_002.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 3,
+      "script": "B27R095/TD/scripts/grain_003.mx3",
+      "script_sha256": "ac2252681bc52beb8a8807de45be6108a17a2228351e7233cbd0e800c143eec0",
+      "output": "B27R095/TD/raw/grain_003.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 4,
+      "script": "B27R095/TD/scripts/grain_004.mx3",
+      "script_sha256": "f196347dbf4d6c3f88d5bdfc567d92c468b673386dba15dfb2eeb4122c477cd0",
+      "output": "B27R095/TD/raw/grain_004.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "script": "B27R095/TD/scripts/grain_005.mx3",
+      "script_sha256": "3aebd2c576ba643966a300386ac5748c7d3c8eddedb2a8271177304065ad4744",
+      "output": "B27R095/TD/raw/grain_005.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 6,
+      "script": "B27R095/TD/scripts/grain_006.mx3",
+      "script_sha256": "be10df48b676f39c44cad2d7ef5e7e8d5b6281f209a1473768bd4fc5b2ad186b",
+      "output": "B27R095/TD/raw/grain_006.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 7,
+      "script": "B27R095/TD/scripts/grain_007.mx3",
+      "script_sha256": "6f8e9c56aeb00993db9b991988b95f294ef7c9d4ec9e21d6cb25eb630e9a069c",
+      "output": "B27R095/TD/raw/grain_007.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 8,
+      "script": "B27R095/TD/scripts/grain_008.mx3",
+      "script_sha256": "37555b7acec2fb6fb0cf495391b7a220be3a17954ced6a92241baeda0cb336b6",
+      "output": "B27R095/TD/raw/grain_008.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 1,
+      "script": "B30P105/RD/scripts/grain_001.mx3",
+      "script_sha256": "0b5fc82f6e4efb0fa2047b86c86ddb887323919a26a3e7fd58a0d298759f447e",
+      "output": "B30P105/RD/raw/grain_001.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 2,
+      "script": "B30P105/RD/scripts/grain_002.mx3",
+      "script_sha256": "69cd855e9b34f0b1ed68eb3294747299e2eef903a127d38a436f3369c4651ded",
+      "output": "B30P105/RD/raw/grain_002.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 3,
+      "script": "B30P105/RD/scripts/grain_003.mx3",
+      "script_sha256": "a1bb9b151203dca16fe51abf5810c1c72893783cb9e9881ee53c96edd214049a",
+      "output": "B30P105/RD/raw/grain_003.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 4,
+      "script": "B30P105/RD/scripts/grain_004.mx3",
+      "script_sha256": "248a006d60886864cd685ce3d50407932092f2107e2ce51fb293e3d355b6f012",
+      "output": "B30P105/RD/raw/grain_004.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 5,
+      "script": "B30P105/RD/scripts/grain_005.mx3",
+      "script_sha256": "a62deea5843174bbb7aff651111dc8cb3762b0fdae712cfd37f74e7e0230e566",
+      "output": "B30P105/RD/raw/grain_005.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 6,
+      "script": "B30P105/RD/scripts/grain_006.mx3",
+      "script_sha256": "04f143f3acab4aae693cc07a1ef1d11367ce4647f5383aeef724e8a50f14d17f",
+      "output": "B30P105/RD/raw/grain_006.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "script": "B30P105/RD/scripts/grain_007.mx3",
+      "script_sha256": "6df5f1f3b88763db9e1d7a19621931dad9911c9716c93c771e0e3e951c4e507a",
+      "output": "B30P105/RD/raw/grain_007.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "script": "B30P105/RD/scripts/grain_008.mx3",
+      "script_sha256": "761110683cc5d1fd0afd4b779d320683ed62f91f44c609321a401a89c4a66ca9",
+      "output": "B30P105/RD/raw/grain_008.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 1,
+      "script": "B30P105/TD/scripts/grain_001.mx3",
+      "script_sha256": "d13ea3dffe38909245362e322f079de91eb2e46d71e2ac86bec4ca6847b71c80",
+      "output": "B30P105/TD/raw/grain_001.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "script": "B30P105/TD/scripts/grain_002.mx3",
+      "script_sha256": "b5886b8131c40db490bd3e474b4c30c51748d2cb7d3bc7dfaab52157ce2a8efc",
+      "output": "B30P105/TD/raw/grain_002.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 3,
+      "script": "B30P105/TD/scripts/grain_003.mx3",
+      "script_sha256": "631d6e3ddfe63fca2959257ee2b7f620c6c3577d4a0099a09a9c1f12d756c325",
+      "output": "B30P105/TD/raw/grain_003.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 4,
+      "script": "B30P105/TD/scripts/grain_004.mx3",
+      "script_sha256": "ec518616137861d9587856797ccb4d51a52fd3bed3faba5f5de8407c6b0b57f1",
+      "output": "B30P105/TD/raw/grain_004.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "script": "B30P105/TD/scripts/grain_005.mx3",
+      "script_sha256": "98e0fc89a9c6c1b8368e377253967c414c89349f966076680e6282bff26b10b1",
+      "output": "B30P105/TD/raw/grain_005.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 6,
+      "script": "B30P105/TD/scripts/grain_006.mx3",
+      "script_sha256": "2c025fe2372e53888e03b6ffbdfae3ea0d138fbe2f8aef8a86d2ad01124bd619",
+      "output": "B30P105/TD/raw/grain_006.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 7,
+      "script": "B30P105/TD/scripts/grain_007.mx3",
+      "script_sha256": "a861adf7617dba917ce7a6c22125e5da3f72e526e11dd8453bad7bcf323e6e66",
+      "output": "B30P105/TD/raw/grain_007.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 8,
+      "script": "B30P105/TD/scripts/grain_008.mx3",
+      "script_sha256": "c596517933112dafa1e7f41c3e0052665c3f14328ec288a7618c8fd4ae372393",
+      "output": "B30P105/TD/raw/grain_008.out"
+    }
+  ]
+}

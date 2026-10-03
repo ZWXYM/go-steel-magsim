@@ -1,0 +1,4 @@
+# Preserve byte-level hashes in scientific evidence across operating systems.
+calibration/** -text
+modules/material_calibration.py -text
+tools/run_calibration_pilot.py -text

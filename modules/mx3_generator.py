@@ -11,6 +11,7 @@ from datetime import datetime
 # ========================================
 class SimulationConfig:
     """仿真配置管理"""
+    PHYSICS_VERSION = 'cubic_sample_frame_v2'
     SIMULATION_TYPE = 'single'  # 'single' 或 'complex'
     DEFAULT_ANGLES = [0, 30, 45, 60, 90, 120, 135, 150, 180]
     INPUT_DIR = 'input'
@@ -23,7 +24,7 @@ class SimulationConfig:
     GRID_SIZE_X = 4
     GRID_SIZE_Y = 4
     GRID_SIZE_Z = 1
-    CELL_SIZE = 4.0e-9  # 10 nm
+    CELL_SIZE = 4.0e-9  # 4 nm in plane; 1 nm along z
 
     # 材料参数
     SI_CONTENT = 3.0  # Si含量 (%)
@@ -33,19 +34,24 @@ class SimulationConfig:
     KU1_BASE = 4.8e4  # 立方各向异性基准值 (J/m³)，用于 get_Ku1() 公式参考
 
     # 外场设置
-    # H_k = 2*Ku1/(μ₀*Msat) ≈ 36728 A/m for Fe-3%Si
+    # H_k scale = 2*Kc1/(μ₀*Msat) ≈ 36728 A/m for Fe-3%Si
     # H_MAX 必须 > H_k 才能完成完整磁滞回线，建议 1.4× H_k ≈ 50000 A/m
     H_MAX = 50000.0  # 最大外场 (A/m)
     N_STEPS = 150  # 每段步数 (150步×4段=600次minimize，约85s/晶粒 RTX2060)
 
     @classmethod
-    def get_Ku1(cls):
+    def get_Kc1(cls):
         """计算立方各向异性常数 K1 (J/m³)
-        公式来源: Moses 2012 综述, Fe-Si: K1(Si%) = (KU1_BASE - 0.4*Si%*1e4)
+        沿用旧工程的经验先验，来源与成分响应尚未独立验证: K1(Si%) = (KU1_BASE - 0.4*Si%*1e4)
         KU1_BASE = 4.8e4 → @ 3%Si: K1 = 48000 - 12000 = 36000 J/m³
         注意: H_k = 2*K1/(μ₀*Msat) = 36728 A/m (不是 2*K1/Msat，单位为 T)
         """
         return cls.KU1_BASE - 0.4 * cls.SI_CONTENT * 1e4
+
+    @classmethod
+    def get_Ku1(cls):
+        """Compatibility alias; this value is emitted as cubic Kc1, not Ku1."""
+        return cls.get_Kc1()
 
     @classmethod
     def get_rve_size(cls):
@@ -53,7 +59,7 @@ class SimulationConfig:
         return (
             cls.GRID_SIZE_X * cls.CELL_SIZE,
             cls.GRID_SIZE_Y * cls.CELL_SIZE,
-            cls.GRID_SIZE_Z * cls.CELL_SIZE
+            cls.GRID_SIZE_Z * cls.CELL_SIZE / 4
         )
 
     @classmethod
@@ -309,21 +315,17 @@ def generate_single_mode_script(grain_id, phi1, Phi, phi2, angle):
     # 获取晶体坐标系的三个轴
     axis_100, axis_010, axis_001 = euler_to_crystal_axes(phi1, Phi, phi2)
 
-    # 构建旋转矩阵:从样品坐标系到晶体坐标系
-    rotation_matrix = np.column_stack([axis_100, axis_010, axis_001])
-    R_s2c = rotation_matrix.T  # 样品 -> 晶体
-
     # 外场方向(样品坐标系)
     angle_rad = np.radians(angle)
     H_sample = np.array([np.cos(angle_rad), np.sin(angle_rad), 0])
 
-    # 转换到晶体坐标系
-    H_crystal = R_s2c @ H_sample
-    H_crystal = H_crystal / np.linalg.norm(H_crystal)  # 归一化
+    # The thin-film geometry stays in the sample frame. Rotate the crystal
+    # anisotropy axes, not the field, so demagnetization has the same frame.
+    H_crystal = H_sample  # historical variable name, now sample coordinates
 
     # 从配置类获取参数
     cfg = SimulationConfig
-    Ku1_value = cfg.get_Ku1()
+    Kc1_value = cfg.get_Kc1()
     Msat_value = cfg.MSAT
     Aex_value = cfg.AEX
     alpha_value = cfg.ALPHA
@@ -340,6 +342,7 @@ def generate_single_mode_script(grain_id, phi1, Phi, phi2, angle):
 // Euler angles: phi1={phi1:.2f}, Phi={Phi:.2f}, phi2={phi2:.2f}
 // Material: Fe-{si_percent}%Si
 // Applied field angle: {angle} degrees (in sample frame)
+// Physics version: {cfg.PHYSICS_VERSION}
 
 // ============================================
 // Grid settings - Single grain RVE
@@ -358,11 +361,14 @@ alpha = {alpha_value:.3f}    // Gilbert damping
 // ============================================
 // Cubic anisotropy (Fe-Si crystal)
 // ============================================
-// Energy: E = Ku1 * (α1²α2² + α2²α3² + α3²α1²) + Ku2 * (α1²α2²α3²)
-// The simulation xyz axes correspond to crystal <100>, <010>, <001> directions
+// Energy: E = Kc1 * (α1²α2² + α2²α3² + α3²α1²) + Kc2 * (α1²α2²α3²)
+// Geometry and field use sample xyz; anisC1/anisC2 rotate the cubic crystal axes
 
-Ku1 = {Ku1_value:.2e}        // First cubic anisotropy constant (J/m³)
-Ku2 = 0                      // Second cubic anisotropy (negligible for Fe-Si)
+Kc1 = {Kc1_value:.2e}        // First cubic anisotropy constant (J/m³)
+Kc2 = 0
+Ku1 = 0                      // No uniaxial anisotropy in this model
+anisC1 = vector({axis_100[0]:.10f}, {axis_100[1]:.10f}, {axis_100[2]:.10f})
+anisC2 = vector({axis_010[0]:.10f}, {axis_010[1]:.10f}, {axis_010[2]:.10f})
 
 // ============================================
 // Crystal orientation information
@@ -373,15 +379,15 @@ Ku2 = 0                      // Second cubic anisotropy (negligible for Fe-Si)
 // <001>: ({axis_001[0]:.6f}, {axis_001[1]:.6f}, {axis_001[2]:.6f})
 
 // ============================================
-// Field direction in CRYSTAL frame
+// Field direction in SAMPLE frame
 // ============================================
 // Sample frame: angle = {angle}° → ({H_sample[0]:.6f}, {H_sample[1]:.6f}, {H_sample[2]:.6f})
-// Crystal frame: ({H_crystal[0]:.6f}, {H_crystal[1]:.6f}, {H_crystal[2]:.6f})
+// Sample frame: ({H_crystal[0]:.6f}, {H_crystal[1]:.6f}, {H_crystal[2]:.6f})
 
 H_max := {H_max_value:.1f}   // Maximum field magnitude (A/m)
 n_steps := {n_steps_value}   // Steps per segment
 
-// Field direction unit vector in crystal coordinates
+// Field direction unit vector in sample coordinates
 Hx_dir := {H_crystal[0]:.10f}
 Hy_dir := {H_crystal[1]:.10f}
 Hz_dir := {H_crystal[2]:.10f}
@@ -454,149 +460,32 @@ print("========================================")
 
 
 def generate_complex_mode_script(grain_id, phi1, Phi, phi2, angles):
-    """生成多角度complex模式的mx3脚本(修正为预饱和+4段完整回线)"""
+    """Generate multi-angle loops with syntax supported by MuMax3 3.11.1.
 
-    # 获取晶体坐标系
-    axis_100, axis_010, axis_001 = euler_to_crystal_axes(phi1, Phi, phi2)
-    rotation_matrix = np.column_stack([axis_100, axis_010, axis_001])
-    R_s2c = rotation_matrix.T
-
-    # 为每个角度计算晶体坐标系中的场方向
-    field_directions = []
-    for angle in angles:
-        angle_rad = np.radians(angle)
-        H_sample = np.array([np.cos(angle_rad), np.sin(angle_rad), 0])
-        H_crystal = R_s2c @ H_sample
-        H_crystal = H_crystal / np.linalg.norm(H_crystal)
-        field_directions.append(H_crystal)
-
-    # 从配置类获取参数
-    cfg = SimulationConfig
-    Ku1_value = cfg.get_Ku1()
-    Msat_value = cfg.MSAT
-    Aex_value = cfg.AEX
-    alpha_value = cfg.ALPHA
-    H_max_value = cfg.H_MAX
-    n_steps_value = cfg.N_STEPS
-    si_percent = cfg.SI_CONTENT
-
-    grid_x, grid_y, grid_z = cfg.GRID_SIZE_X, cfg.GRID_SIZE_Y, cfg.GRID_SIZE_Z
-    cell_size = cfg.CELL_SIZE
-    rve_x, rve_y, rve_z = cfg.get_rve_size_um()
-
-    # 构建角度和方向数组
-    angles_str = ", ".join([str(float(a)) for a in angles])
-
-    # 构建方向数组字符串
-    field_dirs_str = ""
-    for i, (angle, H_crys) in enumerate(zip(angles, field_directions)):
-        field_dirs_str += f"    // {angle}°: ({H_crys[0]:.10f}, {H_crys[1]:.10f}, {H_crys[2]:.10f})\n"
-
-    script_content = f"""// Grain {grain_id} multi-angle simulation
-// Euler angles: phi1={phi1:.2f}, Phi={Phi:.2f}, phi2={phi2:.2f}
-// Material: Fe-{si_percent}%Si
-// Angles: {angles_str} degrees
-
-// ============================================
-// Grid settings
-// ============================================
-SetGridSize({grid_x}, {grid_y}, {grid_z})
-SetCellSize({cell_size:.2e}, {cell_size:.2e}, {cell_size/4:.2e})
-
-// ============================================
-// Material parameters
-// ============================================
-Msat = {Msat_value:.2e}
-Aex = {Aex_value:.2e}
-alpha = {alpha_value:.3f}
-
-// ============================================
-// Cubic anisotropy
-// ============================================
-Ku1 = {Ku1_value:.2e}
-Ku2 = 0
-
-// ============================================
-// Field directions in crystal frame
-// ============================================
-{field_dirs_str}
-H_max := {H_max_value:.1f}
-n_steps := {n_steps_value}
-
-// Angle array
-angles := []float64{{{angles_str}}}
-
-// Field direction arrays (in crystal frame)
-Hx_dirs := []float64{{{", ".join([f"{h[0]:.10f}" for h in field_directions])}}}
-Hy_dirs := []float64{{{", ".join([f"{h[1]:.10f}" for h in field_directions])}}}
-Hz_dirs := []float64{{{", ".join([f"{h[2]:.10f}" for h in field_directions])}}}
-
-// ============================================
-// Loop over all angles
-// ============================================
-for angle_idx, angle := range angles {{
-    Hx_dir := Hx_dirs[angle_idx]
-    Hy_dir := Hy_dirs[angle_idx]
-    Hz_dir := Hz_dirs[angle_idx]
-
-    print(sprint("\\n========================================"))
-    print(sprint("Processing angle: ", angle, " degrees"))
-    print(sprint("Field direction: (", Hx_dir, ", ", Hy_dir, ", ", Hz_dir, ")"))
-    print(sprint("========================================\\n"))
-
-    // Pre-saturation for each angle
-    print("Pre-saturation: magnetizing to +H_max")
-    B_ext = vector(H_max*mu0*Hx_dir, H_max*mu0*Hy_dir, H_max*mu0*Hz_dir)
-    m = uniform(Hx_dir, Hy_dir, Hz_dir)
-    minimize()
-    print("Initial saturation completed")
-
-    tableadd(B_ext)
-    tableadd(m)
-    tableadd(E_total)
-
-    // Segment 1: Descending from saturation (+H_max → 0)
-    print("Segment 1: +H_max -> 0")
-    for i := 0; i <= n_steps; i++ {{
-        H := H_max - i*H_max/n_steps
-        B_ext = vector(H*mu0*Hx_dir, H*mu0*Hy_dir, H*mu0*Hz_dir)
-        minimize()
-        tablesave()
-    }}
-
-    // Segment 2: Reverse magnetization (0 → -H_max)
-    print("Segment 2: 0 -> -H_max")
-    for i := 0; i <= n_steps; i++ {{
-        H := -i*H_max/n_steps
-        B_ext = vector(H*mu0*Hx_dir, H*mu0*Hy_dir, H*mu0*Hz_dir)
-        minimize()
-        tablesave()
-    }}
-
-    // Segment 3: Return to zero (-H_max → 0)
-    print("Segment 3: -H_max -> 0")
-    for i := 0; i <= n_steps; i++ {{
-        H := -H_max + i*H_max/n_steps
-        B_ext = vector(H*mu0*Hx_dir, H*mu0*Hy_dir, H*mu0*Hz_dir)
-        minimize()
-        tablesave()
-    }}
-
-    // Segment 4: Return to saturation (0 → +H_max)
-    print("Segment 4: 0 -> +H_max (closing loop)")
-    for i := 0; i <= n_steps; i++ {{
-        H := i*H_max/n_steps
-        B_ext = vector(H*mu0*Hx_dir, H*mu0*Hy_dir, H*mu0*Hz_dir)
-        minimize()
-        tablesave()
-    }}
-
-    print(sprint("Angle ", angle, " completed (204 data points)\\n"))
-}}
-
-print("\\nAll angles completed!")
-"""
-    return script_content
+    Array literals in the previous implementation were rejected as CompositeLit.
+    Reuse the single-angle physics setup, one set of table columns, and emit
+    each angle explicitly. The angle_deg column distinguishes the loops.
+    """
+    if not angles:
+        raise ValueError('At least one applied-field angle is required')
+    scripts = [generate_single_mode_script(grain_id, phi1, Phi, phi2, a)
+               for a in angles]
+    marker = 'print("Pre-saturation: magnetizing to +H_max")'
+    prefix = scripts[0].split(marker, 1)[0]
+    result = prefix + ('tableadd(B_ext)\ntableadd(m)\ntableadd(E_total)\n'
+                       'angle_value := 0.0\n'
+                       'tableaddvar(angle_value, "angle_deg", "deg")\n')
+    for angle, script in zip(angles, scripts):
+        rad = np.deg2rad(angle)
+        result += (f'\n// Field directions in sample frame: {angle} degrees\n'
+                   f'angle_value = {float(angle):.12g}\n'
+                   f'Hx_dir = {np.cos(rad):.10f}\n'
+                   f'Hy_dir = {np.sin(rad):.10f}\nHz_dir = 0.0\n')
+        body = marker + script.split(marker, 1)[1]
+        body = '\n'.join(line for line in body.splitlines()
+                         if not line.strip().startswith(('tableadd(', 'tableautosave(')))
+        result += body + '\n'
+    return result
 
 
 def generate_simulation_parameters(config_info, angles, output_path):
@@ -611,7 +500,7 @@ def generate_simulation_parameters(config_info, angles, output_path):
     cfg = SimulationConfig
 
     # 计算参数
-    Ku1_value = cfg.get_Ku1()
+    Kc1_value = cfg.get_Kc1()
     Msat_value = cfg.MSAT
     Aex_value = cfg.AEX
     alpha_value = cfg.ALPHA
@@ -676,14 +565,15 @@ Micromagnetic Parameters (MESO-SCALE ADJUSTED):
 {"-" * 60}
 Saturation magnetization (Msat):       {Msat_value:.2e} A/m ({Msat_value * mu0:.3f} T)
 Exchange constant (Aex):               {Aex_value:.2e} J/m
-  Note: Reduced from bulk value (2.1e-11) to account for grain boundary
-        weakening effects at meso-scale
+  Note: Fixed model prior; grain boundaries are not explicitly modeled
 Exchange length (λ_ex):                {lambda_ex:.2f} nm
 Gilbert damping (alpha):               {alpha_value:.3f}
-  Note: Increased from 0.01 to enhance convergence and approximate
-        macroscopic quasi-static processes
-Cubic anisotropy (Ku1):                {Ku1_value:.2e} J/m³
-  Calculated from: (4.8 - 0.4 * {si_percent}) × 1e4 J/m³  [Moses 2012 Si-dependence]
+  Note: Fixed damping; minimize() provides quasi-static states
+Cubic anisotropy (Kc1):                {Kc1_value:.2e} J/m³
+Uniaxial anisotropy (Ku1):             0 J/m³
+Physics version:                      {cfg.PHYSICS_VERSION}
+Coordinate frame:                     sample (geometry and applied field)
+  Calculated from: (4.8 - 0.4 * {si_percent}) × 1e4 J/m³  [existing empirical prior; not independently validated]
 
 Simulation Settings:
 {"-" * 60}
@@ -691,49 +581,25 @@ Grid size:                             {grid_x} x {grid_y} x {grid_z}
 Cell size:                             {cell_size_nm:.1f} nm x {cell_size_nm:.1f} nm x {cell_size_nm/4:.1f} nm
 Total RVE volume:                      {rve_x:.2f} μm x {rve_y:.2f} μm x {rve_z:.3f} μm
 Cell-to-exchange ratio:                {cell_size_nm / lambda_ex:.2f} (cell_size / λ_ex)
-  Note: Ratio > 1 indicates coarse-grained simulation suitable for
-        meso-scale modeling. Each cell represents averaged behavior.
+  Note: This ratio is a mesh diagnostic, not proof of bulk accuracy.
 
 Maximum applied field (H_max):         {H_max_value:.0f} A/m ({H_max_mT:.1f} mT, ~{H_max_Oe:.0f} Oe)
-  Note: H_k = 2*Ku1/(mu0*Msat) ≈ 36728 A/m; H_max={H_max_value:.0f} > H_k ensures full magnetization reversal
+  Note: 2*Kc1/(mu0*Msat) is an anisotropy field scale; loop completion must be checked in the output.
 Steps per segment:                     {n_steps_value}
 Total data points per grain:           {total_points} (4 segments of hysteresis loop)
 Number of grains:                      {config_info['n_grains']}
 
-Scaling Rationale:
+Model interpretation and limitations:
 {"-" * 60}
-The simulation uses a meso-scale approach (RVE ~ 2-3 μm) instead of
-nano-scale (< 100 nm) to:
-
-1. Reduce exchange energy dominance:
-   - At nano-scale: Strong exchange coupling suppresses domain wall
-     formation, leading to artificially high coercivity
-   - At meso-scale: Weaker relative exchange allows more realistic
-     domain structures
-
-2. Approximate polycrystalline behavior:
-   - Each RVE represents an effective single-crystal volume
-   - Grain boundary effects incorporated through reduced Aex
-   - Statistical averaging over {config_info['n_grains']} grains captures texture effects
-
-3. Computational efficiency:
-   - Coarser mesh ({cell_size_nm:.0f} nm vs 10 nm) reduces computation by 125x per grain
-   - Higher damping ({alpha_value} vs 0.01) accelerates convergence
-
-4. Limitations and considerations:
-   - Absolute values (Hc, μi) still higher than bulk steel due to
-     mesoscale approximation
-   - Results suitable for relative comparison (texture parameter effects)
-   - For quantitative motor design, use extracted trends to calibrate
-     macroscopic constitutive models in FEMM/Maxwell
-
-Expected Performance Improvements vs Nano-scale:
-{"-" * 60}
-Parameter              Nano-scale        Meso-scale        Real Steel
-                       (10nm cells)      ({cell_size_nm:.0f}nm cells)      (bulk)
-Coercivity Hc (A/m)    30,000-90,000     500-5,000         10-100
-Initial perm. μi       2-10              500-5,000         5,000-50,000
-Br/Bs ratio            0.7-0.95          0.3-0.6           0.2-0.5
+The RVE is a 16 x 16 x 1 nm feature crystal at default settings.
+It is not a mesoscopic grain/domain-wall model and does not explicitly
+represent grain boundaries, stress, coating or bulk steel hysteresis.
+Kc1 controls cubic anisotropy; Ku1 is zero. Crystal axes are rotated in
+the sample frame so geometry, demagnetization and applied field agree.
+Aggregate grain responses are engineering features requiring calibration.
+Hc, remanence and core loss need separate measured evidence.
+The Si-dependent K1 expression is an existing empirical input prior,
+not a composition law validated by this software.
 
 CRITICAL: B_ext Unit Conversion
 {"-" * 60}
@@ -747,7 +613,7 @@ Generation Information:
 {"-" * 60}
 Generated on:                          {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 Simulation mode:                       {SimulationConfig.SIMULATION_TYPE}
-Parameter version:                     Meso-scale v3.0
+Parameter version:                     {cfg.PHYSICS_VERSION}
 Script generator:                      generate_individual_scripts.py
 """
 
