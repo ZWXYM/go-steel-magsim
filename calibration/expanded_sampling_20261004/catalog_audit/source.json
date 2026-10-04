@@ -1,0 +1,19 @@
+{
+  "retrieved_utc": "2026-10-04T08:37:26.597724+00:00",
+  "url": "https://ecommerce.ibaosteel.com/portal/download/manual/ElectricalSteel.pdf",
+  "sha256": "188d9101dd66da17866d8c02ad41a7590bc6b588572c3bd41dd56cd3130d6668",
+  "bytes": 4399753,
+  "matches_existing_local_EVI_pdf": false,
+  "existing_local_pdf": "materials/go_steel_data/pdf/Baosteel_GO_EVI.pdf",
+  "response_headers": {
+    "Content-Type": "application/pdf",
+    "Content-Length": "4399753",
+    "Last-Modified": "Tue, 16 Oct 2018 21:43:10 GMT",
+    "ETag": "\"6c1e2b-432289-5785f709b3780\""
+  },
+  "older_url_status": "esales.baosteel.com GO-ElectricalSteel.pdf indexed but direct HTTPS hostname validation failed; byte identity not verified",
+  "page_verified_visually": 5,
+  "page_printed_number": "04",
+  "local_render_sha256": "1fb2a01f3a3205df84efa43ffc9a01ae189684aaf7c87ebd72f2da81b28eab96",
+  "full_catalog_published_to_GitHub": false
+}

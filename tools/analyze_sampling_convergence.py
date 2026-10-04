@@ -56,13 +56,27 @@ def read_ensemble(run_dir, grade, direction):
         digest = file_hash(table)
         if digest != completed[job['script']]['table_sha256']:
             raise ValueError('Native table changed after solve')
+        record = completed[job['script']]
+        kind = record.get('execution_kind', 'native')
+        if kind not in ('native', 'imported_native_prefix'):
+            raise ValueError('Unknown native evidence execution kind')
+        if kind == 'imported_native_prefix':
+            root = record.get('root_native_origin', {})
+            origin = record.get('import_origin', {})
+            if (root.get('script_sha256') != job['script_sha256']
+                    or root.get('table_sha256') != digest
+                    or origin.get('source_table_sha256') != digest
+                    or origin.get('protocol') != 'verified_native_prefix_reuse_v1'):
+                raise ValueError('Imported native evidence origin does not bind its bytes')
         curve = extract_loop_midpoint(table, H_GRID, angle_deg=job['angle'])
         values.append(curve['B'])
         unguarded.append(curve['B_midpoint_before_guard'])
         hashes.append({'grain_id': job['grain_id'], 'table_sha256': digest,
-                       'script_sha256': job['script_sha256'],
+                       'script_sha256': job['script_sha256'], 'execution_kind': kind,
                        'max_imposed_guard_change_T': curve['report']['max_guard_change_T']})
     return np.array(values), {'seed': manifest['seed'], 'n_grains': len(jobs),
+        'native_execution_count': sum(completed[j['script']].get('execution_kind', 'native') == 'native' for j in jobs),
+        'imported_evidence_count': sum(completed[j['script']].get('execution_kind') == 'imported_native_prefix' for j in jobs),
         'material_seed': material.get('seed'), 'texture_sampling_version': sampling,
         'texture_distribution_sha256': material.get('texture_sampling', {}).get('distribution_sha256'),
         'texture_module_sha256': manifest.get('texture_module_sha256'),

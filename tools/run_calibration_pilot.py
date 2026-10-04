@@ -246,7 +246,7 @@ def _run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, onl
             proc = subprocess.run([str(mumax), '-http=127.0.0.1:0', '-o', str(output),
                                    str(run_dir / job['script'])], stdout=log,
                                    stderr=subprocess.STDOUT, cwd=PROJECT)
-        result = {**job, 'exit_code': proc.returncode,
+        result = {**job, 'exit_code': proc.returncode, 'execution_kind': 'native',
                   'elapsed_seconds': round(time.perf_counter() - started, 3),
                   'table_sha256': file_hash(table) if table.exists() else None}
         if proc.returncode == 0:

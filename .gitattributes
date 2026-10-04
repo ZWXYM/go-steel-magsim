@@ -2,3 +2,9 @@
 calibration/** -text
 modules/material_calibration.py -text
 tools/run_calibration_pilot.py -text
+modules/texture_sampling.py -text
+tools/analyze_sampling_convergence.py -text
+tools/reuse_native_prefix.py -text
+tools/analyze_component_variation.py -text
+tools/screen_expanded_sampling.py -text
+tools/audit_loop_guards.py -text

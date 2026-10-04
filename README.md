@@ -4,6 +4,8 @@ ODF 取向采样 → MuMax3 单晶仿真 → RD/TD 曲线聚合 → 校准与独
 
 ## 当前阶段（2026-10-04）
 
+第三轮完成三个 seed 的 TD/N128 阶段，新增 256 次真实求解并核验复用前缀；44 项测试通过。H800 seed 极差 0.059629 T，筛查仍失败，并发现较大的 guard 介入；见 [当前扩大采样与来源审计](docs/expanded_sampling_20261004.md)。当前研究实际求解累计 656 次，未升级 bank/代理。
+
 第二轮推进新增 `goss_haar_iid_prefix_v2`，使用固定分布的均匀 SO(3) 背景、逐粒来源及可复现嵌套前缀；bank/训练/预测/材料 metadata 检查采样版本。B30P105 的两个 seed、N64 双方向试验与收敛筛查见 [固定分布采样记录](docs/haar_prefix_sampling_20261004.md)。旧采样器、完整 n8 bank 与既有代理仍保留。
 
 首轮自动推进新增 B30P105 的 n32 双方向及第二 seed 的 n8 双方向，共 80 次原生仿真，合同测试扩展为 23 项。发现显著采样敏感性及“随机背景”随 seed 改变近似 ODF 的问题，见 [参考与采样诊断](docs/reference_and_sampling_20261004.md)。这些数据保留为诊断，尚未生成新的全材料校准 bank。
@@ -57,7 +59,7 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 |---|---|
 | `modules/` | ODF、脚本、提取/聚合、历史修正、新版 bank、训练和材料导出 |
 | `tools/` | 校准试验的准备/续跑/分析、显式 bank 预测、绘图和历史工具 |
-| `calibration/` | 来源登记、冻结输入、64 次基线与 80 次新增采样诊断 table、拟合/留出 bank、误差表和试验材料 |
+| `calibration/` | 来源登记、冻结输入、64 次基线与累计 592 次新增采样诊断的原生证据（复用不重复计数）、拟合/留出 bank、误差表和试验材料 |
 | `go_steel_data/` | 既有处理参考曲线和材料库，保持其参考/估计身份 |
 | `tests/` | 科学合同、便携运行路径与平台烟雾验证 |
 | `docs/` | 当前验证记录、研究边界和历史说明 |

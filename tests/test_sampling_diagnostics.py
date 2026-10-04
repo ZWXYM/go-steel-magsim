@@ -54,6 +54,28 @@ def native_fixture(folder):
 
 
 class SamplingDiagnostics(unittest.TestCase):
+    def test_imported_evidence_origin_and_execution_counts_are_required(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            native_fixture(root)
+            path = root/'run_status.json'
+            status = json.loads(path.read_text())
+            job = status['jobs'][0]
+            job['execution_kind'] = 'imported_native_prefix'
+            write_json(path, status)
+            with self.assertRaisesRegex(ValueError, 'origin'):
+                read_ensemble(root, 'G', 'TD')
+            job['import_origin'] = dict(protocol='verified_native_prefix_reuse_v1', source_table_sha256=job['table_sha256'])
+            job['root_native_origin'] = dict(script_sha256=job['script_sha256'], table_sha256=job['table_sha256'])
+            write_json(path, status)
+            _, source = read_ensemble(root, 'G', 'TD')
+            self.assertEqual(source['native_execution_count'], 1)
+            self.assertEqual(source['imported_evidence_count'], 1)
+            job['root_native_origin']['table_sha256'] = 'bad'
+            write_json(path, status)
+            with self.assertRaisesRegex(ValueError, 'origin'):
+                read_ensemble(root, 'G', 'TD')
+
     def test_reference_B_and_J_are_not_confused(self):
         # B may exceed mu0*Msat solely because of the vacuum-field term.
         H = np.array([0., 800., 50000.])

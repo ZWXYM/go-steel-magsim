@@ -1,0 +1,69 @@
+{
+  "predeclared_utc": "2026-10-04T08:28:33.473993+00:00",
+  "protocol": "expanded_haar_sampling_screen_v1",
+  "selection_basis": "N64 TD failed cross-seed H800 screen; within-Goss variation cannot be removed by count correction",
+  "texture_sampling_version": "goss_haar_iid_prefix_v2",
+  "grade": "B30P105",
+  "manifest_seeds": [
+    20261004,
+    20261005,
+    20261006
+  ],
+  "material_seeds": [
+    20261007,
+    20261008,
+    20261009
+  ],
+  "current_stage": {
+    "n_grains": 128,
+    "comparison_n": 64,
+    "directions": [
+      "TD"
+    ],
+    "planned_complete_stage_evidence": 384,
+    "reused_stage_evidence": 128,
+    "maximum_new_native_solves_this_stage": 256
+  },
+  "subsequent_stage": {
+    "n_grains": 256,
+    "comparison_n": 128,
+    "directions": [
+      "RD",
+      "TD"
+    ],
+    "complete_B30_evidence_budget": 1536,
+    "condition": "After current stage, expand if sampling screen fails; complete RD and all-material checks separately"
+  },
+  "thresholds": {
+    "abs_B800_prefix_T": 0.02,
+    "max_curve_prefix_T": 0.05,
+    "max_B800_seed_range_T": 0.05
+  },
+  "stop_or_continue": "Any failed stage criterion means more N/seeds/physical diagnostics, no bank promotion",
+  "aggregation": "iid_equal_volume_guarded_midpoint; fixed-prior control remains diagnostic_v1 only",
+  "sampler_sha256": "4f0f04b2cea41bd4c53cf08e29f1fcea325046eb5e3a655d8d7211a3de7950f5",
+  "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+  "tool_sha256": {
+    "reuse_native_prefix.py": "5b434fcb1bf6af8a01ea24cbfbdf137638d89efac2761571134512c46f8ce3f5",
+    "screen_expanded_sampling.py": "7574b4246fcc1d1e85f485699d3f6f5850aacd9933e0ed5da44fc79e857c8033",
+    "analyze_component_variation.py": "2d081a20e9eea18e3d331470257598b9f3c23c76895df2b5bb10ffd0372d8a50",
+    "analyze_sampling_convergence.py": "e27b6d06091c761ff55c9d3e9172aa47faf1ae724f241e1a164e87909ed50ca9",
+    "run_calibration_pilot.py": "c450b71bed5b69b521f01bfeb670331a0cdc00349e104bca9629f6674f247a30"
+  },
+  "original_N64_sources": {
+    "20261004": {
+      "manifest_sha256": "31057d026ab5a2c8b356329ca685b83e749c9437d013beedc206b08edb43810b",
+      "status_sha256": "a32e9857cbd0fcdaf7a207f30be4608e836790f49b723b7880f810d8789c5ad4"
+    },
+    "20261005": {
+      "manifest_sha256": "47179ce6d7ed057ccdfb12fae3743e5ea1134b95a65404a92cab6be8748bb567",
+      "status_sha256": "3bf388f21a0d33b165ef69dec0a7299deb2768797c18824dc787d977a9afa9a1"
+    }
+  },
+  "limitations": [
+    "Only B30P105 TD at current stage; RD and other materials remain incomplete",
+    "Same-batch composition, EBSD, independent loops/loss are still missing",
+    "Haar/iid grains represent analytic report priors, not measured microstructure",
+    "Physical H and original native evidence preserved; imported tables are not newly executed solves"
+  ]
+}

@@ -1,0 +1,483 @@
+// Grain 1 simulation - 0 degree direction
+// Euler angles: phi1=8.25, Phi=48.20, phi2=356.05
+// Material: Fe-3.1%Si
+// Applied field angle: 0 degrees (in sample frame)
+// Physics version: cubic_sample_frame_v2
+
+// ============================================
+// Grid settings - Single grain RVE
+// ============================================
+// RVE size: 0.016 um x 0.016 um x 0.001 um
+SetGridSize(4, 4, 1)
+SetCellSize(4.00e-09, 4.00e-09, 1.00e-09)
+
+// ============================================
+// Fe-Si material parameters
+// ============================================
+Msat = 1.56e+06     // Saturation magnetization (A/m)
+Aex = 2.10e-11        // Exchange constant (J/m)
+alpha = 0.010    // Gilbert damping
+
+// ============================================
+// Cubic anisotropy (Fe-Si crystal)
+// ============================================
+// Energy: E = Kc1 * (α1²α2² + α2²α3² + α3²α1²) + Kc2 * (α1²α2²α3²)
+// Geometry and field use sample xyz; anisC1/anisC2 rotate the cubic crystal axes
+
+Kc1 = 3.56e+04        // First cubic anisotropy constant (J/m³)
+Kc2 = 0
+Ku1 = 0                      // No uniaxial anisotropy in this model
+anisC1 = vector(0.9938873699, 0.0977552894, -0.0513010663)
+anisC2 = vector(-0.0273039220, 0.6679099724, 0.7437410602)
+
+// ============================================
+// Crystal orientation information
+// ============================================
+// Crystal axes in sample frame:
+// <100>: (0.993887, 0.097755, -0.051301)
+// <010>: (-0.027304, 0.667910, 0.743741)
+// <001>: (0.106969, -0.737794, 0.666496)
+
+// ============================================
+// Field direction in SAMPLE frame
+// ============================================
+// Sample frame: angle = 0° → (1.000000, 0.000000, 0.000000)
+// Sample frame: (1.000000, 0.000000, 0.000000)
+
+H_max := 50000.0   // Maximum field magnitude (A/m)
+n_steps := 150   // Steps per segment
+
+// Field direction unit vector in sample coordinates
+Hx_dir := 1.0000000000
+Hy_dir := 0.0000000000
+Hz_dir := 0.0000000000
+
+// ============================================
+// Pre-saturation: Start from saturated state
+// ============================================
+print("Pre-saturation: magnetizing to +H_max")
+B_ext = vector(H_max*mu0*Hx_dir, H_max*mu0*Hy_dir, H_max*mu0*Hz_dir)
+m = uniform(Hx_dir, Hy_dir, Hz_dir)
+minimize()
+print("Initial saturation completed")
+
+// ============================================
+// Output setup
+// ============================================
+tableadd(B_ext)              // Applied field (T)
+tableadd(m)                  // Average magnetization (normalized)
+tableadd(E_total)            // Total energy (J)
+
+branch := -1.0
+tableaddvar(branch, "branch", "")
+H := 0.0
+branch = -1.0
+H = 50000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 40000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 30000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 20000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 15000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 10000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 7500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 5000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 3000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 2000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 1500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 1000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 800
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 200
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 100
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 50
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 20
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 10
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 5
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 2
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 1
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 0.5
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 0.2
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 0.1
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 0
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -0.1
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -0.2
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -0.5
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -1
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -2
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -5
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -10
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -20
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -50
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -100
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -200
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -800
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -1000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -1500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -2000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -3000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -5000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -7500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -10000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -15000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -20000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -30000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -40000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -50000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+branch = 1.0
+H = -50000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -40000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -30000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -20000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -15000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -10000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -7500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -5000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -3000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -2000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -1500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -1000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -800
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -200
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -100
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -50
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -20
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -10
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -5
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -2
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -1
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -0.5
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -0.2
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = -0.1
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 0
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 0.1
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 0.2
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 0.5
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 1
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 2
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 5
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 10
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 20
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 50
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 100
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 200
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 800
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 1000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 1500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 2000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 3000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 5000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 7500
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 10000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 15000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 20000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 30000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 40000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
+H = 50000
+B_ext = vector(mu0*H*Hx_dir, mu0*H*Hy_dir, mu0*H*Hz_dir)
+minimize()
+tablesave()
