@@ -4,6 +4,8 @@ ODF 取向采样 → MuMax3 单晶仿真 → RD/TD 曲线聚合 → 校准与独
 
 ## 当前阶段（2026-10-04）
 
+第二轮推进新增 `goss_haar_iid_prefix_v2`，使用固定分布的均匀 SO(3) 背景、逐粒来源及可复现嵌套前缀；bank/训练/预测/材料 metadata 检查采样版本。B30P105 的两个 seed、N64 双方向试验与收敛筛查见 [固定分布采样记录](docs/haar_prefix_sampling_20261004.md)。旧采样器、完整 n8 bank 与既有代理仍保留。
+
 首轮自动推进新增 B30P105 的 n32 双方向及第二 seed 的 n8 双方向，共 80 次原生仿真，合同测试扩展为 23 项。发现显著采样敏感性及“随机背景”随 seed 改变近似 ODF 的问题，见 [参考与采样诊断](docs/reference_and_sampling_20261004.md)。这些数据保留为诊断，尚未生成新的全材料校准 bank。
 
 已修复立方各向异性参数和样品坐标系，新增 `cubic_sample_frame_v2` / `fixed_h_delta_v1` 协议，并保存四牌号 × RD/TD × 8 晶粒的 64 次 GPU 仿真证据。校准、预测 JSON 和 `.amat` 使用同一物理 H（A/m），无需 H 轴缩放。旧平台和历史模型仍走历史修正链；新版校准的独立入口是下方 CLI。
@@ -33,7 +35,9 @@ python -m venv .venv
 无需 GPU 即可从已提交的原始 table 重新分析校准与材料留出：
 
 ```powershell
-python tools/run_calibration_pilot.py --analyze
+New-Item -ItemType Directory -Path tmp -Force | Out-Null
+Copy-Item -LiteralPath calibration/pilot_20261003_n8 -Destination tmp/n8_reanalysis -Recurse
+python tools/run_calibration_pilot.py --run-dir tmp/n8_reanalysis --analyze
 python tools/predict_calibrated_material.py --bank calibration/pilot_20261003_n8/bank_holdout_B23R075.json --raw-pair calibration/pilot_20261003_n8/B23R075/raw_pair.json --exclude-grade B23R075 --output-dir tmp/calibration_check --name B23R075_independent
 ```
 
@@ -43,7 +47,7 @@ python tools/predict_calibrated_material.py --bank calibration/pilot_20261003_n8
 python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004/n32_seed20261003 --n-grains 32 --seed 20261003 --run --only-grade B30P105 --only-direction TD --mumax "D:\mumax3.11.1_windows_cuda12.6\mumax3.exe" --max-jobs 16
 ```
 
-每次复用同一目录/参数可以继续未完成任务；已完成脚本和 table 的 SHA256 不一致时停止。完整完成后增加 `--analyze`。扩大 N 或更换 seed 使用新目录，保留 n8 基线。重分析会更新派生文件及分析代码哈希，原始 table 保持不变。
+每次复用同一目录/参数可以继续未完成任务；已完成脚本和 table 的 SHA256 不一致时停止。完整完成后增加 `--analyze`。扩大 N 或更换 seed 使用新目录，保留 n8 基线。重分析会更新派生文件及分析代码哈希，因此先复制到新目录。新目录默认使用 Haar/prefix v2，冻结目录保留其采样版本；新旧版本不能合并校准或训练。
 
 原 Flask 平台：`python app.py`。浏览器入口及历史 API 详见历史 README；旧模型不能被标为新版校准模型。合成增强脚本使用显式源材料，例如 `python scripts/augment_bh_curves.py --source go_steel_data/output/GO_Steel_B23R075.amat --n 1 --out tmp/augmentation_check`；它的样本必须跟随源材料划入同一训练/测试组。
 

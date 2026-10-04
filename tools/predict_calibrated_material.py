@@ -10,17 +10,20 @@ sys.path.insert(0, str(PROJECT / 'modules'))
 
 from modules.material_calibration import CalibrationBank, PHYSICS_VERSION, file_hash
 from modules.maxwell_exporter import export_calibrated_pair
+from modules.texture_sampling import LEGACY_SAMPLING_VERSION
 
 
 def predict_pair(raw_pair, bank, exclude_grades=()):
     version = raw_pair['simulation_physics_version']
+    sampling = raw_pair.get('texture_sampling_version', LEGACY_SAMPLING_VERSION)
     if version != PHYSICS_VERSION:
         raise ValueError('Raw simulation has an incompatible physics version')
     result = {direction: bank.correct(raw_pair[direction]['H'], raw_pair[direction]['B'],
         raw_pair['params'], direction=direction, exclude_grades=exclude_grades,
-        physics_version=version) for direction in ('RD', 'TD')}
+        physics_version=version, texture_sampling_version=sampling) for direction in ('RD', 'TD')}
     result.update({'material_id': raw_pair['material_id'], 'params': raw_pair['params'],
-                   'simulation_physics_version': version, 'calibration_sha256': bank.bank_sha256})
+                   'simulation_physics_version': version, 'texture_sampling_version': sampling,
+                   'calibration_sha256': bank.bank_sha256})
     return result
 
 

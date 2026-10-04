@@ -676,7 +676,7 @@ class BHPredictor:
         result['bh_reference_corrected'] = bool(self.metadata.get('bh_reference_corrected', False))
         result['params_used'] = params
         for key in ('simulation_physics_version', 'reference_correction_version',
-                    'H_axis', 'calibration_sha256', 'dataset_sha256'):
+                    'H_axis', 'calibration_sha256', 'dataset_sha256', 'texture_sampling_version'):
             result[key] = self.metadata.get(key, 'legacy_unspecified')
         return result
 

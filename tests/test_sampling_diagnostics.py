@@ -14,7 +14,8 @@ PROJECT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT))
 from modules.material_calibration import MU0, file_hash
 from tools.audit_reference_bounds import audit_curve
-from tools.analyze_sampling_convergence import read_ensemble, prefix_metrics
+from tools.analyze_sampling_convergence import read_ensemble, prefix_metrics, analyze
+from modules.texture_sampling import SAMPLING_VERSION, LEGACY_SAMPLING_VERSION
 from tools.run_calibration_pilot import H_GRID, run_jobs, write_json
 
 
@@ -90,6 +91,17 @@ class SamplingDiagnostics(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'table changed'):
                 read_ensemble(root, 'G', 'TD')
 
+    def test_manifest_cannot_relabel_the_script_actually_executed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, _ = native_fixture(root)
+            script = root / manifest['jobs'][0]['script']
+            script.write_text('// a different simulation input')
+            manifest['jobs'][0]['script_sha256'] = file_hash(script)
+            write_json(root / 'manifest.json', manifest)
+            with self.assertRaisesRegex(ValueError, 'Executed script hash'):
+                read_ensemble(root, 'G', 'TD')
+
     def test_filtered_resume_does_not_execute_other_jobs(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -118,6 +130,19 @@ class SamplingDiagnostics(unittest.TestCase):
         self.assertIn('not_independent', result[0]['comparison_role'])
         with self.assertRaises(ValueError):
             prefix_metrics(values, [5])
+
+    def test_new_and_legacy_sampling_cannot_be_compared_as_two_seeds(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            native_fixture(root)
+            values, source = read_ensemble(root, 'G', 'TD')
+            current = {**source, 'texture_sampling_version': SAMPLING_VERSION}
+            # Fail the cross-protocol comparison before any bank/model use.
+            with patch('tools.analyze_sampling_convergence.read_ensemble', side_effect=[(values, current),
+                       (values, {**source, 'texture_sampling_version': LEGACY_SAMPLING_VERSION})]):
+                with self.assertRaisesRegex(ValueError, 'different texture sampling protocols'):
+                    analyze(root, 'G', 'TD', root/'analysis', baseline=root)
+            self.assertFalse((root/'analysis').exists())
 
 
 if __name__ == '__main__':

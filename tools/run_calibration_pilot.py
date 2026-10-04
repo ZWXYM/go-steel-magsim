@@ -31,6 +31,8 @@ from modules.material_calibration import (CalibrationBank, VERSION, PHYSICS_VERS
     MU0, extract_loop_midpoint, file_hash, guard_B)
 from modules.mx3_generator import SimulationConfig, generate_single_mode_script
 from modules.reference_corrector import load_reference_bh
+from modules.texture_sampling import (LEGACY_SAMPLING_VERSION, SAMPLING_VERSION,
+                                      sample_texture)
 
 H_GRID = np.array([0, .1, .2, .5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 800,
                   1000, 1500, 2000, 3000, 5000, 7500, 10000, 15000, 20000,
@@ -69,27 +71,43 @@ def pilot_script(euler, angle):
     return prefix + body
 
 
-def prepare(run_dir, n_grains, seed):
+def prepare(run_dir, n_grains, seed, texture_sampling_version=None):
     if (run_dir / 'manifest.json').exists():
         manifest = json.loads((run_dir / 'manifest.json').read_text(encoding='utf-8'))
         if manifest['n_grains'] != n_grains or manifest['seed'] != seed:
             raise ValueError('Existing run has different grain count/seed; use a new --run-dir')
+        frozen_sampling = manifest.get('texture_sampling_version', LEGACY_SAMPLING_VERSION)
+        if texture_sampling_version is not None and texture_sampling_version != frozen_sampling:
+            raise ValueError('Existing run has different texture sampling version; use a new run')
+        for material in manifest['materials']:
+            if file_hash(run_dir / material['grade'] / 'orientations.csv') != material['orientations_sha256']:
+                raise ValueError('Frozen orientation samples changed')
+            if 'grain_samples' in material:
+                samples = material['grain_samples']
+                if file_hash(run_dir / samples['path']) != samples['sha256']:
+                    raise ValueError('Frozen grain provenance changed')
+            for reference in material['references'].values():
+                if file_hash(run_dir / reference['path']) != reference['sha256']:
+                    raise ValueError('Frozen reference changed')
         for job in manifest['jobs']:
             if file_hash(run_dir / job['script']) != job['script_sha256']:
                 raise ValueError('Existing script changed; use a new run directory')
         return manifest
+    texture_sampling_version = texture_sampling_version or SAMPLING_VERSION
+    if texture_sampling_version not in (SAMPLING_VERSION, LEGACY_SAMPLING_VERSION):
+        raise ValueError('Unsupported texture sampling version')
     run_dir.mkdir(parents=True, exist_ok=True)
-    from modules.odf_texture import generate_texture_with_odf
     registry_path = ROOT / 'calibration/material_registry.csv'
-    registry = {r['grade']: r for r in csv.DictReader(
-        registry_path.open(encoding='utf-8-sig'))}
+    with registry_path.open(encoding='utf-8-sig') as registry_stream:
+        registry = {r['grade']: r for r in csv.DictReader(registry_stream)}
     manifest = {'created_utc': datetime.now(timezone.utc).isoformat(),
                 'calibration_version': VERSION, 'physics_version': PHYSICS_VERSION,
                 'status': 'experimental_pilot', 'H_axis': 'physical_A_per_m',
                 'n_grains': n_grains, 'seed': seed, 'H_grid': H_GRID.tolist(),
                 'registry_sha256': file_hash(registry_path), 'materials': [], 'jobs': []}
-    manifest['texture_sampling_version'] = 'legacy_multi_peak_importance_v1'
-    manifest['texture_module_sha256'] = file_hash(PROJECT / 'modules/odf_texture.py')
+    manifest['texture_sampling_version'] = texture_sampling_version
+    manifest['texture_module_sha256'] = file_hash(PROJECT / 'modules' /
+        ('texture_sampling.py' if texture_sampling_version == SAMPLING_VERSION else 'odf_texture.py'))
     original_si = SimulationConfig.SI_CONTENT
     try:
         for idx, grade in enumerate(GRADES):
@@ -100,11 +118,17 @@ def prepare(run_dir, n_grains, seed):
                       'Si_content': float(record['report_Si_wt_percent'])}
             material_dir = run_dir / grade
             material_dir.mkdir()
-            np.random.seed(seed + idx)
-            with contextlib.redirect_stdout(io.StringIO()):
-                eulers = generate_texture_with_odf(params['f_Goss'], params['theta_0_deg'],
-                    n_grains, params['halfwidth_deg'], plot_odf=False,
-                    output_dir=str(material_dir / 'texture'))
+            sampling_metadata, grain_samples = None, None
+            if texture_sampling_version == SAMPLING_VERSION:
+                eulers, grain_samples, sampling_metadata = sample_texture(params['f_Goss'],
+                    params['theta_0_deg'], n_grains, params['halfwidth_deg'], seed + idx)
+            else:
+                from modules.odf_texture import generate_texture_with_odf
+                np.random.seed(seed + idx)
+                with contextlib.redirect_stdout(io.StringIO()):
+                    eulers = generate_texture_with_odf(params['f_Goss'], params['theta_0_deg'],
+                        n_grains, params['halfwidth_deg'], plot_odf=False,
+                        output_dir=str(material_dir / 'texture'))
             if len(eulers) != n_grains:
                 raise ValueError('Texture generator returned a different grain count')
             # Freeze Euler samples explicitly; reproducibility uses these exact
@@ -116,6 +140,12 @@ def prepare(run_dir, n_grains, seed):
                         'Si_status': 'report_nominal_unverified_batch_composition',
                         'ODF_status': 'report_estimated_not_independent_EBSD',
                         'orientations_sha256': file_hash(euler_path), 'references': {}}
+            if grain_samples is not None:
+                samples_path = material_dir / 'grain_samples.csv'
+                write_csv(samples_path, grain_samples)
+                material['grain_samples'] = {'path': samples_path.relative_to(run_dir).as_posix(),
+                                            'sha256': file_hash(samples_path)}
+                material['texture_sampling'] = sampling_metadata
             SimulationConfig.SI_CONTENT = params['Si_content']
             for direction, angle in [('RD', 0), ('TD', 90)]:
                 # Copy references into the run: subsequent library edits cannot
@@ -163,6 +193,22 @@ def resolve_mumax(explicit=None):
 
 
 def run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, only_direction=None):
+    # Two writers on one run_status can lose successfully completed jobs.
+    # Serialize ownership per run; a crash leaves a lock for explicit review.
+    lock = run_dir / 'runner.lock'
+    try:
+        handle = os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL)
+    except FileExistsError as exc:
+        raise ValueError('Run directory already locked; inspect its runner.lock and process') from exc
+    try:
+        with os.fdopen(handle, 'w', encoding='utf-8') as stream:
+            stream.write(json.dumps({'pid': os.getpid(), 'created_utc': datetime.now(timezone.utc).isoformat()}))
+        return _run_jobs(run_dir, manifest, max_jobs, mumax, only_grade, only_direction)
+    finally:
+        lock.unlink()
+
+
+def _run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, only_direction=None):
     mumax = resolve_mumax(mumax)
     runtime = {'mumax_binary_sha256': file_hash(mumax),
                'mumax_version_query': subprocess.run([str(mumax), '-v'],
@@ -235,6 +281,7 @@ def metrics(H, predicted, reference):
 
 
 def analyze(run_dir, manifest):
+    sampling = manifest.get('texture_sampling_version', LEGACY_SAMPLING_VERSION)
     status = json.loads((run_dir / 'run_status.json').read_text(encoding='utf-8'))
     completed = {j['script']: j for j in status['jobs'] if j['exit_code'] == 0}
     anchors, aggregate, targets = [], {}, {}
@@ -247,6 +294,9 @@ def analyze(run_dir, manifest):
             for job in jobs:
                 if job['script'] not in completed:
                     raise ValueError('Incomplete pilot: all material/direction jobs required')
+                if (file_hash(run_dir / job['script']) != job['script_sha256']
+                        or completed[job['script']]['script_sha256'] != job['script_sha256']):
+                    raise ValueError('Executed script differs from the frozen manifest')
                 table = run_dir / job['output'] / 'table.txt'
                 if file_hash(table) != completed[job['script']]['table_sha256']:
                     raise ValueError('Raw table changed after solve')
@@ -264,10 +314,12 @@ def analyze(run_dir, manifest):
             aggregate[grade, direction] = mean
             targets[grade, direction] = reference
             anchors.append({'grade': grade, 'direction': direction, 'params': material['params'],
+                'texture_sampling_version': sampling,
                 'H': H_GRID.tolist(), 'delta_B': (reference - mean).tolist(),
                 'raw_aggregate_sha256': file_hash(raw_path), 'n_grains_completed': len(values),
                 'reference': material['references'][direction], 'guard': guard})
     payload = {'calibration_version': VERSION, 'physics_version': PHYSICS_VERSION,
+        'texture_sampling_version': sampling,
         'status': 'experimental_pilot', 'H_axis': 'physical_A_per_m',
         'curve_definition': 'equal_volume_mean_of_major_loop_midpoint_proxy',
         'feature_distance_scales': {'f_Goss': .5, 'theta_0_deg': 10,
@@ -290,8 +342,9 @@ def analyze(run_dir, manifest):
             write_json(fold_path, fold_payload)
             fold = CalibrationBank.load(fold_path)
             lomo = fold.correct(H_GRID, raw, material['params'], direction=direction,
-                                exclude_grades=[grade])
-            fitted = bank.correct(H_GRID, raw, material['params'], direction=direction)
+                                exclude_grades=[grade], texture_sampling_version=sampling)
+            fitted = bank.correct(H_GRID, raw, material['params'], direction=direction,
+                                  texture_sampling_version=sampling)
             # Diagnostic control: remove transfer of the small-ensemble raw
             # residual while retaining exactly the same training-only weights.
             # This is a reference-only baseline, not a MuMax calibration result.
@@ -325,6 +378,7 @@ def analyze(run_dir, manifest):
         grade = material['grade']
         raw_pair = {'material_id': grade, 'params': material['params'],
                     'simulation_physics_version': PHYSICS_VERSION,
+                    'texture_sampling_version': sampling,
                     'curve_definition': payload['curve_definition'],
                     'manifest_sha256': payload['manifest_sha256'],
                     'thickness_mm': material['thickness_mm']}
@@ -332,10 +386,12 @@ def analyze(run_dir, manifest):
             'dataset_role': 'calibration_fit_diagnostics',
             'simulation_physics_version': PHYSICS_VERSION, 'reference_correction_version': VERSION,
             'H_axis': 'physical_A_per_m', 'calibration_sha256': bank.bank_sha256}
+        row['texture_sampling_version'] = sampling
         fitted_pair, held_pair = {}, {}
         for direction, angle in [('RD', 0), ('TD', 90)]:
             raw = aggregate[grade, direction]
-            fitted_pair[direction] = bank.correct(H_GRID, raw, material['params'], direction=direction)
+            fitted_pair[direction] = bank.correct(H_GRID, raw, material['params'], direction=direction,
+                                                 texture_sampling_version=sampling)
             held_pair[direction] = json.loads((run_dir / grade /
                                       f'holdout_prediction_{direction}.json').read_text(encoding='utf-8'))
             raw_pair[direction] = {'H': H_GRID.tolist(), 'B': raw.tolist()}
@@ -350,6 +406,7 @@ def analyze(run_dir, manifest):
         diagnostic_rows.append(row)
     write_csv(run_dir / 'calibration_fit_diagnostics.csv', diagnostic_rows)
     summary = {'status': 'experimental_pilot_not_promoted', 'calibration_version': VERSION,
+        'texture_sampling_version': sampling,
         'physics_version': PHYSICS_VERSION, 'n_materials': 4,
         'n_grains_per_material_direction': manifest['n_grains'],
         'completed_simulations': len(manifest['jobs']), 'H_axis': 'physical_A_per_m',
@@ -381,6 +438,8 @@ def main():
     parser.add_argument('--run-dir', type=Path, default=ROOT / 'calibration/pilot_20261003_n8')
     parser.add_argument('--n-grains', type=int, default=8)
     parser.add_argument('--seed', type=int, default=20261003)
+    parser.add_argument('--texture-sampling-version', choices=[SAMPLING_VERSION, LEGACY_SAMPLING_VERSION],
+                        help='New runs default to Haar/prefix v2; existing frozen runs retain their protocol')
     parser.add_argument('--prepare', action='store_true')
     parser.add_argument('--run', action='store_true')
     parser.add_argument('--analyze', action='store_true')
@@ -391,7 +450,7 @@ def main():
     args = parser.parse_args()
     if args.n_grains < 2:
         parser.error('At least two grains are required for the pilot')
-    manifest = prepare(args.run_dir.resolve(), args.n_grains, args.seed)
+    manifest = prepare(args.run_dir.resolve(), args.n_grains, args.seed, args.texture_sampling_version)
     print(f'Prepared {len(manifest["jobs"])} jobs in {args.run_dir}', flush=True)
     if args.run:
         run_jobs(args.run_dir.resolve(), manifest, args.max_jobs, args.mumax,

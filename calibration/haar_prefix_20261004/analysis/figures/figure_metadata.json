@@ -1,0 +1,44 @@
+{
+  "source_summary_sha256": "7bd25ae30ab9d7e409164c200cbcf8f8da08753965b400eead5b9512f3c732f3",
+  "plot_source_sha256": "522b176c12f8f77ede196ce5931b9012b13f478b5613e5c2b6c5795f5d313b60",
+  "groups": [
+    {
+      "group": "seed20261004_RD",
+      "summary_sha256": "05e39cec46b1555a80e3513f1d27db884c68c4769f4bb4b58c8b635263761d68",
+      "manifest_seed": 20261004,
+      "material_seed": 20261007,
+      "grain_curves_sha256": "1a2d433e0c3851692244adbdd66da1bdf54c14f4724ee24ae4223bfe67b28d60"
+    },
+    {
+      "group": "seed20261005_RD",
+      "summary_sha256": "74cf436ca18eba9af010ab1c4292830984a48750e5cb81a27d507ccc95a6394c",
+      "manifest_seed": 20261005,
+      "material_seed": 20261008,
+      "grain_curves_sha256": "907f1ededd8de51216a64f0a8f571afda194655d8fed8bafada2dad8283ca04e"
+    },
+    {
+      "group": "seed20261004_TD",
+      "summary_sha256": "429d13fe1e3a34640f086c2e041b67fc909915884dc235ae516a704f29198985",
+      "manifest_seed": 20261004,
+      "material_seed": 20261007,
+      "grain_curves_sha256": "b89abd020876503c208edf8ccdcc61f2e2741247917aa032974b437fa28fb00c"
+    },
+    {
+      "group": "seed20261005_TD",
+      "summary_sha256": "cc58c2715b0bc3c60aa8ace2575dda77339f9e4fab49f420faa76bac77064307",
+      "manifest_seed": 20261005,
+      "material_seed": 20261008,
+      "grain_curves_sha256": "3adb0c9e2927022d133f6b718f6e59696d6d06669981a0eb3b15f164bf1692c8"
+    }
+  ],
+  "curve_source_rows": 104,
+  "prefix_source_rows": 20,
+  "display_excluded_points": 4,
+  "display_exclusion_rule": "One H=0 mean node per ensemble only on logarithmic panels; retained in source CSV",
+  "grains_or_seeds_excluded": 0,
+  "center": "equal_volume_arithmetic_mean",
+  "error_bars": "none; no experimental confidence intervals",
+  "width_mm": 183,
+  "height_mm": 125,
+  "status": "simulation_sampling_diagnostic_not_material_validation"
+}

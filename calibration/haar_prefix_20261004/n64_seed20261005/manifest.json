@@ -1,0 +1,4888 @@
+{
+  "created_utc": "2026-10-04T03:28:45.564642+00:00",
+  "calibration_version": "fixed_h_delta_v1",
+  "physics_version": "cubic_sample_frame_v2",
+  "status": "experimental_pilot",
+  "H_axis": "physical_A_per_m",
+  "n_grains": 64,
+  "seed": 20261005,
+  "H_grid": [
+    0.0,
+    0.1,
+    0.2,
+    0.5,
+    1.0,
+    2.0,
+    5.0,
+    10.0,
+    20.0,
+    50.0,
+    100.0,
+    200.0,
+    500.0,
+    800.0,
+    1000.0,
+    1500.0,
+    2000.0,
+    3000.0,
+    5000.0,
+    7500.0,
+    10000.0,
+    15000.0,
+    20000.0,
+    30000.0,
+    40000.0,
+    50000.0
+  ],
+  "registry_sha256": "0a1f7af3d13e9923baad9d564b04117a04d5c95ea793e0112afd7fbe42e3aed9",
+  "materials": [
+    {
+      "grade": "B23R075",
+      "params": {
+        "f_Goss": 0.91,
+        "theta_0_deg": 3.0,
+        "halfwidth_deg": 5.0,
+        "Si_content": 3.1
+      },
+      "seed": 20261005,
+      "thickness_mm": 0.23,
+      "Si_status": "report_nominal_unverified_batch_composition",
+      "ODF_status": "report_estimated_not_independent_EBSD",
+      "orientations_sha256": "05ad8164bba414df817022ca483f93e00fb710d7a835c2c08840177083baec12",
+      "references": {
+        "RD": {
+          "path": "B23R075/reference_RD.csv",
+          "sha256": "b9d0c3b389d1e8ef73b6c7b792d2b4ed69cdf9b6ecf7a9a9d12ad624b8c46de6",
+          "source": "magsim/go_steel_data/output/B23R075_RD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        },
+        "TD": {
+          "path": "B23R075/reference_TD.csv",
+          "sha256": "8aa3ed5195fd867d5cbe3f501646c1a6e0fa131cdb23f14fff29d6edbd746587",
+          "source": "magsim/go_steel_data/output/B23R075_TD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        }
+      },
+      "grain_samples": {
+        "path": "B23R075/grain_samples.csv",
+        "sha256": "d090f8ad55c7cc094ffa055d48b04e3b767a595f444861f85a8d48f39ba7fb12"
+      },
+      "texture_sampling": {
+        "distribution": {
+          "texture_sampling_version": "goss_haar_iid_prefix_v2",
+          "f_Goss_prior": 0.91,
+          "theta_0_deg": 3.0,
+          "goss_center_euler_deg": [
+            0,
+            45,
+            0
+          ],
+          "goss_scatter_sigma_deg_prior": 5.0,
+          "goss_scatter": "uniform_S2_axis_half_normal_angle_clipped_at_3sigma",
+          "background": "Haar_uniform_SO3_normalized_isotropic_4D_Gaussian",
+          "mixture": "iid_Bernoulli_equal_volume_grains",
+          "orientation_convention": "active_crystal_to_sample_intrinsic_ZXZ_degrees"
+        },
+        "distribution_sha256": "f1bd0f09bee3f5c36fac23481ba630c82876d127b42fc482d7d667a0b22e524b",
+        "seed": 20261005,
+        "n_grains": 64,
+        "rng": "PCG64_SeedSequence_seed_channel",
+        "numpy_version": "1.26.4",
+        "scipy_version": "1.15.2",
+        "goss_count": 63,
+        "background_count": 1,
+        "prefix_policy": "same_parameters_and_seed_same_first_k_grains",
+        "ODF_status": "parametric_prior_not_independent_EBSD"
+      }
+    },
+    {
+      "grade": "B27R090",
+      "params": {
+        "f_Goss": 0.87,
+        "theta_0_deg": 4.0,
+        "halfwidth_deg": 6.0,
+        "Si_content": 3.1
+      },
+      "seed": 20261006,
+      "thickness_mm": 0.27,
+      "Si_status": "report_nominal_unverified_batch_composition",
+      "ODF_status": "report_estimated_not_independent_EBSD",
+      "orientations_sha256": "dbababf0d7dbcc151534e5f04d4db0ca83ddcc87272b06dccbcf6d1fae866a21",
+      "references": {
+        "RD": {
+          "path": "B27R090/reference_RD.csv",
+          "sha256": "ebdf372b05bb2027d79241445f95f08f9538b5f8281f97ec571a1de591a6e69a",
+          "source": "magsim/go_steel_data/output/B27R090_RD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        },
+        "TD": {
+          "path": "B27R090/reference_TD.csv",
+          "sha256": "f23c9ce0cfdc7dca83c13c7681fb251d6c62dbfc0ac0f80474545dd66d751ea9",
+          "source": "magsim/go_steel_data/output/B27R090_TD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        }
+      },
+      "grain_samples": {
+        "path": "B27R090/grain_samples.csv",
+        "sha256": "dbdbf3a2987b54764a5c660c052de03d484ad82f8745e6dba095853727f57299"
+      },
+      "texture_sampling": {
+        "distribution": {
+          "texture_sampling_version": "goss_haar_iid_prefix_v2",
+          "f_Goss_prior": 0.87,
+          "theta_0_deg": 4.0,
+          "goss_center_euler_deg": [
+            0,
+            45,
+            0
+          ],
+          "goss_scatter_sigma_deg_prior": 6.0,
+          "goss_scatter": "uniform_S2_axis_half_normal_angle_clipped_at_3sigma",
+          "background": "Haar_uniform_SO3_normalized_isotropic_4D_Gaussian",
+          "mixture": "iid_Bernoulli_equal_volume_grains",
+          "orientation_convention": "active_crystal_to_sample_intrinsic_ZXZ_degrees"
+        },
+        "distribution_sha256": "e141deab8a252deb500d8bf1f8027be8b5d8fff19c8dbf7533fe1b9fdc4daef1",
+        "seed": 20261006,
+        "n_grains": 64,
+        "rng": "PCG64_SeedSequence_seed_channel",
+        "numpy_version": "1.26.4",
+        "scipy_version": "1.15.2",
+        "goss_count": 54,
+        "background_count": 10,
+        "prefix_policy": "same_parameters_and_seed_same_first_k_grains",
+        "ODF_status": "parametric_prior_not_independent_EBSD"
+      }
+    },
+    {
+      "grade": "B27R095",
+      "params": {
+        "f_Goss": 0.84,
+        "theta_0_deg": 5.0,
+        "halfwidth_deg": 7.0,
+        "Si_content": 3.1
+      },
+      "seed": 20261007,
+      "thickness_mm": 0.27,
+      "Si_status": "report_nominal_unverified_batch_composition",
+      "ODF_status": "report_estimated_not_independent_EBSD",
+      "orientations_sha256": "92d6a55e165b7ab0a102a0af1f495fded6c9390fb95b4647970122f63e6359f8",
+      "references": {
+        "RD": {
+          "path": "B27R095/reference_RD.csv",
+          "sha256": "670dada7b858ec1f05c13cb5dc5ae13ef59db612f4ef67d890f413590db73faa",
+          "source": "magsim/go_steel_data/output/B27R095_RD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        },
+        "TD": {
+          "path": "B27R095/reference_TD.csv",
+          "sha256": "0c205e74f6c3ce538c302feccb23b80e6c41e961f79dd7f8ee059af9c51e9741",
+          "source": "magsim/go_steel_data/output/B27R095_TD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        }
+      },
+      "grain_samples": {
+        "path": "B27R095/grain_samples.csv",
+        "sha256": "15fc0d61c34d7f52b99de95fc1a5efbcdf023a04a7d390088e1666efd3dafe39"
+      },
+      "texture_sampling": {
+        "distribution": {
+          "texture_sampling_version": "goss_haar_iid_prefix_v2",
+          "f_Goss_prior": 0.84,
+          "theta_0_deg": 5.0,
+          "goss_center_euler_deg": [
+            0,
+            45,
+            0
+          ],
+          "goss_scatter_sigma_deg_prior": 7.0,
+          "goss_scatter": "uniform_S2_axis_half_normal_angle_clipped_at_3sigma",
+          "background": "Haar_uniform_SO3_normalized_isotropic_4D_Gaussian",
+          "mixture": "iid_Bernoulli_equal_volume_grains",
+          "orientation_convention": "active_crystal_to_sample_intrinsic_ZXZ_degrees"
+        },
+        "distribution_sha256": "0afaaeea893a8d44b7cfb33e934e5dba53398575ec907ae41e4bbc0515a88b5a",
+        "seed": 20261007,
+        "n_grains": 64,
+        "rng": "PCG64_SeedSequence_seed_channel",
+        "numpy_version": "1.26.4",
+        "scipy_version": "1.15.2",
+        "goss_count": 47,
+        "background_count": 17,
+        "prefix_policy": "same_parameters_and_seed_same_first_k_grains",
+        "ODF_status": "parametric_prior_not_independent_EBSD"
+      }
+    },
+    {
+      "grade": "B30P105",
+      "params": {
+        "f_Goss": 0.79,
+        "theta_0_deg": 6.0,
+        "halfwidth_deg": 8.0,
+        "Si_content": 3.0
+      },
+      "seed": 20261008,
+      "thickness_mm": 0.3,
+      "Si_status": "report_nominal_unverified_batch_composition",
+      "ODF_status": "report_estimated_not_independent_EBSD",
+      "orientations_sha256": "e35e8cb16b1adb4518a314ea9deb44266facecf69a9bc53c699856cd560961c3",
+      "references": {
+        "RD": {
+          "path": "B30P105/reference_RD.csv",
+          "sha256": "2794c946d6573a7bb00fd4100f3c5e8fd1eb4a0446304d722dd58a91ded8eccc",
+          "source": "magsim/go_steel_data/output/B30P105_RD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        },
+        "TD": {
+          "path": "B30P105/reference_TD.csv",
+          "sha256": "c8b6ed93137c70feb08ec85b9a0a770c97f48c6bc0a60baa4847dc10928af0e3",
+          "source": "magsim/go_steel_data/output/B30P105_TD.csv",
+          "status": "existing_processed_catalog_reference_not_batch_measurement"
+        }
+      },
+      "grain_samples": {
+        "path": "B30P105/grain_samples.csv",
+        "sha256": "d9029746b086d74a4365f572d841713063b6bc8fe0e6442a0fa78753618a2cce"
+      },
+      "texture_sampling": {
+        "distribution": {
+          "texture_sampling_version": "goss_haar_iid_prefix_v2",
+          "f_Goss_prior": 0.79,
+          "theta_0_deg": 6.0,
+          "goss_center_euler_deg": [
+            0,
+            45,
+            0
+          ],
+          "goss_scatter_sigma_deg_prior": 8.0,
+          "goss_scatter": "uniform_S2_axis_half_normal_angle_clipped_at_3sigma",
+          "background": "Haar_uniform_SO3_normalized_isotropic_4D_Gaussian",
+          "mixture": "iid_Bernoulli_equal_volume_grains",
+          "orientation_convention": "active_crystal_to_sample_intrinsic_ZXZ_degrees"
+        },
+        "distribution_sha256": "e7a48c0cfc7b6c1b9333f306f40daaf066fad0e0874963e5342b289190f58061",
+        "seed": 20261008,
+        "n_grains": 64,
+        "rng": "PCG64_SeedSequence_seed_channel",
+        "numpy_version": "1.26.4",
+        "scipy_version": "1.15.2",
+        "goss_count": 54,
+        "background_count": 10,
+        "prefix_policy": "same_parameters_and_seed_same_first_k_grains",
+        "ODF_status": "parametric_prior_not_independent_EBSD"
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 1,
+      "script": "B23R075/RD/scripts/grain_001.mx3",
+      "script_sha256": "4736f946616388c6f59063263ce2bbbd26666b21ee30a0dfeee199e08cbaff83",
+      "output": "B23R075/RD/raw/grain_001.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 2,
+      "script": "B23R075/RD/scripts/grain_002.mx3",
+      "script_sha256": "7491613c312fefe47bdbf16e1734f4280d4b96d52f99d980776d4cfbd81c3a08",
+      "output": "B23R075/RD/raw/grain_002.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 3,
+      "script": "B23R075/RD/scripts/grain_003.mx3",
+      "script_sha256": "698b0b8221aed299071e1236e0594790c45dd00d83b3572620b340a05ed5b0b2",
+      "output": "B23R075/RD/raw/grain_003.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 4,
+      "script": "B23R075/RD/scripts/grain_004.mx3",
+      "script_sha256": "d73f9ba2032ff23a74103a7dcc123bc3a6ab872b6ffa95193ccca44958737a25",
+      "output": "B23R075/RD/raw/grain_004.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 5,
+      "script": "B23R075/RD/scripts/grain_005.mx3",
+      "script_sha256": "d67d322f94354804225dca921d19b79d5d40beb824c579c27bc6cb6a52c9cbdb",
+      "output": "B23R075/RD/raw/grain_005.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 6,
+      "script": "B23R075/RD/scripts/grain_006.mx3",
+      "script_sha256": "adbcfce1c9fe873bef47b28e60f8bc41ee28f952e39db1eb92dfef331c278190",
+      "output": "B23R075/RD/raw/grain_006.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "script": "B23R075/RD/scripts/grain_007.mx3",
+      "script_sha256": "5aadc389fac41c40365eca4d28f58f4149048a11cc050df1aceac59aa2224a9b",
+      "output": "B23R075/RD/raw/grain_007.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "script": "B23R075/RD/scripts/grain_008.mx3",
+      "script_sha256": "e235c047b6f3fbf195f9c2be331313c5421f1a7eb3396947b3b7aa7b253ba284",
+      "output": "B23R075/RD/raw/grain_008.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 9,
+      "script": "B23R075/RD/scripts/grain_009.mx3",
+      "script_sha256": "805bce79cbdbafe06dfa3c4a0864026401ee7cb849bb25c429f897faa5ba14bf",
+      "output": "B23R075/RD/raw/grain_009.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 10,
+      "script": "B23R075/RD/scripts/grain_010.mx3",
+      "script_sha256": "6fea55b830a5bc529895356092503d3f3db77d7e2996b3df4cc1fd71075ce209",
+      "output": "B23R075/RD/raw/grain_010.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 11,
+      "script": "B23R075/RD/scripts/grain_011.mx3",
+      "script_sha256": "0fbc0e26395a9d37d0367d7b962bfde548f01f228ce6e3bdef7e0ae47fd0debb",
+      "output": "B23R075/RD/raw/grain_011.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 12,
+      "script": "B23R075/RD/scripts/grain_012.mx3",
+      "script_sha256": "db63d2da85d27efd73c4611d6ecddf1241aa01de9a5d7de553a34925ac5f0f39",
+      "output": "B23R075/RD/raw/grain_012.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 13,
+      "script": "B23R075/RD/scripts/grain_013.mx3",
+      "script_sha256": "14ca3849d40f954148bb2ef61c10467ef8f9cdd5cadd7966125f5793d35d170f",
+      "output": "B23R075/RD/raw/grain_013.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 14,
+      "script": "B23R075/RD/scripts/grain_014.mx3",
+      "script_sha256": "22f7ff923952b7d536fc72ddcddb7550c7cbb76b89537b6542f7ff79da0a7ffc",
+      "output": "B23R075/RD/raw/grain_014.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 15,
+      "script": "B23R075/RD/scripts/grain_015.mx3",
+      "script_sha256": "657df15766f472a0973c3ded583be82c5e170c413729bea6ec21eecad38e4c4f",
+      "output": "B23R075/RD/raw/grain_015.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 16,
+      "script": "B23R075/RD/scripts/grain_016.mx3",
+      "script_sha256": "e962362d1dce0f9e703d24778c9948f8d3276e04100c78df4ab9d019c53f7fa2",
+      "output": "B23R075/RD/raw/grain_016.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 17,
+      "script": "B23R075/RD/scripts/grain_017.mx3",
+      "script_sha256": "9a5a0fca5c8bef12ad9363123fcbfe107507facf8e09ea19ba5987a020864d62",
+      "output": "B23R075/RD/raw/grain_017.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 18,
+      "script": "B23R075/RD/scripts/grain_018.mx3",
+      "script_sha256": "ad2135a057b5b21a498d404d641eabe6507f3fb1a0061ad83dd4f72e3fbd0b52",
+      "output": "B23R075/RD/raw/grain_018.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 19,
+      "script": "B23R075/RD/scripts/grain_019.mx3",
+      "script_sha256": "d3d0a91151e50fea6f1b484aa70bdb91c724af5d0676297613e7b71ba791e5c8",
+      "output": "B23R075/RD/raw/grain_019.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 20,
+      "script": "B23R075/RD/scripts/grain_020.mx3",
+      "script_sha256": "66ab3c41bb111809bfc25290887055d66fb1120b99be9c375f7a2465c95a566b",
+      "output": "B23R075/RD/raw/grain_020.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 21,
+      "script": "B23R075/RD/scripts/grain_021.mx3",
+      "script_sha256": "152341ad97c09a72aaba1e9ad2dfa40530fee1ca0003289ba61dd02f18872330",
+      "output": "B23R075/RD/raw/grain_021.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 22,
+      "script": "B23R075/RD/scripts/grain_022.mx3",
+      "script_sha256": "a1b7c993cc2724ba342df4089abf9b9bf80b3d2c4f4c57f68cdc39eee9d8530f",
+      "output": "B23R075/RD/raw/grain_022.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 23,
+      "script": "B23R075/RD/scripts/grain_023.mx3",
+      "script_sha256": "776dbfd7d5288a9855214edf3938ac7ab01e984b2b7bcd69be792d90c06e6347",
+      "output": "B23R075/RD/raw/grain_023.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 24,
+      "script": "B23R075/RD/scripts/grain_024.mx3",
+      "script_sha256": "622a5bfe8947a3b8cefd03c179da8ffdf888497cf931d6977a2155b4f65c4cbc",
+      "output": "B23R075/RD/raw/grain_024.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 25,
+      "script": "B23R075/RD/scripts/grain_025.mx3",
+      "script_sha256": "71209f88daa2bba9b38eedb8740d36b0efec138cb9e3874a3b37de73c6601a2f",
+      "output": "B23R075/RD/raw/grain_025.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 26,
+      "script": "B23R075/RD/scripts/grain_026.mx3",
+      "script_sha256": "24e0705bc3fa60ccc8b67965b97a63ef46aa296abb4b8269cbfdef20384211bf",
+      "output": "B23R075/RD/raw/grain_026.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 27,
+      "script": "B23R075/RD/scripts/grain_027.mx3",
+      "script_sha256": "9ab1ddd4cdc0f6400779217a9066329d16f73100e61f1311c03417dd3c835be2",
+      "output": "B23R075/RD/raw/grain_027.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 28,
+      "script": "B23R075/RD/scripts/grain_028.mx3",
+      "script_sha256": "932f26043c384dcf1e532e7ed4973bdd374b4d621a83f7ed6f19cdf0aba03101",
+      "output": "B23R075/RD/raw/grain_028.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 29,
+      "script": "B23R075/RD/scripts/grain_029.mx3",
+      "script_sha256": "4b8e8eb7bee85eb1cba45461ecbd24df169aa5d7cd5bdb438d80402b21ef8fcf",
+      "output": "B23R075/RD/raw/grain_029.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 30,
+      "script": "B23R075/RD/scripts/grain_030.mx3",
+      "script_sha256": "71f9ffd96671039ab160fd78b084538476cc2119f0f7e3cb3ca3d44480fd48c1",
+      "output": "B23R075/RD/raw/grain_030.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 31,
+      "script": "B23R075/RD/scripts/grain_031.mx3",
+      "script_sha256": "76cf6082113fa2528f66238698e1883d4c16b9bfac19230b93fae79899ee6f99",
+      "output": "B23R075/RD/raw/grain_031.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 32,
+      "script": "B23R075/RD/scripts/grain_032.mx3",
+      "script_sha256": "ec7ed1d9282045abcb5f3a77062c4694a19b8ae482e63ef9d56c6042f668430b",
+      "output": "B23R075/RD/raw/grain_032.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 33,
+      "script": "B23R075/RD/scripts/grain_033.mx3",
+      "script_sha256": "045be58be25b26c5a8fddcf35e099d1b29cfe8789314e8ee800758fb0044bbb6",
+      "output": "B23R075/RD/raw/grain_033.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 34,
+      "script": "B23R075/RD/scripts/grain_034.mx3",
+      "script_sha256": "20e66c5258a25fd1f9b262f98a9cd439c02aebd94f76a24cb83678d6f415ec76",
+      "output": "B23R075/RD/raw/grain_034.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 35,
+      "script": "B23R075/RD/scripts/grain_035.mx3",
+      "script_sha256": "2bd1dd10f5ff2c5735837ad6b5aab83bcca0a6aafca5f15af7352837076c1452",
+      "output": "B23R075/RD/raw/grain_035.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 36,
+      "script": "B23R075/RD/scripts/grain_036.mx3",
+      "script_sha256": "e92570b57803563f87c4f008a4aa7de672b695ef13dacf9662caa3a16836aef3",
+      "output": "B23R075/RD/raw/grain_036.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 37,
+      "script": "B23R075/RD/scripts/grain_037.mx3",
+      "script_sha256": "56c29ee561fe324fe5b260230a7d2f621208f96f7fb73e1a65be0c6c298ac1bb",
+      "output": "B23R075/RD/raw/grain_037.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 38,
+      "script": "B23R075/RD/scripts/grain_038.mx3",
+      "script_sha256": "2872656f9b2c8553811e34afc11efd005da0118069ae48c2a1f26d12df39d5bb",
+      "output": "B23R075/RD/raw/grain_038.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 39,
+      "script": "B23R075/RD/scripts/grain_039.mx3",
+      "script_sha256": "f103f97fa4cde65d1aabe0ca0c8d7cc9586e533826369cf8c07a84b10be60aef",
+      "output": "B23R075/RD/raw/grain_039.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 40,
+      "script": "B23R075/RD/scripts/grain_040.mx3",
+      "script_sha256": "c180613ea730ce7ee5d8da45f56da914ad911e5c9e25b454d2316f65273f2fff",
+      "output": "B23R075/RD/raw/grain_040.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 41,
+      "script": "B23R075/RD/scripts/grain_041.mx3",
+      "script_sha256": "e860b8c2292892da3a88494dbd4535b224a5bbb0c573f41fca464741eb29573c",
+      "output": "B23R075/RD/raw/grain_041.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 42,
+      "script": "B23R075/RD/scripts/grain_042.mx3",
+      "script_sha256": "520e8f124e0e768ff4f0e2d8409f16d71ffd231bbf13c8f5c4d007890eed60a4",
+      "output": "B23R075/RD/raw/grain_042.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 43,
+      "script": "B23R075/RD/scripts/grain_043.mx3",
+      "script_sha256": "d350ec277cf7274c37d1cf66f1488648574aa93801bf49478b1455304eed0bcf",
+      "output": "B23R075/RD/raw/grain_043.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 44,
+      "script": "B23R075/RD/scripts/grain_044.mx3",
+      "script_sha256": "fad44e2e4d5acc9d03ec5e2af778b8833f34ea95bd905e7f2487735d6388a33f",
+      "output": "B23R075/RD/raw/grain_044.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 45,
+      "script": "B23R075/RD/scripts/grain_045.mx3",
+      "script_sha256": "20d14ef17a185e6865d3117bc23af618779fda2f87add1fd1630f062f9d5a6e5",
+      "output": "B23R075/RD/raw/grain_045.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 46,
+      "script": "B23R075/RD/scripts/grain_046.mx3",
+      "script_sha256": "be117f8a63c3724149a0a4b479d8368b1bffb3253f0b4cf20796767749b02587",
+      "output": "B23R075/RD/raw/grain_046.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 47,
+      "script": "B23R075/RD/scripts/grain_047.mx3",
+      "script_sha256": "693b73668e0f7bb4be0402542da4d55c162d6dce885fe8cfc1022ea5ea2bbd5f",
+      "output": "B23R075/RD/raw/grain_047.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 48,
+      "script": "B23R075/RD/scripts/grain_048.mx3",
+      "script_sha256": "41e7be16c33b89b72df02c9f3d334083d70f0a1b809c7a07b94313097aebaae3",
+      "output": "B23R075/RD/raw/grain_048.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 49,
+      "script": "B23R075/RD/scripts/grain_049.mx3",
+      "script_sha256": "847138d2e2c6e9c5de8454edbac2da6fdb8ed0322db515101ad25810ed3ea511",
+      "output": "B23R075/RD/raw/grain_049.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 50,
+      "script": "B23R075/RD/scripts/grain_050.mx3",
+      "script_sha256": "53e9e0675fc2802f0b78596f3faafc3e95ecd0fbc61ada858fc77e00f72a98f3",
+      "output": "B23R075/RD/raw/grain_050.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 51,
+      "script": "B23R075/RD/scripts/grain_051.mx3",
+      "script_sha256": "95ea7797c9f7d02975e96ac0262c122c9122a26404f5584f9abb8d2a527b3240",
+      "output": "B23R075/RD/raw/grain_051.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 52,
+      "script": "B23R075/RD/scripts/grain_052.mx3",
+      "script_sha256": "e40a58688020b1b9a59442523a77b870fed368ed419f4557f948b3f1e3d61281",
+      "output": "B23R075/RD/raw/grain_052.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 53,
+      "script": "B23R075/RD/scripts/grain_053.mx3",
+      "script_sha256": "f495284bb7478785442b1a9d30dc1b4c4c5d6c71c5dcbaba475a931550c387ca",
+      "output": "B23R075/RD/raw/grain_053.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 54,
+      "script": "B23R075/RD/scripts/grain_054.mx3",
+      "script_sha256": "4e1d086fe239f8eb95adafd20fc6c60afb659dcfe25fa1aee2d606517edf3189",
+      "output": "B23R075/RD/raw/grain_054.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 55,
+      "script": "B23R075/RD/scripts/grain_055.mx3",
+      "script_sha256": "52f9867f68cfca8fbb69861cde11a25c6bc6e093a6b03b002c498c6483fe007c",
+      "output": "B23R075/RD/raw/grain_055.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 56,
+      "script": "B23R075/RD/scripts/grain_056.mx3",
+      "script_sha256": "b0d6b7a8a4eb8a16ae61aa29994e7f55585b251a793d3a7c517dcb0b90cf8551",
+      "output": "B23R075/RD/raw/grain_056.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 57,
+      "script": "B23R075/RD/scripts/grain_057.mx3",
+      "script_sha256": "dce2b6013595e690fe792bc3da00ba08b386b16fda1723344a442b0f441ab281",
+      "output": "B23R075/RD/raw/grain_057.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 58,
+      "script": "B23R075/RD/scripts/grain_058.mx3",
+      "script_sha256": "42cee3556256c6ffccbe31b4c8de0fc6a48cfa216a00c55491a2b327c80071f5",
+      "output": "B23R075/RD/raw/grain_058.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 59,
+      "script": "B23R075/RD/scripts/grain_059.mx3",
+      "script_sha256": "67d01f4e1c3297e986eae33075d20813569cab2ad3162a0f67a9bd242aa5bfde",
+      "output": "B23R075/RD/raw/grain_059.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 60,
+      "script": "B23R075/RD/scripts/grain_060.mx3",
+      "script_sha256": "8f461e0fe673efac3adc00b88c21612ad72886562d5e87bca39ae59e9cc5230e",
+      "output": "B23R075/RD/raw/grain_060.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 61,
+      "script": "B23R075/RD/scripts/grain_061.mx3",
+      "script_sha256": "bedb02698a828a5eca5b5d6963e5342ec5f25cafc9c5ca1cf3be5575ca7acb89",
+      "output": "B23R075/RD/raw/grain_061.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 62,
+      "script": "B23R075/RD/scripts/grain_062.mx3",
+      "script_sha256": "dd07d57e09705171ed751a25f898b12d5a2108514d12b3ba00b66ec2a83e5ee4",
+      "output": "B23R075/RD/raw/grain_062.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 63,
+      "script": "B23R075/RD/scripts/grain_063.mx3",
+      "script_sha256": "da3da5fdaaed6ac8d162048b190f6ae61393d711caca553f0e1378e4d5db9606",
+      "output": "B23R075/RD/raw/grain_063.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 64,
+      "script": "B23R075/RD/scripts/grain_064.mx3",
+      "script_sha256": "29d47e703b90d9c3874886caba0779da407ab7aec992aca0e7e671ef671464f0",
+      "output": "B23R075/RD/raw/grain_064.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 1,
+      "script": "B23R075/TD/scripts/grain_001.mx3",
+      "script_sha256": "821d724ba14a52d03874096f4e35814db4a1a437ab0bb19360874afc56508668",
+      "output": "B23R075/TD/raw/grain_001.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "script": "B23R075/TD/scripts/grain_002.mx3",
+      "script_sha256": "1ffcc05296fa6566cfea084762773aa386b696907e4dba395c783af2cac75ec2",
+      "output": "B23R075/TD/raw/grain_002.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 3,
+      "script": "B23R075/TD/scripts/grain_003.mx3",
+      "script_sha256": "90a0712a18e70fef95e1de9ad1537dd60ea7f80f77dea322a4612e6d6939a3b0",
+      "output": "B23R075/TD/raw/grain_003.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 4,
+      "script": "B23R075/TD/scripts/grain_004.mx3",
+      "script_sha256": "5984795fe561b6a5606ff0bcf5c0c4ab5ee8b9c56a8894d69e33964096302683",
+      "output": "B23R075/TD/raw/grain_004.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "script": "B23R075/TD/scripts/grain_005.mx3",
+      "script_sha256": "7c7554dca2cdb3779e7f37f70d883b4ebc21ff599eb78901ddbb19b857ebf9b4",
+      "output": "B23R075/TD/raw/grain_005.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 6,
+      "script": "B23R075/TD/scripts/grain_006.mx3",
+      "script_sha256": "35c3080a6f365307096ad0d015b65dc2dafb164ba058cecd24c45ce55101e937",
+      "output": "B23R075/TD/raw/grain_006.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 7,
+      "script": "B23R075/TD/scripts/grain_007.mx3",
+      "script_sha256": "7eb621620ff2722e3cd31afda448d5097dfa3ff338c72311f7b519b144fac11b",
+      "output": "B23R075/TD/raw/grain_007.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 8,
+      "script": "B23R075/TD/scripts/grain_008.mx3",
+      "script_sha256": "d0b93553036569a7f15ff01fd7c39b3bf94d3c5bf638d63a8982a27da62386f8",
+      "output": "B23R075/TD/raw/grain_008.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 9,
+      "script": "B23R075/TD/scripts/grain_009.mx3",
+      "script_sha256": "274bb3d67f01952fc0e039df2f65f82c2cfafcd4ba7e94b34fa74c0b9b6a84ed",
+      "output": "B23R075/TD/raw/grain_009.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 10,
+      "script": "B23R075/TD/scripts/grain_010.mx3",
+      "script_sha256": "a4a6789a4cc1ba24fd874cf877b455941d5da6c6d331f02b9984afa17599677f",
+      "output": "B23R075/TD/raw/grain_010.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 11,
+      "script": "B23R075/TD/scripts/grain_011.mx3",
+      "script_sha256": "7d6331820f03ce23a5e6290ab6dcd9269a6140949ec337baf5e05def9451d8cd",
+      "output": "B23R075/TD/raw/grain_011.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 12,
+      "script": "B23R075/TD/scripts/grain_012.mx3",
+      "script_sha256": "fd9081a53cf3939f666161b08c820498af1c78fb04c3933759a6cca451ba05e4",
+      "output": "B23R075/TD/raw/grain_012.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 13,
+      "script": "B23R075/TD/scripts/grain_013.mx3",
+      "script_sha256": "9df767a8bbc22c1066f40f528f11e3541ada90ec866972b2ef4cb9c6f84374b3",
+      "output": "B23R075/TD/raw/grain_013.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 14,
+      "script": "B23R075/TD/scripts/grain_014.mx3",
+      "script_sha256": "9ea0e4fdc3f1ad178fd1c24cecc2abefdec707f5c6cdb8c9213cca6ff9aab85e",
+      "output": "B23R075/TD/raw/grain_014.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 15,
+      "script": "B23R075/TD/scripts/grain_015.mx3",
+      "script_sha256": "68e5aeb6b7123c49b029b0e268dbe90efc77d9286bec8f5e6a0e5231828a0b16",
+      "output": "B23R075/TD/raw/grain_015.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 16,
+      "script": "B23R075/TD/scripts/grain_016.mx3",
+      "script_sha256": "b04f26d903e06500943aec7608e091d8764f1d27928e1eeae9f3d7c582dff94b",
+      "output": "B23R075/TD/raw/grain_016.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 17,
+      "script": "B23R075/TD/scripts/grain_017.mx3",
+      "script_sha256": "f06a4c187b67260ef8857ce0b8abfb1caf341346ddefdc340ebd65f379a72109",
+      "output": "B23R075/TD/raw/grain_017.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 18,
+      "script": "B23R075/TD/scripts/grain_018.mx3",
+      "script_sha256": "1dd5fe56fa05a43c015d9ec1bcf3467b509f904ff7efd2e66c538cad6b312914",
+      "output": "B23R075/TD/raw/grain_018.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 19,
+      "script": "B23R075/TD/scripts/grain_019.mx3",
+      "script_sha256": "b1c06e6e0c48f998352097ec16de1e27933da829e09df357b377181f9f0557d2",
+      "output": "B23R075/TD/raw/grain_019.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 20,
+      "script": "B23R075/TD/scripts/grain_020.mx3",
+      "script_sha256": "6473ea0aeab2dfad9e43d3990f7e3098bc3a29c9dcc9ddaaca4f5d3ef809c7f6",
+      "output": "B23R075/TD/raw/grain_020.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 21,
+      "script": "B23R075/TD/scripts/grain_021.mx3",
+      "script_sha256": "70c3ca4d251d8f06fcf2fb7e9a77962a7879eeafa3bf63bc05cb0f0c1ec8201f",
+      "output": "B23R075/TD/raw/grain_021.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 22,
+      "script": "B23R075/TD/scripts/grain_022.mx3",
+      "script_sha256": "230aa7114639063764246034d056861bec8d9bf9109947b012f23e2d2668ad74",
+      "output": "B23R075/TD/raw/grain_022.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 23,
+      "script": "B23R075/TD/scripts/grain_023.mx3",
+      "script_sha256": "bd9855fac8abcf591f9d2adeb37eea0dc083770f399ab65284327ae8eef1f8d2",
+      "output": "B23R075/TD/raw/grain_023.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 24,
+      "script": "B23R075/TD/scripts/grain_024.mx3",
+      "script_sha256": "c0423311fe90d9caeb58aad2a95982f09e7871caecda65e3ed78955071400de7",
+      "output": "B23R075/TD/raw/grain_024.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 25,
+      "script": "B23R075/TD/scripts/grain_025.mx3",
+      "script_sha256": "679f57f2d6fc3a1262a1888c69ad0ff40f71424eb46ad3d4630ba10ae59da989",
+      "output": "B23R075/TD/raw/grain_025.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 26,
+      "script": "B23R075/TD/scripts/grain_026.mx3",
+      "script_sha256": "c714ebb3efe135fd895a70e52c8e4cceff3b931d693ffd28c505cc3d86182dd8",
+      "output": "B23R075/TD/raw/grain_026.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 27,
+      "script": "B23R075/TD/scripts/grain_027.mx3",
+      "script_sha256": "6f580d5e042f4d1c3da1d000b4ce2e09f6c79308726ab671919e79cff48d54f0",
+      "output": "B23R075/TD/raw/grain_027.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 28,
+      "script": "B23R075/TD/scripts/grain_028.mx3",
+      "script_sha256": "00285ad1cc76787e08c900c854bb4cfc2a097a5636eca1461390d942d5e65027",
+      "output": "B23R075/TD/raw/grain_028.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 29,
+      "script": "B23R075/TD/scripts/grain_029.mx3",
+      "script_sha256": "82368b443e8ab42879b207d2e8883d456fe3c8af3db3f74ec7ae6e42a103a22f",
+      "output": "B23R075/TD/raw/grain_029.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 30,
+      "script": "B23R075/TD/scripts/grain_030.mx3",
+      "script_sha256": "b9c0fdb358a6f1ce8ec5843fe174f76aee98f918f16ee065b3a2919fb65c813a",
+      "output": "B23R075/TD/raw/grain_030.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 31,
+      "script": "B23R075/TD/scripts/grain_031.mx3",
+      "script_sha256": "16b3e15b6c5757b046b023b92f9e9727bc607fe2c3a8ec13a4c8b468027e9a9c",
+      "output": "B23R075/TD/raw/grain_031.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 32,
+      "script": "B23R075/TD/scripts/grain_032.mx3",
+      "script_sha256": "fbb9a0416cd46d5c364ef0f91708ddc848c032df33f1bc6624e26b651c3a1885",
+      "output": "B23R075/TD/raw/grain_032.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 33,
+      "script": "B23R075/TD/scripts/grain_033.mx3",
+      "script_sha256": "c2e809824ba13bb28edc184c53c10fc42167abe7e6a20d69badcc089acd315b4",
+      "output": "B23R075/TD/raw/grain_033.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 34,
+      "script": "B23R075/TD/scripts/grain_034.mx3",
+      "script_sha256": "6c40ea4d411c8b16fc4533c42a214ef31f7588d1f06a08630fbdc31227b39812",
+      "output": "B23R075/TD/raw/grain_034.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 35,
+      "script": "B23R075/TD/scripts/grain_035.mx3",
+      "script_sha256": "462863fd928f13884e793106f569c7174eecfaf51538b7e76c9f3fa31683855e",
+      "output": "B23R075/TD/raw/grain_035.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 36,
+      "script": "B23R075/TD/scripts/grain_036.mx3",
+      "script_sha256": "dbe5aea5b57196098446a3cc1c35cb0fb3a6418a784da5dc1c6463e20726e706",
+      "output": "B23R075/TD/raw/grain_036.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 37,
+      "script": "B23R075/TD/scripts/grain_037.mx3",
+      "script_sha256": "d401cadd72f5641f2b70e2785201019cf422c7d2ae545684d639126af996a458",
+      "output": "B23R075/TD/raw/grain_037.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 38,
+      "script": "B23R075/TD/scripts/grain_038.mx3",
+      "script_sha256": "be891759727bd713a7930ddc794cbedfb0d80c87138dcc0f16a86d98e3a10e0a",
+      "output": "B23R075/TD/raw/grain_038.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 39,
+      "script": "B23R075/TD/scripts/grain_039.mx3",
+      "script_sha256": "e43a0d0d2529e2b9fffa772acf37e37edce8183773b6d132998462eff0472d2c",
+      "output": "B23R075/TD/raw/grain_039.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 40,
+      "script": "B23R075/TD/scripts/grain_040.mx3",
+      "script_sha256": "a9ce0e820725e6d922cf4a4715d07cbe198cb65080c9b1d37eb564b72435612c",
+      "output": "B23R075/TD/raw/grain_040.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 41,
+      "script": "B23R075/TD/scripts/grain_041.mx3",
+      "script_sha256": "84a18943f6221a33d3a16b8d2f331274ea45869442b08124fbf03f9d8e766f3f",
+      "output": "B23R075/TD/raw/grain_041.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 42,
+      "script": "B23R075/TD/scripts/grain_042.mx3",
+      "script_sha256": "671273fefe79ee590e65a1467c4857bfc4249a1687c0c2d02aeafb0bbaac9e06",
+      "output": "B23R075/TD/raw/grain_042.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 43,
+      "script": "B23R075/TD/scripts/grain_043.mx3",
+      "script_sha256": "117cf53aba1a33c349b69333dce3f84d9addfcd04cc5abf2eb35d74fa9fdd1e8",
+      "output": "B23R075/TD/raw/grain_043.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 44,
+      "script": "B23R075/TD/scripts/grain_044.mx3",
+      "script_sha256": "8553ce39cc59b5acf854d802609f0a6e5925030bd4f2b4f4bf60ba94832a4115",
+      "output": "B23R075/TD/raw/grain_044.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 45,
+      "script": "B23R075/TD/scripts/grain_045.mx3",
+      "script_sha256": "f970a51e118d3ada3f89a4c5239433fff668c8b88ab5dffa74a6da1e2be25ab4",
+      "output": "B23R075/TD/raw/grain_045.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 46,
+      "script": "B23R075/TD/scripts/grain_046.mx3",
+      "script_sha256": "3a9e4f549452d56a6b22a757804f0fa87f6004cb7559f74556b93bbf5dc763ca",
+      "output": "B23R075/TD/raw/grain_046.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 47,
+      "script": "B23R075/TD/scripts/grain_047.mx3",
+      "script_sha256": "67dcfc062029e3c38a76779cb2192194ed14200dc8fc70a9488e07578bd56cf8",
+      "output": "B23R075/TD/raw/grain_047.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 48,
+      "script": "B23R075/TD/scripts/grain_048.mx3",
+      "script_sha256": "ce488035ba29fc297de9d56d0992ead81a035530f0095934ec7d1be5a17b2604",
+      "output": "B23R075/TD/raw/grain_048.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 49,
+      "script": "B23R075/TD/scripts/grain_049.mx3",
+      "script_sha256": "5523e5b99703869f7d1beb0b026ddab5653c9559fef523a6f4b7c0e7f87de537",
+      "output": "B23R075/TD/raw/grain_049.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 50,
+      "script": "B23R075/TD/scripts/grain_050.mx3",
+      "script_sha256": "abbd917060c594b7e35526fdf3761ead9f9f9b4594103bc006a7228fe0145a67",
+      "output": "B23R075/TD/raw/grain_050.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 51,
+      "script": "B23R075/TD/scripts/grain_051.mx3",
+      "script_sha256": "047a343abb4baba7bd1761459068c7e87eecebc9fc987327745647c0ef7255e8",
+      "output": "B23R075/TD/raw/grain_051.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 52,
+      "script": "B23R075/TD/scripts/grain_052.mx3",
+      "script_sha256": "53019d50d8914a30fbec7a0c4be5bc8928ba5eb5d81a942674e44704c91119a9",
+      "output": "B23R075/TD/raw/grain_052.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 53,
+      "script": "B23R075/TD/scripts/grain_053.mx3",
+      "script_sha256": "27f7d4acc803ff216642629d658e9d989171e9c192d88c38c8759edb22d8bf91",
+      "output": "B23R075/TD/raw/grain_053.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 54,
+      "script": "B23R075/TD/scripts/grain_054.mx3",
+      "script_sha256": "134fb9f29aa18b10a67c7fb020ec84655213188840e3faa2836371a3469195cd",
+      "output": "B23R075/TD/raw/grain_054.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 55,
+      "script": "B23R075/TD/scripts/grain_055.mx3",
+      "script_sha256": "17085bb81b527718d5d69b33d88b684d3f3bc52bb514421cfdcc451fd53c104b",
+      "output": "B23R075/TD/raw/grain_055.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 56,
+      "script": "B23R075/TD/scripts/grain_056.mx3",
+      "script_sha256": "392b995b3976331d3023c94153ff523909178487ab7d38c4d30ab2bc0186e64c",
+      "output": "B23R075/TD/raw/grain_056.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 57,
+      "script": "B23R075/TD/scripts/grain_057.mx3",
+      "script_sha256": "edbb5a2e113db8824e95e7c7100b0d6e79241e6bec8012cf4e47fdaad33205af",
+      "output": "B23R075/TD/raw/grain_057.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 58,
+      "script": "B23R075/TD/scripts/grain_058.mx3",
+      "script_sha256": "6f8a8ac9328f460f5d53c93adf289b2a37281a6ea92f19157e6f5cfb54cdca5e",
+      "output": "B23R075/TD/raw/grain_058.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 59,
+      "script": "B23R075/TD/scripts/grain_059.mx3",
+      "script_sha256": "b3c6173c65e44240068ce1af8b55a2b75164dba9e0eef5e89c3f3ac1a57fccb8",
+      "output": "B23R075/TD/raw/grain_059.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 60,
+      "script": "B23R075/TD/scripts/grain_060.mx3",
+      "script_sha256": "3112d173c468accbfb17359176b71974b37291453c93ee837d7a93e889acfcfa",
+      "output": "B23R075/TD/raw/grain_060.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 61,
+      "script": "B23R075/TD/scripts/grain_061.mx3",
+      "script_sha256": "377ddca2d0c0225dc607eb04d92e13909bbfb00d2fb84a70e997219a135fa42e",
+      "output": "B23R075/TD/raw/grain_061.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 62,
+      "script": "B23R075/TD/scripts/grain_062.mx3",
+      "script_sha256": "d1a5b210b79f5845e0fa145a815b4922f4efb4996d648fe779b8a3f276155253",
+      "output": "B23R075/TD/raw/grain_062.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 63,
+      "script": "B23R075/TD/scripts/grain_063.mx3",
+      "script_sha256": "ce00dad0ce1516879f279fe001f6a88bd5eba4d798f833c7597fdfc6247e9849",
+      "output": "B23R075/TD/raw/grain_063.out"
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 64,
+      "script": "B23R075/TD/scripts/grain_064.mx3",
+      "script_sha256": "7088ed1aa1e345758f7ff3528740a4fb28e485fe2839fdc7c1ca3820d8eae032",
+      "output": "B23R075/TD/raw/grain_064.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 1,
+      "script": "B27R090/RD/scripts/grain_001.mx3",
+      "script_sha256": "2a6a13b5ed5cbfb7cfd37081af40d51d9d9fe296dfe53ae1073908eccc487292",
+      "output": "B27R090/RD/raw/grain_001.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 2,
+      "script": "B27R090/RD/scripts/grain_002.mx3",
+      "script_sha256": "d2fc6a6d617269acf786b9ed2a1fe75a4c76a60fed0f43cea6022ffb4098f0c2",
+      "output": "B27R090/RD/raw/grain_002.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 3,
+      "script": "B27R090/RD/scripts/grain_003.mx3",
+      "script_sha256": "5764fa50fecff0564445088dfb9b835fb6f0521f14374881455489770a323af5",
+      "output": "B27R090/RD/raw/grain_003.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 4,
+      "script": "B27R090/RD/scripts/grain_004.mx3",
+      "script_sha256": "c774dd61efac4eee528c6892c00ae952a01cdb8f45525a72bb1623438385bd4d",
+      "output": "B27R090/RD/raw/grain_004.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 5,
+      "script": "B27R090/RD/scripts/grain_005.mx3",
+      "script_sha256": "3dfd589652746b171de3c3284a1e5d301d626c15855b6c6ac62a56095e7a4ccd",
+      "output": "B27R090/RD/raw/grain_005.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 6,
+      "script": "B27R090/RD/scripts/grain_006.mx3",
+      "script_sha256": "9aec9572b3a1b11292b2b718eae4c483ffa584ffe68c079c6d174c56f2f941bc",
+      "output": "B27R090/RD/raw/grain_006.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "script": "B27R090/RD/scripts/grain_007.mx3",
+      "script_sha256": "ae0cc2631ed905a144638ab7b172cd2c9a0ff79e3d8daf3e558377d6a35a4fce",
+      "output": "B27R090/RD/raw/grain_007.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "script": "B27R090/RD/scripts/grain_008.mx3",
+      "script_sha256": "c81aeb5f1126862f187880f1cda03d787874efbe9dbbf456ecde527957255f38",
+      "output": "B27R090/RD/raw/grain_008.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 9,
+      "script": "B27R090/RD/scripts/grain_009.mx3",
+      "script_sha256": "eabdb4284d55a11fb4f4c088ae1d33d74501ba5fe18fdc4b5f9604d211eca8ad",
+      "output": "B27R090/RD/raw/grain_009.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 10,
+      "script": "B27R090/RD/scripts/grain_010.mx3",
+      "script_sha256": "0feb4e21df4b64f29b2f52132de5f63e8b7c5f16d0731b8ee7364324f4be4222",
+      "output": "B27R090/RD/raw/grain_010.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 11,
+      "script": "B27R090/RD/scripts/grain_011.mx3",
+      "script_sha256": "5f07079392320edd49ac9591bd46b6b0f1f3869c46bc04b01e80239c73a68a0b",
+      "output": "B27R090/RD/raw/grain_011.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 12,
+      "script": "B27R090/RD/scripts/grain_012.mx3",
+      "script_sha256": "c8dd2674b9bb63580359f0cf18427559515c82e54e699c800a68bb2ea5d7a685",
+      "output": "B27R090/RD/raw/grain_012.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 13,
+      "script": "B27R090/RD/scripts/grain_013.mx3",
+      "script_sha256": "3c6e250caf9e609eb2e31493d2fedf0d60010153dd226af76d3cfec181726a98",
+      "output": "B27R090/RD/raw/grain_013.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 14,
+      "script": "B27R090/RD/scripts/grain_014.mx3",
+      "script_sha256": "0e5152518688d2c3e47813a2048d2766be80952fee7da6496ade3451f48f0928",
+      "output": "B27R090/RD/raw/grain_014.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 15,
+      "script": "B27R090/RD/scripts/grain_015.mx3",
+      "script_sha256": "931b3162380f195ce4f3e592d623fa0d1e55b01a90b02b7f28fdc4403a4eaedb",
+      "output": "B27R090/RD/raw/grain_015.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 16,
+      "script": "B27R090/RD/scripts/grain_016.mx3",
+      "script_sha256": "2dde0e56047ecdddb33bf9714c758106f3cc293010c6aa51a4b149a844e3b823",
+      "output": "B27R090/RD/raw/grain_016.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 17,
+      "script": "B27R090/RD/scripts/grain_017.mx3",
+      "script_sha256": "29a3d64c62591211c1b34fee0f6fa2f98c05e04624e2be6912ef61809b7dc72b",
+      "output": "B27R090/RD/raw/grain_017.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 18,
+      "script": "B27R090/RD/scripts/grain_018.mx3",
+      "script_sha256": "a1e492a3d6aaa616d2aaf5705aef8dd258070d98cf1b07827cb7c1d44e4d998a",
+      "output": "B27R090/RD/raw/grain_018.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 19,
+      "script": "B27R090/RD/scripts/grain_019.mx3",
+      "script_sha256": "42248a05adfa20c0fc813a522a2da59dead125d319d3c65ee5894a52c7202868",
+      "output": "B27R090/RD/raw/grain_019.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 20,
+      "script": "B27R090/RD/scripts/grain_020.mx3",
+      "script_sha256": "570465a71e7f892843b40a8c07e0d4e252955c0c52c427d36c42decd480fb5d8",
+      "output": "B27R090/RD/raw/grain_020.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 21,
+      "script": "B27R090/RD/scripts/grain_021.mx3",
+      "script_sha256": "1c7418e1688af9131546af3b9295ce8e5baa36c9871886e2abe9ddd33659dbb3",
+      "output": "B27R090/RD/raw/grain_021.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 22,
+      "script": "B27R090/RD/scripts/grain_022.mx3",
+      "script_sha256": "5cd141c03826fcf89cd47b552c0b739a0337451d385f576ba03cc700260ee2b7",
+      "output": "B27R090/RD/raw/grain_022.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 23,
+      "script": "B27R090/RD/scripts/grain_023.mx3",
+      "script_sha256": "0dca9ad1e8143a3dcf5c82859c6c6cc26fcfe6f5a0c3401e26041df1512efa68",
+      "output": "B27R090/RD/raw/grain_023.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 24,
+      "script": "B27R090/RD/scripts/grain_024.mx3",
+      "script_sha256": "741168b42a33ca7caae9f1ca4f30960a63f2105dc8d68859953a918932d60f7c",
+      "output": "B27R090/RD/raw/grain_024.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 25,
+      "script": "B27R090/RD/scripts/grain_025.mx3",
+      "script_sha256": "ec912e235a0d5e38d8125be130c2d855888f4701081cdc9e9c708734f338500f",
+      "output": "B27R090/RD/raw/grain_025.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 26,
+      "script": "B27R090/RD/scripts/grain_026.mx3",
+      "script_sha256": "a4d8a50b64fd250fe9c85a9da3de79f7a8048b5a10037ce33674b652b30efcc1",
+      "output": "B27R090/RD/raw/grain_026.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 27,
+      "script": "B27R090/RD/scripts/grain_027.mx3",
+      "script_sha256": "10d278a8877e0f60bff7e2b409176605b33893640f0db648e5689cd8c1e534aa",
+      "output": "B27R090/RD/raw/grain_027.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 28,
+      "script": "B27R090/RD/scripts/grain_028.mx3",
+      "script_sha256": "51babdf9727afb743142947aac1be3354cd9c432e72d6904d4a6d2c98563b220",
+      "output": "B27R090/RD/raw/grain_028.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 29,
+      "script": "B27R090/RD/scripts/grain_029.mx3",
+      "script_sha256": "cca00aaf116088384ff8d18608cc60ce60840ad026717120b5ab611f0fb49f9b",
+      "output": "B27R090/RD/raw/grain_029.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 30,
+      "script": "B27R090/RD/scripts/grain_030.mx3",
+      "script_sha256": "f9df279a6bcda2fe4904f477c4127c9ec7a422cf1f774d348841a8879ea40b71",
+      "output": "B27R090/RD/raw/grain_030.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 31,
+      "script": "B27R090/RD/scripts/grain_031.mx3",
+      "script_sha256": "2afc5ef91d2d4d674eba5e094aedda38f27093764c169def9864d27d3c34d308",
+      "output": "B27R090/RD/raw/grain_031.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 32,
+      "script": "B27R090/RD/scripts/grain_032.mx3",
+      "script_sha256": "f65484c4758f2e3b6017bb45223f2fc4dc233cac176c5e7681b99982ba0c75d5",
+      "output": "B27R090/RD/raw/grain_032.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 33,
+      "script": "B27R090/RD/scripts/grain_033.mx3",
+      "script_sha256": "72c8f429b0153c3d918004963fdaa657d9f151a83bcf0dd2389b46638cefebff",
+      "output": "B27R090/RD/raw/grain_033.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 34,
+      "script": "B27R090/RD/scripts/grain_034.mx3",
+      "script_sha256": "74b55f27c669d969bdaa7c3aabf73643c1505f2e953d29967d8f759c66ee84be",
+      "output": "B27R090/RD/raw/grain_034.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 35,
+      "script": "B27R090/RD/scripts/grain_035.mx3",
+      "script_sha256": "48d2d31f39a0da52140969717ddaac5c038ac52b50e89a79fb4ab6985c3ec5ce",
+      "output": "B27R090/RD/raw/grain_035.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 36,
+      "script": "B27R090/RD/scripts/grain_036.mx3",
+      "script_sha256": "9bf97281efc53bf6ebf8ea31ac1beb81866c6e29961824599066651db77bc182",
+      "output": "B27R090/RD/raw/grain_036.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 37,
+      "script": "B27R090/RD/scripts/grain_037.mx3",
+      "script_sha256": "2312227b7d373413569d2fade9baefc48da2e621781f1a34e458a7e0224dd5b9",
+      "output": "B27R090/RD/raw/grain_037.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 38,
+      "script": "B27R090/RD/scripts/grain_038.mx3",
+      "script_sha256": "ab9a4c1518cc4e74557b164ab7605ff14b7d4e587d18a95b1706cdbfe42699c5",
+      "output": "B27R090/RD/raw/grain_038.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 39,
+      "script": "B27R090/RD/scripts/grain_039.mx3",
+      "script_sha256": "0325ab5b62ce7a48f9a2ee6537984e86be456c47abf2f1295fc6553b49fc9df7",
+      "output": "B27R090/RD/raw/grain_039.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 40,
+      "script": "B27R090/RD/scripts/grain_040.mx3",
+      "script_sha256": "ba620c471e3344f400db03499bd545510c155583e4621bc3b0c6bab7bc310f11",
+      "output": "B27R090/RD/raw/grain_040.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 41,
+      "script": "B27R090/RD/scripts/grain_041.mx3",
+      "script_sha256": "8556dc73769723583e9ae42175d18894453f15d0c639985267817e42e947c68b",
+      "output": "B27R090/RD/raw/grain_041.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 42,
+      "script": "B27R090/RD/scripts/grain_042.mx3",
+      "script_sha256": "f772a7e610abdd7cecec516e74d2ca84db645ca9a729433a6ed0142a8a332064",
+      "output": "B27R090/RD/raw/grain_042.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 43,
+      "script": "B27R090/RD/scripts/grain_043.mx3",
+      "script_sha256": "78ddc9f78d478a6450100b9867f5142d6a7658857aef6b12e4c649c9a429ed39",
+      "output": "B27R090/RD/raw/grain_043.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 44,
+      "script": "B27R090/RD/scripts/grain_044.mx3",
+      "script_sha256": "856bfd0599d2aea191f9045ba18276c4722d0a97083182b9f65aa283992c751f",
+      "output": "B27R090/RD/raw/grain_044.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 45,
+      "script": "B27R090/RD/scripts/grain_045.mx3",
+      "script_sha256": "6d371f32f8c32912b123af26e4eb244435b29a9c4522523b1bf83caa8a79a8e2",
+      "output": "B27R090/RD/raw/grain_045.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 46,
+      "script": "B27R090/RD/scripts/grain_046.mx3",
+      "script_sha256": "78fdb0b2d0aa166f51ed099d32d8b19354dc91da5be7541048e8122ca263a8c9",
+      "output": "B27R090/RD/raw/grain_046.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 47,
+      "script": "B27R090/RD/scripts/grain_047.mx3",
+      "script_sha256": "9e02c6517501ceb476c84cb561bd555ad26bf6b3b2ea731eebe1cd0301f57d21",
+      "output": "B27R090/RD/raw/grain_047.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 48,
+      "script": "B27R090/RD/scripts/grain_048.mx3",
+      "script_sha256": "2602dbf358a23f5782222a1b81f4355689c0493b0deff78bea0dedaf2d9fba59",
+      "output": "B27R090/RD/raw/grain_048.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 49,
+      "script": "B27R090/RD/scripts/grain_049.mx3",
+      "script_sha256": "90a3e1bd66f0148a1ccbf3fc30a44ab307af9b66091c865f1069ffc2fd2f8d97",
+      "output": "B27R090/RD/raw/grain_049.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 50,
+      "script": "B27R090/RD/scripts/grain_050.mx3",
+      "script_sha256": "cd0dc1544994317598c37c5ae538c2a91dc60c4313613b93ca631f8f8a0df8df",
+      "output": "B27R090/RD/raw/grain_050.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 51,
+      "script": "B27R090/RD/scripts/grain_051.mx3",
+      "script_sha256": "78c6a0b7cb2b4a62cdc4d7becd48779101d9e8bf0d4a81e5ba9fd15390142768",
+      "output": "B27R090/RD/raw/grain_051.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 52,
+      "script": "B27R090/RD/scripts/grain_052.mx3",
+      "script_sha256": "57cb7786974eba4bfde84d05164f019774e08680d9b8ba6afa912beaee50c6ae",
+      "output": "B27R090/RD/raw/grain_052.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 53,
+      "script": "B27R090/RD/scripts/grain_053.mx3",
+      "script_sha256": "d306b4d54889386ef4fbe2627e3dee69c881369788d666c68c12fcfdb865d624",
+      "output": "B27R090/RD/raw/grain_053.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 54,
+      "script": "B27R090/RD/scripts/grain_054.mx3",
+      "script_sha256": "0d1fdeb3c9701413b460eb64a3d4f051cbc4401e9bed5d0386ef7eb17899f1e5",
+      "output": "B27R090/RD/raw/grain_054.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 55,
+      "script": "B27R090/RD/scripts/grain_055.mx3",
+      "script_sha256": "6c0c7488ecb3327342ce1933f351af642a026062683538c5bf3287fc97545c46",
+      "output": "B27R090/RD/raw/grain_055.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 56,
+      "script": "B27R090/RD/scripts/grain_056.mx3",
+      "script_sha256": "b613d7d2dbe482d21351e269c157b2087775d7dca70d3e013b681ad22bc609a8",
+      "output": "B27R090/RD/raw/grain_056.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 57,
+      "script": "B27R090/RD/scripts/grain_057.mx3",
+      "script_sha256": "fe703afd29984965e73cb6baaf00c3cf407ffc0cfe932d6a6b6c69dffa0d906a",
+      "output": "B27R090/RD/raw/grain_057.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 58,
+      "script": "B27R090/RD/scripts/grain_058.mx3",
+      "script_sha256": "6c9be70a0a404b86ec2814d47773edef527ac739651d70897ec91cda85fb52c1",
+      "output": "B27R090/RD/raw/grain_058.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 59,
+      "script": "B27R090/RD/scripts/grain_059.mx3",
+      "script_sha256": "e0289b372dcc71aedf81018b4aa8521dcf6c85328e37c2702f129e977e89164b",
+      "output": "B27R090/RD/raw/grain_059.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 60,
+      "script": "B27R090/RD/scripts/grain_060.mx3",
+      "script_sha256": "c1df7fb72ed1a41748a963b3bb682446371480cfedc4e23d36545dd67999048b",
+      "output": "B27R090/RD/raw/grain_060.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 61,
+      "script": "B27R090/RD/scripts/grain_061.mx3",
+      "script_sha256": "c93c8c48e21dff1127c3713675edac066e10d335f90010ecb2e016e13b10cd4c",
+      "output": "B27R090/RD/raw/grain_061.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 62,
+      "script": "B27R090/RD/scripts/grain_062.mx3",
+      "script_sha256": "c0b0819d688afb3cc67cb7160623387cc4fdb4ff6b02e0a8c530c464b617e256",
+      "output": "B27R090/RD/raw/grain_062.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 63,
+      "script": "B27R090/RD/scripts/grain_063.mx3",
+      "script_sha256": "05e398958f08a74f728162942e67a240e5839415f1598674d88218900de8df1a",
+      "output": "B27R090/RD/raw/grain_063.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 64,
+      "script": "B27R090/RD/scripts/grain_064.mx3",
+      "script_sha256": "4fca6eb25a9762ef1006758b88263264da5df44110695db7d5347b6238141a72",
+      "output": "B27R090/RD/raw/grain_064.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 1,
+      "script": "B27R090/TD/scripts/grain_001.mx3",
+      "script_sha256": "3d3b548b60231868638b42427a9598135dda21855a3e663c8fbc0828855ce83f",
+      "output": "B27R090/TD/raw/grain_001.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "script": "B27R090/TD/scripts/grain_002.mx3",
+      "script_sha256": "5ab3e37ca32c08e30c4c3b2b64adf8dc94a784f8a2ddc022421e6a3f02f33caa",
+      "output": "B27R090/TD/raw/grain_002.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 3,
+      "script": "B27R090/TD/scripts/grain_003.mx3",
+      "script_sha256": "29c6f42822e5d94fe8f81d437d62d222be00beb182ec18e1c3c7470c4391916b",
+      "output": "B27R090/TD/raw/grain_003.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 4,
+      "script": "B27R090/TD/scripts/grain_004.mx3",
+      "script_sha256": "711b27f7c1d0234727a7f3631224b5912996294ab06dae6ade10388112a748b5",
+      "output": "B27R090/TD/raw/grain_004.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "script": "B27R090/TD/scripts/grain_005.mx3",
+      "script_sha256": "11d1a19a982115753df99730ed05979fd11c186d1562d3eff19d097dbf0f6cd4",
+      "output": "B27R090/TD/raw/grain_005.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 6,
+      "script": "B27R090/TD/scripts/grain_006.mx3",
+      "script_sha256": "4f3a3095d4e76a677685dbb92385bd8747c786234dfdce6cb1e2b01c3175d282",
+      "output": "B27R090/TD/raw/grain_006.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 7,
+      "script": "B27R090/TD/scripts/grain_007.mx3",
+      "script_sha256": "0191c992cc0bd0188d3c39041aac00518b2beccd26b2c012491ff9947cc470d3",
+      "output": "B27R090/TD/raw/grain_007.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 8,
+      "script": "B27R090/TD/scripts/grain_008.mx3",
+      "script_sha256": "685b2c10d0ce5d8b51040c8da81dea3abf0b68f0c2e2a18ce8c8ad54df76e528",
+      "output": "B27R090/TD/raw/grain_008.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 9,
+      "script": "B27R090/TD/scripts/grain_009.mx3",
+      "script_sha256": "3ccff8a48d789a01d0d4f6eb67a35c23d631d657a052ee3832c03a3a15a802fb",
+      "output": "B27R090/TD/raw/grain_009.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 10,
+      "script": "B27R090/TD/scripts/grain_010.mx3",
+      "script_sha256": "a2c7b04deca1c1e952d08e3f7bfd69b01c926d66f4ea09c22df5ed42e6dfa039",
+      "output": "B27R090/TD/raw/grain_010.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 11,
+      "script": "B27R090/TD/scripts/grain_011.mx3",
+      "script_sha256": "46ff875dc7516d013a3ed35561d45e44feb36f86c91c411c75d5357ed283682a",
+      "output": "B27R090/TD/raw/grain_011.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 12,
+      "script": "B27R090/TD/scripts/grain_012.mx3",
+      "script_sha256": "48edd920dec563b53c1c4111da1cfc14cf707e84a6d295b0ee6e12a041213c16",
+      "output": "B27R090/TD/raw/grain_012.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 13,
+      "script": "B27R090/TD/scripts/grain_013.mx3",
+      "script_sha256": "b0e574c6934fef6911b4082ed1f0a67e7ee735f459806f7c4c552d51534287f5",
+      "output": "B27R090/TD/raw/grain_013.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 14,
+      "script": "B27R090/TD/scripts/grain_014.mx3",
+      "script_sha256": "6a26fa7140497147714549e75a71759860c9523ff437248826fe7b27b541f699",
+      "output": "B27R090/TD/raw/grain_014.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 15,
+      "script": "B27R090/TD/scripts/grain_015.mx3",
+      "script_sha256": "273262b88e00cbde278cc48449db0b41ed35a2b94de820013c52be72921b212b",
+      "output": "B27R090/TD/raw/grain_015.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 16,
+      "script": "B27R090/TD/scripts/grain_016.mx3",
+      "script_sha256": "9f6786c36f2ea89f30d862d1fbd0e8d0793db543360d2871c161c7e74514fba6",
+      "output": "B27R090/TD/raw/grain_016.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 17,
+      "script": "B27R090/TD/scripts/grain_017.mx3",
+      "script_sha256": "176bf7665e7154b4b9b7939d168c0dfc4897287ea5f20f828309dcd058b10c96",
+      "output": "B27R090/TD/raw/grain_017.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 18,
+      "script": "B27R090/TD/scripts/grain_018.mx3",
+      "script_sha256": "4df6ca8a95db8bc74005b78eba50346209895fd6ce5b377dc72c7e2fcdc7099f",
+      "output": "B27R090/TD/raw/grain_018.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 19,
+      "script": "B27R090/TD/scripts/grain_019.mx3",
+      "script_sha256": "5381130eb42b51414eb77996151ef9410dd036daca689cc9c75ef322433e076c",
+      "output": "B27R090/TD/raw/grain_019.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 20,
+      "script": "B27R090/TD/scripts/grain_020.mx3",
+      "script_sha256": "1f0b899d4cc0ca4f855d63401c9c34d5f4d3183914ffdf2c62a5c8a1a2c62751",
+      "output": "B27R090/TD/raw/grain_020.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 21,
+      "script": "B27R090/TD/scripts/grain_021.mx3",
+      "script_sha256": "49f6fe968585ac0e57aef38dee005adca6023e19eadf98cd4336c96cbf61c1c1",
+      "output": "B27R090/TD/raw/grain_021.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 22,
+      "script": "B27R090/TD/scripts/grain_022.mx3",
+      "script_sha256": "c685d767d1ea4abaeb0160b017b448ec376bc87ee2f8d9771446942aed3cd5ad",
+      "output": "B27R090/TD/raw/grain_022.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 23,
+      "script": "B27R090/TD/scripts/grain_023.mx3",
+      "script_sha256": "faf51e2b0dc6b06831ea5f6feb569e0e7b34fa36978ad221f882896ea11d6314",
+      "output": "B27R090/TD/raw/grain_023.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 24,
+      "script": "B27R090/TD/scripts/grain_024.mx3",
+      "script_sha256": "3d3362f49deee92f32eb7569acf69606f16cd0a404b954ff944c12519ce43116",
+      "output": "B27R090/TD/raw/grain_024.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 25,
+      "script": "B27R090/TD/scripts/grain_025.mx3",
+      "script_sha256": "79447e9000487c16ce0e9ea250318e7f78f672e092c6269ef9772292d26478d2",
+      "output": "B27R090/TD/raw/grain_025.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 26,
+      "script": "B27R090/TD/scripts/grain_026.mx3",
+      "script_sha256": "fe31c869dd350a5e6e76a0a1c394f92797b09abe7fd60a680f8e13d23f3ec66a",
+      "output": "B27R090/TD/raw/grain_026.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 27,
+      "script": "B27R090/TD/scripts/grain_027.mx3",
+      "script_sha256": "b30c24772d46a7ba75d22ec0c5943219b0c8b6f334c7d2fe3bfc7100c0dfd148",
+      "output": "B27R090/TD/raw/grain_027.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 28,
+      "script": "B27R090/TD/scripts/grain_028.mx3",
+      "script_sha256": "68ad56e79879d73da03688175e1a82b7a0c7030ded90e5ea5e270f54f1fb422b",
+      "output": "B27R090/TD/raw/grain_028.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 29,
+      "script": "B27R090/TD/scripts/grain_029.mx3",
+      "script_sha256": "4cc3850e334e6c171fd699fadbcdca0a46123a19bf1733a2cc0fb1582c8f63e5",
+      "output": "B27R090/TD/raw/grain_029.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 30,
+      "script": "B27R090/TD/scripts/grain_030.mx3",
+      "script_sha256": "98edde6530f35e504810b4e532258ae4818fb42ff5cb4d9c983b5d1d0b425b81",
+      "output": "B27R090/TD/raw/grain_030.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 31,
+      "script": "B27R090/TD/scripts/grain_031.mx3",
+      "script_sha256": "9e6a53b5efe1d67d5c1314d409470509b8375c67e166dc61a8c4d3d2cf5f5a7e",
+      "output": "B27R090/TD/raw/grain_031.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 32,
+      "script": "B27R090/TD/scripts/grain_032.mx3",
+      "script_sha256": "d050db6375a3e7a2cc24b9ed52f69d4d8d12efcc3100499cb75f69808d06fb83",
+      "output": "B27R090/TD/raw/grain_032.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 33,
+      "script": "B27R090/TD/scripts/grain_033.mx3",
+      "script_sha256": "613a248b62d2eeef581c10e5c4b749ca70d7193065b80e4cf0715f651b39a40d",
+      "output": "B27R090/TD/raw/grain_033.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 34,
+      "script": "B27R090/TD/scripts/grain_034.mx3",
+      "script_sha256": "22d1777d66622637c7fd12ff71b1f62fdcabd6fd74e11a9c95a2e4b23e4fea90",
+      "output": "B27R090/TD/raw/grain_034.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 35,
+      "script": "B27R090/TD/scripts/grain_035.mx3",
+      "script_sha256": "08c6e16405078e2240af30cdb1371be8cfe659a988de323e0307c551281f99b6",
+      "output": "B27R090/TD/raw/grain_035.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 36,
+      "script": "B27R090/TD/scripts/grain_036.mx3",
+      "script_sha256": "46f8a207aafbf4024bc358b94042ff0819a11e117b63ca96216591ca2ceebad2",
+      "output": "B27R090/TD/raw/grain_036.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 37,
+      "script": "B27R090/TD/scripts/grain_037.mx3",
+      "script_sha256": "6a0e9f552cbcb44de8c4c31d841a83fdd48db769a0ddc51b25b84720b616b9fc",
+      "output": "B27R090/TD/raw/grain_037.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 38,
+      "script": "B27R090/TD/scripts/grain_038.mx3",
+      "script_sha256": "b0660df1877b656d64e7d1ff20e3cee6de81d79930c033749d028f6974080d21",
+      "output": "B27R090/TD/raw/grain_038.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 39,
+      "script": "B27R090/TD/scripts/grain_039.mx3",
+      "script_sha256": "57f8ac1085ce0d5239f563f558b29975a08c83de5fe54d56ed85f15965ebd84d",
+      "output": "B27R090/TD/raw/grain_039.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 40,
+      "script": "B27R090/TD/scripts/grain_040.mx3",
+      "script_sha256": "301a2ae169533becef7d182ceb750e01417615cd8ef1322a0618587e5638269c",
+      "output": "B27R090/TD/raw/grain_040.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 41,
+      "script": "B27R090/TD/scripts/grain_041.mx3",
+      "script_sha256": "957a0f736fede74bcdf9121b245c5002c77a301c186a202394d2e4ac65ec2052",
+      "output": "B27R090/TD/raw/grain_041.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 42,
+      "script": "B27R090/TD/scripts/grain_042.mx3",
+      "script_sha256": "3570a208a8d2d2f26d7121d6acb12d3d3b8fd1eef3bd0adcaefd4c38c3edfff3",
+      "output": "B27R090/TD/raw/grain_042.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 43,
+      "script": "B27R090/TD/scripts/grain_043.mx3",
+      "script_sha256": "d0a1a1bf1729f325acaca5cbc4f24f235a4e0c12c778fb2d5fdb6101afb267c8",
+      "output": "B27R090/TD/raw/grain_043.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 44,
+      "script": "B27R090/TD/scripts/grain_044.mx3",
+      "script_sha256": "ecd9b77a8775e45d0fdbc56290d64e7f9eedd050e4ffde5124a726f38e52b575",
+      "output": "B27R090/TD/raw/grain_044.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 45,
+      "script": "B27R090/TD/scripts/grain_045.mx3",
+      "script_sha256": "d69d5d50d4b0a60aea6d99b349fa5c32a9866a17cd14b69c64d8099579a9ae4d",
+      "output": "B27R090/TD/raw/grain_045.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 46,
+      "script": "B27R090/TD/scripts/grain_046.mx3",
+      "script_sha256": "ca6e22aed26342b2929400a0a8af84636ba825edff0f4cf5bcfd38a1bf213133",
+      "output": "B27R090/TD/raw/grain_046.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 47,
+      "script": "B27R090/TD/scripts/grain_047.mx3",
+      "script_sha256": "9812609f542ad2f357717b0dd4ccfc2c3860a8099b48bbc948156ec549cfd4ce",
+      "output": "B27R090/TD/raw/grain_047.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 48,
+      "script": "B27R090/TD/scripts/grain_048.mx3",
+      "script_sha256": "f78eafd1e7d43175a66f63523b3888514a32f2e54d77a2ffc80a046add2e3fe7",
+      "output": "B27R090/TD/raw/grain_048.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 49,
+      "script": "B27R090/TD/scripts/grain_049.mx3",
+      "script_sha256": "2cacc9b0048bd8d3eeb59e87241a7012607c90fd26be7fea066cff56acb69ec3",
+      "output": "B27R090/TD/raw/grain_049.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 50,
+      "script": "B27R090/TD/scripts/grain_050.mx3",
+      "script_sha256": "0c0118614ec7bce70a8db3629e00e498777084f9cb84d767d3941dd007543b21",
+      "output": "B27R090/TD/raw/grain_050.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 51,
+      "script": "B27R090/TD/scripts/grain_051.mx3",
+      "script_sha256": "e0e14dc9323a581ab5f9be292d31cfcf65ef8db290d3c022eca8b64e3e27f702",
+      "output": "B27R090/TD/raw/grain_051.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 52,
+      "script": "B27R090/TD/scripts/grain_052.mx3",
+      "script_sha256": "07be9a2161e557873a0bf0f35d4e07ba53dd4a83d02d5f6b4123152752d24a1d",
+      "output": "B27R090/TD/raw/grain_052.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 53,
+      "script": "B27R090/TD/scripts/grain_053.mx3",
+      "script_sha256": "04b70644f28caf8adf2ecfa9d92a61f6dc8ef9914d6930ef51ef6cf43077ad0b",
+      "output": "B27R090/TD/raw/grain_053.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 54,
+      "script": "B27R090/TD/scripts/grain_054.mx3",
+      "script_sha256": "3e67c308bcbc582c8c1a158054c694a189ae468e6592bc31ec0396d5d2de2187",
+      "output": "B27R090/TD/raw/grain_054.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 55,
+      "script": "B27R090/TD/scripts/grain_055.mx3",
+      "script_sha256": "1bd598fcfb20b31410abc7ac3407c5d815a4cd394654476947e10dc6a9366be1",
+      "output": "B27R090/TD/raw/grain_055.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 56,
+      "script": "B27R090/TD/scripts/grain_056.mx3",
+      "script_sha256": "e674b8d1651b90900c09ee958dc7ed909f62933b43be1c86cf986b446593d45e",
+      "output": "B27R090/TD/raw/grain_056.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 57,
+      "script": "B27R090/TD/scripts/grain_057.mx3",
+      "script_sha256": "7cc58c852443343d103ef976b0e2b21db5fa944b53528e95d20284143ce29b4f",
+      "output": "B27R090/TD/raw/grain_057.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 58,
+      "script": "B27R090/TD/scripts/grain_058.mx3",
+      "script_sha256": "abbaa6f2b6a292743df654586def39f9758e5e3a81681e783547e00705bfa9d7",
+      "output": "B27R090/TD/raw/grain_058.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 59,
+      "script": "B27R090/TD/scripts/grain_059.mx3",
+      "script_sha256": "3250a7675284772b8684d58aaa0246634b7d8d76faed936b06ff0face63bb457",
+      "output": "B27R090/TD/raw/grain_059.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 60,
+      "script": "B27R090/TD/scripts/grain_060.mx3",
+      "script_sha256": "0b41d4598a278fe995f454deebde5e30fe8b2d36bdeb95adca06c1679134102b",
+      "output": "B27R090/TD/raw/grain_060.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 61,
+      "script": "B27R090/TD/scripts/grain_061.mx3",
+      "script_sha256": "8b5c4122c7424b21e0d864a6a020c2b35fad56c79fe34f19004f6c877ec24d57",
+      "output": "B27R090/TD/raw/grain_061.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 62,
+      "script": "B27R090/TD/scripts/grain_062.mx3",
+      "script_sha256": "5a407c5648e8e4c102d8a71f371ee5f9e1c9873e01359a90b5aed625b5a725c8",
+      "output": "B27R090/TD/raw/grain_062.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 63,
+      "script": "B27R090/TD/scripts/grain_063.mx3",
+      "script_sha256": "2d7851a2836299f05788e7d4a83a515043038917fce56decc6467eba3ec83b53",
+      "output": "B27R090/TD/raw/grain_063.out"
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 64,
+      "script": "B27R090/TD/scripts/grain_064.mx3",
+      "script_sha256": "4d1de8233e77ccc304845cbd6f14c34afb846a9924db561d0fec89453e769919",
+      "output": "B27R090/TD/raw/grain_064.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 1,
+      "script": "B27R095/RD/scripts/grain_001.mx3",
+      "script_sha256": "ee9823446a406bb2bf1b6c4a3b5dcd55a44a8d3d0b3a4247f7961275b3b58a8c",
+      "output": "B27R095/RD/raw/grain_001.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 2,
+      "script": "B27R095/RD/scripts/grain_002.mx3",
+      "script_sha256": "0efcb449e27c2921ef5951c5f41bdb9119b95cb02d2cd2efda23ebb897eb2ab9",
+      "output": "B27R095/RD/raw/grain_002.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 3,
+      "script": "B27R095/RD/scripts/grain_003.mx3",
+      "script_sha256": "ac676837baa29f0e967c1a581064347df295d0ea3e02a7d78d0cf58eb89b1193",
+      "output": "B27R095/RD/raw/grain_003.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 4,
+      "script": "B27R095/RD/scripts/grain_004.mx3",
+      "script_sha256": "40c78fb3e731a2fd00879f261d36d4227dd531ff8cf2330e4cf3ba64a7c738bc",
+      "output": "B27R095/RD/raw/grain_004.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 5,
+      "script": "B27R095/RD/scripts/grain_005.mx3",
+      "script_sha256": "48f9d44d6297525cc7c6a6ebfff8281c546105cb823a3fbd531cd07a0d29fd46",
+      "output": "B27R095/RD/raw/grain_005.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 6,
+      "script": "B27R095/RD/scripts/grain_006.mx3",
+      "script_sha256": "4d6cecc3530174db69a09ce203aac0f74db4bd09e0034b387267549a3e541757",
+      "output": "B27R095/RD/raw/grain_006.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "script": "B27R095/RD/scripts/grain_007.mx3",
+      "script_sha256": "d361aec0fe294a17adaccd0375c3abb6aa9de318a27db21583174f2a5f2ed348",
+      "output": "B27R095/RD/raw/grain_007.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "script": "B27R095/RD/scripts/grain_008.mx3",
+      "script_sha256": "0628561811d98b9e4506152db98b1dd286ab3f107f745e5b05a2893f0d179491",
+      "output": "B27R095/RD/raw/grain_008.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 9,
+      "script": "B27R095/RD/scripts/grain_009.mx3",
+      "script_sha256": "95bb8aaae9f0e74eaddfda4a7ed72f8126a9c8f6128d86b1bce0018769c39855",
+      "output": "B27R095/RD/raw/grain_009.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 10,
+      "script": "B27R095/RD/scripts/grain_010.mx3",
+      "script_sha256": "97bb2f08556543b60e3e7958c30d848f2084c5dca90976ef5f0da66f27f4c333",
+      "output": "B27R095/RD/raw/grain_010.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 11,
+      "script": "B27R095/RD/scripts/grain_011.mx3",
+      "script_sha256": "9f5693e453c3c6151425e1f33f26eeb1798ba110eb50e6a12077cd2509fc4737",
+      "output": "B27R095/RD/raw/grain_011.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 12,
+      "script": "B27R095/RD/scripts/grain_012.mx3",
+      "script_sha256": "d363d82bf2c1870567f733f44cc988fdf7c234a5ac5f926f520382ee71c266b2",
+      "output": "B27R095/RD/raw/grain_012.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 13,
+      "script": "B27R095/RD/scripts/grain_013.mx3",
+      "script_sha256": "62f2b32096e4acd384e8ef694babc37879cb3850e6b5c2e370a652f30f6a030c",
+      "output": "B27R095/RD/raw/grain_013.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 14,
+      "script": "B27R095/RD/scripts/grain_014.mx3",
+      "script_sha256": "dd03d2032247443d1ad2c349cd88fe6c93ca209a719b0f0a53f939768d791914",
+      "output": "B27R095/RD/raw/grain_014.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 15,
+      "script": "B27R095/RD/scripts/grain_015.mx3",
+      "script_sha256": "9cbb225ec8453e9710fd119dfcdfa8c218d7795b93114186c913b46605eb6571",
+      "output": "B27R095/RD/raw/grain_015.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 16,
+      "script": "B27R095/RD/scripts/grain_016.mx3",
+      "script_sha256": "97f6fc5c17df272933742338fe20a150aff3385dd822c9c91079afbc50f034b7",
+      "output": "B27R095/RD/raw/grain_016.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 17,
+      "script": "B27R095/RD/scripts/grain_017.mx3",
+      "script_sha256": "a781ab2f7d06fca438d3360bed4fceb9e2c70e598879e273dc1d3b2bf338337c",
+      "output": "B27R095/RD/raw/grain_017.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 18,
+      "script": "B27R095/RD/scripts/grain_018.mx3",
+      "script_sha256": "69046e05c0421731b0a6e4b04ecec7db2ba23de5407dbe3a311722d6fc97e441",
+      "output": "B27R095/RD/raw/grain_018.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 19,
+      "script": "B27R095/RD/scripts/grain_019.mx3",
+      "script_sha256": "4a5f14c97957d64ca20551aa5ee92a25be29c78073ce941dfbd338cd12638047",
+      "output": "B27R095/RD/raw/grain_019.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 20,
+      "script": "B27R095/RD/scripts/grain_020.mx3",
+      "script_sha256": "2259c0d90e07687f0214b4484f6a14e08d378a1758248b0992fb52f34cb36b02",
+      "output": "B27R095/RD/raw/grain_020.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 21,
+      "script": "B27R095/RD/scripts/grain_021.mx3",
+      "script_sha256": "6a61027f2f577bf4937852d969b92878d61538d8b9d4932ecc6dc5280f97bcd0",
+      "output": "B27R095/RD/raw/grain_021.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 22,
+      "script": "B27R095/RD/scripts/grain_022.mx3",
+      "script_sha256": "7a91f61e9d300ff0a9d8e735335143903faf4f6f34301029b4f17a4a203bae9e",
+      "output": "B27R095/RD/raw/grain_022.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 23,
+      "script": "B27R095/RD/scripts/grain_023.mx3",
+      "script_sha256": "804fac27bcfc55dd4cb6d0112b86da6f0fa8a1a99ff13c0f6e422c22ac8c8ad7",
+      "output": "B27R095/RD/raw/grain_023.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 24,
+      "script": "B27R095/RD/scripts/grain_024.mx3",
+      "script_sha256": "474e407b17f15bf00e89a27b9ad221a776669a0fe8d551efa63e18d740c3e92e",
+      "output": "B27R095/RD/raw/grain_024.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 25,
+      "script": "B27R095/RD/scripts/grain_025.mx3",
+      "script_sha256": "2afc88ceb4f4ad8ebe3d4c1cf70fb448f748dff9de33866d62c63ca599a1adf6",
+      "output": "B27R095/RD/raw/grain_025.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 26,
+      "script": "B27R095/RD/scripts/grain_026.mx3",
+      "script_sha256": "e0e794c2be44100ec4c8ca4fe23a8e271c12173df505e7a9c68802c379679720",
+      "output": "B27R095/RD/raw/grain_026.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 27,
+      "script": "B27R095/RD/scripts/grain_027.mx3",
+      "script_sha256": "9ea5bd3dc696a20408bd8a2a972a8c1996d179d4b5e0424d0b38fcddd81d09bb",
+      "output": "B27R095/RD/raw/grain_027.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 28,
+      "script": "B27R095/RD/scripts/grain_028.mx3",
+      "script_sha256": "763e729c027e27ba5d757a441e7ef41d28a7c0ab7c1b127ba64b69fb0e876895",
+      "output": "B27R095/RD/raw/grain_028.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 29,
+      "script": "B27R095/RD/scripts/grain_029.mx3",
+      "script_sha256": "8167a109c85a158fe0a04363998f51360352506136d589538de653a243b17089",
+      "output": "B27R095/RD/raw/grain_029.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 30,
+      "script": "B27R095/RD/scripts/grain_030.mx3",
+      "script_sha256": "bd279bb4ed3068bc09c769f58101914d5ba0e3949bd2c283e5ac6b1e9e299b41",
+      "output": "B27R095/RD/raw/grain_030.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 31,
+      "script": "B27R095/RD/scripts/grain_031.mx3",
+      "script_sha256": "96bc5eac21c0510764453ef16efb81f69393cefd9702283d00f749b33e699698",
+      "output": "B27R095/RD/raw/grain_031.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 32,
+      "script": "B27R095/RD/scripts/grain_032.mx3",
+      "script_sha256": "8a15d317f2983be9e1f7393e78e71498cd2858626b5519042502c5b7a9d235e3",
+      "output": "B27R095/RD/raw/grain_032.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 33,
+      "script": "B27R095/RD/scripts/grain_033.mx3",
+      "script_sha256": "90447b45c6b6d19f33fcfce875afdbf5dc175f94149b06aef8bf78bb8018ca72",
+      "output": "B27R095/RD/raw/grain_033.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 34,
+      "script": "B27R095/RD/scripts/grain_034.mx3",
+      "script_sha256": "588812c6d2f3b3031c1c4c2307b15cea52e6a64691a64cb0584a11d571957b1d",
+      "output": "B27R095/RD/raw/grain_034.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 35,
+      "script": "B27R095/RD/scripts/grain_035.mx3",
+      "script_sha256": "69e113b7b04f9be70315001380bd3d01901219b33d7d181e45102a900d5f8c33",
+      "output": "B27R095/RD/raw/grain_035.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 36,
+      "script": "B27R095/RD/scripts/grain_036.mx3",
+      "script_sha256": "21a1a8090b6d1cdae96fc041dc34f02ead23e83b68f2431273d28bdd117c7153",
+      "output": "B27R095/RD/raw/grain_036.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 37,
+      "script": "B27R095/RD/scripts/grain_037.mx3",
+      "script_sha256": "c664fb57c2a786ff9b501f24c2b87d319245c01c12e5a0dc891605b9a14e2876",
+      "output": "B27R095/RD/raw/grain_037.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 38,
+      "script": "B27R095/RD/scripts/grain_038.mx3",
+      "script_sha256": "a1f9e7f5100073a05e374807d6ad6f4c10b411c35c1c8d4c14601127a244ab5a",
+      "output": "B27R095/RD/raw/grain_038.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 39,
+      "script": "B27R095/RD/scripts/grain_039.mx3",
+      "script_sha256": "27499b369c6c999bc6d1d615dcafa90e26871b8af41295a0369092b737ea26a5",
+      "output": "B27R095/RD/raw/grain_039.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 40,
+      "script": "B27R095/RD/scripts/grain_040.mx3",
+      "script_sha256": "ccd9d5b7a7e0778f16f9d914645e34df97faf712d413e8b805c11ecb103133b7",
+      "output": "B27R095/RD/raw/grain_040.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 41,
+      "script": "B27R095/RD/scripts/grain_041.mx3",
+      "script_sha256": "e4580a40a31fc364f38853e02acce3f062bbebb984d8adcbd56f106ab70eeeae",
+      "output": "B27R095/RD/raw/grain_041.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 42,
+      "script": "B27R095/RD/scripts/grain_042.mx3",
+      "script_sha256": "62f5c651853b343691af0f62e0b97ea22204c258825c6825412b5902a97f0f60",
+      "output": "B27R095/RD/raw/grain_042.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 43,
+      "script": "B27R095/RD/scripts/grain_043.mx3",
+      "script_sha256": "ca3d5c1c726c7b77e8ac923842f9d52f96bd6d3894279fd234421582402ab4eb",
+      "output": "B27R095/RD/raw/grain_043.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 44,
+      "script": "B27R095/RD/scripts/grain_044.mx3",
+      "script_sha256": "19894236feda88de3ccb2efdde2fce92fe9caf77e7c23d02e01d701d7b0fce72",
+      "output": "B27R095/RD/raw/grain_044.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 45,
+      "script": "B27R095/RD/scripts/grain_045.mx3",
+      "script_sha256": "2cfee48f4df9e2f9c5f1857b3a38aa8530182e7c8dd986b484ae9b06f7463e42",
+      "output": "B27R095/RD/raw/grain_045.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 46,
+      "script": "B27R095/RD/scripts/grain_046.mx3",
+      "script_sha256": "576f97981f8a3b2cb1aced76b13b0995c0e9e1f27b72389170df432261b80e3b",
+      "output": "B27R095/RD/raw/grain_046.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 47,
+      "script": "B27R095/RD/scripts/grain_047.mx3",
+      "script_sha256": "3863b872011d0926822fbb2b996fe5a7345b39fa6e8a7d8251fcc2d53ac6a214",
+      "output": "B27R095/RD/raw/grain_047.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 48,
+      "script": "B27R095/RD/scripts/grain_048.mx3",
+      "script_sha256": "8fdb73dccf36fdcf88bb6b84bdbd9b5206a1b0afc150b5a6f65baccb8e863d22",
+      "output": "B27R095/RD/raw/grain_048.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 49,
+      "script": "B27R095/RD/scripts/grain_049.mx3",
+      "script_sha256": "f0178235bbb76e08f29749862f5349dfe7ae357ec031cf30ff5b8182c6840fb7",
+      "output": "B27R095/RD/raw/grain_049.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 50,
+      "script": "B27R095/RD/scripts/grain_050.mx3",
+      "script_sha256": "3a697b9cd738aef45d68aeb20c062a3a9455f3ef6aaa5b8a7fb1815f51eb5668",
+      "output": "B27R095/RD/raw/grain_050.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 51,
+      "script": "B27R095/RD/scripts/grain_051.mx3",
+      "script_sha256": "ef7220eb8d5493e34f314933053f999b9a1f0e03c5ccde2567e384040cf85c4a",
+      "output": "B27R095/RD/raw/grain_051.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 52,
+      "script": "B27R095/RD/scripts/grain_052.mx3",
+      "script_sha256": "be5337ab795e77554430dd45d0c9273225eb6f2c9b346e424db175f669397a05",
+      "output": "B27R095/RD/raw/grain_052.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 53,
+      "script": "B27R095/RD/scripts/grain_053.mx3",
+      "script_sha256": "465df74d397a3f7da3465fb3259219a48bbf8b0dbd9e1a458984e2abe5e4e3c0",
+      "output": "B27R095/RD/raw/grain_053.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 54,
+      "script": "B27R095/RD/scripts/grain_054.mx3",
+      "script_sha256": "0e85a16fdafe4f18323be0bca5c3ac9c5244246cd1b25289ee484d0088f57f26",
+      "output": "B27R095/RD/raw/grain_054.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 55,
+      "script": "B27R095/RD/scripts/grain_055.mx3",
+      "script_sha256": "93ba2a503561d70b1bd5eed22bec10bf53ac022feb3d45b3e6eeb25569fc72db",
+      "output": "B27R095/RD/raw/grain_055.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 56,
+      "script": "B27R095/RD/scripts/grain_056.mx3",
+      "script_sha256": "8379a47f54eb26120f066b205119bfd5c6eb49ef22a16a7f810827d8dc8fcf7f",
+      "output": "B27R095/RD/raw/grain_056.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 57,
+      "script": "B27R095/RD/scripts/grain_057.mx3",
+      "script_sha256": "9744929eb8b9f73b4cac4a156fbae736a5ead7811eb56070556e9af9d8400aec",
+      "output": "B27R095/RD/raw/grain_057.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 58,
+      "script": "B27R095/RD/scripts/grain_058.mx3",
+      "script_sha256": "d67ea82a76c7c24516ff86863a09fcaa0f7151890ac90bff1caee7a060c0565f",
+      "output": "B27R095/RD/raw/grain_058.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 59,
+      "script": "B27R095/RD/scripts/grain_059.mx3",
+      "script_sha256": "a12d967eb2af453ac175a2b716eab4ee48aec6acdb9997a80ecbb295a8da4004",
+      "output": "B27R095/RD/raw/grain_059.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 60,
+      "script": "B27R095/RD/scripts/grain_060.mx3",
+      "script_sha256": "189ea679bb4a86180d03511705cc1651a5bb402f62458221a74ea16eecf3288a",
+      "output": "B27R095/RD/raw/grain_060.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 61,
+      "script": "B27R095/RD/scripts/grain_061.mx3",
+      "script_sha256": "2cbe637b788837d22776faf1b90ec6665e8e7407fef4005a3ff0d3e864796947",
+      "output": "B27R095/RD/raw/grain_061.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 62,
+      "script": "B27R095/RD/scripts/grain_062.mx3",
+      "script_sha256": "80692d064b28e5e6137d9ac653a763ddcea73a7a55b2415b9d0d620b8bf7efed",
+      "output": "B27R095/RD/raw/grain_062.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 63,
+      "script": "B27R095/RD/scripts/grain_063.mx3",
+      "script_sha256": "66be50a21de24e23c83fc6d1a243bc99984d811b66acaa054e17bbf462bb1f61",
+      "output": "B27R095/RD/raw/grain_063.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 64,
+      "script": "B27R095/RD/scripts/grain_064.mx3",
+      "script_sha256": "5dc5369e48937c4a768ee4d8af822c8590f25c011c89f16c09a338d5fd0d34d3",
+      "output": "B27R095/RD/raw/grain_064.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 1,
+      "script": "B27R095/TD/scripts/grain_001.mx3",
+      "script_sha256": "ec67687f61d5a7a2a0c39f6d3e4776fefde869c6da89f7db0a2e65d3db850f3c",
+      "output": "B27R095/TD/raw/grain_001.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "script": "B27R095/TD/scripts/grain_002.mx3",
+      "script_sha256": "2bd56bac9770f6c4096000826174f7b2627ec826b665d31e21ff251b18a3c0e8",
+      "output": "B27R095/TD/raw/grain_002.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 3,
+      "script": "B27R095/TD/scripts/grain_003.mx3",
+      "script_sha256": "ec6fa0be655d54167900adb6d162c7fab013e85d213ec4df6ab3ce0ec054ecf6",
+      "output": "B27R095/TD/raw/grain_003.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 4,
+      "script": "B27R095/TD/scripts/grain_004.mx3",
+      "script_sha256": "334beeaa0b1a9bf0a4c14387cc9ee088f61fdf7d6bdaee9304bf25857c69055d",
+      "output": "B27R095/TD/raw/grain_004.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "script": "B27R095/TD/scripts/grain_005.mx3",
+      "script_sha256": "a9c25fbcff4c8000b9ded2ec0d813f72cdfe32e655cfa83735cc96ffb7696e8d",
+      "output": "B27R095/TD/raw/grain_005.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 6,
+      "script": "B27R095/TD/scripts/grain_006.mx3",
+      "script_sha256": "72b4df4ee867de8933c8e40a24524be5422c8554b65c7f472ea5be7f82f36019",
+      "output": "B27R095/TD/raw/grain_006.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 7,
+      "script": "B27R095/TD/scripts/grain_007.mx3",
+      "script_sha256": "e07bf01c07c382d5a2eac60c6225fabc40d65ed41060fed54623a6c8bf94cb5a",
+      "output": "B27R095/TD/raw/grain_007.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 8,
+      "script": "B27R095/TD/scripts/grain_008.mx3",
+      "script_sha256": "1682849489b48a91fac5189e3b164d83a40ab0b3c3173a567a66a94f60a943b1",
+      "output": "B27R095/TD/raw/grain_008.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 9,
+      "script": "B27R095/TD/scripts/grain_009.mx3",
+      "script_sha256": "2ef2d653ca2aafce9ede90d53da23dea420e126dc9dd31ffae4cb54bd6238523",
+      "output": "B27R095/TD/raw/grain_009.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 10,
+      "script": "B27R095/TD/scripts/grain_010.mx3",
+      "script_sha256": "1c02098159014bc4b602b0aa1d9338320323b74de460b365ccba4e5a8ad9d8a8",
+      "output": "B27R095/TD/raw/grain_010.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 11,
+      "script": "B27R095/TD/scripts/grain_011.mx3",
+      "script_sha256": "de63c576e656509f378287afcd2bac22a22e5ac4f6e0f5f4157fc5cd819a381f",
+      "output": "B27R095/TD/raw/grain_011.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 12,
+      "script": "B27R095/TD/scripts/grain_012.mx3",
+      "script_sha256": "b722744451818e80ceb0da284a51b90236a02cce0d41fbb5a50a782ec1c1ff7c",
+      "output": "B27R095/TD/raw/grain_012.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 13,
+      "script": "B27R095/TD/scripts/grain_013.mx3",
+      "script_sha256": "1ee620fb253b557861b4dccd1e3635626bf05f5b86e924ab1d4169ee32268514",
+      "output": "B27R095/TD/raw/grain_013.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 14,
+      "script": "B27R095/TD/scripts/grain_014.mx3",
+      "script_sha256": "7f0020ccb5ce2adb1f0b59a909cce5c8fb988c8a8cc85eba1b8718aae94ca1de",
+      "output": "B27R095/TD/raw/grain_014.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 15,
+      "script": "B27R095/TD/scripts/grain_015.mx3",
+      "script_sha256": "17f44f0dccdb80f8e59fbc1787c0c4658b2002afe8314cebe4e7b301b8f4433c",
+      "output": "B27R095/TD/raw/grain_015.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 16,
+      "script": "B27R095/TD/scripts/grain_016.mx3",
+      "script_sha256": "aec242f76812a6599a1bfcb777cca9e9ed360e9a8370a90e3e82a070a4bf9846",
+      "output": "B27R095/TD/raw/grain_016.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 17,
+      "script": "B27R095/TD/scripts/grain_017.mx3",
+      "script_sha256": "06b9914ecb41ef8ff328b0f38ac78a124c0f7d1c9beb1545729d58817ba21a53",
+      "output": "B27R095/TD/raw/grain_017.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 18,
+      "script": "B27R095/TD/scripts/grain_018.mx3",
+      "script_sha256": "16a0dfc082d0b8687e3165b34c9375fd487a0a9cf0a0149059b42521828b4759",
+      "output": "B27R095/TD/raw/grain_018.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 19,
+      "script": "B27R095/TD/scripts/grain_019.mx3",
+      "script_sha256": "ed18395db9e6d4086922657fd5681bc1dc4bee39a6a4b2f3e7bf1b660806a31e",
+      "output": "B27R095/TD/raw/grain_019.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 20,
+      "script": "B27R095/TD/scripts/grain_020.mx3",
+      "script_sha256": "c4939bc2a5755b0513deb711b975f6d264ea32e57ec7a6f4bc1093370e6930e2",
+      "output": "B27R095/TD/raw/grain_020.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 21,
+      "script": "B27R095/TD/scripts/grain_021.mx3",
+      "script_sha256": "d6ecf2ae5e162b675ffc1a8b9eaf8182a50fe64db0c5c259153d86514ee88ccf",
+      "output": "B27R095/TD/raw/grain_021.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 22,
+      "script": "B27R095/TD/scripts/grain_022.mx3",
+      "script_sha256": "83f952df432d4d644f3d9668ea2c010af7309785ac080beb1a07a28dccf2137d",
+      "output": "B27R095/TD/raw/grain_022.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 23,
+      "script": "B27R095/TD/scripts/grain_023.mx3",
+      "script_sha256": "ba3bab285a6db1c7d3ef06e87397e993c5a8217b410ff13e0405c64ad1eb67a0",
+      "output": "B27R095/TD/raw/grain_023.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 24,
+      "script": "B27R095/TD/scripts/grain_024.mx3",
+      "script_sha256": "49f8873ee1b489d83e7135324d9fcd54834163aab02bc551a8f91fad22ad48ae",
+      "output": "B27R095/TD/raw/grain_024.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 25,
+      "script": "B27R095/TD/scripts/grain_025.mx3",
+      "script_sha256": "d8a7518b6e770f366b7d674f9382f74efcb19f11008f67727b856d9bbbf4dbab",
+      "output": "B27R095/TD/raw/grain_025.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 26,
+      "script": "B27R095/TD/scripts/grain_026.mx3",
+      "script_sha256": "58fde1634b7bfa7a82d5b404f339f28581e2c41ba065c14b7e78c41af2d838c3",
+      "output": "B27R095/TD/raw/grain_026.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 27,
+      "script": "B27R095/TD/scripts/grain_027.mx3",
+      "script_sha256": "3aa7ad3e6de3c78332706ad68dc2d42e5c62f253c775b2664a7295d68cbac030",
+      "output": "B27R095/TD/raw/grain_027.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 28,
+      "script": "B27R095/TD/scripts/grain_028.mx3",
+      "script_sha256": "0221dfffd38a9653d62727bee31e209f0e88e65523010fe5df5ec025da58ed27",
+      "output": "B27R095/TD/raw/grain_028.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 29,
+      "script": "B27R095/TD/scripts/grain_029.mx3",
+      "script_sha256": "b6385b463463b6aa69d57fc445c7312db3bd282c9df2d715afc8eef3fe2bc688",
+      "output": "B27R095/TD/raw/grain_029.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 30,
+      "script": "B27R095/TD/scripts/grain_030.mx3",
+      "script_sha256": "502daa9634c2f780f6f87a98042046cd61a926e8f4739908835063e295175fbf",
+      "output": "B27R095/TD/raw/grain_030.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 31,
+      "script": "B27R095/TD/scripts/grain_031.mx3",
+      "script_sha256": "4726468472c9ba142e506e4b596bcec198b2f6b9bd84746960f974d1565d45f0",
+      "output": "B27R095/TD/raw/grain_031.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 32,
+      "script": "B27R095/TD/scripts/grain_032.mx3",
+      "script_sha256": "1fb776c07777750ccf0e682d2b74c82c194523831286447351c01381be2456ee",
+      "output": "B27R095/TD/raw/grain_032.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 33,
+      "script": "B27R095/TD/scripts/grain_033.mx3",
+      "script_sha256": "b038605548b7876be40b66ed1043c6a283c08e5c419a59b05dc57b4d1f6c481b",
+      "output": "B27R095/TD/raw/grain_033.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 34,
+      "script": "B27R095/TD/scripts/grain_034.mx3",
+      "script_sha256": "67d96b5cfdacd205a084029d089e58e15dd60c5a37a4942e50da86e2c6bfa86b",
+      "output": "B27R095/TD/raw/grain_034.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 35,
+      "script": "B27R095/TD/scripts/grain_035.mx3",
+      "script_sha256": "12c569cc3d3f90316b420bd017d848914260d0b631aeba765464b611a1841e8c",
+      "output": "B27R095/TD/raw/grain_035.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 36,
+      "script": "B27R095/TD/scripts/grain_036.mx3",
+      "script_sha256": "1dbce6b5a1ebb55a7f5b2bd498673b0cb9f6b5fed5ee1a25f12986e60c9fa633",
+      "output": "B27R095/TD/raw/grain_036.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 37,
+      "script": "B27R095/TD/scripts/grain_037.mx3",
+      "script_sha256": "9ce040fefcf2d977299658a2dcacd7233c60e83b13e67a6ea2365b25e1671884",
+      "output": "B27R095/TD/raw/grain_037.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 38,
+      "script": "B27R095/TD/scripts/grain_038.mx3",
+      "script_sha256": "bd73c0755d2835a3cf07572b37827e9fafe132eb4fbb90627c2b51f30de76e00",
+      "output": "B27R095/TD/raw/grain_038.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 39,
+      "script": "B27R095/TD/scripts/grain_039.mx3",
+      "script_sha256": "2ce064dae631edc1dbe29bd8adfd73603e9580e26fe091e2a5887eaf8b2d46d7",
+      "output": "B27R095/TD/raw/grain_039.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 40,
+      "script": "B27R095/TD/scripts/grain_040.mx3",
+      "script_sha256": "885c0b3c9a0a37bf12df480264adb6b5f846e651d9876f51daabca7d533c9b8b",
+      "output": "B27R095/TD/raw/grain_040.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 41,
+      "script": "B27R095/TD/scripts/grain_041.mx3",
+      "script_sha256": "2113eb845a75d3eb9b953316064f209508b8ecc4d9063e88e91dc6ff3fdadd6b",
+      "output": "B27R095/TD/raw/grain_041.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 42,
+      "script": "B27R095/TD/scripts/grain_042.mx3",
+      "script_sha256": "6f4426c58fe62699667ce0395e9ff702e1fc66976e91057748b2bd7ad2cb7a7b",
+      "output": "B27R095/TD/raw/grain_042.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 43,
+      "script": "B27R095/TD/scripts/grain_043.mx3",
+      "script_sha256": "72ba876b6753b7fb5dcf405853bfa8b8ae19ad00653c16e2d8afb3678ace47cc",
+      "output": "B27R095/TD/raw/grain_043.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 44,
+      "script": "B27R095/TD/scripts/grain_044.mx3",
+      "script_sha256": "0dde0a5579a6e0a48930cdae2cbfce1e5e5217a391fab564857fbf2e55d6855d",
+      "output": "B27R095/TD/raw/grain_044.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 45,
+      "script": "B27R095/TD/scripts/grain_045.mx3",
+      "script_sha256": "67e297767389b8783f46a0cc2bd67c21b7838ee2da5c4124a031060c5249a23c",
+      "output": "B27R095/TD/raw/grain_045.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 46,
+      "script": "B27R095/TD/scripts/grain_046.mx3",
+      "script_sha256": "700f5b3ed3193124da1486ec5bbd31fd797371e252a1319ae47720250b634e1f",
+      "output": "B27R095/TD/raw/grain_046.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 47,
+      "script": "B27R095/TD/scripts/grain_047.mx3",
+      "script_sha256": "022a0f40e7ed637e83cdbc00b24c0edca31b6fc9fb98b51893437e6f6a73a03f",
+      "output": "B27R095/TD/raw/grain_047.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 48,
+      "script": "B27R095/TD/scripts/grain_048.mx3",
+      "script_sha256": "98ea7628ab04b406e2877f99331698625e1baaaf37b54bf287171fd500096057",
+      "output": "B27R095/TD/raw/grain_048.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 49,
+      "script": "B27R095/TD/scripts/grain_049.mx3",
+      "script_sha256": "836a8d0c23667924b19cbfce68b4f9309e518ac2f4ad9f9b57e95e278e49c6ad",
+      "output": "B27R095/TD/raw/grain_049.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 50,
+      "script": "B27R095/TD/scripts/grain_050.mx3",
+      "script_sha256": "01e24432df69a098d88477995ae1a088173b2340b98a96d64fd4e3e361593106",
+      "output": "B27R095/TD/raw/grain_050.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 51,
+      "script": "B27R095/TD/scripts/grain_051.mx3",
+      "script_sha256": "057f3a71acdc4a5a287340911771e2b3a3c1c0fba85981deddce4f74a02d97fa",
+      "output": "B27R095/TD/raw/grain_051.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 52,
+      "script": "B27R095/TD/scripts/grain_052.mx3",
+      "script_sha256": "35bd54c4b9703a5170e090301d23d1793769d1f412ce72cda001dc7ec9a0468f",
+      "output": "B27R095/TD/raw/grain_052.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 53,
+      "script": "B27R095/TD/scripts/grain_053.mx3",
+      "script_sha256": "45a616b0d79563922398407d50a0d157b3700c60ebcc1f43f9b77f871c7f493a",
+      "output": "B27R095/TD/raw/grain_053.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 54,
+      "script": "B27R095/TD/scripts/grain_054.mx3",
+      "script_sha256": "46faf646949f462c41cbba1533b135c73aa337f858f98099d09818f2f13cec65",
+      "output": "B27R095/TD/raw/grain_054.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 55,
+      "script": "B27R095/TD/scripts/grain_055.mx3",
+      "script_sha256": "363d780a6aa29ed37788163633bb0843d10c37d32b7634a9d750a995dfdb8e86",
+      "output": "B27R095/TD/raw/grain_055.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 56,
+      "script": "B27R095/TD/scripts/grain_056.mx3",
+      "script_sha256": "ba30bff3862aa56e4179a39b8122a340a9175bae4e09c469916d9f5a00a4b4dd",
+      "output": "B27R095/TD/raw/grain_056.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 57,
+      "script": "B27R095/TD/scripts/grain_057.mx3",
+      "script_sha256": "4a4bd7664817311fedf1d379ed87cf1f94434ff7b9e58ebdc516d6b59ebb6917",
+      "output": "B27R095/TD/raw/grain_057.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 58,
+      "script": "B27R095/TD/scripts/grain_058.mx3",
+      "script_sha256": "826d44c111536075267734d1277a47f90d31b7ec16e01575603724b1508f4733",
+      "output": "B27R095/TD/raw/grain_058.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 59,
+      "script": "B27R095/TD/scripts/grain_059.mx3",
+      "script_sha256": "ca358e955c09c6214a542da5c337a6024ce748079f01976cca1ff590dec810ea",
+      "output": "B27R095/TD/raw/grain_059.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 60,
+      "script": "B27R095/TD/scripts/grain_060.mx3",
+      "script_sha256": "7f570b7f5b39053b00fff05d6163da0c9c6386555358d8c6803789218ceb0fab",
+      "output": "B27R095/TD/raw/grain_060.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 61,
+      "script": "B27R095/TD/scripts/grain_061.mx3",
+      "script_sha256": "d8fbee5463c892aa5f2554757245be6d264e3436ca2e93dfc6a53d8408bc9e2a",
+      "output": "B27R095/TD/raw/grain_061.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 62,
+      "script": "B27R095/TD/scripts/grain_062.mx3",
+      "script_sha256": "dbb293a9ffec16b3cdc40d1369357c39fd4ed44330adb5b42eb76791b6337346",
+      "output": "B27R095/TD/raw/grain_062.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 63,
+      "script": "B27R095/TD/scripts/grain_063.mx3",
+      "script_sha256": "c8a13e371a2ae6a3f39656ee86d8c60bd6e81a4b0792f70db3c2c92546e61546",
+      "output": "B27R095/TD/raw/grain_063.out"
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 64,
+      "script": "B27R095/TD/scripts/grain_064.mx3",
+      "script_sha256": "a4597f0193ac09d22136bc5677397f78b97dce4a6f80a8043be509efb7723cb4",
+      "output": "B27R095/TD/raw/grain_064.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 1,
+      "script": "B30P105/RD/scripts/grain_001.mx3",
+      "script_sha256": "29fe6e7162196999c82704f3b1be75b05a59e35ff9da74b6625976fe36cf7ebf",
+      "output": "B30P105/RD/raw/grain_001.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 2,
+      "script": "B30P105/RD/scripts/grain_002.mx3",
+      "script_sha256": "cb11187efa7fd08c8f8c1a11267e5841a94ecc054c8983d328570c9ea2267fee",
+      "output": "B30P105/RD/raw/grain_002.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 3,
+      "script": "B30P105/RD/scripts/grain_003.mx3",
+      "script_sha256": "d6d652e7d9f29ca452514be9d04f77edea9b33422bf9b6578945fe57bf4e8a81",
+      "output": "B30P105/RD/raw/grain_003.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 4,
+      "script": "B30P105/RD/scripts/grain_004.mx3",
+      "script_sha256": "43abb239ef4111d9cf17fdf70251d3a3065e6a1b6238ba037316cc98fb2473dd",
+      "output": "B30P105/RD/raw/grain_004.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 5,
+      "script": "B30P105/RD/scripts/grain_005.mx3",
+      "script_sha256": "6bb0ccfb9225c7649fa98345547a715e59edca0347345693f59acd8ecf6d27f7",
+      "output": "B30P105/RD/raw/grain_005.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 6,
+      "script": "B30P105/RD/scripts/grain_006.mx3",
+      "script_sha256": "8a7862a31361799d41677273a4b698228eca33d9eb7dfb8fdd2645700377d4e7",
+      "output": "B30P105/RD/raw/grain_006.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "script": "B30P105/RD/scripts/grain_007.mx3",
+      "script_sha256": "22ea9190c1191233adfeb44f222450a222f78f7e51c5ecfc48ffa15dddcf0e00",
+      "output": "B30P105/RD/raw/grain_007.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "script": "B30P105/RD/scripts/grain_008.mx3",
+      "script_sha256": "6c55b1535dc6a926c6145c3024ba9e1a5f8b3176bff894a61e11055a999d79f1",
+      "output": "B30P105/RD/raw/grain_008.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 9,
+      "script": "B30P105/RD/scripts/grain_009.mx3",
+      "script_sha256": "a3684565de7cc284c0a212453731e82a773f5d85ddd5d914c0508a8311cbc88b",
+      "output": "B30P105/RD/raw/grain_009.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 10,
+      "script": "B30P105/RD/scripts/grain_010.mx3",
+      "script_sha256": "55e439d851a31e6cb94a3abf446657541cf7af7a54a975c289a706b6013823df",
+      "output": "B30P105/RD/raw/grain_010.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 11,
+      "script": "B30P105/RD/scripts/grain_011.mx3",
+      "script_sha256": "af4b1f3fba7bde67ebfff0f0b31d740524593744fabd336d23407b15afc9c6f2",
+      "output": "B30P105/RD/raw/grain_011.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 12,
+      "script": "B30P105/RD/scripts/grain_012.mx3",
+      "script_sha256": "07aedd86105643e2306963ed88561e94ce2353c53da8d055dd422f342a3f920d",
+      "output": "B30P105/RD/raw/grain_012.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 13,
+      "script": "B30P105/RD/scripts/grain_013.mx3",
+      "script_sha256": "0ebcb727afece949c9b8d7ae8a9e3387cf81c93b93e93cd03924edd88f38ab6d",
+      "output": "B30P105/RD/raw/grain_013.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 14,
+      "script": "B30P105/RD/scripts/grain_014.mx3",
+      "script_sha256": "0a942568bfcaf747e9f6a2c14474065f005a6b08caa6183cf8dc507afbbbba42",
+      "output": "B30P105/RD/raw/grain_014.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 15,
+      "script": "B30P105/RD/scripts/grain_015.mx3",
+      "script_sha256": "3a6f300858ba7e05d6ba0c6e2a6aa248a8d48d435d1b05f659f8dbf27a91cb64",
+      "output": "B30P105/RD/raw/grain_015.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 16,
+      "script": "B30P105/RD/scripts/grain_016.mx3",
+      "script_sha256": "1c3958ae4fa411e30274dbde2eba07d52a0e7f7cd1e4965fa44e2b4f59873305",
+      "output": "B30P105/RD/raw/grain_016.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 17,
+      "script": "B30P105/RD/scripts/grain_017.mx3",
+      "script_sha256": "859562ee42ba2a27da2df6a884bb2f936835663308bb7dc90f1b634e09a6041b",
+      "output": "B30P105/RD/raw/grain_017.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 18,
+      "script": "B30P105/RD/scripts/grain_018.mx3",
+      "script_sha256": "4a5f0eadc805023a88df3e655ce4a32cb951bea7ebcc4a06fa5f9ab02498fa33",
+      "output": "B30P105/RD/raw/grain_018.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 19,
+      "script": "B30P105/RD/scripts/grain_019.mx3",
+      "script_sha256": "dd76a9ac198433785189b0e73040b104ae32fda0198b11b72e7defd8b2ed947f",
+      "output": "B30P105/RD/raw/grain_019.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 20,
+      "script": "B30P105/RD/scripts/grain_020.mx3",
+      "script_sha256": "f7f9eda274e684285832faf2a9946d1a9e8b1453e3d50f02cd409563239173f4",
+      "output": "B30P105/RD/raw/grain_020.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 21,
+      "script": "B30P105/RD/scripts/grain_021.mx3",
+      "script_sha256": "378694f144baae854019c5baa052a2f685274b07c4f143258d75510c40ff7210",
+      "output": "B30P105/RD/raw/grain_021.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 22,
+      "script": "B30P105/RD/scripts/grain_022.mx3",
+      "script_sha256": "9c10be49b4777f4df3ad6155251d68b4797c6a480c679f46c271a8c666780d26",
+      "output": "B30P105/RD/raw/grain_022.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 23,
+      "script": "B30P105/RD/scripts/grain_023.mx3",
+      "script_sha256": "02f75bfd5c0ec63102417441a22be783bbb7b59d3b4959174a3578c8025b203d",
+      "output": "B30P105/RD/raw/grain_023.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 24,
+      "script": "B30P105/RD/scripts/grain_024.mx3",
+      "script_sha256": "e3b155107ade38d01fee961dbb2aee81eff78c74535c88212687e8d6464d4dba",
+      "output": "B30P105/RD/raw/grain_024.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 25,
+      "script": "B30P105/RD/scripts/grain_025.mx3",
+      "script_sha256": "29061adc610259b7b0e335766c6009a8bf6c2f9962f7d8cc969c162286a72f1c",
+      "output": "B30P105/RD/raw/grain_025.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 26,
+      "script": "B30P105/RD/scripts/grain_026.mx3",
+      "script_sha256": "901cb0d8a53c4d62d34f9c7d1e4e2defa273f1d451a92cbb7938ff032f32a2e6",
+      "output": "B30P105/RD/raw/grain_026.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 27,
+      "script": "B30P105/RD/scripts/grain_027.mx3",
+      "script_sha256": "ffc351649cb2af2ab3c591eb6e6a0ad25b08c677e9aebb94f41007c3473f9587",
+      "output": "B30P105/RD/raw/grain_027.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 28,
+      "script": "B30P105/RD/scripts/grain_028.mx3",
+      "script_sha256": "993c58a92674ea9e08f17748480915873843e596f2095d3c118d9cb66c5e5262",
+      "output": "B30P105/RD/raw/grain_028.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 29,
+      "script": "B30P105/RD/scripts/grain_029.mx3",
+      "script_sha256": "f5fa43ba5f0845420e3de5a1b1188b80bc2e72cb380f41c110e7aed4b56afaad",
+      "output": "B30P105/RD/raw/grain_029.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 30,
+      "script": "B30P105/RD/scripts/grain_030.mx3",
+      "script_sha256": "0d26248eda6274095ae51721f5f9a587c63323d248e4ab24199a65a5633b49c5",
+      "output": "B30P105/RD/raw/grain_030.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 31,
+      "script": "B30P105/RD/scripts/grain_031.mx3",
+      "script_sha256": "232c9113a425af0c39d253bb6b505c01586b42f6a1d9360606fe7561d4b185a4",
+      "output": "B30P105/RD/raw/grain_031.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 32,
+      "script": "B30P105/RD/scripts/grain_032.mx3",
+      "script_sha256": "c18fc6f4d1a6b8ef00d58a898d8066c22b9fdcc999a1931c8d3b0379ec2d985b",
+      "output": "B30P105/RD/raw/grain_032.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 33,
+      "script": "B30P105/RD/scripts/grain_033.mx3",
+      "script_sha256": "badc37083667110965f7d929abd01a7e5a301c34e5de5ebedeaac073f7536a30",
+      "output": "B30P105/RD/raw/grain_033.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 34,
+      "script": "B30P105/RD/scripts/grain_034.mx3",
+      "script_sha256": "b45247bb4e6040da55034d75882e91e0a30dd2df8524f33f049db589ad248902",
+      "output": "B30P105/RD/raw/grain_034.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 35,
+      "script": "B30P105/RD/scripts/grain_035.mx3",
+      "script_sha256": "734f721c1d60c000e35b97065e1489579597c674de51f13e0c628fc201ce5fd4",
+      "output": "B30P105/RD/raw/grain_035.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 36,
+      "script": "B30P105/RD/scripts/grain_036.mx3",
+      "script_sha256": "4aaa9544585925851cc4b586b3c9abd0f8e654264c5a8ca3f9bd0e037c54bc53",
+      "output": "B30P105/RD/raw/grain_036.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 37,
+      "script": "B30P105/RD/scripts/grain_037.mx3",
+      "script_sha256": "f96796be2f3f6245e38ddb194738bf360b45dd96d550987f1b17c13b676e362d",
+      "output": "B30P105/RD/raw/grain_037.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 38,
+      "script": "B30P105/RD/scripts/grain_038.mx3",
+      "script_sha256": "f1a589c450ebf29510f6018eb795e2e7ad09241b81bd274c5ed27b3a5637dbf7",
+      "output": "B30P105/RD/raw/grain_038.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 39,
+      "script": "B30P105/RD/scripts/grain_039.mx3",
+      "script_sha256": "7233934d0af8352c6d8b5034cb06b6fe47b5056c926d442c8eb6b3232e48adad",
+      "output": "B30P105/RD/raw/grain_039.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 40,
+      "script": "B30P105/RD/scripts/grain_040.mx3",
+      "script_sha256": "0c84f311b8cd28d666fcc41f60819b7adb79938c71c0b3f44dc47a12b2f6317a",
+      "output": "B30P105/RD/raw/grain_040.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 41,
+      "script": "B30P105/RD/scripts/grain_041.mx3",
+      "script_sha256": "6d5805e90dea77fce4ed37861ce5b0a21a4ba384b537872a3161ce3da473268e",
+      "output": "B30P105/RD/raw/grain_041.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 42,
+      "script": "B30P105/RD/scripts/grain_042.mx3",
+      "script_sha256": "0e214dabeccbe6ee3d52964bb4e4c7d26ba87c829cd4c53c604b90d676e61124",
+      "output": "B30P105/RD/raw/grain_042.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 43,
+      "script": "B30P105/RD/scripts/grain_043.mx3",
+      "script_sha256": "bc7484675db3bb82af688898f0cd9a75a525a1002b35b63f3ff8dfc06bdc0247",
+      "output": "B30P105/RD/raw/grain_043.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 44,
+      "script": "B30P105/RD/scripts/grain_044.mx3",
+      "script_sha256": "eefd262f8274f1caf9ee5ab39d381204b3637ead9c1ba9031ab4d62aa306d9b4",
+      "output": "B30P105/RD/raw/grain_044.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 45,
+      "script": "B30P105/RD/scripts/grain_045.mx3",
+      "script_sha256": "1efa06d16d8169c9393e6b12d2f7651b2f7e3b26641b8ea08980288beaae8bc7",
+      "output": "B30P105/RD/raw/grain_045.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 46,
+      "script": "B30P105/RD/scripts/grain_046.mx3",
+      "script_sha256": "e75ef67d5a707d23b47c96d19c19eaa02e00d4344d3c9ffb2603db30513a96d4",
+      "output": "B30P105/RD/raw/grain_046.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 47,
+      "script": "B30P105/RD/scripts/grain_047.mx3",
+      "script_sha256": "78c8f86acb5d9903990f2e0d900c1b7dc64dc7398f5adc97a6f7db0aecd3e404",
+      "output": "B30P105/RD/raw/grain_047.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 48,
+      "script": "B30P105/RD/scripts/grain_048.mx3",
+      "script_sha256": "2970efaae0a553e755c18cb9833d992445e259c1d363c0ffe7755cb03e062ac5",
+      "output": "B30P105/RD/raw/grain_048.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 49,
+      "script": "B30P105/RD/scripts/grain_049.mx3",
+      "script_sha256": "efcfe2aa1ee7f923aed3fbee81d19e79c299cdf75b6f6ff6bdde1b84b333556b",
+      "output": "B30P105/RD/raw/grain_049.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 50,
+      "script": "B30P105/RD/scripts/grain_050.mx3",
+      "script_sha256": "ba430e5a4117488802c3bda977226714a35d472395023d0369d56ccb17d55ffd",
+      "output": "B30P105/RD/raw/grain_050.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 51,
+      "script": "B30P105/RD/scripts/grain_051.mx3",
+      "script_sha256": "24551978a7957e0cb9a4543213772bfe5b723def083d24f94afb19512f542956",
+      "output": "B30P105/RD/raw/grain_051.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 52,
+      "script": "B30P105/RD/scripts/grain_052.mx3",
+      "script_sha256": "aa87b4810a92b5518741811039e0a8a42d60dfcdf7ac78ff2226ef4c63283e94",
+      "output": "B30P105/RD/raw/grain_052.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 53,
+      "script": "B30P105/RD/scripts/grain_053.mx3",
+      "script_sha256": "e662888e1b83c0e1b81a524503729167526d167ecb89ed4de2d6bc729b4a3ab0",
+      "output": "B30P105/RD/raw/grain_053.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 54,
+      "script": "B30P105/RD/scripts/grain_054.mx3",
+      "script_sha256": "4cf63321c5193d3fc6b09b319af1f29ad3c125b6cc66b4a3cb1f826435b79528",
+      "output": "B30P105/RD/raw/grain_054.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 55,
+      "script": "B30P105/RD/scripts/grain_055.mx3",
+      "script_sha256": "de1409b1a5d93b3312b5efb69137da3463f196e4d3381c73526dd891c97b05de",
+      "output": "B30P105/RD/raw/grain_055.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 56,
+      "script": "B30P105/RD/scripts/grain_056.mx3",
+      "script_sha256": "46be99c911e077720a467b57a246d21c8fa6bc95335765225b3652934478f7d2",
+      "output": "B30P105/RD/raw/grain_056.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 57,
+      "script": "B30P105/RD/scripts/grain_057.mx3",
+      "script_sha256": "dd597d27d451a76617ca84766c77e9c2b140789c40446f6c30201370423b5989",
+      "output": "B30P105/RD/raw/grain_057.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 58,
+      "script": "B30P105/RD/scripts/grain_058.mx3",
+      "script_sha256": "3bea3220834208756fe58fedb296c581359d433b0ee93cf61d32282e4706b304",
+      "output": "B30P105/RD/raw/grain_058.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 59,
+      "script": "B30P105/RD/scripts/grain_059.mx3",
+      "script_sha256": "aa2dbddc68d23ae900057688f3d004388861acde6d448ed9a357f4833246ca2f",
+      "output": "B30P105/RD/raw/grain_059.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 60,
+      "script": "B30P105/RD/scripts/grain_060.mx3",
+      "script_sha256": "39e71313baeb06d75bc9abde4facbf1b1737a031d52fac332e21e8050019a2eb",
+      "output": "B30P105/RD/raw/grain_060.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 61,
+      "script": "B30P105/RD/scripts/grain_061.mx3",
+      "script_sha256": "4f1dd1de33eda90dadb24605a191ef87ada71f8b1f17fde9ecee7562a9944e94",
+      "output": "B30P105/RD/raw/grain_061.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 62,
+      "script": "B30P105/RD/scripts/grain_062.mx3",
+      "script_sha256": "a05eefa8dd3fc64a3907e9909d89754700fef286a1a6c9bca756d32273187f10",
+      "output": "B30P105/RD/raw/grain_062.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 63,
+      "script": "B30P105/RD/scripts/grain_063.mx3",
+      "script_sha256": "f613338142fb9c7d234947c0d96dfd115458b163767f9f6c8e3caae05c4c3d87",
+      "output": "B30P105/RD/raw/grain_063.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 64,
+      "script": "B30P105/RD/scripts/grain_064.mx3",
+      "script_sha256": "2b15982718421ac5ae9260afd26316af44e9d7341fc65b71865cc134f9415371",
+      "output": "B30P105/RD/raw/grain_064.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 1,
+      "script": "B30P105/TD/scripts/grain_001.mx3",
+      "script_sha256": "4987143694a76433ef688c0e34ed26e82bef941abd637d7c8d3d34c39ee99071",
+      "output": "B30P105/TD/raw/grain_001.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "script": "B30P105/TD/scripts/grain_002.mx3",
+      "script_sha256": "abf6e442d2dc1737deb1bcc80a203a1b07388f992edf413fb6f75a7e7e59e386",
+      "output": "B30P105/TD/raw/grain_002.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 3,
+      "script": "B30P105/TD/scripts/grain_003.mx3",
+      "script_sha256": "83a9eef2d791f30acb1ff632c8e616a5d0c2fc925ee05f2382c46a892016cb97",
+      "output": "B30P105/TD/raw/grain_003.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 4,
+      "script": "B30P105/TD/scripts/grain_004.mx3",
+      "script_sha256": "db465468e0339f747536e221b6eded76dfb6ede3ce7c9019c741a21472722b9d",
+      "output": "B30P105/TD/raw/grain_004.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "script": "B30P105/TD/scripts/grain_005.mx3",
+      "script_sha256": "6e736eb7877c74ff8a37f57a5a6cf44f5db4aac3d01610a35bd7cec4201f8a26",
+      "output": "B30P105/TD/raw/grain_005.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 6,
+      "script": "B30P105/TD/scripts/grain_006.mx3",
+      "script_sha256": "b0183a142763180e5d198cd2dcc478e7d8e3e433e90c34b97874256270265104",
+      "output": "B30P105/TD/raw/grain_006.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 7,
+      "script": "B30P105/TD/scripts/grain_007.mx3",
+      "script_sha256": "9aa93155ca4f09c0faeda7f0824e6da91940baa0997316d0505147af8de3c60b",
+      "output": "B30P105/TD/raw/grain_007.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 8,
+      "script": "B30P105/TD/scripts/grain_008.mx3",
+      "script_sha256": "fef2a83343ec1e889b9f2f954f7160405803fb2b71a3ffc4419fd2ad0a61280b",
+      "output": "B30P105/TD/raw/grain_008.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 9,
+      "script": "B30P105/TD/scripts/grain_009.mx3",
+      "script_sha256": "a5f739ff52235669440069ace5b14e12e0ebe9f4dd4d3388dbcead9dbb186de3",
+      "output": "B30P105/TD/raw/grain_009.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 10,
+      "script": "B30P105/TD/scripts/grain_010.mx3",
+      "script_sha256": "fd7d4e7803b4060f922d5e60dcb1c9f3e67efa744a2e2db10b12a7cd875c4e80",
+      "output": "B30P105/TD/raw/grain_010.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 11,
+      "script": "B30P105/TD/scripts/grain_011.mx3",
+      "script_sha256": "a224887d7c1f27e682b9cb6e16c6fe0f8c5394b5313145a825d6d03bfe060a51",
+      "output": "B30P105/TD/raw/grain_011.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 12,
+      "script": "B30P105/TD/scripts/grain_012.mx3",
+      "script_sha256": "41309d915bdf6e8af9931567878e56ccf27c3961c0d2193ee45bd484b38a6aea",
+      "output": "B30P105/TD/raw/grain_012.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 13,
+      "script": "B30P105/TD/scripts/grain_013.mx3",
+      "script_sha256": "158060ba28c43d1837d121f12f7ba9545beaa3b09a58307b35187f8d5ca1804b",
+      "output": "B30P105/TD/raw/grain_013.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 14,
+      "script": "B30P105/TD/scripts/grain_014.mx3",
+      "script_sha256": "94a50acbe784be7ac1dad46923d667cea0fc33d5453f169f5407f817bc5fc79f",
+      "output": "B30P105/TD/raw/grain_014.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 15,
+      "script": "B30P105/TD/scripts/grain_015.mx3",
+      "script_sha256": "9f90894f27b5ea7bcd2d30cd739076503a764ff69a8625a2bbaa9b3497080601",
+      "output": "B30P105/TD/raw/grain_015.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 16,
+      "script": "B30P105/TD/scripts/grain_016.mx3",
+      "script_sha256": "3f9ce887d6cc3141b83512599291cb6748506d0c7789148a3b2f23657d45e5b9",
+      "output": "B30P105/TD/raw/grain_016.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 17,
+      "script": "B30P105/TD/scripts/grain_017.mx3",
+      "script_sha256": "291d56004a25ae7882cb41dc14643d2742b610dfbf0585ee475c3cf9762047c5",
+      "output": "B30P105/TD/raw/grain_017.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 18,
+      "script": "B30P105/TD/scripts/grain_018.mx3",
+      "script_sha256": "d35465ccfdb40fc50609351a2b241d65ab1bf1bb603cecbf437e3db18e1e278d",
+      "output": "B30P105/TD/raw/grain_018.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 19,
+      "script": "B30P105/TD/scripts/grain_019.mx3",
+      "script_sha256": "a7e07080f6dc8bec9589fe808178cf389d7db9f9c78fdd4351e63a75d1f8e210",
+      "output": "B30P105/TD/raw/grain_019.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 20,
+      "script": "B30P105/TD/scripts/grain_020.mx3",
+      "script_sha256": "1874ae746dc1309daed54bb3ac51bbb28c8aa508dd066b4b14f565a2ffbc366d",
+      "output": "B30P105/TD/raw/grain_020.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 21,
+      "script": "B30P105/TD/scripts/grain_021.mx3",
+      "script_sha256": "1e471c2770227221d4cdc50d39c480363b777caf426940514e24d99c88982263",
+      "output": "B30P105/TD/raw/grain_021.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 22,
+      "script": "B30P105/TD/scripts/grain_022.mx3",
+      "script_sha256": "a9deafcae7f6b424a381ea7bbd61af20dcadf22184fd9b33fbca779d14699695",
+      "output": "B30P105/TD/raw/grain_022.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 23,
+      "script": "B30P105/TD/scripts/grain_023.mx3",
+      "script_sha256": "085e0bc12e89dadc00513bef665408a8b058f925a67a0bbc804a0a995f52b322",
+      "output": "B30P105/TD/raw/grain_023.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 24,
+      "script": "B30P105/TD/scripts/grain_024.mx3",
+      "script_sha256": "341056dcba80d237f71158fce0b0cfe68121d7262a4318f5db0c2231e41aacd4",
+      "output": "B30P105/TD/raw/grain_024.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 25,
+      "script": "B30P105/TD/scripts/grain_025.mx3",
+      "script_sha256": "d6751e11b3c3fee7cee5ce2ae3c96011835ae88cdb55c7c27b71eb8ba04a313b",
+      "output": "B30P105/TD/raw/grain_025.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 26,
+      "script": "B30P105/TD/scripts/grain_026.mx3",
+      "script_sha256": "198c10ecbec74fb6ef83131bd7c9b3904ddf8327f4e2038ef1e670c1552eede8",
+      "output": "B30P105/TD/raw/grain_026.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 27,
+      "script": "B30P105/TD/scripts/grain_027.mx3",
+      "script_sha256": "a8a05b541449e0c456860881e656b651734c8d3acb81d15498d11ec47ef8a8ff",
+      "output": "B30P105/TD/raw/grain_027.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 28,
+      "script": "B30P105/TD/scripts/grain_028.mx3",
+      "script_sha256": "3dfff0904bb6e402f17ccd5d63951a577c560dd90dbb26f38449ab4e83a90900",
+      "output": "B30P105/TD/raw/grain_028.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 29,
+      "script": "B30P105/TD/scripts/grain_029.mx3",
+      "script_sha256": "39007aa87a8021db29d2a9cea633e8e2b1bc74382e4522373ed67e5315bac74d",
+      "output": "B30P105/TD/raw/grain_029.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 30,
+      "script": "B30P105/TD/scripts/grain_030.mx3",
+      "script_sha256": "4d5a77d173fe177717089e96f5f0312d2a9b86f4638481850b3cbfb26ca7f5bd",
+      "output": "B30P105/TD/raw/grain_030.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 31,
+      "script": "B30P105/TD/scripts/grain_031.mx3",
+      "script_sha256": "595c3cdcfd7b90166d7bdc2ff4a5d221dae6a493b48a81b6b5c13b51ce1dd58c",
+      "output": "B30P105/TD/raw/grain_031.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 32,
+      "script": "B30P105/TD/scripts/grain_032.mx3",
+      "script_sha256": "e38d43bd604f0b2fe1a8dce85843bf0a134ad0a8a997dd0c914bfc338ade343d",
+      "output": "B30P105/TD/raw/grain_032.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 33,
+      "script": "B30P105/TD/scripts/grain_033.mx3",
+      "script_sha256": "21939220e838e1974d25db88137affb27baefc2a453fba97bf5fb691127497f0",
+      "output": "B30P105/TD/raw/grain_033.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 34,
+      "script": "B30P105/TD/scripts/grain_034.mx3",
+      "script_sha256": "7ee008415af335db5853bac6353ad383459a1e882b8733825eeac6c84ac8a0dc",
+      "output": "B30P105/TD/raw/grain_034.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 35,
+      "script": "B30P105/TD/scripts/grain_035.mx3",
+      "script_sha256": "4ae675c252eb4d07e9ab8085b4e74715122160fb6f6cbd336e177d6a042d562a",
+      "output": "B30P105/TD/raw/grain_035.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 36,
+      "script": "B30P105/TD/scripts/grain_036.mx3",
+      "script_sha256": "373dfb1ea97fcfa6f69f24070fd69d6e2e2c6efb7dae1ed1ccf3047e4a6f1c94",
+      "output": "B30P105/TD/raw/grain_036.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 37,
+      "script": "B30P105/TD/scripts/grain_037.mx3",
+      "script_sha256": "b938a3d2519fcaa649f1f98aef47f6bf3ca0a1b38eca9cb108720d3b71e59f26",
+      "output": "B30P105/TD/raw/grain_037.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 38,
+      "script": "B30P105/TD/scripts/grain_038.mx3",
+      "script_sha256": "f4396d40f2ea2e54250631ab707488b7934dc5e4d14d4ea69677c063b16c24a9",
+      "output": "B30P105/TD/raw/grain_038.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 39,
+      "script": "B30P105/TD/scripts/grain_039.mx3",
+      "script_sha256": "d93fa33406e78482c43e02d7a7c65998c5a94f1162fc22e43c666d9716f5872f",
+      "output": "B30P105/TD/raw/grain_039.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 40,
+      "script": "B30P105/TD/scripts/grain_040.mx3",
+      "script_sha256": "3820d82201a3f38281322af68dabae1bf5ab2395a732cf6a27c6840ffeca1512",
+      "output": "B30P105/TD/raw/grain_040.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 41,
+      "script": "B30P105/TD/scripts/grain_041.mx3",
+      "script_sha256": "627f5f796d5974d54b5a065231128b55e77de8b934fb72bfc0959cb7a14b5612",
+      "output": "B30P105/TD/raw/grain_041.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 42,
+      "script": "B30P105/TD/scripts/grain_042.mx3",
+      "script_sha256": "f37f776af9030ee8f9433ba7332c12823552003f6624f0d74c25e6d3c7453c1e",
+      "output": "B30P105/TD/raw/grain_042.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 43,
+      "script": "B30P105/TD/scripts/grain_043.mx3",
+      "script_sha256": "faa84079b56d40065b54187f22e4d6fa5070781cd310b4084030923fa725e1b2",
+      "output": "B30P105/TD/raw/grain_043.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 44,
+      "script": "B30P105/TD/scripts/grain_044.mx3",
+      "script_sha256": "dbdcd4970cb80737a84b951fcca5d23b84e2a741ed2bed3ca355a7fbe8a7ddae",
+      "output": "B30P105/TD/raw/grain_044.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 45,
+      "script": "B30P105/TD/scripts/grain_045.mx3",
+      "script_sha256": "cb0c787f952267f7886d48294086f00ca6ee2a95c13e2ce0ef0a0fb7b526d17f",
+      "output": "B30P105/TD/raw/grain_045.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 46,
+      "script": "B30P105/TD/scripts/grain_046.mx3",
+      "script_sha256": "cb4519c55089ab536f84e65e4391b0ac2ea764dc597f0d3c65ded736e42cd17d",
+      "output": "B30P105/TD/raw/grain_046.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 47,
+      "script": "B30P105/TD/scripts/grain_047.mx3",
+      "script_sha256": "5c1557f147f256a1b19e021b69852ac42bdd9d7a074a1f38c06e3a0334b6e6fd",
+      "output": "B30P105/TD/raw/grain_047.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 48,
+      "script": "B30P105/TD/scripts/grain_048.mx3",
+      "script_sha256": "66452e41be5b30e2d027897d8962e169d61ec0672e3dee62bf19fc0743c3fe7a",
+      "output": "B30P105/TD/raw/grain_048.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 49,
+      "script": "B30P105/TD/scripts/grain_049.mx3",
+      "script_sha256": "d6b6c88b8808da70b4bf992b9e8e1741f1cfa59f8a271adda0c27f8608ba60db",
+      "output": "B30P105/TD/raw/grain_049.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 50,
+      "script": "B30P105/TD/scripts/grain_050.mx3",
+      "script_sha256": "d6a9077ac2e0aeca8dde928ad248a116aa8c846c47ef09ecc064dd1b1f7ca4a3",
+      "output": "B30P105/TD/raw/grain_050.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 51,
+      "script": "B30P105/TD/scripts/grain_051.mx3",
+      "script_sha256": "33e63be31759a2cc7ef0bd7678f6253743c1ce732cae7754887ef503bc804efb",
+      "output": "B30P105/TD/raw/grain_051.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 52,
+      "script": "B30P105/TD/scripts/grain_052.mx3",
+      "script_sha256": "66c9cf46e282c00a9b8bcd93273c4f2e4ab78e9cc1e1841801cd3952906b69e1",
+      "output": "B30P105/TD/raw/grain_052.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 53,
+      "script": "B30P105/TD/scripts/grain_053.mx3",
+      "script_sha256": "91e744181e93217cdaeee7418b9cb96128339ae11d1ae711be06e05304b4e0c5",
+      "output": "B30P105/TD/raw/grain_053.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 54,
+      "script": "B30P105/TD/scripts/grain_054.mx3",
+      "script_sha256": "cfdb9a2da85c980bc51b4194717aa685e170b2771b98d265a14a794dd6c54e92",
+      "output": "B30P105/TD/raw/grain_054.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 55,
+      "script": "B30P105/TD/scripts/grain_055.mx3",
+      "script_sha256": "214c31b5dd9bcd399e7751eade11f2b3de67ba64abc8207dc97bff2e3c71fb1b",
+      "output": "B30P105/TD/raw/grain_055.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 56,
+      "script": "B30P105/TD/scripts/grain_056.mx3",
+      "script_sha256": "9c90d5b7b8aa41a8d5dd35dbe695fa81161a0163a8c73d7ca77a2bb9c4913a7a",
+      "output": "B30P105/TD/raw/grain_056.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 57,
+      "script": "B30P105/TD/scripts/grain_057.mx3",
+      "script_sha256": "750992d87073d062100f949e906a91fec7145d8c5ea27e1dfd703b68e8dcca40",
+      "output": "B30P105/TD/raw/grain_057.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 58,
+      "script": "B30P105/TD/scripts/grain_058.mx3",
+      "script_sha256": "ee6ec4c9efda62a4693ac4b6614caff68d7d8d4f451b4ea163fa3d1100b15c00",
+      "output": "B30P105/TD/raw/grain_058.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 59,
+      "script": "B30P105/TD/scripts/grain_059.mx3",
+      "script_sha256": "67caa9f0facd5b033a0fe92fc1c1da98c8709f491cd69db83e40b368a74b637a",
+      "output": "B30P105/TD/raw/grain_059.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 60,
+      "script": "B30P105/TD/scripts/grain_060.mx3",
+      "script_sha256": "95e1566e6de534d7d19e1ea467be3d76857e8b90c8777c7d28c3ba43a5c3e35d",
+      "output": "B30P105/TD/raw/grain_060.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 61,
+      "script": "B30P105/TD/scripts/grain_061.mx3",
+      "script_sha256": "ff068f9d27a865c4e2d7b4b4c4e56deb7eccc578dfd9ea7ff0c4208b10d29ac5",
+      "output": "B30P105/TD/raw/grain_061.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 62,
+      "script": "B30P105/TD/scripts/grain_062.mx3",
+      "script_sha256": "01d0e75d941183f565d6deb7cf8527ec47f5183e1b96560fc4df62c584f1565f",
+      "output": "B30P105/TD/raw/grain_062.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 63,
+      "script": "B30P105/TD/scripts/grain_063.mx3",
+      "script_sha256": "ac7982422fbef190665bb6fd8e7d71ad37e698418e91cca6d46040d528e1f8d7",
+      "output": "B30P105/TD/raw/grain_063.out"
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 64,
+      "script": "B30P105/TD/scripts/grain_064.mx3",
+      "script_sha256": "d1720b53b171eace0218633a21b93a2a442cbaf178eaefeca6b1b1ccf11a28a8",
+      "output": "B30P105/TD/raw/grain_064.out"
+    }
+  ],
+  "texture_sampling_version": "goss_haar_iid_prefix_v2",
+  "texture_module_sha256": "4f0f04b2cea41bd4c53cf08e29f1fcea325046eb5e3a655d8d7211a3de7950f5"
+}

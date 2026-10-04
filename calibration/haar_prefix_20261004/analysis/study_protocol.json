@@ -1,0 +1,40 @@
+{
+  "created_utc": "2026-10-04T03:28:46.8471915Z",
+  "texture_sampling_version": "goss_haar_iid_prefix_v2",
+  "grade": "B30P105",
+  "directions": [
+    "RD",
+    "TD"
+  ],
+  "manifest_seeds": [
+    20261004,
+    20261005
+  ],
+  "material_seeds": [
+    20261007,
+    20261008
+  ],
+  "grains_per_seed_direction": 64,
+  "actual_job_budget": 256,
+  "prefix_counts": [
+    8,
+    16,
+    32,
+    64
+  ],
+  "H_axis": "physical_A_per_m",
+  "curve_definition": "guarded_major_loop_midpoint_proxy",
+  "screening_thresholds_T": {
+    "abs_B800_n32_minus_n64_per_seed_direction": 0.02,
+    "max_curve_n32_minus_n64_per_seed_direction": 0.05,
+    "abs_B800_between_n64_seeds_per_direction": 0.05
+  },
+  "threshold_status": "engineering_sampling_screen_declared_before_new_native_results_not_material_accuracy_or_full_convergence_certification",
+  "result_selection": "report_all_two_seeds_and_directions_no_best_seed_selection",
+  "previous_studies": "preserved_legacy_background_approximation_not_pooled",
+  "limitations": [
+    "Only B30P105 and two seeds; no all-material convergence certification",
+    "ODF and Si remain report priors",
+    "No calibration bank or production surrogate promotion"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "status": "passed",
+  "texture_sampling_version": "goss_haar_iid_prefix_v2",
+  "sampler_source_sha256": "4f0f04b2cea41bd4c53cf08e29f1fcea325046eb5e3a655d8d7211a3de7950f5",
+  "verification_source_sha256": "99d8294fde34344f157edf8b3aa648820d3199635e970da5514978da166458e3",
+  "checks": {
+    "prefix_eulers_exact": true,
+    "prefix_provenance_exact": true,
+    "distribution_seed_and_N_independent": true,
+    "ideal_Goss_axes": true,
+    "orix_passive_to_native_active_axes": true,
+    "stored_quaternion_to_native_axes": true,
+    "Haar_axis_mean_check": true,
+    "Haar_axis_second_moment_check": true,
+    "cos_Phi_uniform_check": true
+  },
+  "background_sample_count": 100000,
+  "ideal_Goss_axis_max_error": 1.1102230246251565e-16,
+  "orix_axis_max_error": 9.992007221626409e-16,
+  "quaternion_axis_max_error": 8.604228440844963e-16,
+  "background_axis_mean_max_abs": 0.0034445911274221504,
+  "background_axis_second_moment_max_error": 0.0009318004724228612,
+  "cos_Phi_KS_statistic": 0.001983464483501951,
+  "mixture_metadata": {
+    "distribution": {
+      "texture_sampling_version": "goss_haar_iid_prefix_v2",
+      "f_Goss_prior": 0.79,
+      "theta_0_deg": 6.0,
+      "goss_center_euler_deg": [
+        0,
+        45,
+        0
+      ],
+      "goss_scatter_sigma_deg_prior": 8.0,
+      "goss_scatter": "uniform_S2_axis_half_normal_angle_clipped_at_3sigma",
+      "background": "Haar_uniform_SO3_normalized_isotropic_4D_Gaussian",
+      "mixture": "iid_Bernoulli_equal_volume_grains",
+      "orientation_convention": "active_crystal_to_sample_intrinsic_ZXZ_degrees"
+    },
+    "distribution_sha256": "e7a48c0cfc7b6c1b9333f306f40daaf066fad0e0874963e5342b289190f58061",
+    "seed": 20261007,
+    "n_grains": 64,
+    "rng": "PCG64_SeedSequence_seed_channel",
+    "numpy_version": "1.26.4",
+    "scipy_version": "1.15.2",
+    "goss_count": 44,
+    "background_count": 20,
+    "prefix_policy": "same_parameters_and_seed_same_first_k_grains",
+    "ODF_status": "parametric_prior_not_independent_EBSD"
+  },
+  "background_metadata": {
+    "distribution": {
+      "texture_sampling_version": "goss_haar_iid_prefix_v2",
+      "f_Goss_prior": 0.0,
+      "theta_0_deg": 0.0,
+      "goss_center_euler_deg": [
+        0,
+        45,
+        0
+      ],
+      "goss_scatter_sigma_deg_prior": 8.0,
+      "goss_scatter": "uniform_S2_axis_half_normal_angle_clipped_at_3sigma",
+      "background": "Haar_uniform_SO3_normalized_isotropic_4D_Gaussian",
+      "mixture": "iid_Bernoulli_equal_volume_grains",
+      "orientation_convention": "active_crystal_to_sample_intrinsic_ZXZ_degrees"
+    },
+    "distribution_sha256": "dc2df4088edd0ced57aa5539debd7a138be5f96841bef5eb4f91fd16e8ade469",
+    "seed": 20261004,
+    "n_grains": 100000,
+    "rng": "PCG64_SeedSequence_seed_channel",
+    "numpy_version": "1.26.4",
+    "scipy_version": "1.15.2",
+    "goss_count": 0,
+    "background_count": 100000,
+    "prefix_policy": "same_parameters_and_seed_same_first_k_grains",
+    "ODF_status": "parametric_prior_not_independent_EBSD"
+  },
+  "limitations": [
+    "Algorithm and geometric convention checks only, not measured ODF validation",
+    "Moment and marginal checks supplement the Haar construction; they are not a proof from finite samples",
+    "Goss radial scatter remains an explicit prior, not measured ODF HWHM"
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "status": "sampling_screen_failed_needs_more_grains_seeds",
+  "texture_sampling_version": "goss_haar_iid_prefix_v2",
+  "grade": "B30P105",
+  "predeclared_protocol_sha256": "8fb031e6f4689bbd7d64af2d10a83da3e6708ff7e5cbcf0ccef1e7ae3ce1a4de",
+  "summary_source_sha256": "9a9fab8afed7ed9916d05f159e6b0790d22288208b0c4dc1ecef6ef0f759c7e8",
+  "sampler_source_sha256": "4f0f04b2cea41bd4c53cf08e29f1fcea325046eb5e3a655d8d7211a3de7950f5",
+  "completed_requested_jobs": 256,
+  "per_seed_direction": [
+    {
+      "manifest_seed": 20261004,
+      "material_seed": 20261007,
+      "direction": "RD",
+      "B800_N64_raw_guarded_T": 0.03737565102662545,
+      "goss_fraction_N64_realized": 0.6875,
+      "delta_B800_N32_minus_N64_T": -0.003982484505715575,
+      "max_curve_delta_N32_vs_N64_T": 0.13670664461310622,
+      "B800_prefix_screen_pass": true,
+      "whole_curve_prefix_screen_pass": false,
+      "guard_diagnostic": {
+        "B800_unguarded_ensemble_mean_T": 0.03737565102662545,
+        "B800_guarded_ensemble_mean_T": 0.03737565102662545,
+        "B800_imposed_mean_change_T": 0.0,
+        "max_grain_guard_change_T": 0.00048641214783606834,
+        "grains_with_guard_change": 28,
+        "role": "imposed_prior_not_observed_magnetization"
+      }
+    },
+    {
+      "manifest_seed": 20261004,
+      "material_seed": 20261007,
+      "direction": "TD",
+      "B800_N64_raw_guarded_T": 0.08934121408021756,
+      "goss_fraction_N64_realized": 0.6875,
+      "delta_B800_N32_minus_N64_T": 0.019840612062560714,
+      "max_curve_delta_N32_vs_N64_T": 0.0983971701277731,
+      "B800_prefix_screen_pass": true,
+      "whole_curve_prefix_screen_pass": false,
+      "guard_diagnostic": {
+        "B800_unguarded_ensemble_mean_T": 0.08934121408021756,
+        "B800_guarded_ensemble_mean_T": 0.08934121408021756,
+        "B800_imposed_mean_change_T": 0.0,
+        "max_grain_guard_change_T": 0.15819913033413358,
+        "grains_with_guard_change": 31,
+        "role": "imposed_prior_not_observed_magnetization"
+      }
+    },
+    {
+      "manifest_seed": 20261005,
+      "material_seed": 20261008,
+      "direction": "RD",
+      "B800_N64_raw_guarded_T": 0.020010319726548615,
+      "goss_fraction_N64_realized": 0.84375,
+      "delta_B800_N32_minus_N64_T": 0.01560413028564411,
+      "max_curve_delta_N32_vs_N64_T": 0.07728421938206309,
+      "B800_prefix_screen_pass": true,
+      "whole_curve_prefix_screen_pass": false,
+      "guard_diagnostic": {
+        "B800_unguarded_ensemble_mean_T": 0.020010319726548615,
+        "B800_guarded_ensemble_mean_T": 0.020010319726548615,
+        "B800_imposed_mean_change_T": 0.0,
+        "max_grain_guard_change_T": 0.001334435921502397,
+        "grains_with_guard_change": 29,
+        "role": "imposed_prior_not_observed_magnetization"
+      }
+    },
+    {
+      "manifest_seed": 20261005,
+      "material_seed": 20261008,
+      "direction": "TD",
+      "B800_N64_raw_guarded_T": 0.010658010745438472,
+      "goss_fraction_N64_realized": 0.84375,
+      "delta_B800_N32_minus_N64_T": -0.003455090353780643,
+      "max_curve_delta_N32_vs_N64_T": 0.12401621095678061,
+      "B800_prefix_screen_pass": true,
+      "whole_curve_prefix_screen_pass": false,
+      "guard_diagnostic": {
+        "B800_unguarded_ensemble_mean_T": 0.010658010745438472,
+        "B800_guarded_ensemble_mean_T": 0.010658010745438472,
+        "B800_imposed_mean_change_T": 0.0,
+        "max_grain_guard_change_T": 0.0010439374157804214,
+        "grains_with_guard_change": 34,
+        "role": "imposed_prior_not_observed_magnetization"
+      }
+    }
+  ],
+  "between_seeds": [
+    {
+      "direction": "RD",
+      "delta_B800_N64_seed2_minus_seed1_T": -0.017365331300076833,
+      "max_curve_delta_between_N64_seeds_T": 0.29942353224313434,
+      "B800_seed_screen_pass": true
+    },
+    {
+      "direction": "TD",
+      "delta_B800_N64_seed2_minus_seed1_T": -0.07868320333477909,
+      "max_curve_delta_between_N64_seeds_T": 0.1766202923388589,
+      "B800_seed_screen_pass": false
+    }
+  ],
+  "calibration_bank_updated": false,
+  "material_convergence_certified": false,
+  "limitations": [
+    "Only B30P105 and two seeds; no all-material convergence certification",
+    "ODF and Si remain report priors",
+    "No calibration bank or production surrogate promotion",
+    "Largest N is a finite baseline; screen thresholds do not certify independent B800 accuracy",
+    "Guarded and unguarded midpoint diagnostics remain engineering proxies"
+  ]
+}

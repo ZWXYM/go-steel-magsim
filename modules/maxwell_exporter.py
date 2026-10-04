@@ -285,7 +285,7 @@ def export_from_prediction(prediction_result: dict,
         'exported_directions': ['RD', 'TD'],
         **{key: prediction_result.get(key, 'legacy_unspecified') for key in
            ('simulation_physics_version', 'reference_correction_version',
-            'H_axis', 'calibration_sha256', 'dataset_sha256')},
+            'H_axis', 'calibration_sha256', 'dataset_sha256', 'texture_sampling_version')},
     }
     return save_amat_file(content, mat_name, export_dir, metadata=metadata)
 
@@ -300,6 +300,7 @@ def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
     import re
     import numpy as np
     from modules.material_calibration import VERSION, PHYSICS_VERSION, validated_curve
+    from modules.texture_sampling import LEGACY_SAMPLING_VERSION
     for curve in (rd, td):
         if (curve.get('calibration_version') != VERSION
                 or curve.get('physics_version') != PHYSICS_VERSION
@@ -311,6 +312,9 @@ def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
             raise ValueError('Export requires monotone nonnegative B')
     if rd['calibration_sha256'] != td['calibration_sha256']:
         raise ValueError('RD and TD must come from the same calibration bank')
+    sampling = rd.get('texture_sampling_version', LEGACY_SAMPLING_VERSION)
+    if sampling != td.get('texture_sampling_version', LEGACY_SAMPLING_VERSION):
+        raise ValueError('RD and TD have different texture sampling versions')
     content = generate_amat_content(mat_name, rd['H'], rd['B'], td['H'], td['B'],
         thickness_mm=thickness_mm, core_loss_override={'kh': 0, 'kc': 0, 'ke': 0})
     content = ('# EXPERIMENTAL B-H ONLY: loss coefficients are zero placeholders.\n'
@@ -330,6 +334,7 @@ def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
         'core_loss_status': 'uncalibrated_zero_placeholders', 'motor_validation': 'not_run',
         'simulation_physics_version': PHYSICS_VERSION, 'reference_correction_version': VERSION,
         'calibration_sha256': rd['calibration_sha256'], 'H_axis': 'physical_A_per_m',
+        'texture_sampling_version': sampling,
         'H_scale': 1.0, 'thickness_mm': thickness_mm,
         'RD_anchor_weights': rd['anchor_weights'], 'TD_anchor_weights': td['anchor_weights'],
         'excluded_grades': rd['excluded_grades'], 'exported_directions': ['RD', 'TD'],

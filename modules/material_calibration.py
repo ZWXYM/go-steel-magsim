@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+from modules.texture_sampling import LEGACY_SAMPLING_VERSION, SAMPLING_VERSION
 
 MU0 = 4 * np.pi * 1e-7
 VERSION = 'fixed_h_delta_v1'
@@ -105,10 +106,15 @@ class CalibrationBank:
         if payload.get('H_axis') != 'physical_A_per_m':
             raise ValueError('Calibration requires physical H in A/m')
         self.payload = payload
+        self.texture_sampling_version = payload.get('texture_sampling_version', LEGACY_SAMPLING_VERSION)
+        if self.texture_sampling_version not in (LEGACY_SAMPLING_VERSION, SAMPLING_VERSION):
+            raise ValueError('Unsupported texture sampling version')
         self.anchors = payload['anchors']
         if not self.anchors:
             raise ValueError('Empty calibration bank')
         for anchor in self.anchors:
+            if anchor.get('texture_sampling_version', LEGACY_SAMPLING_VERSION) != self.texture_sampling_version:
+                raise ValueError('Mixed texture sampling versions in calibration bank')
             features(anchor['params'])
             validated_curve(anchor['H'], anchor['delta_B'])
             if anchor['direction'] not in ('RD', 'TD'):
@@ -125,9 +131,12 @@ class CalibrationBank:
                               separators=(',', ':')).encode()).hexdigest()
 
     def correct(self, H, B_sim, params, *, direction, exclude_grades=(),
-                weight_cap=1.0, physics_version=PHYSICS_VERSION):
+                weight_cap=1.0, physics_version=PHYSICS_VERSION,
+                texture_sampling_version=LEGACY_SAMPLING_VERSION):
         if physics_version != self.payload['physics_version']:
             raise ValueError('Cannot apply cubic calibration to legacy simulation labels')
+        if texture_sampling_version != self.texture_sampling_version:
+            raise ValueError('Raw simulation and bank have different texture sampling versions')
         if not 0 <= weight_cap <= 1:
             raise ValueError('weight_cap must be in [0, 1]')
         h, b = validated_curve(H, B_sim)
@@ -154,6 +163,7 @@ class CalibrationBank:
         return {'H': h.tolist(), 'B': corrected.tolist(), 'B_raw': b.tolist(),
                 'delta_B': delta.tolist(), 'calibration_version': VERSION,
                 'physics_version': physics_version, 'calibration_sha256': self.bank_sha256,
+                'texture_sampling_version': self.texture_sampling_version,
                 'H_axis': 'physical_A_per_m', 'H_scale': 1.0,
                 'anchor_weights': {a['grade']: float(w) for a, w in zip(eligible, weights)},
                 'excluded_grades': sorted(set(exclude_grades)),

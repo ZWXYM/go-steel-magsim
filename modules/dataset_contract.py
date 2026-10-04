@@ -1,12 +1,14 @@
 """Prevent accidental mixing of incompatible physical models/label protocols."""
 from pathlib import Path
 import hashlib
+from modules.texture_sampling import LEGACY_SAMPLING_VERSION
 
 CONTRACT_COLUMNS = {
     'simulation_physics_version': 'legacy_unspecified',
     'reference_correction_version': 'legacy_unspecified',
     'H_axis': 'legacy_unspecified',
     'calibration_sha256': 'legacy_unspecified',
+    'texture_sampling_version': LEGACY_SAMPLING_VERSION,
 }
 
 
