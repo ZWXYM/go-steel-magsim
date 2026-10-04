@@ -40,3 +40,5 @@ tmp/
 data/.calib_state.json
 data/sim_bh/
 
+# Local calibration artifacts and private motor solver outputs
+data/workbench/

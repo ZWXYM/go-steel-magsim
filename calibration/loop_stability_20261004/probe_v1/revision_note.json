@@ -1,0 +1,12 @@
+{
+  "v1_planned": 54,
+  "v1_successful": 3,
+  "v1_timeout": 1,
+  "v1_unattempted": 50,
+  "timeout_stage": "presaturation before first saved table row",
+  "all_outputs_retained": true,
+  "predeclared_manifest_before_execution": true,
+  "git_checkpoint": "a07b145a",
+  "git_checkpoint_timing": "The initial git command used the wrong cwd and did not stage; corrected commit was made after first native job started. Manifest/conditions/script hashes were frozen before any solve; no result-based case changes.",
+  "superseding_run_id": "loop_stability_v2_20261004"
+}

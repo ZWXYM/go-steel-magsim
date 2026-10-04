@@ -1,0 +1,71 @@
+{
+  "protocol": "isolated_loop_stability_probe_v1",
+  "manifest_sha256": "05905c807e74fedae90feb13dfd56f1e309770ee6fe80ecd76bde26e7c18cc9f",
+  "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+  "jobs": [
+    {
+      "case_id": "s20261004_g069",
+      "condition": "exact_repeat",
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 69,
+      "script": "scripts/s20261004_g069/exact_repeat.mx3",
+      "script_sha256": "c9b9ffa96d5a56185a154bcfa69ff4d367db4a1bdd73d8b66f98dc23d7849f80",
+      "output": "raw/s20261004_g069/exact_repeat.out",
+      "exit_code": 0,
+      "timed_out": false,
+      "execution_kind": "native",
+      "elapsed_seconds": 5.247,
+      "table_sha256": "373304ebfa83c8f0d5f29b43f1b8b63630d745b937b773f5217885867008a9f2"
+    },
+    {
+      "case_id": "s20261004_g069",
+      "condition": "default_telemetry",
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 69,
+      "script": "scripts/s20261004_g069/default_telemetry.mx3",
+      "script_sha256": "8822158950df6c5b790d0b64aca9bcb9be153f167f2b95e6f48ad4549803ddab",
+      "output": "raw/s20261004_g069/default_telemetry.out",
+      "exit_code": 0,
+      "timed_out": false,
+      "execution_kind": "native",
+      "elapsed_seconds": 5.566,
+      "table_sha256": "9271f83e4a207605128e01bff631c101c79c68119a80e4d9659659c815c2ac7c"
+    },
+    {
+      "case_id": "s20261004_g069",
+      "condition": "strict_minimize",
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 69,
+      "script": "scripts/s20261004_g069/strict_minimize.mx3",
+      "script_sha256": "61185f5f13cd94af13c7691980484d9e36af08c057f1302d40d5fe4296c018e3",
+      "output": "raw/s20261004_g069/strict_minimize.out",
+      "exit_code": 0,
+      "timed_out": false,
+      "execution_kind": "native",
+      "elapsed_seconds": 9.204,
+      "table_sha256": "68c4f243e705ad11aa7976ed4043d588c894ac29ccddf3ef972ec2bb118c7c79"
+    },
+    {
+      "case_id": "s20261004_g069",
+      "condition": "relax_continuous",
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 69,
+      "script": "scripts/s20261004_g069/relax_continuous.mx3",
+      "script_sha256": "a3e02098d45bd3ac9d9b08a95f39d597d1e3d9cf82153b4f5ceccb8577f3af66",
+      "output": "raw/s20261004_g069/relax_continuous.out",
+      "exit_code": -124,
+      "timed_out": true,
+      "execution_kind": "native",
+      "elapsed_seconds": 120.071,
+      "table_sha256": null
+    }
+  ]
+}

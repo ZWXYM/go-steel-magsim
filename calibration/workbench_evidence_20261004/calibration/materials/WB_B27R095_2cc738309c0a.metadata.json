@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-10-04T23:42:14.217181",
+  "amat_path": "D:\\Project\\go-steel-thesis\\magsim\\data\\workbench\\calibration\\cal_2cc738309c0a\\materials\\WB_B27R095_2cc738309c0a.amat",
+  "material_name": "WB_B27R095_2cc738309c0a",
+  "status": "experimental_BH_only",
+  "core_loss_status": "uncalibrated_zero_placeholders",
+  "motor_validation": "not_run",
+  "simulation_physics_version": "cubic_sample_frame_v2",
+  "reference_correction_version": "fixed_h_delta_v1",
+  "calibration_sha256": "4fcf027c3e30e2d62cef8f01494021a1bca1322c3fe4cc88528aa88fdb4adc4c",
+  "H_axis": "physical_A_per_m",
+  "texture_sampling_version": "legacy_multi_peak_importance_v1",
+  "H_scale": 1.0,
+  "thickness_mm": 0.27,
+  "RD_anchor_weights": {
+    "B23R075": 0.0,
+    "B27R090": 0.0,
+    "B27R095": 1.0,
+    "B30P105": 0.0
+  },
+  "TD_anchor_weights": {
+    "B23R075": 0.0,
+    "B27R090": 0.0,
+    "B27R095": 1.0,
+    "B30P105": 0.0
+  },
+  "excluded_grades": [],
+  "exported_directions": [
+    "RD",
+    "TD"
+  ],
+  "ND_status": "scalar_prior_1000_not_measured",
+  "outside_feature_box": false
+}

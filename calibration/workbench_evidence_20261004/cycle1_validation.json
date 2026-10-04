@@ -1,0 +1,59 @@
+{
+  "status": "partial_periodic_run_pending",
+  "runs": [
+    {
+      "job": "scan_d499b9ece91a",
+      "measurement_protocol": "v8_2_cycle1",
+      "cases": [
+        {
+          "material": "AK Steel - M-6 Carlite",
+          "accepted": false,
+          "solver_success": true,
+          "metrics": {
+            "T_avg_Nm": -4.7129729729104275,
+            "P_Fe_W": 1454.671453792745,
+            "P_Cu_W": 49.17506412530503,
+            "K_T_ripple_pct": -4313.062671258978,
+            "periodic_stability": null
+          },
+          "official_CSV_hashes": {
+            "maxwell_reports\\CoreLoss.csv": "76177ec92bd11f3fbefa65a8ee024f0dbae1e717e4be7229cc8bb6a7b80cb3d9",
+            "maxwell_reports\\SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+            "maxwell_reports\\StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+            "reports\\Drive Current Plots.csv": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+            "reports\\Torque Plots.csv": "289c602abf928278e17045500db283fb8df3a6173e7b9017670a81710b4cad23"
+          },
+          "validated_object_count": 48
+        },
+        {
+          "material": "Nippon Steel - 23ZH90",
+          "accepted": true,
+          "solver_success": true,
+          "metrics": {
+            "T_avg_Nm": 1.8847709411083282,
+            "P_Fe_W": 16.394297810392914,
+            "P_Cu_W": 49.17506412530503,
+            "K_T_ripple_pct": 20.712075695387274,
+            "periodic_stability": null
+          },
+          "official_CSV_hashes": {
+            "maxwell_reports\\CoreLoss.csv": "3774d4de9a89b6e11c5219e3aa0652ebd3d41e23915de18224f4f213dc8cb3bb",
+            "maxwell_reports\\SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+            "maxwell_reports\\StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+            "reports\\Drive Current Plots.csv": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+            "reports\\Torque Plots.csv": "80925be8c39dffdc3f27999ee8e0cc301b3903464efb374f529f058729a76923"
+          },
+          "validated_object_count": 48
+        }
+      ]
+    }
+  ],
+  "successful_Maxwell_solves": 2,
+  "old_results_preserved": true,
+  "private_projects_excluded": true,
+  "MuMax_successful_research_total": 668,
+  "tests_main": 58,
+  "tests_public": 58,
+  "public_private_model_test_skipped": true,
+  "project_complete": false
+}

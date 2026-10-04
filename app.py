@@ -1971,6 +1971,9 @@ def pipeline_list():
     return jsonify({'pipelines': _get_pr().list_pipelines()})
 
 
+from modules.workbench_routes import create_workbench
+app.register_blueprint(create_workbench(SCRIPT_DIR))
+
 if __name__ == '__main__':
     print("="*60)
     print("Fe-Si Multi-Crystal Micromagnetics Platform v2")

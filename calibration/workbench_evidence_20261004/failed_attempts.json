@@ -1,0 +1,24 @@
+[
+  {
+    "job": "scan_57192b1bc9f0",
+    "manifest_sha256": "50ccbb77af5e17a9cbc7b258dca8c259cac830af1ecc22670f356b6f882616a5",
+    "successful_native_solves": 0,
+    "failures": [
+      "'NoneType' object has no attribute 'GetDesignType'",
+      "'NoneType' object has no attribute 'GetDesignType'"
+    ],
+    "producer_commit": "9f7adbf3",
+    "worker_sha256": "de536b0d6e9c000c3e1241e71abd7ae03683db727232109f8d799be4d53cc8f3"
+  },
+  {
+    "job": "scan_c1e4979cc57a",
+    "manifest_sha256": "7757c96225ce3a392b598a28eb3cf074201048f5e2ff3d06020b2d0e5c2de2d3",
+    "successful_native_solves": 0,
+    "failures": [
+      "Desktop.release_desktop() got an unexpected keyword argument 'close_desktop'",
+      "Desktop.release_desktop() got an unexpected keyword argument 'close_desktop'"
+    ],
+    "producer_commit": "43de5fd5",
+    "worker_sha256": "c2ce9775002c10e88217094dcb6e046c1e7eed53f33d5db3734611b6ebfb8d34"
+  }
+]

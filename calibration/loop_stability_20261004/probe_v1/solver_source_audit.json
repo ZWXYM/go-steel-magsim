@@ -1,0 +1,20 @@
+[
+  {
+    "url": "https://github.com/mumax/3/blob/v3.11.1/engine/minimizer.go",
+    "retrieval_url": "https://api.github.com/repos/mumax/3/contents/engine/minimizer.go?ref=v3.11.1",
+    "tag": "v3.11.1",
+    "commit": "ee077035f13f917b3b74f44850f5768c5d13d892",
+    "sha256": "eaaeb8dbd15335e037cf4f23be93583fe05f37e0da92b4be40a7dc3e2fd4aecb",
+    "bytes": 3355,
+    "retrieved_utc": "2026-10-04T14:14:48.150768+00:00"
+  },
+  {
+    "url": "https://github.com/mumax/3/blob/v3.11.1/engine/relax.go",
+    "retrieval_url": "https://api.github.com/repos/mumax/3/contents/engine/relax.go?ref=v3.11.1",
+    "tag": "v3.11.1",
+    "commit": "ee077035f13f917b3b74f44850f5768c5d13d892",
+    "sha256": "a03ccbdf88a5c798a4d900a169562264fbf0a74c48a60cbb910962bdba033d58",
+    "bytes": 2941,
+    "retrieved_utc": "2026-10-04T14:14:49.242190+00:00"
+  }
+]
