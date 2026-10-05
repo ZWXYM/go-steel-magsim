@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "metric_function_AST_unchanged": true,
+  "new_MuMax_solves": 0,
+  "new_Maxwell_solves": 0,
+  "cumulative_MuMax_success": 668,
+  "cumulative_Maxwell_success": 4,
+  "tests_main": 68,
+  "tests_public": 68,
+  "public_private_archive_test_skipped": 1,
+  "recovery_tests": 10,
+  "live_or_unknown_processes_block_recovery": true,
+  "old_locks_retired_with_bytes_preserved": true,
+  "bundles": [
+    {
+      "job": "scan_d499b9ece91a",
+      "source_files_preserved": 1419,
+      "official_CSV_in_bundle": 10,
+      "accepted": 1,
+      "reasons": [
+        "转矩存在负值或零值",
+        "通过"
+      ],
+      "bundle_sha256": "ab8c0a68324ae98ae8c906c4c212ba073ec40269e31f78cb68e1c0b489694777"
+    },
+    {
+      "job": "scan_092904b5932d",
+      "source_files_preserved": 3819,
+      "official_CSV_in_bundle": 10,
+      "accepted": 0,
+      "reasons": [
+        "周期波形差 0.245182 N·m > 0.1",
+        "周期波形差 0.239221 N·m > 0.1"
+      ],
+      "bundle_sha256": "494ef0181b622279b6cd6900c2888151b93de51bc16c70464a31060466230702"
+    }
+  ],
+  "UI_bundle_download_hash_verified": true,
+  "project_complete": false
+}

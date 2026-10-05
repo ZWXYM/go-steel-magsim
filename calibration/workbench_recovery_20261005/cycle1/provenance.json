@@ -1,0 +1,24 @@
+{
+  "source_job": "scan_d499b9ece91a",
+  "source_manifest_sha256": "77636d1676bac31417869d176c9809caabcc76f9d9b2821eb81f4e5125f41c6a",
+  "result_hashes": {
+    "case_01": "4b036c631ecf7360dffd7afb491831631b9920eae013728ca7d45aa85c8cea9f",
+    "case_02": "2123ea1dd047eea8d63d19b80f1dfc5defffdb85b008aa0f7e84a2cf1e19d521"
+  },
+  "derived_summary": true,
+  "raw_results_changed": false,
+  "new_native_solves": 0,
+  "verified_legacy_protocol_aliases": {
+    "case_01": {
+      "stored": "v8_2_torque_all_core_drop_first_copper_all_v1",
+      "canonical": "v8_2_cycle1",
+      "verification": "same full 31-point time grid; recomputed official torque/core/copper metrics"
+    },
+    "case_02": {
+      "stored": "v8_2_torque_all_core_drop_first_copper_all_v1",
+      "canonical": "v8_2_cycle1",
+      "verification": "same full 31-point time grid; recomputed official torque/core/copper metrics"
+    }
+  },
+  "summary_producer_sha256": "14cb769398afc8658c7be05839883e0a59157a44cc8ae478c33c6c78a58056e7"
+}

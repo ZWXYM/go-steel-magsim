@@ -12,3 +12,4 @@ tools/probe_loop_stability.py -text
 tools/audit_raw_loop_states.py -text
 tools/motor_scan_worker.py -text
 modules/motor_workbench.py -text
+modules/motor_queue.py -text

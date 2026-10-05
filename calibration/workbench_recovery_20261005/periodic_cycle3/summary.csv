@@ -1,0 +1,3 @@
+﻿case_id,material,measurement_protocol,accepted,acceptance_reason,T_avg_Nm,K_T_ripple_pct,P_Fe_W,P_Cu_W,eta_estimate_pct,source_n_samples,phase_torque_delta_Nm,mean_torque_relative_change,core_loss_relative_change,error
+case_01,AK Steel - M-6 Carlite,periodic_cycle3_v1,False,周期波形差 0.245182 N·m > 0.1,1.8761701435912432,24.623954330460332,24.305476555769285,49.175064125305035,88.91523635538445,91,0.24518226362519013,0.0011775683272520975,0.04737899871494695,
+case_02,Nippon Steel - 23ZH90,periodic_cycle3_v1,False,周期波形差 0.239221 N·m > 0.1,1.907502826179743,21.30520603302191,24.88688614518089,49.175064125305035,89.00050938196375,91,0.23922065807893,0.019040395245768574,0.033882413190443716,

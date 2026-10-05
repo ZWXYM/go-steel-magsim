@@ -66,6 +66,22 @@ def create_workbench(project,storage=None,root=None):
     def motor_jobs():
         return jsonify(motor.jobs())
 
+    @bp.get('/api/workbench/motor/queue')
+    def queue_state():
+        return jsonify(motor.queue_status())
+
+    @bp.post('/api/workbench/motor/queue/recover')
+    def recover_queue():
+        return jsonify(motor.recover_queue())
+
+    @bp.post('/api/workbench/motor/jobs/<job_id>/continue')
+    def continue_motor(job_id):
+        return jsonify(motor.continue_unattempted(job_id))
+
+    @bp.post('/api/workbench/motor/jobs/<job_id>/export')
+    def export_motor(job_id):
+        return jsonify(motor.export_summary(job_id))
+
     @bp.post('/api/workbench/motor/jobs')
     def prepare_motor():
         data=request.get_json()
@@ -92,4 +108,6 @@ def create_workbench(project,storage=None,root=None):
             raise ValueError('文件路径不属于该任务')
         return send_file(path,as_attachment=True)
 
+    if (storage/'motor/queue.lock').exists() or any(j['status'] in ('queued','starting','running') for j in motor.jobs()):
+        motor.start_queue_monitor()
     return bp

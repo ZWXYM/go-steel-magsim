@@ -1,0 +1,13 @@
+{
+  "source_job": "scan_092904b5932d",
+  "source_manifest_sha256": "7e608b496b0b63165b456ed59df7dc5dff57a6e9ddda8fff8eadb2f8fc773b21",
+  "result_hashes": {
+    "case_01": "573b837f81b4a22fa9e779802b30cdf9e06b85169424501b6dbf6aed40a29dea",
+    "case_02": "743b9aba86fbbcee1d48c63f32491512cf93b82d3d1d3f9234e127925df00038"
+  },
+  "derived_summary": true,
+  "raw_results_changed": false,
+  "new_native_solves": 0,
+  "verified_legacy_protocol_aliases": {},
+  "summary_producer_sha256": "14cb769398afc8658c7be05839883e0a59157a44cc8ae478c33c6c78a58056e7"
+}

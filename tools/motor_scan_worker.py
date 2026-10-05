@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 import os
 import sys
@@ -14,6 +13,8 @@ PROJECT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(PROJECT))
 from modules.material_calibration import file_hash
 from modules.motor_workbench import collect_metrics,write_json,license_config
+from modules.motor_workbench import write_scan_summary
+from modules.motor_queue import process_identity,identity_status
 
 
 def export_report(app,name,expressions,path):
@@ -55,6 +56,8 @@ def solve_case(path,case,manifest):
         if pid in existing:
             raise RuntimeError('未取得独立 AEDT 进程，拒绝改动已有会话')
         owned=True
+        write_json(folder/'desktop_session.json',dict(identity=process_identity(pid),
+            dedicated_session=True,created_utc=datetime.now(timezone.utc).isoformat()))
         app=Maxwell2d(project=str(project),design=manifest['design'],solution_type='Transient',
             version=manifest['aedt_version'],non_graphical=True,new_desktop=False,
             aedt_process_id=pid,close_on_exit=False,remove_lock=False)
@@ -128,6 +131,12 @@ def run(path):
     write_json(path/'state.json',state)
     results=[]
     for i,case in enumerate(manifest['cases']):
+        for previous in manifest['cases'][:i]:
+            session=path/previous['id']/'desktop_session.json'
+            if session.exists() and identity_status(json.loads(session.read_text(encoding='utf-8'))['identity'])!='dead':
+                state.update(status='needs_attention',error='前序独立 Desktop 尚未确认退出；保留现场及未执行牌号',current=None)
+                write_json(path/'state.json',state)
+                return 3
         state['current']=case['material']
         state['cases'][i]['status']='running'
         write_json(path/'state.json',state)
@@ -144,29 +153,11 @@ def run(path):
             print(traceback.format_exc(),flush=True)
         state['completed']=i+1
         write_json(path/'state.json',state)
-    fields=['case_id','material','accepted','T_avg_Nm','K_T_ripple_pct','P_Fe_W','P_Cu_W','eta_estimate_pct','error']
-    with (path/'summary.csv').open('w',encoding='utf-8-sig',newline='') as stream:
-        writer=csv.DictWriter(stream,fieldnames=fields,extrasaction='ignore')
-        writer.writeheader()
-        writer.writerows(results)
-    valid=[r for r in results if r.get('accepted')]
-    summary=dict(id=manifest['id'],model_version=manifest['model_version'],template_sha256=manifest['template_sha256'],
-        measurement_protocol=manifest.get('measurement_protocol','v8_2_cycle1'),
-        results=results,accepted=len(valid),failed_or_rejected=len(results)-len(valid),
-        best_torque=max(valid,key=lambda r:r['T_avg_Nm'])['material'] if valid else None,
-        minimum_core_loss=min(valid,key=lambda r:r['P_Fe_W'])['material'] if valid else None)
-    write_json(path/'summary.json',summary)
-    lines=['# 多牌号扫描结果',f"任务：{manifest['id']}；模型：{manifest['model_version']}",
-        f"测量口径：{summary['measurement_protocol']}；通过 {len(valid)} / {len(results)}；转矩最高：{summary['best_torque']}；铁损最低：{summary['minimum_core_loss']}",
-        '全部失败/拒绝项均保留；效率为 Pout/(Pout+PFe+PCu) 估计，未含机械/杂散损耗。',
-        '', '| 材料 | 状态 | 转矩 N·m | 脉动 % | 铁损 W |', '|---|---|---:|---:|---:|']
-    for r in results:
-        lines.append(f"| {r['material']} | {'通过' if r.get('accepted') else r.get('error','未通过数值门限')} | {r.get('T_avg_Nm','')} | {r.get('K_T_ripple_pct','')} | {r.get('P_Fe_W','')} |")
-    (path/'summary.md').write_text('\n'.join(lines),encoding='utf-8')
-    state.update(status='completed' if len(valid)==len(results) else 'completed_with_failures',
+    summary=write_scan_summary(path,manifest,results)
+    state.update(status='completed' if summary['accepted']==len(results) else 'completed_with_failures',
         finished_utc=datetime.now(timezone.utc).isoformat(),current=None,summary=summary)
     write_json(path/'state.json',state)
-    return 0 if valid else 2
+    return 0 if summary['accepted'] else 2
 
 
 if __name__=='__main__':

@@ -1,0 +1,3 @@
+﻿case_id,material,measurement_protocol,accepted,acceptance_reason,T_avg_Nm,K_T_ripple_pct,P_Fe_W,P_Cu_W,eta_estimate_pct,source_n_samples,phase_torque_delta_Nm,mean_torque_relative_change,core_loss_relative_change,error
+case_01,AK Steel - M-6 Carlite,v8_2_cycle1,False,转矩存在负值或零值,-4.7129729729104275,-4313.062671258978,1454.6714537927448,49.17506412530502,,,,,,
+case_02,Nippon Steel - 23ZH90,v8_2_cycle1,True,通过,1.8847709411083282,20.712075695387274,16.394297810392914,49.17506412530502,90.03031829638047,,,,,
