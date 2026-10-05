@@ -39,7 +39,8 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.post('/api/workbench/calibrate')
     def calibrate():
-        return jsonify(calibration.calibrate(request.get_json()['grades']))
+        data=request.get_json()
+        return jsonify(calibration.calibrate(data['grades'],data.get('calibration_version','fixed_h_delta_v1')))
 
     @bp.get('/api/workbench/calibrations')
     def calibrations():

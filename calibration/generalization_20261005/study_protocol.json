@@ -1,0 +1,71 @@
+{
+  "calibration_version": "fixed_h_nested_transfer_v2",
+  "candidates": [
+    {
+      "id": "legacy_idw",
+      "kind": "idw",
+      "native_beta": 1.0,
+      "ridge": 0.0
+    },
+    {
+      "id": "mean_delta",
+      "kind": "mean",
+      "native_beta": 1.0,
+      "ridge": 0.0
+    },
+    {
+      "id": "goss_ridge_1_beta_1",
+      "kind": "goss_ridge",
+      "native_beta": 1.0,
+      "ridge": 1.0
+    },
+    {
+      "id": "goss_ridge_1_beta_0.5",
+      "kind": "goss_ridge",
+      "native_beta": 0.5,
+      "ridge": 1.0
+    },
+    {
+      "id": "goss_ridge_0.1_beta_1",
+      "kind": "goss_ridge",
+      "native_beta": 1.0,
+      "ridge": 0.1
+    },
+    {
+      "id": "goss_ridge_0.1_beta_0.5",
+      "kind": "goss_ridge",
+      "native_beta": 0.5,
+      "ridge": 0.1
+    },
+    {
+      "id": "goss_ridge_0_beta_1",
+      "kind": "goss_ridge",
+      "native_beta": 1.0,
+      "ridge": 0.0
+    },
+    {
+      "id": "goss_ridge_0_beta_0.5",
+      "kind": "goss_ridge",
+      "native_beta": 0.5,
+      "ridge": 0.0
+    }
+  ],
+  "selection": "inner_leave_one_whole_material_out; shared RD/TD candidate",
+  "selection_loss": "equal-material/equal-direction mean(RMSE_H>=100_T + abs(B800_error_T))",
+  "metric_windows": "legacy unchanged: RMSE H>=100; low 100<=H<=1000; high H>=5000 A/m",
+  "minimum_outer_materials": 4,
+  "minimum_selection_materials": 3,
+  "f_Goss_scale": 0.1,
+  "max_signed_weight_L1": 3.0,
+  "exact_known_anchor": "all four material parameters match; use its residual",
+  "correction": "beta*B_native + sum(w*(B_reference - beta*B_native_anchor))",
+  "physical_H_unchanged": true,
+  "guard": "existing monotone_J_Msat_prior",
+  "outer_target_use": "metrics only after training-only selection and prediction",
+  "reference_only_control": "same outer split; legacy IDW with beta=0; never a candidate",
+  "limitations": [
+    "four reused processed references; no new prospective external batch",
+    "collinear reported texture parameters; independent Si/texture effects unidentified",
+    "no calibrated hysteresis or loss; native n8 sampling remains unconverged"
+  ]
+}

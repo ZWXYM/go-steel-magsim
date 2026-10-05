@@ -404,13 +404,13 @@ def apply_reference_correction(H_pred:     np.ndarray,
     # Explicit bank selects the versioned, fixed-H protocol. Legacy saved
     # models keep their historical behavior unless a bank is supplied.
     if calibration_path is not None:
-        from modules.material_calibration import CalibrationBank
+        from modules.calibration_transfer import load_bank
         from modules.texture_sampling import LEGACY_SAMPLING_VERSION
         if physics_version is None:
             raise ValueError('physics_version is required for a calibrated bank')
         params = dict(odf_params)
         params.setdefault('Si_content', si_content)
-        result = CalibrationBank.load(calibration_path).correct(
+        result = load_bank(calibration_path).correct(
             H_pred, B_sim, params, direction=direction, weight_cap=weight_cap,
             exclude_grades=exclude_grades, physics_version=physics_version,
             texture_sampling_version=texture_sampling_version or LEGACY_SAMPLING_VERSION)

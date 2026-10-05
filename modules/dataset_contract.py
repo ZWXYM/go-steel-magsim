@@ -22,11 +22,11 @@ def dataset_contract(df, dataset_path=None):
         versions[column] = values[0]
     if 'dataset_role' in df and any(df['dataset_role'].fillna('') == 'calibration_fit_diagnostics'):
         raise ValueError('校准拟合诊断表不可作为正式代理训练集')
-    if versions['reference_correction_version'] == 'fixed_h_delta_v1':
+    if versions['reference_correction_version'] in ('fixed_h_delta_v1','fixed_h_nested_transfer_v2'):
         if (versions['simulation_physics_version'] != 'cubic_sample_frame_v2'
                 or versions['H_axis'] != 'physical_A_per_m'
                 or versions['calibration_sha256'] == 'legacy_unspecified'):
-            raise ValueError('fixed_h_delta_v1 数据缺少匹配的物理版本、H 轴或校准哈希')
+            raise ValueError(versions['reference_correction_version']+' 数据缺少匹配的物理版本、H 轴或校准哈希')
     if dataset_path:
         versions['dataset_sha256'] = hashlib.sha256(Path(dataset_path).read_bytes()).hexdigest()
     return versions

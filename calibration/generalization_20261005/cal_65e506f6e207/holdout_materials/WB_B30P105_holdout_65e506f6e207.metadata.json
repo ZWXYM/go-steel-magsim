@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-10-05T12:29:40.626090",
+  "amat_path": "D:\\Project\\go-steel-thesis\\calibration\\generalization_20261005\\final\\cal_65e506f6e207\\holdout_materials\\WB_B30P105_holdout_65e506f6e207.amat",
+  "material_name": "WB_B30P105_holdout_65e506f6e207",
+  "status": "experimental_BH_only",
+  "core_loss_status": "uncalibrated_zero_placeholders",
+  "motor_validation": "not_run",
+  "simulation_physics_version": "cubic_sample_frame_v2",
+  "reference_correction_version": "fixed_h_nested_transfer_v2",
+  "calibration_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+  "H_axis": "physical_A_per_m",
+  "texture_sampling_version": "legacy_multi_peak_importance_v1",
+  "H_scale": 1.0,
+  "thickness_mm": 0.3,
+  "RD_anchor_weights": {
+    "B23R075": 0.08823529411764722,
+    "B27R090": 0.35561497326203195,
+    "B27R095": 0.5561497326203209
+  },
+  "TD_anchor_weights": {
+    "B23R075": 0.08823529411764722,
+    "B27R090": 0.35561497326203195,
+    "B27R095": 0.5561497326203209
+  },
+  "excluded_grades": [
+    "B30P105"
+  ],
+  "exported_directions": [
+    "RD",
+    "TD"
+  ],
+  "ND_status": "scalar_prior_1000_not_measured",
+  "outside_feature_box": true,
+  "transfer_candidate": "goss_ridge_1_beta_0.5",
+  "native_beta": 0.5,
+  "effective_native_beta": 0.5,
+  "prediction_mode": "cross_material_transfer",
+  "selection_training_grades": [
+    "B23R075",
+    "B27R090",
+    "B27R095"
+  ],
+  "selection_training_sha256": "b2cfed22cc44c224d5e489f610f996675d60e0e19369a33a6dbc5db0e3586855",
+  "protocol_sha256": "025efb96c89e0dd4a61ade1003160036d1201fca5d37ce362180683f574c3083",
+  "RD_extrapolation_limited": false,
+  "TD_extrapolation_limited": false,
+  "composition_effect_identified": false,
+  "prospective_external_validation": false
+}

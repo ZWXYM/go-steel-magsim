@@ -13,3 +13,7 @@ tools/audit_raw_loop_states.py -text
 tools/motor_scan_worker.py -text
 modules/motor_workbench.py -text
 modules/motor_queue.py -text
+modules/calibration_transfer.py -text
+modules/calibration_workbench.py -text
+modules/maxwell_exporter.py -text
+tools/run_calibration_transfer.py -text

@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "tests_main": 76,
+  "tests_public_expected": 76,
+  "new_transfer_contract_tests": 8,
+  "python_AST_files": 122,
+  "pilot_source_files_preserved": 525,
+  "new_MuMax_solves": 0,
+  "new_Maxwell_solves": 0,
+  "cumulative_MuMax_success": 668,
+  "cumulative_Maxwell_success": 4,
+  "UI_calibration_id": "cal_9de0030b8ce9",
+  "evidence_calibration_id": "cal_65e506f6e207",
+  "UI_and_CLI_model_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "UI_and_CLI_metrics_equal": true,
+  "UI_bundle_download_sha256": "1505ac89ce49b85e8c231faf0834da07da5b2afc9a7f11650276df77b2a6eabd",
+  "UI_bundle_download_verified": true,
+  "UI_known_anchor_label_verified_on_primary_port_5001": true,
+  "outer_reference_mutation_test": "passed; selection/model/prediction invariant",
+  "excluded_material_config_reselected": true,
+  "fixed_candidate_registry_unchanged": true,
+  "annotation_revision_metrics_unchanged": true,
+  "legacy": {
+    "mean_rmse_T": 0.0658125792273107,
+    "max_abs_B800_error_T": 0.15906374508983578,
+    "B800_0_05T_pass_all": false
+  },
+  "nested": {
+    "mean_rmse_T": 0.04404264729019529,
+    "max_abs_B800_error_T": 0.10615668757659735,
+    "B800_0_05T_pass_all": false
+  },
+  "reference_only_control": {
+    "mean_rmse_T": 0.02924797844779696,
+    "max_abs_B800_error_T": 0.07450303818284576,
+    "B800_0_05T_pass_all": false
+  },
+  "calibration_fit": {
+    "mean_rmse_T": 0.010740501742069954,
+    "max_abs_B800_error_T": 0.0036523656101312696,
+    "B800_0_05T_pass_all": true
+  },
+  "independent_external_validation": false,
+  "project_complete": false,
+  "bank_promoted": false
+}

@@ -9,6 +9,7 @@ sys.path.insert(0, str(PROJECT))
 sys.path.insert(0, str(PROJECT / 'modules'))
 
 from modules.material_calibration import CalibrationBank, PHYSICS_VERSION, file_hash
+from modules.calibration_transfer import load_bank
 from modules.maxwell_exporter import export_calibrated_pair
 from modules.texture_sampling import LEGACY_SAMPLING_VERSION
 
@@ -36,7 +37,7 @@ def main():
     parser.add_argument('--name', default='Calibrated_BH_Pilot')
     args = parser.parse_args()
     raw = json.loads(args.raw_pair.read_text(encoding='utf-8'))
-    result = predict_pair(raw, CalibrationBank.load(args.bank), args.exclude_grade)
+    result = predict_pair(raw, load_bank(args.bank), args.exclude_grade)
     result['raw_pair_sha256'] = file_hash(args.raw_pair)
     result['bank_file_sha256'] = file_hash(args.bank)
     args.output_dir.mkdir(parents=True, exist_ok=True)
