@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "tests_main": 116,
+  "new_meaningful_tests": 9,
+  "test_log_sha256": "8433726a8e6c10573a05546ebad700f2cf594f1e4bff89258b779fdc057da59a",
+  "AST_checked": {
+    "magsim/tools/run_torque_stop_probe.py": "9173095d6896fd716859e4642d05c312ba0d99d26edfeb051dba935a1937767b",
+    "magsim/modules/motor_phase_diagnostics.py": "f4ae8470f43a08f5b3d8647d1f799fba4b9e7c20ee8caa3cbd3f70c4327e6ebe",
+    "magsim/tools/audit_motor_phase.py": "669162812869bfd948daae682b1b5ef92d14e0a638f48f83ae213b8ee5971305",
+    "magsim/tests/test_torque_stop_probe.py": "5c30e4af18b050e6f86d9d8fb5673cd355d338a2adadb7752519019dfb0ba24f",
+    "magsim/tests/test_motor_phase_diagnostics.py": "550f0ba23658b43622b4ca86227375c8066aab9d0ee1c5f9c320e4ccee12414e",
+    "tools/export_public_repo.py": "f0c61a2d9e380d648b7f795a1aa9c341b001e4465138e31f9685c63083492c51"
+  },
+  "new_MuMax_success": 8,
+  "cumulative_MuMax_success": 680,
+  "new_Maxwell_success": 0,
+  "cumulative_Maxwell_success": 4,
+  "all_eight_dM_stops_passed": true,
+  "all_eight_torque_gates_failed": true,
+  "tight_B27R090_inversion_gate_failed": true,
+  "all_old_native_and_reference_sources_unchanged": true,
+  "motor_accepted_cases": 0,
+  "motor_metrics_replaced": false,
+  "new_motor_solve_submitted": false,
+  "model_changed": false,
+  "independently_validated_material": false,
+  "project_complete": false
+}

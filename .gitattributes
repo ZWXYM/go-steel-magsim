@@ -32,3 +32,8 @@ templates/workbench.html -text
 modules/native_state_controls.py -text
 tools/run_initial_state_controls.py -text
 calibration/initial_state_gpu_20261005/** -text
+tools/run_torque_stop_probe.py -text
+modules/motor_phase_diagnostics.py -text
+tools/audit_motor_phase.py -text
+calibration/torque_stop_probe_20261005/** -text
+calibration/motor_phase_20261005/** -text

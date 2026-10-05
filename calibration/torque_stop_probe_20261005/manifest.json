@@ -1,0 +1,224 @@
+{
+  "protocol": "large_H0_stop_probe_v1",
+  "predeclared_utc": "2026-10-05T12:34:34.353385+00:00",
+  "selection": "All four large-H0 grains identified before this study; no grain exclusions or reference fitting",
+  "cases": [
+    [
+      "B23R075",
+      "RD",
+      8
+    ],
+    [
+      "B27R090",
+      "TD",
+      2
+    ],
+    [
+      "B30P105",
+      "RD",
+      7
+    ],
+    [
+      "B30P105",
+      "TD",
+      5
+    ]
+  ],
+  "stops": [
+    [
+      "strict_dm_1e7",
+      1e-07
+    ],
+    [
+      "tight_dm_1e8",
+      1e-08
+    ]
+  ],
+  "jobs": [
+    {
+      "case_id": "B23R075_RD_g008",
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "condition": "strict_dm_1e7",
+      "stop_dM": 1e-07,
+      "script": "scripts/B23R075_RD_g008/strict_dm_1e7.mx3",
+      "script_sha256": "958b45fcae544ad5f2e4776dbf81cdf749b923a729406ae72acf7bc40224216c",
+      "output": "raw/B23R075_RD_g008/strict_dm_1e7.out",
+      "source_script_sha256": "fff807be30f332a694ffb249dff1d68b1bffae5454edd1a42013374ffef819e1",
+      "source_table_sha256": "8af38147217df267beded88003800de41aff341119e02ff8455d7ad83c6b76f2"
+    },
+    {
+      "case_id": "B27R090_TD_g002",
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "condition": "strict_dm_1e7",
+      "stop_dM": 1e-07,
+      "script": "scripts/B27R090_TD_g002/strict_dm_1e7.mx3",
+      "script_sha256": "5c2202b1d7784334f6b2b8912afd7bd8bd40f276a51ee130945051d1ad5a6860",
+      "output": "raw/B27R090_TD_g002/strict_dm_1e7.out",
+      "source_script_sha256": "b0ff5f3c8d8000ae154ca23a91c0faf6754c4deb5826b1b62734a39566eb43ac",
+      "source_table_sha256": "3596bb05f053dbc9c479967da216c13575e3f6844c1d619e1d7b7557bcdffc5a"
+    },
+    {
+      "case_id": "B30P105_RD_g007",
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "condition": "strict_dm_1e7",
+      "stop_dM": 1e-07,
+      "script": "scripts/B30P105_RD_g007/strict_dm_1e7.mx3",
+      "script_sha256": "6de0fee161bb6bd9473ab75b947f1917b2f5d14154cd9028830366b060a71a7e",
+      "output": "raw/B30P105_RD_g007/strict_dm_1e7.out",
+      "source_script_sha256": "6df5f1f3b88763db9e1d7a19621931dad9911c9716c93c771e0e3e951c4e507a",
+      "source_table_sha256": "9da152e60c742e6e45adcfc4d3cb8dc2f06d13bf91b179205c6544a5d73c331e"
+    },
+    {
+      "case_id": "B30P105_TD_g005",
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "condition": "strict_dm_1e7",
+      "stop_dM": 1e-07,
+      "script": "scripts/B30P105_TD_g005/strict_dm_1e7.mx3",
+      "script_sha256": "b8a0202275c6f553105109cace7f7e7babd81a350697e20de57f54b5ef0a1f85",
+      "output": "raw/B30P105_TD_g005/strict_dm_1e7.out",
+      "source_script_sha256": "98e0fc89a9c6c1b8368e377253967c414c89349f966076680e6282bff26b10b1",
+      "source_table_sha256": "fa5a707577e663180e0c81eb14eec2187e2a0c1cb1760fdfee12f9c5b94c6748"
+    },
+    {
+      "case_id": "B23R075_RD_g008",
+      "grade": "B23R075",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 8,
+      "condition": "tight_dm_1e8",
+      "stop_dM": 1e-08,
+      "script": "scripts/B23R075_RD_g008/tight_dm_1e8.mx3",
+      "script_sha256": "5f1153d0d52f571a09994f5c29a1fe8baec54714e085de1bf79e4e9edb855c31",
+      "output": "raw/B23R075_RD_g008/tight_dm_1e8.out",
+      "source_script_sha256": "fff807be30f332a694ffb249dff1d68b1bffae5454edd1a42013374ffef819e1",
+      "source_table_sha256": "8af38147217df267beded88003800de41aff341119e02ff8455d7ad83c6b76f2"
+    },
+    {
+      "case_id": "B27R090_TD_g002",
+      "grade": "B27R090",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 2,
+      "condition": "tight_dm_1e8",
+      "stop_dM": 1e-08,
+      "script": "scripts/B27R090_TD_g002/tight_dm_1e8.mx3",
+      "script_sha256": "b62bfb712887479456f8264b50a04e77947d954456a356dd2120396787ee3ae9",
+      "output": "raw/B27R090_TD_g002/tight_dm_1e8.out",
+      "source_script_sha256": "b0ff5f3c8d8000ae154ca23a91c0faf6754c4deb5826b1b62734a39566eb43ac",
+      "source_table_sha256": "3596bb05f053dbc9c479967da216c13575e3f6844c1d619e1d7b7557bcdffc5a"
+    },
+    {
+      "case_id": "B30P105_RD_g007",
+      "grade": "B30P105",
+      "direction": "RD",
+      "angle": 0,
+      "grain_id": 7,
+      "condition": "tight_dm_1e8",
+      "stop_dM": 1e-08,
+      "script": "scripts/B30P105_RD_g007/tight_dm_1e8.mx3",
+      "script_sha256": "5262d61dca27d598cc9a39b513f5e09677722b6bcad0493b612679b57d89d8b7",
+      "output": "raw/B30P105_RD_g007/tight_dm_1e8.out",
+      "source_script_sha256": "6df5f1f3b88763db9e1d7a19621931dad9911c9716c93c771e0e3e951c4e507a",
+      "source_table_sha256": "9da152e60c742e6e45adcfc4d3cb8dc2f06d13bf91b179205c6544a5d73c331e"
+    },
+    {
+      "case_id": "B30P105_TD_g005",
+      "grade": "B30P105",
+      "direction": "TD",
+      "angle": 90,
+      "grain_id": 5,
+      "condition": "tight_dm_1e8",
+      "stop_dM": 1e-08,
+      "script": "scripts/B30P105_TD_g005/tight_dm_1e8.mx3",
+      "script_sha256": "cb440b36069b8f4aa3cfc5bb22fe329e74e23f656766757971348d27bbce80bc",
+      "output": "raw/B30P105_TD_g005/tight_dm_1e8.out",
+      "source_script_sha256": "98e0fc89a9c6c1b8368e377253967c414c89349f966076680e6282bff26b10b1",
+      "source_table_sha256": "fa5a707577e663180e0c81eb14eec2187e2a0c1cb1760fdfee12f9c5b94c6748"
+    }
+  ],
+  "frozen_files": {
+    "source_cases/B23R075_RD_g008/original.mx3": "fff807be30f332a694ffb249dff1d68b1bffae5454edd1a42013374ffef819e1",
+    "source_cases/B23R075_RD_g008/original_table.txt": "8af38147217df267beded88003800de41aff341119e02ff8455d7ad83c6b76f2",
+    "source_cases/B27R090_TD_g002/original.mx3": "b0ff5f3c8d8000ae154ca23a91c0faf6754c4deb5826b1b62734a39566eb43ac",
+    "source_cases/B27R090_TD_g002/original_table.txt": "3596bb05f053dbc9c479967da216c13575e3f6844c1d619e1d7b7557bcdffc5a",
+    "source_cases/B30P105_RD_g007/original.mx3": "6df5f1f3b88763db9e1d7a19621931dad9911c9716c93c771e0e3e951c4e507a",
+    "source_cases/B30P105_RD_g007/original_table.txt": "9da152e60c742e6e45adcfc4d3cb8dc2f06d13bf91b179205c6544a5d73c331e",
+    "source_cases/B30P105_TD_g005/original.mx3": "98e0fc89a9c6c1b8368e377253967c414c89349f966076680e6282bff26b10b1",
+    "source_cases/B30P105_TD_g005/original_table.txt": "fa5a707577e663180e0c81eb14eec2187e2a0c1cb1760fdfee12f9c5b94c6748",
+    "frozen_producers/run_torque_stop_probe.py": "9173095d6896fd716859e4642d05c312ba0d99d26edfeb051dba935a1937767b",
+    "frozen_producers/run_initial_state_controls.py": "f3cc921b5002ecb071b88a82ca74f8ffbc302a9f02c3c18c1f0cc3b5960c18c7",
+    "frozen_producers/native_state_controls.py": "c9353d239e998d62af570fad45e26dbe20cb24849b4ebad2face3bf25759a7e0",
+    "frozen_producers/native_loop_diagnostics.py": "748d8a58bef265dc709226c4309fee9746a13147b29ea4d66584bbad9846f2e0",
+    "frozen_producers/material_calibration.py": "f08cec15c1832003bf3a0b2bd596b1ddb773c47283489325c6839bdacbfaf334",
+    "frozen_producers/run_calibration_pilot.py": "c450b71bed5b69b521f01bfeb670331a0cdc00349e104bca9629f6674f247a30",
+    "source_before.json": "599cc0a877224e8f55c85e2e8768df1e44e983b5e63df169c03db540132090c2"
+  },
+  "producer_sha256": {
+    "tools/run_torque_stop_probe.py": "9173095d6896fd716859e4642d05c312ba0d99d26edfeb051dba935a1937767b",
+    "tools/run_initial_state_controls.py": "f3cc921b5002ecb071b88a82ca74f8ffbc302a9f02c3c18c1f0cc3b5960c18c7",
+    "modules/native_state_controls.py": "c9353d239e998d62af570fad45e26dbe20cb24849b4ebad2face3bf25759a7e0",
+    "modules/native_loop_diagnostics.py": "748d8a58bef265dc709226c4309fee9746a13147b29ea4d66584bbad9846f2e0",
+    "modules/material_calibration.py": "f08cec15c1832003bf3a0b2bd596b1ddb773c47283489325c6839bdacbfaf334",
+    "tools/run_calibration_pilot.py": "c450b71bed5b69b521f01bfeb670331a0cdc00349e104bca9629f6674f247a30"
+  },
+  "source_manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+  "H_axis": "physical_A_per_m",
+  "H_grid": [
+    0.0,
+    0.1,
+    0.2,
+    0.5,
+    1.0,
+    2.0,
+    5.0,
+    10.0,
+    20.0,
+    50.0,
+    100.0,
+    200.0,
+    500.0,
+    800.0,
+    1000.0,
+    1500.0,
+    2000.0,
+    3000.0,
+    5000.0,
+    7500.0,
+    10000.0,
+    15000.0,
+    20000.0,
+    30000.0,
+    40000.0,
+    50000.0
+  ],
+  "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+  "timeout_seconds_per_job": 60,
+  "maximum_attempts": 8,
+  "parallel_jobs": 1,
+  "gates": {
+    "min_signed_endpoint_m_projection": 0.95,
+    "max_branch_inversion_error_T": 0.02,
+    "max_residual_torque_T": 1e-05
+  },
+  "promotion_allowed": false,
+  "material_validation": false,
+  "stopping_criterion": "MinimizerStop is sampled magnetization change, not maxTorque; telemetry recorded separately",
+  "upstream_source_commit": "ee077035",
+  "source_links": {
+    "minimizer": "https://github.com/mumax/3/blob/ee077035/engine/minimizer.go",
+    "torque": "https://github.com/mumax/3/blob/ee077035/engine/torque.go",
+    "relax": "https://github.com/mumax/3/blob/ee077035/engine/relax.go"
+  }
+}
