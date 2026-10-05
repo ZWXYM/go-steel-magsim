@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "native_validation": 1,
+  "actual_saved_materials": 4,
+  "points_per_direction": 26,
+  "directions": [
+    "RD",
+    "TD"
+  ],
+  "assigned_insert_count": 48,
+  "serialized_curve_transport_verified": true,
+  "directional_field_verified": false,
+  "loss_calibration_verified": false,
+  "source_motor_files_unchanged": 150,
+  "frozen_calibration_files_unchanged": 26,
+  "original_pilot_files_unchanged": 525,
+  "AST_files": 5,
+  "no_existing_user_application_closed": true,
+  "native_owned_sessions_closed": 5,
+  "new_Maxwell_solves": 0,
+  "new_MuMax_solves": 0,
+  "project_complete": false
+}

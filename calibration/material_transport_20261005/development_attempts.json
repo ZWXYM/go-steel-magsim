@@ -1,0 +1,42 @@
+{
+  "attempts": [
+    {
+      "directory": "final",
+      "state": "native_import_failed_no_retry",
+      "native_session_closed": true,
+      "new_Maxwell_solves": 0,
+      "error": "AEDT WB_B23R075_65e506f6e207 需唯一块，实际 0"
+    },
+    {
+      "directory": "corrected_v1",
+      "state": "native_import_failed_no_retry",
+      "native_session_closed": true,
+      "new_Maxwell_solves": 0,
+      "error": "AEDT permeability 需唯一块，实际 0"
+    },
+    {
+      "directory": "native_direct_v2",
+      "state": "native_import_failed_no_retry",
+      "native_session_closed": true,
+      "new_Maxwell_solves": 0,
+      "error": "Need normal, non-temperature-dependent B/H in T and A/m"
+    },
+    {
+      "directory": "verified_v3",
+      "state": "native_import_failed_no_retry",
+      "native_session_closed": true,
+      "new_Maxwell_solves": 0,
+      "error": "Saved material changed core_loss_equiv_cut_depth"
+    },
+    {
+      "directory": "ready_v4",
+      "state": "native_import_preflight_passed_not_solved",
+      "native_session_closed": true,
+      "new_Maxwell_solves": 0
+    }
+  ],
+  "failed_directories_retained_without_resubmission": true,
+  "first_cleanup_keyword_error_recovered_using_exact_owned_identity": true,
+  "new_Maxwell_solves": 0,
+  "full_native_logs_and_projects_private": true
+}

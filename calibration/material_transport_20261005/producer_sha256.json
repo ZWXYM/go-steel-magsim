@@ -1,0 +1,8 @@
+{
+  "modules/maxwell_material_transport.py": "f7633a06f9893970024dc15049afee28cb3789306cabd480f4224708cb6dc01d",
+  "modules/maxwell_exporter.py": "acd606231842b7e59224281f0da8deabb98af9112d42811e7df4a7bc77dcfbe0",
+  "modules/motor_model_audit.py": "f106bf390736815c8ac8298a6ffbe0f5cf793622eb4cd1b329732300ad1c7ee6",
+  "modules/motor_workbench.py": "61c85211b7ba0167cc737d31a88265a9656f3783ca6c71d0b2732b919fa60f4d",
+  "modules/motor_queue.py": "d8a06c676310ba77c7807af9573779cb323775214a84b04cbb07ea79e5496766",
+  "tools/preflight_calibrated_materials.py": "b8300a12e9cd1839d0be1098b6e1094d642a586601357367886ddb06feb5619f"
+}

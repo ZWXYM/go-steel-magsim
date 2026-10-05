@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-10-05T12:29:40.601403",
+  "amat_path": "D:\\Project\\go-steel-thesis\\calibration\\diagnostics\\material_transport_20261005\\ready_v4\\import_materials\\WB_B27R095_65e506f6e207.amat",
+  "material_name": "WB_B27R095_65e506f6e207",
+  "status": "experimental_BH_only",
+  "core_loss_status": "uncalibrated_zero_placeholders",
+  "motor_validation": "not_run",
+  "simulation_physics_version": "cubic_sample_frame_v2",
+  "reference_correction_version": "fixed_h_nested_transfer_v2",
+  "calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "H_axis": "physical_A_per_m",
+  "texture_sampling_version": "legacy_multi_peak_importance_v1",
+  "H_scale": 1.0,
+  "thickness_mm": 0.27,
+  "RD_anchor_weights": {
+    "B23R075": 0.0,
+    "B27R090": 0.0,
+    "B27R095": 1.0,
+    "B30P105": 0.0
+  },
+  "TD_anchor_weights": {
+    "B23R075": 0.0,
+    "B27R090": 0.0,
+    "B27R095": 1.0,
+    "B30P105": 0.0
+  },
+  "excluded_grades": [],
+  "exported_directions": [
+    "RD",
+    "TD"
+  ],
+  "ND_status": "scalar_prior_1000_not_measured",
+  "outside_feature_box": false,
+  "transfer_candidate": "goss_ridge_0_beta_0.5",
+  "native_beta": 0.5,
+  "effective_native_beta": 1.0,
+  "prediction_mode": "known_anchor_calibration",
+  "selection_training_grades": [
+    "B23R075",
+    "B27R090",
+    "B27R095",
+    "B30P105"
+  ],
+  "selection_training_sha256": "59359dd8f930f55b410174fab2639066229d43ce39d9041ee1874fa2ea019166",
+  "protocol_sha256": "025efb96c89e0dd4a61ade1003160036d1201fca5d37ce362180683f574c3083",
+  "RD_extrapolation_limited": false,
+  "TD_extrapolation_limited": false,
+  "composition_effect_identified": false,
+  "prospective_external_validation": false,
+  "aedt_transport_version": "aedt_directional_transport_v1",
+  "original_amat_sha256": "0db3f002b437c12f6885e14cacde12781d0a2cf7399ef500016537e425428d65",
+  "original_metadata_sha256": "d9ddc9c200767521ec5d99b353dc1ccb30a19c5761351aca6675eb04f0de62b9",
+  "import_normalization": "unquoted PhysicsTypes set and two DimUnits; omitted empty no_modifier block; H/B unchanged"
+}

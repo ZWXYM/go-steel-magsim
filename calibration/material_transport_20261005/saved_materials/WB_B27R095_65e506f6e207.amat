@@ -1,0 +1,57 @@
+$begin 'WB_B27R095_65e506f6e207'
+
+				CoordinateSystemType='Cartesian'
+				BulkOrSurfaceType=1
+				$begin 'PhysicsTypes'
+					set('Electromagnetic')
+				$end 'PhysicsTypes'
+				permittivity='1'
+				$begin 'permeability'
+					property_type='AnisoProperty'
+					unit=''
+					$begin 'component1'
+						property_type='nonlinear'
+						BTypeForSingleCurve='normal'
+						HUnit='A_per_meter'
+						BUnit='tesla'
+						IsTemperatureDependent=false
+						$begin 'BHCoordinates'
+							DimUnits[2: '', '']
+							Points[52: 0, 0, 0.1, 5.5e-05, 0.2, 0.000220058057585, 0.5, 0.00135373878924, 1, 0.00526002339463, 2, 0.0197747241977, 5, 0.100105088719, 10, 0.52064341864, 20, 1.43416215104, 50, 1.77628680427, 100, 1.88960224264, 200, 1.91201659966, 500, 1.91999282863, 800, 1.9253780935, 1000, 1.93989963995, 1500, 1.95288226141, 2000, 1.95999172799, 3000, 1.96412372702, 5000, 1.96663700115, 7500, 1.9697785938, 10000, 1.97292018645, 15000, 1.97920337176, 20000, 1.98548655707, 30000, 1.99805292768, 40000, 2.0106192983, 50000, 2.02318566891]
+						$end 'BHCoordinates'
+						$begin 'Temperatures'
+						$end 'Temperatures'
+						RecoilPermeability='1'
+					$end 'component1'
+					$begin 'component2'
+						property_type='nonlinear'
+						BTypeForSingleCurve='normal'
+						HUnit='A_per_meter'
+						BUnit='tesla'
+						IsTemperatureDependent=false
+						$begin 'BHCoordinates'
+							DimUnits[2: '', '']
+							Points[52: 0, 0, 0.1, 8.5e-05, 0.2, 0.000171418134938, 0.5, 0.000446405269058, 1, 0.000952478741086, 2, 0.0021375976477, 5, 0.00701526356318, 10, 0.0191087891965, 20, 0.0549150790212, 50, 0.249533891822, 100, 0.675710075083, 200, 1.17809402099, 500, 1.54974886732, 800, 1.65005744045, 1000, 1.68973684106, 1500, 1.73053629292, 2000, 1.7794721463, 3000, 1.82981146057, 5000, 1.86995260472, 7500, 1.90224786028, 10000, 1.91960759739, 15000, 1.93053258136, 20000, 1.939204427, 30000, 1.95177079762, 40000, 1.96433716823, 50000, 1.97690353885]
+						$end 'BHCoordinates'
+						$begin 'Temperatures'
+						$end 'Temperatures'
+						RecoilPermeability='1'
+					$end 'component2'
+					component3='1000'
+				$end 'permeability'
+				conductivity='2000000'
+				$begin 'core_loss_type'
+					property_type='ChoiceProperty'
+					Choice='Electrical Steel'
+				$end 'core_loss_type'
+				core_loss_kh='0'
+				core_loss_kc='0'
+				core_loss_ke='0'
+				core_loss_kdc='0'
+				mass_density='7650'
+				core_loss_equiv_cut_depth='0.00027meter'
+				ModTime=1791216378
+				Library=''
+				LibLocation='Project'
+				ModSinceLib=false
+$end 'WB_B27R095_65e506f6e207'

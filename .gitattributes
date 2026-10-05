@@ -41,3 +41,6 @@ modules/motor_model_audit.py -text
 tools/review_motor_models.py -text
 calibration/motor_review_20261005/** -text
 calibration/motor_review_preflight_20261005/** -text
+modules/maxwell_material_transport.py -text
+tools/preflight_calibrated_materials.py -text
+calibration/material_transport_20261005/** -text
