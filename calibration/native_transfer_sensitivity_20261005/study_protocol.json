@@ -1,0 +1,39 @@
+{
+  "diagnostic_version": "fixed_h_native_sensitivity_v1",
+  "resamples": 512,
+  "random_seed": 20261005,
+  "rng": "numpy Generator(PCG64)",
+  "quantiles": [
+    0.025,
+    0.5,
+    0.975
+  ],
+  "quantile_method": "linear",
+  "model": "read frozen outer banks; no candidate selection or tuning",
+  "sampling": "equal-volume empirical grains, with replacement within material",
+  "pairing": "one grain-index draw shared by RD/TD; independent draws across materials",
+  "perturbations": [
+    "all_materials",
+    "query_only",
+    "training_only"
+  ],
+  "decomposition": "reference interpolation + beta*(query native - weighted training native)",
+  "controls": [
+    "same frozen weights with beta=0 (diagnostic only)",
+    "same frozen weights/beta with pre-grain-guard midpoint (diagnostic only)"
+  ],
+  "guard": "existing per-grain guard before mean; existing final guard after prediction; record both final-guarded and pre-final-guard sensitivity",
+  "scoring": "outer reference used only after predictions; unchanged H>=100/B800 metrics",
+  "H_axis": "physical_A_per_m",
+  "conditional_on_observed_grains": true,
+  "calibrated_material_confidence_interval": false,
+  "candidate_selection_uncertainty": false,
+  "prospective_external_validation": false,
+  "new_native_solves": 0,
+  "limitations": [
+    "n8 single-seed legacy distribution, not fixed-ODF multi-seed evidence",
+    "processed reference uncertainty and material-parameter error not propagated",
+    "512 computational draws are not 512 independent material experiments",
+    "fixed-weights controls are retrospective diagnostics, not deployable alternatives"
+  ]
+}

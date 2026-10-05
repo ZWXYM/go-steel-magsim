@@ -17,3 +17,5 @@ modules/calibration_transfer.py -text
 modules/calibration_workbench.py -text
 modules/maxwell_exporter.py -text
 tools/run_calibration_transfer.py -text
+modules/calibration_sensitivity.py -text
+tools/audit_calibration_native_sensitivity.py -text

@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "tests_main": 83,
+  "new_sensitivity_contracts": 7,
+  "python_AST_count": 125,
+  "pilot_files_unchanged": 525,
+  "frozen_calibration_files_unchanged": 26,
+  "baseline_predictions_reproduced": true,
+  "candidate_reselection": false,
+  "first_and_final_model_weights_and_scores_identical": true,
+  "new_MuMax_solves": 0,
+  "new_Maxwell_solves": 0,
+  "cumulative_MuMax_success": 668,
+  "cumulative_Maxwell_success": 4,
+  "model_promoted": false,
+  "new_independent_material_validation": false,
+  "summary": {
+    "scores": {
+      "frozen_native_v2": {
+        "mean_rmse_T": 0.044042647290195296,
+        "max_abs_B800_error_T": 0.10615668757659713
+      },
+      "fixed_weights_reference_only": {
+        "mean_rmse_T": 0.02015557151172971,
+        "max_abs_B800_error_T": 0.06516457107723905
+      },
+      "pre_grain_guard_diagnostic": {
+        "mean_rmse_T": 0.04404240034934413,
+        "max_abs_B800_error_T": 0.10615668757659713
+      }
+    },
+    "direction_cases": 8,
+    "native_improves_rmse_cases": 0,
+    "native_improves_abs_B800_cases": 1,
+    "largest_conditional_B800_span_T": 0.23599994520240242,
+    "largest_native_guard_effect_on_B800_T": 0.0,
+    "empirical_resampling_only": true,
+    "model_changed": false,
+    "new_native_solves": 0,
+    "prospective_external_validation": false
+  }
+}

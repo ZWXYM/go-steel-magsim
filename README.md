@@ -31,6 +31,8 @@ Si 为报告标称值，ODF 为估计；尚未绑定同批次完整成分证书�
 
 ## 安装与复现
 
+新增 [原生残差敏感性诊断](docs/native_transfer_sensitivity_20261005.md)：直接从冻结的四材料外层 bank 和 64 份 table 生成晶粒/分支/约束报告，不调参、不新增求解。固定相同权重的仅参考诊断优于现行模型；最终约束会遮蔽部分波动，bank 仍为试验版。入口为 `python tools/audit_calibration_native_sensitivity.py --root . --artifact calibration/generalization_20261005/cal_65e506f6e207 --output-dir calibration/new_native_sensitivity`，使用新目录。
+
 ```powershell
 python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt

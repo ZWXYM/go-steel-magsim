@@ -1,0 +1,77 @@
+{
+  "scope": "six additional existing AMAT files only; not exhaustive archive search",
+  "files_checked": 6,
+  "source_files_unchanged": true,
+  "candidates": [
+    {
+      "grade": "Baosteel_B18R065",
+      "public_relative_source": "go_steel_data/output/GO_Steel_Baosteel_B18R065.amat",
+      "sha256": "8dc9a4fc8ee0aa67b530a9e339d5d9a1b3d791ccc81651b0fb82173585e04e52",
+      "evidence_statements": [
+        "# Source: Baosteel GO Electrical Steel EVI brochure",
+        "# component2/TD: representative hard-axis estimate, not supplier data",
+        "# H>1000 A/m points are extrapolated toward saturation."
+      ],
+      "eligible_as_new_strict_paired_RD_TD_validation": false,
+      "reason": "TD representative estimate and high-field extrapolation"
+    },
+    {
+      "grade": "Baosteel_B20R070",
+      "public_relative_source": "go_steel_data/output/GO_Steel_Baosteel_B20R070.amat",
+      "sha256": "ff8f996c3f7bfe0c1a5875e2226910a025714708a6e0916b617544982f4f010f",
+      "evidence_statements": [
+        "# Source: Baosteel GO Electrical Steel EVI brochure",
+        "# component2/TD: representative hard-axis estimate, not supplier data",
+        "# H>1000 A/m points are extrapolated toward saturation."
+      ],
+      "eligible_as_new_strict_paired_RD_TD_validation": false,
+      "reason": "TD representative estimate and high-field extrapolation"
+    },
+    {
+      "grade": "Baosteel_B23R080",
+      "public_relative_source": "go_steel_data/output/GO_Steel_Baosteel_B23R080.amat",
+      "sha256": "f26500ab08fd155ac70fe044bcc8918526ed973f8210a893a12c8f65473f4b25",
+      "evidence_statements": [
+        "# Source: Baosteel GO Electrical Steel EVI brochure",
+        "# component2/TD: representative hard-axis estimate, not supplier data",
+        "# H>1000 A/m points are extrapolated toward saturation."
+      ],
+      "eligible_as_new_strict_paired_RD_TD_validation": false,
+      "reason": "TD representative estimate and high-field extrapolation"
+    },
+    {
+      "grade": "IEC_M089_27P",
+      "public_relative_source": "go_steel_data/output/GO_Steel_IEC_M089_27P.amat",
+      "sha256": "958c39e6f48bc0b00e4956214343c66bd538111d848920b7c11c555d212ccbb1",
+      "evidence_statements": [
+        "# DATA TYPE: REPRESENTATIVE TYPICAL VALUES (not manufacturer-guaranteed)",
+        "# Source: IEC 60404-8-7 grade specs + Nippon Steel catalog D008en"
+      ],
+      "eligible_as_new_strict_paired_RD_TD_validation": false,
+      "reason": "representative typical values; no independent batch binding"
+    },
+    {
+      "grade": "IEC_M111_30P",
+      "public_relative_source": "go_steel_data/output/GO_Steel_IEC_M111_30P.amat",
+      "sha256": "61174fc7d3ea8ca5132ad9d1b0e6074e988fa9a7a0739dcc9d8ef3cec6ee5c36",
+      "evidence_statements": [
+        "# DATA TYPE: REPRESENTATIVE TYPICAL VALUES (not manufacturer-guaranteed)",
+        "# Source: IEC 60404-8-7 grade specs + Nippon Steel catalog D008en"
+      ],
+      "eligible_as_new_strict_paired_RD_TD_validation": false,
+      "reason": "representative typical values; no independent batch binding"
+    },
+    {
+      "grade": "IEC_M120_35S",
+      "public_relative_source": "go_steel_data/output/GO_Steel_IEC_M120_35S.amat",
+      "sha256": "fde8b5266b99ab0b2f7280d203d76fdbcbb545525d3d280e9a55668408c9c874",
+      "evidence_statements": [
+        "# DATA TYPE: REPRESENTATIVE TYPICAL VALUES (not manufacturer-guaranteed)",
+        "# Source: IEC 60404-8-7 grade specs + Nippon Steel catalog D008en"
+      ],
+      "eligible_as_new_strict_paired_RD_TD_validation": false,
+      "reason": "representative typical values; no independent batch binding"
+    }
+  ],
+  "no_new_samples_admitted": true
+}
