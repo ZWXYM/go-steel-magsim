@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "tests_main": 107,
+  "native_contract_tests": 7,
+  "test_log_sha256": "ca49eb482371d85111b28ff39b8c65aec8ec932140d51557569a0b43f4943e6f",
+  "AST_files": {
+    "magsim/modules/native_state_controls.py": "c9353d239e998d62af570fad45e26dbe20cb24849b4ebad2face3bf25759a7e0",
+    "magsim/tools/run_initial_state_controls.py": "f3cc921b5002ecb071b88a82ca74f8ffbc302a9f02c3c18c1f0cc3b5960c18c7",
+    "magsim/tests/test_native_state_controls.py": "8165ab76ddc7db19b2eba11cba03c22ac3a9e77de9868ff4add084c5a63a1ea8",
+    "tools/export_public_repo.py": "225aa4501c5df2b3a469840ecab6038443eb12b5704b29475bdf0214cca01014"
+  },
+  "manifest_sha256": "c51cfa322f75befa30385d625d8f3a35e3f451e39b103e42684b63ba3491feb2",
+  "analysis_sha256": "7c534f68ac4b4ff5367baec678f4870dbb1ed4c95f28e2bd818b6448ec25a899",
+  "new_MuMax_success": 4,
+  "cumulative_MuMax_success": 672,
+  "new_Maxwell_success": 0,
+  "cumulative_Maxwell_success": 4,
+  "all_four_tables_complete": true,
+  "all_four_torque_screens_failed": true,
+  "gates_unchanged": true,
+  "model_changed": false,
+  "existing_bank_and_predictions_unchanged": true,
+  "sources_unchanged": true,
+  "private_motor_states": {
+    "scan_092904b5932d": "completed_with_failures",
+    "scan_57192b1bc9f0": "completed_with_failures",
+    "scan_87b9967c56b4": "prepared",
+    "scan_c1e4979cc57a": "completed_with_failures",
+    "scan_d499b9ece91a": "completed_with_failures"
+  },
+  "native_motor_submission_this_turn": false,
+  "normal_workbench_resources": {
+    "cpu_only": false,
+    "native_submission_allowed": true,
+    "training_submission_allowed": true
+  },
+  "restored_workbench_launcher_pid": 32080,
+  "user_GPU_authorization": "provenance/gpu_resume_20261005.json",
+  "automation_ACTIVE": true,
+  "no_user_applications_stopped": true,
+  "project_complete": false
+}

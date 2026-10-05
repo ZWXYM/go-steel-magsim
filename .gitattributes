@@ -29,3 +29,6 @@ modules/workbench_routes.py -text
 tools/start_workbench.py -text
 tools/audit_workbench_native_quality.py -text
 templates/workbench.html -text
+modules/native_state_controls.py -text
+tools/run_initial_state_controls.py -text
+calibration/initial_state_gpu_20261005/** -text
