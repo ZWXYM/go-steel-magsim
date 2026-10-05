@@ -1,0 +1,1180 @@
+{
+  "before": {
+    "version": "motor_saved_model_audit_v1",
+    "scope": "serialized saved model; no solve or mesh/geometry validation",
+    "insert_count": 48,
+    "inserts": [
+      {
+        "name": "GOES_V3_01",
+        "object_id": 2104,
+        "coordinate_system_id": 2776,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_01_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_02",
+        "object_id": 2120,
+        "coordinate_system_id": 2786,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_02_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_03",
+        "object_id": 2132,
+        "coordinate_system_id": 2796,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_03_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_04",
+        "object_id": 2148,
+        "coordinate_system_id": 2806,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_04_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_05",
+        "object_id": 2160,
+        "coordinate_system_id": 2816,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_05_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_06",
+        "object_id": 2176,
+        "coordinate_system_id": 2826,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_06_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_07",
+        "object_id": 2188,
+        "coordinate_system_id": 2836,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_07_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_08",
+        "object_id": 2200,
+        "coordinate_system_id": 2846,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_08_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_09",
+        "object_id": 2212,
+        "coordinate_system_id": 2856,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_09_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_10",
+        "object_id": 2224,
+        "coordinate_system_id": 2866,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_10_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_11",
+        "object_id": 2240,
+        "coordinate_system_id": 2876,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_11_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_12",
+        "object_id": 2256,
+        "coordinate_system_id": 2886,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_12_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_13",
+        "object_id": 2272,
+        "coordinate_system_id": 2896,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_13_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_14",
+        "object_id": 2288,
+        "coordinate_system_id": 2906,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_14_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_15",
+        "object_id": 2300,
+        "coordinate_system_id": 2916,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_15_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_16",
+        "object_id": 2316,
+        "coordinate_system_id": 2926,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_16_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_17",
+        "object_id": 2328,
+        "coordinate_system_id": 2936,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_17_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_18",
+        "object_id": 2344,
+        "coordinate_system_id": 2946,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_18_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_19",
+        "object_id": 2356,
+        "coordinate_system_id": 2956,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_19_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_20",
+        "object_id": 2368,
+        "coordinate_system_id": 2966,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_20_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_21",
+        "object_id": 2380,
+        "coordinate_system_id": 2976,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_21_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_22",
+        "object_id": 2392,
+        "coordinate_system_id": 2986,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_22_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_23",
+        "object_id": 2408,
+        "coordinate_system_id": 2996,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_23_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_24",
+        "object_id": 2424,
+        "coordinate_system_id": 3006,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_24_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_01_1",
+        "object_id": 2441,
+        "coordinate_system_id": 2781,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_01_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_02_1",
+        "object_id": 2457,
+        "coordinate_system_id": 2791,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_02_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_03_1",
+        "object_id": 2469,
+        "coordinate_system_id": 2801,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_03_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_04_1",
+        "object_id": 2485,
+        "coordinate_system_id": 2811,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_04_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_05_1",
+        "object_id": 2497,
+        "coordinate_system_id": 2821,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_05_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_06_1",
+        "object_id": 2513,
+        "coordinate_system_id": 2831,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_06_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_07_1",
+        "object_id": 2525,
+        "coordinate_system_id": 2841,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_07_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_08_1",
+        "object_id": 2537,
+        "coordinate_system_id": 2851,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_08_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_09_1",
+        "object_id": 2549,
+        "coordinate_system_id": 2861,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_09_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_10_1",
+        "object_id": 2561,
+        "coordinate_system_id": 2871,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_10_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_11_1",
+        "object_id": 2577,
+        "coordinate_system_id": 2881,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_11_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_12_1",
+        "object_id": 2593,
+        "coordinate_system_id": 2891,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_12_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_13_1",
+        "object_id": 2609,
+        "coordinate_system_id": 2901,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_13_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_14_1",
+        "object_id": 2625,
+        "coordinate_system_id": 2911,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_14_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_15_1",
+        "object_id": 2637,
+        "coordinate_system_id": 2921,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_15_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_16_1",
+        "object_id": 2653,
+        "coordinate_system_id": 2931,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_16_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_17_1",
+        "object_id": 2665,
+        "coordinate_system_id": 2941,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_17_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_18_1",
+        "object_id": 2681,
+        "coordinate_system_id": 2951,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_18_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_19_1",
+        "object_id": 2693,
+        "coordinate_system_id": 2961,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_19_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_20_1",
+        "object_id": 2705,
+        "coordinate_system_id": 2971,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_20_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_21_1",
+        "object_id": 2717,
+        "coordinate_system_id": 2981,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_21_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_22_1",
+        "object_id": 2729,
+        "coordinate_system_id": 2991,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_22_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_23_1",
+        "object_id": 2745,
+        "coordinate_system_id": 3001,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_23_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_24_1",
+        "object_id": 2761,
+        "coordinate_system_id": 3011,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_24_1_CS",
+        "object_CS_binding_verified": true
+      }
+    ],
+    "local_CS_verified": true,
+    "moving_insert_count": 48,
+    "materials": [
+      {
+        "name": "AK Steel - M-6 Carlite",
+        "embedded": true,
+        "material_block_sha256": "56f37449dcc966f09fbcdff94755364284766faff5c2e72c1ad4959b59f4f3c6",
+        "permeability_type": "nonlinear",
+        "scalar_BH_curve_count": 1,
+        "tensor_declared": false,
+        "directional_constitutive_verified": false,
+        "core_loss_type": "Power Ferrite",
+        "loss_definition_present": true,
+        "conductivity": "1960780",
+        "mass_density": "7650",
+        "stacking_type": null,
+        "loss_coefficients": {
+          "core_loss_cm": "8.39364",
+          "core_loss_x": "1.89035",
+          "core_loss_y": "1.54494",
+          "core_loss_kh": null,
+          "core_loss_kc": null,
+          "core_loss_ke": null
+        },
+        "loss_calibration_verified": false,
+        "calibrated_RD_TD_import_verified": false,
+        "loss_curve_frequencies_Hz": [
+          50.0,
+          60.0
+        ],
+        "BH_points": 27,
+        "H_unit": "A_per_meter",
+        "B_unit": "tesla",
+        "H_last_A_per_m": 292430.0,
+        "B_last_T": 2.389
+      }
+    ],
+    "core_loss": {
+      "enabled_object_ids": [
+        6,
+        735
+      ],
+      "enabled_object_names": [
+        "Stator",
+        "Rotor_1"
+      ],
+      "insert_enabled_count": 0,
+      "complete_insert_coverage": false,
+      "missing_inserts": [
+        "GOES_V3_01",
+        "GOES_V3_02",
+        "GOES_V3_03",
+        "GOES_V3_04",
+        "GOES_V3_05",
+        "GOES_V3_06",
+        "GOES_V3_07",
+        "GOES_V3_08",
+        "GOES_V3_09",
+        "GOES_V3_10",
+        "GOES_V3_11",
+        "GOES_V3_12",
+        "GOES_V3_13",
+        "GOES_V3_14",
+        "GOES_V3_15",
+        "GOES_V3_16",
+        "GOES_V3_17",
+        "GOES_V3_18",
+        "GOES_V3_19",
+        "GOES_V3_20",
+        "GOES_V3_21",
+        "GOES_V3_22",
+        "GOES_V3_23",
+        "GOES_V3_24",
+        "GOES_V3_01_1",
+        "GOES_V3_02_1",
+        "GOES_V3_03_1",
+        "GOES_V3_04_1",
+        "GOES_V3_05_1",
+        "GOES_V3_06_1",
+        "GOES_V3_07_1",
+        "GOES_V3_08_1",
+        "GOES_V3_09_1",
+        "GOES_V3_10_1",
+        "GOES_V3_11_1",
+        "GOES_V3_12_1",
+        "GOES_V3_13_1",
+        "GOES_V3_14_1",
+        "GOES_V3_15_1",
+        "GOES_V3_16_1",
+        "GOES_V3_17_1",
+        "GOES_V3_18_1",
+        "GOES_V3_19_1",
+        "GOES_V3_20_1",
+        "GOES_V3_21_1",
+        "GOES_V3_22_1",
+        "GOES_V3_23_1",
+        "GOES_V3_24_1"
+      ],
+      "effect_on_field": "false"
+    },
+    "operating_point": {
+      "speed_rpm": 3000.0,
+      "poles": 4.0,
+      "electrical_frequency_Hz": 100.0,
+      "cycles": "3",
+      "points_per_cycle": "30",
+      "angular_velocity": "-MachineRPM",
+      "model_depth": "Magnetic_Axial_Length",
+      "magnetic_axial_length": "90mm"
+    },
+    "setup": {
+      "StopTime": "NumTorqueCycles*120/(MachineRPM/1rpm*NumPoles) s",
+      "TimeStep": "120/(MachineRPM/1rpm*NumPoles)/NumTorquePointsPerCycle s",
+      "NonlinearSolverResidual": "0.0001",
+      "SmoothBHCurve": "false",
+      "UseAdaptiveTimeStep": "false",
+      "AutoDetectSteadyState": "false",
+      "FastReachSteadyState": "false",
+      "OutputError": "false",
+      "OutputPerObjectCoreLoss": "true"
+    },
+    "directional_constitutive_verified": false,
+    "loss_calibration_verified": false,
+    "mesh_convergence_verified": false,
+    "project_sha256": "04a81ffb3b70cff240319e3c086496affcd244185f20e3dc15931f2eb5d4b329"
+  },
+  "after": {
+    "version": "motor_saved_model_audit_v1",
+    "scope": "serialized saved model; no solve or mesh/geometry validation",
+    "insert_count": 48,
+    "inserts": [
+      {
+        "name": "GOES_V3_01",
+        "object_id": 2104,
+        "coordinate_system_id": 2776,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_01_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_02",
+        "object_id": 2120,
+        "coordinate_system_id": 2786,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_02_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_03",
+        "object_id": 2132,
+        "coordinate_system_id": 2796,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_03_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_04",
+        "object_id": 2148,
+        "coordinate_system_id": 2806,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_04_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_05",
+        "object_id": 2160,
+        "coordinate_system_id": 2816,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_05_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_06",
+        "object_id": 2176,
+        "coordinate_system_id": 2826,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_06_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_07",
+        "object_id": 2188,
+        "coordinate_system_id": 2836,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_07_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_08",
+        "object_id": 2200,
+        "coordinate_system_id": 2846,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_08_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_09",
+        "object_id": 2212,
+        "coordinate_system_id": 2856,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_09_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_10",
+        "object_id": 2224,
+        "coordinate_system_id": 2866,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_10_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_11",
+        "object_id": 2240,
+        "coordinate_system_id": 2876,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_11_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_12",
+        "object_id": 2256,
+        "coordinate_system_id": 2886,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_12_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_13",
+        "object_id": 2272,
+        "coordinate_system_id": 2896,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_13_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_14",
+        "object_id": 2288,
+        "coordinate_system_id": 2906,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_14_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_15",
+        "object_id": 2300,
+        "coordinate_system_id": 2916,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_15_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_16",
+        "object_id": 2316,
+        "coordinate_system_id": 2926,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_16_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_17",
+        "object_id": 2328,
+        "coordinate_system_id": 2936,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_17_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_18",
+        "object_id": 2344,
+        "coordinate_system_id": 2946,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_18_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_19",
+        "object_id": 2356,
+        "coordinate_system_id": 2956,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_19_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_20",
+        "object_id": 2368,
+        "coordinate_system_id": 2966,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_20_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_21",
+        "object_id": 2380,
+        "coordinate_system_id": 2976,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_21_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_22",
+        "object_id": 2392,
+        "coordinate_system_id": 2986,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_22_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_23",
+        "object_id": 2408,
+        "coordinate_system_id": 2996,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_23_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_24",
+        "object_id": 2424,
+        "coordinate_system_id": 3006,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_24_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_01_1",
+        "object_id": 2441,
+        "coordinate_system_id": 2781,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_01_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_02_1",
+        "object_id": 2457,
+        "coordinate_system_id": 2791,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_02_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_03_1",
+        "object_id": 2469,
+        "coordinate_system_id": 2801,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_03_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_04_1",
+        "object_id": 2485,
+        "coordinate_system_id": 2811,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_04_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_05_1",
+        "object_id": 2497,
+        "coordinate_system_id": 2821,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_05_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_06_1",
+        "object_id": 2513,
+        "coordinate_system_id": 2831,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_06_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_07_1",
+        "object_id": 2525,
+        "coordinate_system_id": 2841,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_07_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_08_1",
+        "object_id": 2537,
+        "coordinate_system_id": 2851,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_08_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_09_1",
+        "object_id": 2549,
+        "coordinate_system_id": 2861,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_09_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_10_1",
+        "object_id": 2561,
+        "coordinate_system_id": 2871,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_10_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_11_1",
+        "object_id": 2577,
+        "coordinate_system_id": 2881,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_11_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_12_1",
+        "object_id": 2593,
+        "coordinate_system_id": 2891,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_12_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_13_1",
+        "object_id": 2609,
+        "coordinate_system_id": 2901,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_13_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_14_1",
+        "object_id": 2625,
+        "coordinate_system_id": 2911,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_14_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_15_1",
+        "object_id": 2637,
+        "coordinate_system_id": 2921,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_15_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_16_1",
+        "object_id": 2653,
+        "coordinate_system_id": 2931,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_16_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_17_1",
+        "object_id": 2665,
+        "coordinate_system_id": 2941,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_17_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_18_1",
+        "object_id": 2681,
+        "coordinate_system_id": 2951,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_18_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_19_1",
+        "object_id": 2693,
+        "coordinate_system_id": 2961,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_19_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_20_1",
+        "object_id": 2705,
+        "coordinate_system_id": 2971,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_20_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_21_1",
+        "object_id": 2717,
+        "coordinate_system_id": 2981,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_21_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_22_1",
+        "object_id": 2729,
+        "coordinate_system_id": 2991,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_22_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_23_1",
+        "object_id": 2745,
+        "coordinate_system_id": 3001,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_23_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_24_1",
+        "object_id": 2761,
+        "coordinate_system_id": 3011,
+        "material": "AK Steel - M-6 Carlite",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_24_1_CS",
+        "object_CS_binding_verified": true
+      }
+    ],
+    "local_CS_verified": true,
+    "moving_insert_count": 48,
+    "materials": [
+      {
+        "name": "AK Steel - M-6 Carlite",
+        "embedded": true,
+        "material_block_sha256": "56f37449dcc966f09fbcdff94755364284766faff5c2e72c1ad4959b59f4f3c6",
+        "permeability_type": "nonlinear",
+        "scalar_BH_curve_count": 1,
+        "tensor_declared": false,
+        "directional_constitutive_verified": false,
+        "core_loss_type": "Power Ferrite",
+        "loss_definition_present": true,
+        "conductivity": "1960780",
+        "mass_density": "7650",
+        "stacking_type": null,
+        "loss_coefficients": {
+          "core_loss_cm": "8.39364",
+          "core_loss_x": "1.89035",
+          "core_loss_y": "1.54494",
+          "core_loss_kh": null,
+          "core_loss_kc": null,
+          "core_loss_ke": null
+        },
+        "loss_calibration_verified": false,
+        "calibrated_RD_TD_import_verified": false,
+        "loss_curve_frequencies_Hz": [
+          50.0,
+          60.0
+        ],
+        "BH_points": 27,
+        "H_unit": "A_per_meter",
+        "B_unit": "tesla",
+        "H_last_A_per_m": 292430.0,
+        "B_last_T": 2.389
+      }
+    ],
+    "core_loss": {
+      "enabled_object_ids": [
+        6,
+        735,
+        2104,
+        2120,
+        2132,
+        2148,
+        2160,
+        2176,
+        2188,
+        2200,
+        2212,
+        2224,
+        2240,
+        2256,
+        2272,
+        2288,
+        2300,
+        2316,
+        2328,
+        2344,
+        2356,
+        2368,
+        2380,
+        2392,
+        2408,
+        2424,
+        2441,
+        2457,
+        2469,
+        2485,
+        2497,
+        2513,
+        2525,
+        2537,
+        2549,
+        2561,
+        2577,
+        2593,
+        2609,
+        2625,
+        2637,
+        2653,
+        2665,
+        2681,
+        2693,
+        2705,
+        2717,
+        2729,
+        2745,
+        2761
+      ],
+      "enabled_object_names": [
+        "Stator",
+        "Rotor_1",
+        "GOES_V3_01",
+        "GOES_V3_02",
+        "GOES_V3_03",
+        "GOES_V3_04",
+        "GOES_V3_05",
+        "GOES_V3_06",
+        "GOES_V3_07",
+        "GOES_V3_08",
+        "GOES_V3_09",
+        "GOES_V3_10",
+        "GOES_V3_11",
+        "GOES_V3_12",
+        "GOES_V3_13",
+        "GOES_V3_14",
+        "GOES_V3_15",
+        "GOES_V3_16",
+        "GOES_V3_17",
+        "GOES_V3_18",
+        "GOES_V3_19",
+        "GOES_V3_20",
+        "GOES_V3_21",
+        "GOES_V3_22",
+        "GOES_V3_23",
+        "GOES_V3_24",
+        "GOES_V3_01_1",
+        "GOES_V3_02_1",
+        "GOES_V3_03_1",
+        "GOES_V3_04_1",
+        "GOES_V3_05_1",
+        "GOES_V3_06_1",
+        "GOES_V3_07_1",
+        "GOES_V3_08_1",
+        "GOES_V3_09_1",
+        "GOES_V3_10_1",
+        "GOES_V3_11_1",
+        "GOES_V3_12_1",
+        "GOES_V3_13_1",
+        "GOES_V3_14_1",
+        "GOES_V3_15_1",
+        "GOES_V3_16_1",
+        "GOES_V3_17_1",
+        "GOES_V3_18_1",
+        "GOES_V3_19_1",
+        "GOES_V3_20_1",
+        "GOES_V3_21_1",
+        "GOES_V3_22_1",
+        "GOES_V3_23_1",
+        "GOES_V3_24_1"
+      ],
+      "insert_enabled_count": 48,
+      "complete_insert_coverage": true,
+      "missing_inserts": [],
+      "effect_on_field": "false"
+    },
+    "operating_point": {
+      "speed_rpm": 3000.0,
+      "poles": 4.0,
+      "electrical_frequency_Hz": 100.0,
+      "cycles": "3",
+      "points_per_cycle": "30",
+      "angular_velocity": "-MachineRPM",
+      "model_depth": "Magnetic_Axial_Length",
+      "magnetic_axial_length": "90mm"
+    },
+    "setup": {
+      "StopTime": "NumTorqueCycles*120/(MachineRPM/1rpm*NumPoles) s",
+      "TimeStep": "120/(MachineRPM/1rpm*NumPoles)/NumTorquePointsPerCycle s",
+      "NonlinearSolverResidual": "0.0001",
+      "SmoothBHCurve": "false",
+      "UseAdaptiveTimeStep": "false",
+      "AutoDetectSteadyState": "false",
+      "FastReachSteadyState": "false",
+      "OutputError": "false",
+      "OutputPerObjectCoreLoss": "true"
+    },
+    "directional_constitutive_verified": false,
+    "loss_calibration_verified": false,
+    "mesh_convergence_verified": false,
+    "project_sha256": "c4c9eb6b3c10c8913f24ef71d2fc8c50619136dd0979e80c61d1611f0beaa8f3"
+  },
+  "loss_scope_policy": "core_loss_scope_v2_all_magnetic_inserts",
+  "changed_existing_archive": false,
+  "original_enabled_objects_preserved": true
+}

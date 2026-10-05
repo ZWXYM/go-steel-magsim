@@ -1,0 +1,35 @@
+{
+  "protocol": "motor_loss_scope_preflight_v1",
+  "cases": [
+    {
+      "case_id": "case_01",
+      "material": "AK Steel - M-6 Carlite",
+      "validation": 1,
+      "final_saved_project_sha256": "3dafe6d9fe16c10276022994ccc4604cf0806635e081cfc22f5efa26ea670b13",
+      "old_insert_loss_count": 0,
+      "new_insert_loss_count": 48,
+      "original_loss_objects_preserved": true,
+      "native_session_closed": true,
+      "new_Maxwell_solves": 0
+    },
+    {
+      "case_id": "case_02",
+      "material": "Nippon Steel - 23ZH90",
+      "validation": 1,
+      "final_saved_project_sha256": "63216e5a4e05abb2ec28580fe4691432981154d18a17643167b205109f42c0f6",
+      "old_insert_loss_count": 0,
+      "new_insert_loss_count": 48,
+      "original_loss_objects_preserved": true,
+      "native_session_closed": true,
+      "new_Maxwell_solves": 0
+    }
+  ],
+  "max_wall_seconds": 240,
+  "new_Maxwell_solves": 0,
+  "cumulative_Maxwell_solves": 4,
+  "unchanged_original_motor_sources": 150,
+  "no_existing_user_application_closed": true,
+  "native_preflight_pass_is_not_mesh_or_solver_convergence": true,
+  "calibrated_RD_TD_law_verified": false,
+  "loss_calibration_verified": false
+}

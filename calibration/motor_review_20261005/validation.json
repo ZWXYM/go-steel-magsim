@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "tests_main": 127,
+  "added_motor_tests": 11,
+  "AST_files": 6,
+  "source_motor_files_unchanged": 150,
+  "static_projects_verified": 17,
+  "official_CSV_metric_replays": 9,
+  "all_old_insert_CoreLoss_coverage_zero": true,
+  "new_native_preflight_validations": 2,
+  "new_Maxwell_solves": 0,
+  "original_cycle_gates_unchanged": true,
+  "old_numerical_metrics_unchanged": true,
+  "old_banks_unchanged": true,
+  "source_producer_hashes_verified": true,
+  "public_native_projects_excluded": true,
+  "project_complete": false
+}

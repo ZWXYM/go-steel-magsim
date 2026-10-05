@@ -1,0 +1,16 @@
+{
+  "protocol": "motor_loss_scope_preflight_v1",
+  "created_utc": "2026-10-05T15:18:48.582611+00:00",
+  "job_id": "scan_456bd621b9f8",
+  "materials": [
+    "AK Steel - M-6 Carlite",
+    "Nippon Steel - 23ZH90"
+  ],
+  "scope": "two independent copies; native validation only; no analyze_setup/no solve",
+  "loss_scope_policy": "core_loss_scope_v2_all_magnetic_inserts",
+  "wall_timeout_seconds": 240,
+  "no_retry": true,
+  "expected_new_Maxwell_solves": 0,
+  "previous_results_must_remain_unchanged": true,
+  "manifest_sha256": "03a84e41dc3da93c19f9320ac7b889ec57545c6ec22e80069cd0eec4ceb700ad"
+}

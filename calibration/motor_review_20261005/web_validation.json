@@ -1,0 +1,13 @@
+{
+  "preview_url": "http://127.0.0.1:5002/workbench",
+  "cpu_preview_only": true,
+  "original_5001_process_not_restarted": true,
+  "automatic_restart_rejection": "blocked by policy",
+  "job_id": "scan_092904b5932d",
+  "export_id": "summary_c3d98c0c37e0",
+  "download_zip_sha256": "5d2ef95e2ae68717a3d92444da348f5d4a15b8709c59f316e8b465e368843bde",
+  "download_matches": true,
+  "ranking_eligible": 0,
+  "new_Maxwell_solves": 0,
+  "original_sources_after_browser_export_unchanged": true
+}
