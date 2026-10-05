@@ -22,3 +22,10 @@ tools/audit_calibration_native_sensitivity.py -text
 modules/native_loop_diagnostics.py -text
 tools/prepare_initial_state_audit.py -text
 tools/decompose_zero_state_audit.py -text
+modules/native_quality.py -text
+modules/workbench_cpu_policy.py -text
+modules/dataset_contract.py -text
+modules/workbench_routes.py -text
+tools/start_workbench.py -text
+tools/audit_workbench_native_quality.py -text
+templates/workbench.html -text

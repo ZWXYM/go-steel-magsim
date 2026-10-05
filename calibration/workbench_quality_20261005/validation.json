@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "tests_main": 100,
+  "new_quality_and_CPU_contract_tests": 10,
+  "tracked_and_new_runtime_Python_AST": 77,
+  "web_JS_syntax_passed": true,
+  "pilot_files_preserved": 525,
+  "frozen_calibration_files_preserved": 26,
+  "grains_retained": 64,
+  "native_quality_endpoint_failures": 5,
+  "native_quality_inversion_failures": 18,
+  "torque_unknown": 64,
+  "existing_bank_and_holdout_curves_unchanged": true,
+  "actual_browser_quality_and_prediction_and_download_passed": true,
+  "CPU_only_HTTP_and_startup_guard_passed": true,
+  "prepared_motor_jobs": 1,
+  "prepared_motor_cases": 2,
+  "executed_native_jobs": 0,
+  "GPU_work_started": false,
+  "cumulative_MuMax_success": 668,
+  "cumulative_Maxwell_success": 4,
+  "independent_material_validation": false
+}

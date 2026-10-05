@@ -153,7 +153,13 @@ class TransferContracts(unittest.TestCase):
             from modules.dataset_contract import dataset_contract
             contract={k:metadata[k] for k in ('simulation_physics_version',
                 'reference_correction_version','H_axis','calibration_sha256','texture_sampling_version')}
-            self.assertEqual(dataset_contract(pd.DataFrame([contract]))['reference_correction_version'],VERSION)
+            with self.assertRaisesRegex(ValueError,'原生质量合同'):
+                dataset_contract(pd.DataFrame([contract]))
+            from modules.native_quality import VERSION as QUALITY_VERSION
+            screened_fixture={**contract,'native_quality_contract_version':QUALITY_VERSION,
+                'native_quality_status':'numerical_screen_passed','native_quality_sha256':'0'*64,
+                'strict_training_eligible':True}
+            self.assertEqual(dataset_contract(pd.DataFrame([screened_fixture]))['reference_correction_version'],VERSION)
             with self.assertRaisesRegex(ValueError,'H 轴'):
                 dataset_contract(pd.DataFrame([{**contract,'H_axis':'legacy_scaled'}]))
             changed=copy.deepcopy(bank.payload)

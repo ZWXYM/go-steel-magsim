@@ -1,0 +1,8 @@
+{
+  "contract_version": "native_quality_contract_v1",
+  "scope": "all four existing n8 materials, both directions, all 64 grains; no selection or correction",
+  "native_execution_allowed": false,
+  "new_native_solves": 0,
+  "model_changed": false,
+  "GPU_resumption_requires_explicit_user_authorization": true
+}

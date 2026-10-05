@@ -31,6 +31,8 @@ Si 为报告标称值，ODF 为估计；尚未绑定同批次完整成分证书�
 
 ## 安装与复现
 
+新增 [质量工作台与 CPU 模式](docs/workbench_quality_20261005.md)：逐方向原生质量表、冻结来源下载、预测/材料 metadata 继承及正式训练标签筛查。使用 `python tools/start_workbench.py --port 5001 --cpu-only` 可校准、准备和整理任务，原生求解/训练提交暂停，启动不恢复队列；本轮未改变 bank 或曲线，100 项测试通过。
+
 新增 [CPU 原生零场/分支审计](docs/initial_state_cpu_20261005.md)：64 份旧回线中发现四个约 0.977 T 的未约束零场中点，同时存在端点/反演筛查失败；保留全部粒，不把扣除偏移当作校准。16 个状态对照只准备未运行，工具 `tools/prepare_initial_state_audit.py` 没有原生求解入口；未知 torque、同牌号标定和独立验证分开标识。
 
 新增 [原生残差敏感性诊断](docs/native_transfer_sensitivity_20261005.md)：直接从冻结的四材料外层 bank 和 64 份 table 生成晶粒/分支/约束报告，不调参、不新增求解。固定相同权重的仅参考诊断优于现行模型；最终约束会遮蔽部分波动，bank 仍为试验版。入口为 `python tools/audit_calibration_native_sensitivity.py --root . --artifact calibration/generalization_20261005/cal_65e506f6e207 --output-dir calibration/new_native_sensitivity`，使用新目录。

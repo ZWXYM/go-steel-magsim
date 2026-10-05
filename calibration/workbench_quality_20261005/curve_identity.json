@@ -1,0 +1,50 @@
+[
+  {
+    "grade": "B23R075",
+    "direction": "RD",
+    "calibration_fit_max_abs_delta_T": 0.0,
+    "material_holdout_max_abs_delta_T": 0.0
+  },
+  {
+    "grade": "B23R075",
+    "direction": "TD",
+    "calibration_fit_max_abs_delta_T": 0.0,
+    "material_holdout_max_abs_delta_T": 0.0
+  },
+  {
+    "grade": "B27R090",
+    "direction": "RD",
+    "calibration_fit_max_abs_delta_T": 0.0,
+    "material_holdout_max_abs_delta_T": 0.0
+  },
+  {
+    "grade": "B27R090",
+    "direction": "TD",
+    "calibration_fit_max_abs_delta_T": 0.0,
+    "material_holdout_max_abs_delta_T": 0.0
+  },
+  {
+    "grade": "B27R095",
+    "direction": "RD",
+    "calibration_fit_max_abs_delta_T": 0.0,
+    "material_holdout_max_abs_delta_T": 0.0
+  },
+  {
+    "grade": "B27R095",
+    "direction": "TD",
+    "calibration_fit_max_abs_delta_T": 0.0,
+    "material_holdout_max_abs_delta_T": 0.0
+  },
+  {
+    "grade": "B30P105",
+    "direction": "RD",
+    "calibration_fit_max_abs_delta_T": 0.0,
+    "material_holdout_max_abs_delta_T": 0.0
+  },
+  {
+    "grade": "B30P105",
+    "direction": "TD",
+    "calibration_fit_max_abs_delta_T": 0.0,
+    "material_holdout_max_abs_delta_T": 0.0
+  }
+]

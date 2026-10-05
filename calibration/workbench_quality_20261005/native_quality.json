@@ -1,0 +1,1896 @@
+{
+  "B23R075": {
+    "contract_version": "native_quality_contract_v1",
+    "material_id": "B23R075",
+    "status": "numerical_screen_failed",
+    "verified_native_source": true,
+    "strict_training_eligible": false,
+    "source_manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+    "producer_sha256": {
+      "modules/native_quality.py": "d2b63599c3862246b7fea37c19bfc7ed7fb1360647c5833ae6cb1c081be4ca83",
+      "modules/native_loop_diagnostics.py": "748d8a58bef265dc709226c4309fee9746a13147b29ea4d66584bbad9846f2e0",
+      "modules/material_calibration.py": "f08cec15c1832003bf3a0b2bd596b1ddb773c47283489325c6839bdacbfaf334",
+      "tools/analyze_sampling_convergence.py": "e27b6d06091c761ff55c9d3e9172aa47faf1ae724f241e1a164e87909ed50ca9",
+      "tools/run_calibration_pilot.py": "c450b71bed5b69b521f01bfeb670331a0cdc00349e104bca9629f6674f247a30"
+    },
+    "physics_version": "cubic_sample_frame_v2",
+    "texture_sampling_version": "legacy_multi_peak_importance_v1",
+    "H_axis": "physical_A_per_m",
+    "gates": {
+      "min_signed_endpoint_m_projection": 0.95,
+      "max_branch_inversion_error_T": 0.02,
+      "max_residual_torque_T": 1e-05
+    },
+    "directions": {
+      "RD": {
+        "grains": 8,
+        "grain_details": [
+          {
+            "grain_id": 1,
+            "table_sha256": "1b617ea426302c180b913e70bc36be0b13236af35dda95f1094af37025b37b4f",
+            "min_signed_endpoint_m_projection": 0.9973328,
+            "max_branch_inversion_error_T": 0.0004143403825156433,
+            "native_unforced_midpoint_H0_T": 0.00014192961626668943,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "adfe50c2712e72a6fdddd9c665c78b2ef18efec3d72ca89414591609a95c50fd",
+            "min_signed_endpoint_m_projection": 0.99989605,
+            "max_branch_inversion_error_T": 6.33194282517735e-06,
+            "native_unforced_midpoint_H0_T": -2.940530730022317e-08,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "d8934585965530e3b98b38a265e9e2143d27a608d50b46a0db246f48e8b2f8b9",
+            "min_signed_endpoint_m_projection": 0.9991845,
+            "max_branch_inversion_error_T": 0.000100389718909355,
+            "native_unforced_midpoint_H0_T": -5.0194859454566476e-05,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "9607277ca6bfa509ec97ced908658a3e5b7fcdb3e353e5706e4f35485a85d4ef",
+            "min_signed_endpoint_m_projection": 0.99992925,
+            "max_branch_inversion_error_T": 6.8612383552491e-07,
+            "native_unforced_midpoint_H0_T": 2.254406888946292e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "04ad6118c7d45e5a478f91790693696fa662667499ab64c77e3da9e655d6b8da",
+            "min_signed_endpoint_m_projection": 0.9998337,
+            "max_branch_inversion_error_T": 1.3212784718774628e-05,
+            "native_unforced_midpoint_H0_T": 6.606392359387314e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "68d03a6babbb64d642680ec4dcba5ba9fbc4038ba34c833b61988bd6ac7f50ab",
+            "min_signed_endpoint_m_projection": 0.9992836,
+            "max_branch_inversion_error_T": 4.744056234340377e-05,
+            "native_unforced_midpoint_H0_T": 3.9207076307778976e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "0e2a1940b8e3c94ce6045c643371e2c558671880e8fbc0f1b550b1c6afbb26ae",
+            "min_signed_endpoint_m_projection": -0.006281603,
+            "max_branch_inversion_error_T": 1.9723441298002964,
+            "native_unforced_midpoint_H0_T": 2.7935041876370192e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "8af38147217df267beded88003800de41aff341119e02ff8455d7ad83c6b76f2",
+            "min_signed_endpoint_m_projection": -0.0062824,
+            "max_branch_inversion_error_T": 1.9716087952029135,
+            "native_unforced_midpoint_H0_T": 0.9771681494145162,
+            "max_residual_torque_T": null
+          }
+        ],
+        "guarded_mean_B_T": [
+          0.0,
+          0.12216513771855403,
+          0.12216526338226062,
+          0.12216565507603189,
+          0.1221662833945626,
+          0.12216754003162404,
+          0.12217130994280835,
+          0.12217759312811552,
+          0.12219015949872988,
+          0.122237112706258,
+          0.12230920845747366,
+          0.122467515732869,
+          0.12297184654277873,
+          0.12350881228084999,
+          0.12378607028926052,
+          0.12463013185972827,
+          0.12546054947777163,
+          0.1271279767636161,
+          0.13050306648340598,
+          0.13486194085551823,
+          0.13949186826478843,
+          0.15062625688234094,
+          0.3997123741184694,
+          1.7502720546513209,
+          1.7633005099408863,
+          1.776172083028404
+        ],
+        "endpoint_failed_grain_ids": [
+          7,
+          8
+        ],
+        "inversion_failed_grain_ids": [
+          7,
+          8
+        ],
+        "torque_unknown_grain_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "torque_failed_grain_ids": [],
+        "max_abs_unforced_midpoint_H0_T": 0.9771681494145162
+      },
+      "TD": {
+        "grains": 8,
+        "grain_details": [
+          {
+            "grain_id": 1,
+            "table_sha256": "9932b5ae310c855029d44ca819c13272e2616aa249e4fb895516dcf2ffc79103",
+            "min_signed_endpoint_m_projection": 0.9986062,
+            "max_branch_inversion_error_T": 2.502730591094558,
+            "native_unforced_midpoint_H0_T": 1.137005213203146e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "54f13848d8e819f828806de7fd219535901781111dd7222fc58b28c6ce8802e9",
+            "min_signed_endpoint_m_projection": 0.99992096,
+            "max_branch_inversion_error_T": 6.07709682909352e-06,
+            "native_unforced_midpoint_H0_T": -1.1762122897884808e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "d6f00e496806db60ad3b6eb8d176f95f17edc6a24a7a835d728ffe67478415ba",
+            "min_signed_endpoint_m_projection": 0.9996475,
+            "max_branch_inversion_error_T": 0.00032483062728472234,
+            "native_unforced_midpoint_H0_T": 1.4702653605702665e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "cc5ecfa1ec307a1e8de3f04bd18b86f5b51c47407414cbd24ae5705c646904bb",
+            "min_signed_endpoint_m_projection": 0.9999325,
+            "max_branch_inversion_error_T": 3.411015639498416e-06,
+            "native_unforced_midpoint_H0_T": -1.9603538170542834e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "14d1b263f803ce1a8a3f0fabf7413f24c3c4d520d5c9018661520d8548ccc883",
+            "min_signed_endpoint_m_projection": 0.9999083,
+            "max_branch_inversion_error_T": 1.8231290487502605e-05,
+            "native_unforced_midpoint_H0_T": 8.762781556814758e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "fe5f0125f1cfb26f88dc213b6d52f46a510fea8cae70b8ac96488d8c7fe7f630",
+            "min_signed_endpoint_m_projection": 0.9996975,
+            "max_branch_inversion_error_T": 1.0812441839185523,
+            "native_unforced_midpoint_H0_T": -4.900884541525485e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "83166009ee40f8dcd122b986d2b628258ef83bcefa5edde8f1f0db682bfd7ea6",
+            "min_signed_endpoint_m_projection": 0.99989307,
+            "max_branch_inversion_error_T": 2.793504187570406e-05,
+            "native_unforced_midpoint_H0_T": 9.399896547024333e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "ea0c81a89f2b045e6c7d63ed5434545f0153d655f0e72b2807ee038b74208649",
+            "min_signed_endpoint_m_projection": 0.99977577,
+            "max_branch_inversion_error_T": 1.0993921789722292,
+            "native_unforced_midpoint_H0_T": 7.351326808402447e-07,
+            "max_residual_torque_T": null
+          }
+        ],
+        "guarded_mean_B_T": [
+          0.0,
+          2.648394023002288e-06,
+          2.7740577291458795e-06,
+          3.1510488475766548e-06,
+          3.779367378294613e-06,
+          5.036004439730531e-06,
+          8.805915624040976e-06,
+          1.5089100931220562e-05,
+          2.7655471545579736e-05,
+          0.0001644688479004144,
+          0.0002664293624443308,
+          0.00039438914607510533,
+          0.0011761455651581737,
+          0.0019765203968978295,
+          0.0022692395112601377,
+          0.003557919079903313,
+          0.004775157435388047,
+          0.0073095334971218645,
+          0.01314987577379452,
+          0.14670828176742035,
+          0.8551928002718283,
+          1.9766399678725561,
+          1.9835624280625106,
+          1.9968397100928745,
+          2.009768856335327,
+          2.022544196920112
+        ],
+        "endpoint_failed_grain_ids": [],
+        "inversion_failed_grain_ids": [
+          1,
+          6,
+          8
+        ],
+        "torque_unknown_grain_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "torque_failed_grain_ids": [],
+        "max_abs_unforced_midpoint_H0_T": 9.399896547024333e-06
+      }
+    },
+    "source_native_evidence": {
+      "RD": {
+        "seed": 20261003,
+        "n_grains": 8,
+        "native_execution_count": 8,
+        "imported_evidence_count": 0,
+        "material_seed": 20261003,
+        "texture_sampling_version": "legacy_multi_peak_importance_v1",
+        "texture_distribution_sha256": null,
+        "texture_module_sha256": null,
+        "unguarded_ensemble_mean_B_T": [
+          0.0,
+          0.12215885968545884,
+          0.12215898534916511,
+          0.12215937704293568,
+          0.12215998385221975,
+          0.12216122509902029,
+          0.12216494885367801,
+          0.12217115512332928,
+          0.12218356760556115,
+          0.12223634408448424,
+          0.12230766994807699,
+          0.12246443926343593,
+          0.12297078581174128,
+          0.12350881228084999,
+          0.12378299318275313,
+          0.12462950676227814,
+          0.12546054947777163,
+          0.1271279767636161,
+          0.13050306648340598,
+          0.1348571994826285,
+          0.1394766626837338,
+          0.1505776218698491,
+          0.3996186054879124,
+          1.7500667566527952,
+          1.7628192021633904,
+          1.7754040214963969
+        ],
+        "params": {
+          "f_Goss": 0.91,
+          "theta_0_deg": 3.0,
+          "halfwidth_deg": 5.0,
+          "Si_content": 3.1
+        },
+        "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+        "orientations_sha256": "c5c14da014675943cb12dacbfc34942dd987172b38c8b459d597a9b474cebb85",
+        "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+        "jobs": [
+          {
+            "grain_id": 1,
+            "table_sha256": "1b617ea426302c180b913e70bc36be0b13236af35dda95f1094af37025b37b4f",
+            "script_sha256": "9cecf6ed77b697d4f5e1e4c11322c4df62232d27490b6997e31d50644d665c46",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 5.091142351448807e-16
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "adfe50c2712e72a6fdddd9c665c78b2ef18efec3d72ca89414591609a95c50fd",
+            "script_sha256": "f7e1d0822f508085d73ec899202a78b01d403df6e31c6a3849fd5aed6be6c5df",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9405307480384856e-08
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "d8934585965530e3b98b38a265e9e2143d27a608d50b46a0db246f48e8b2f8b9",
+            "script_sha256": "bb78a4a46f3dcef81df8dd2065a24b3941ea07d6ac20e24f9c1d3871c2419472",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 5.0194859454749564e-05
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "9607277ca6bfa509ec97ced908658a3e5b7fcdb3e353e5706e4f35485a85d4ef",
+            "script_sha256": "0c409e3fedaa18ba3eaa3ec37d9c8aa7f0c3a0333ef044c4172dd06df8770f23",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 4.9008843237813684e-08
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "04ad6118c7d45e5a478f91790693696fa662667499ab64c77e3da9e655d6b8da",
+            "script_sha256": "dcd7222c3162417b77fdda03e850b21786876dd6f77182bef506ce49d9002ebe",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.690996889637449e-16
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "68d03a6babbb64d642680ec4dcba5ba9fbc4038ba34c833b61988bd6ac7f50ab",
+            "script_sha256": "92355836c68ed4153aa4047431fc547ca46faf0e1c8bdad215818d08cb379fda",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.6909926544727127e-16
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "0e2a1940b8e3c94ce6045c643371e2c558671880e8fbc0f1b550b1c6afbb26ae",
+            "script_sha256": "b0ef7ba60da7606188e453f9adce4db294ed1b800ea50229f93ca19d10b76c52",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 0.0023880433714349447
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "8af38147217df267beded88003800de41aff341119e02ff8455d7ad83c6b76f2",
+            "script_sha256": "fff807be30f332a694ffb249dff1d68b1bffae5454edd1a42013374ffef819e1",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 0.0037564488846231203
+          }
+        ]
+      },
+      "TD": {
+        "seed": 20261003,
+        "n_grains": 8,
+        "native_execution_count": 8,
+        "imported_evidence_count": 0,
+        "material_seed": 20261003,
+        "texture_sampling_version": "legacy_multi_peak_importance_v1",
+        "texture_distribution_sha256": null,
+        "texture_module_sha256": null,
+        "unguarded_ensemble_mean_B_T": [
+          0.0,
+          2.5479258899674395e-06,
+          2.673589595811321e-06,
+          3.0505807143005326e-06,
+          3.678899245129763e-06,
+          4.935536306413524e-06,
+          8.705447490917062e-06,
+          1.498863279793261e-05,
+          2.7555003412227386e-05,
+          0.00016436838088099148,
+          0.0002664293624442954,
+          0.00039438914607510533,
+          0.0011761455651581737,
+          0.0019765203968978295,
+          0.0022692395112601377,
+          0.003557919079903313,
+          0.004775157435388047,
+          0.0073095334971218645,
+          0.01314987577379452,
+          0.14670828176742035,
+          0.8551928002718283,
+          1.9766399678725561,
+          1.9835624280625106,
+          1.9968397100928745,
+          2.009768856335327,
+          2.022544196920112
+        ],
+        "params": {
+          "f_Goss": 0.91,
+          "theta_0_deg": 3.0,
+          "halfwidth_deg": 5.0,
+          "Si_content": 3.1
+        },
+        "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+        "orientations_sha256": "c5c14da014675943cb12dacbfc34942dd987172b38c8b459d597a9b474cebb85",
+        "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+        "jobs": [
+          {
+            "grain_id": 1,
+            "table_sha256": "9932b5ae310c855029d44ca819c13272e2616aa249e4fb895516dcf2ffc79103",
+            "script_sha256": "2608b0a115f9b653561c2681d4698cef8ae6ba1ac4a1b1c6409c4ed14858a270",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "54f13848d8e819f828806de7fd219535901781111dd7222fc58b28c6ce8802e9",
+            "script_sha256": "f329fa96bcb7be209a9eaa27f17b499004aff0daaee94475f7e8988f61a79c04",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 1.1762122919091125e-07
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "d6f00e496806db60ad3b6eb8d176f95f17edc6a24a7a835d728ffe67478415ba",
+            "script_sha256": "12ae65647a13069511a820a5407197b79ad69fae6ba6e60c1751b7863a6d3ccc",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "cc5ecfa1ec307a1e8de3f04bd18b86f5b51c47407414cbd24ae5705c646904bb",
+            "script_sha256": "417ca39fc74c2fbb07a73be08da1ce233c39f581b98b92f541b6a0147a2ae57a",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 1.960353818064692e-07
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "14d1b263f803ce1a8a3f0fabf7413f24c3c4d520d5c9018661520d8548ccc883",
+            "script_sha256": "55d435a71a529454809ef3927eaf37b364b0c60f3387b2aced287d3bd67deb30",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705607769269337e-16
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "fe5f0125f1cfb26f88dc213b6d52f46a510fea8cae70b8ac96488d8c7fe7f630",
+            "script_sha256": "b6fc84f4495b35004461ea0d6cb6771dc3628fcc0d0d705b9e5f3a44a3cfb7a9",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 4.900884542535894e-07
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "83166009ee40f8dcd122b986d2b628258ef83bcefa5edde8f1f0db682bfd7ea6",
+            "script_sha256": "d07db41810f645f5c99b7a5ca9a26d46ac7d9d05a133d214b55c1206fcca21d6",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 4.80120297360366e-16
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "ea0c81a89f2b045e6c7d63ed5434545f0153d655f0e72b2807ee038b74208649",
+            "script_sha256": "0a9295f1637e2600caa41b4633d4e722ddb60fc2fed575a9412ac9bfdaec397e",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          }
+        ]
+      }
+    },
+    "independently_validated": false,
+    "screening_is_not_material_validation": true,
+    "native_H0_is_not_measured_Br": true,
+    "no_grain_removed": true,
+    "no_offset_correction_applied": true,
+    "quality_sha256": "2a7849adb9fc2b5ad8fb929edfdcb9f7657e5299eae71fe75c15286fe0975769"
+  },
+  "B27R090": {
+    "contract_version": "native_quality_contract_v1",
+    "material_id": "B27R090",
+    "status": "numerical_screen_failed",
+    "verified_native_source": true,
+    "strict_training_eligible": false,
+    "source_manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+    "producer_sha256": {
+      "modules/native_quality.py": "d2b63599c3862246b7fea37c19bfc7ed7fb1360647c5833ae6cb1c081be4ca83",
+      "modules/native_loop_diagnostics.py": "748d8a58bef265dc709226c4309fee9746a13147b29ea4d66584bbad9846f2e0",
+      "modules/material_calibration.py": "f08cec15c1832003bf3a0b2bd596b1ddb773c47283489325c6839bdacbfaf334",
+      "tools/analyze_sampling_convergence.py": "e27b6d06091c761ff55c9d3e9172aa47faf1ae724f241e1a164e87909ed50ca9",
+      "tools/run_calibration_pilot.py": "c450b71bed5b69b521f01bfeb670331a0cdc00349e104bca9629f6674f247a30"
+    },
+    "physics_version": "cubic_sample_frame_v2",
+    "texture_sampling_version": "legacy_multi_peak_importance_v1",
+    "H_axis": "physical_A_per_m",
+    "gates": {
+      "min_signed_endpoint_m_projection": 0.95,
+      "max_branch_inversion_error_T": 0.02,
+      "max_residual_torque_T": 1e-05
+    },
+    "directions": {
+      "RD": {
+        "grains": 8,
+        "grain_details": [
+          {
+            "grain_id": 1,
+            "table_sha256": "f393ff89950caabea41a197270a621e5f8cb0a1ec98a44494d42759adc784ef5",
+            "min_signed_endpoint_m_projection": 0.99897623,
+            "max_branch_inversion_error_T": 0.00012716815203361875,
+            "native_unforced_midpoint_H0_T": -3.440420946787537e-05,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "1fb8e27df0546ef912f4213e671f25fab0f59f1b09bf210e8349fb02a86c54b0",
+            "min_signed_endpoint_m_projection": 0.99934125,
+            "max_branch_inversion_error_T": 9.101922766951986e-05,
+            "native_unforced_midpoint_H0_T": 6.17511451972419e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "1e2a5c0139517bc5e01281b49d0550db7cb993bcd205104765def175c6e652cc",
+            "min_signed_endpoint_m_projection": 0.9995122,
+            "max_branch_inversion_error_T": 6.057493290945182e-05,
+            "native_unforced_midpoint_H0_T": 3.0287466454614886e-05,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "42c76929d710ddc23c0fd0a19c9c3a8abcac91cbabe0d513ebcb1a61548bf74c",
+            "min_signed_endpoint_m_projection": 0.99979556,
+            "max_branch_inversion_error_T": 1.1174016747439453e-06,
+            "native_unforced_midpoint_H0_T": 9.801769096373647e-08,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "d1852faa8d16959010991eddac752e2d296d84adfa24c42c0b234dc7b82fc612",
+            "min_signed_endpoint_m_projection": 0.9999209,
+            "max_branch_inversion_error_T": 2.352424579354917e-06,
+            "native_unforced_midpoint_H0_T": 0.0,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "c2317af0c02780715e4872a2dc480061eb3e187a35e0e193420824e034399d14",
+            "min_signed_endpoint_m_projection": 0.9998365,
+            "max_branch_inversion_error_T": 1.4016529783056342e-05,
+            "native_unforced_midpoint_H0_T": 0.0,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "da7cf31401c1ec4d1d1f1124ee284be3bdbdbfcca23554684709f8803c3b535d",
+            "min_signed_endpoint_m_projection": 0.9992429,
+            "max_branch_inversion_error_T": 0.0001246785026873809,
+            "native_unforced_midpoint_H0_T": -3.7050687119233316e-05,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "929af5cab0ff928f26387dc4274cf010a9d63b8d97b677c284ba00dfd129e0e7",
+            "min_signed_endpoint_m_projection": 0.9991889,
+            "max_branch_inversion_error_T": 0.0010532981052508994,
+            "native_unforced_midpoint_H0_T": 9.801769074169187e-08,
+            "max_residual_torque_T": null
+          }
+        ],
+        "guarded_mean_B_T": [
+          0.0,
+          4.013290367319692e-06,
+          4.138954073463282e-06,
+          4.515945191894061e-06,
+          5.144263722612018e-06,
+          6.400900784047935e-06,
+          1.017081196835838e-05,
+          1.6453997275537968e-05,
+          3.9333053285392935e-05,
+          0.00014285104539396888,
+          0.00021197195994401285,
+          0.00036616372284901944,
+          0.001026988358550432,
+          0.0016940076804974613,
+          0.001977041407201771,
+          0.0030971697733444548,
+          0.0041498988739465115,
+          0.00631388691342423,
+          0.011148762563593664,
+          0.18528825999531587,
+          0.20296659574906825,
+          0.2692115783284227,
+          0.2837859283889075,
+          1.996281632906728,
+          2.009304941043692,
+          2.022160153761784
+        ],
+        "endpoint_failed_grain_ids": [],
+        "inversion_failed_grain_ids": [],
+        "torque_unknown_grain_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "torque_failed_grain_ids": [],
+        "max_abs_unforced_midpoint_H0_T": 3.7050687119233316e-05
+      },
+      "TD": {
+        "grains": 8,
+        "grain_details": [
+          {
+            "grain_id": 1,
+            "table_sha256": "8d3dc960f0d89394359363dad4bb39222585b8c648f7c1960e2a1d6a5f5b459d",
+            "min_signed_endpoint_m_projection": 0.99955153,
+            "max_branch_inversion_error_T": 0.23785815799727927,
+            "native_unforced_midpoint_H0_T": -2.009362661148373e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "3596bb05f053dbc9c479967da216c13575e3f6844c1d619e1d7b7557bcdffc5a",
+            "min_signed_endpoint_m_projection": -0.0062302295,
+            "max_branch_inversion_error_T": 1.9719746550553867,
+            "native_unforced_midpoint_H0_T": 0.9759663324128616,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "999fc8b560ee86e6e3ab27e560dd74b5b7e5c4dc4deec587f602c9bd15a9fdc4",
+            "min_signed_endpoint_m_projection": 0.9997852,
+            "max_branch_inversion_error_T": 0.00016212126056980303,
+            "native_unforced_midpoint_H0_T": 1.1762122875680348e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "f50e025ff8e14207bf61c960a3222d5fe5d21dccc5294f7465b2005f7912f75a",
+            "min_signed_endpoint_m_projection": 0.99987817,
+            "max_branch_inversion_error_T": 5.324320963806528e-05,
+            "native_unforced_midpoint_H0_T": 1.287952457007524e-05,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "121adf9057a9323fe3479f96a425af5eef9d1d2e0b9126decd6be684306a3047",
+            "min_signed_endpoint_m_projection": 0.9999207,
+            "max_branch_inversion_error_T": 5.410576531694744e-06,
+            "native_unforced_midpoint_H0_T": -2.7052882657363497e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "7991b1f7b9f322fb6781b66fb4761e8c3e96210acf37cb304568894f71786b39",
+            "min_signed_endpoint_m_projection": 0.99989116,
+            "max_branch_inversion_error_T": 2.430838731637408e-05,
+            "native_unforced_midpoint_H0_T": -2.450442269097408e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "03767fe2942726ceef909f584b3e544c7f39b0277adadd35f285ee7ccc1dea63",
+            "min_signed_endpoint_m_projection": 0.9996536,
+            "max_branch_inversion_error_T": 0.20300608609651993,
+            "native_unforced_midpoint_H0_T": 3.430619176514327e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "0403f841103f07c0dd750d1c501a8a1064b54eaa7ba019b63d2d98f133f6a786",
+            "min_signed_endpoint_m_projection": 0.9974507,
+            "max_branch_inversion_error_T": 1.2938335184564664e-05,
+            "native_unforced_midpoint_H0_T": 1.2742299804191504e-07,
+            "max_residual_torque_T": null
+          }
+        ],
+        "guarded_mean_B_T": [
+          0.0,
+          0.12199760066915324,
+          0.12199772633285941,
+          0.12199810332397784,
+          0.12199873164250855,
+          0.12199998827956995,
+          0.12200435487340289,
+          0.12201107056178821,
+          0.12202530690873353,
+          0.12209854846283816,
+          0.12220754297111519,
+          0.12234880375117438,
+          0.12303272171253432,
+          0.12372219953479822,
+          0.12405095359982808,
+          0.12514032947973103,
+          0.12620647196430404,
+          0.12838572896938688,
+          0.1331212509350374,
+          0.14107839302229458,
+          0.6551139161491153,
+          1.6180725789312613,
+          1.8601388634038734,
+          1.8734954399929586,
+          1.8865113245170662,
+          1.8993586161839768
+        ],
+        "endpoint_failed_grain_ids": [
+          2
+        ],
+        "inversion_failed_grain_ids": [
+          1,
+          2,
+          7
+        ],
+        "torque_unknown_grain_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "torque_failed_grain_ids": [],
+        "max_abs_unforced_midpoint_H0_T": 0.9759663324128616
+      }
+    },
+    "source_native_evidence": {
+      "RD": {
+        "seed": 20261003,
+        "n_grains": 8,
+        "native_execution_count": 8,
+        "imported_evidence_count": 0,
+        "material_seed": 20261004,
+        "texture_sampling_version": "legacy_multi_peak_importance_v1",
+        "texture_distribution_sha256": null,
+        "texture_module_sha256": null,
+        "unguarded_ensemble_mean_B_T": [
+          0.0,
+          -4.91857170602239e-06,
+          -4.792908000220142e-06,
+          -4.41591688173093e-06,
+          -3.7875983508461886e-06,
+          -2.5309612895901834e-06,
+          1.238949894899477e-06,
+          7.522135201942781e-06,
+          3.470171739525241e-05,
+          0.00013821971003603883,
+          0.00021197195994397677,
+          0.00036616372284901944,
+          0.001026988358550432,
+          0.0016940076804974613,
+          0.001977041407201771,
+          0.0030971697733444548,
+          0.0041498988739465115,
+          0.00631388691342423,
+          0.011148762563593664,
+          0.18528825999531587,
+          0.20296659574906825,
+          0.2692115783284227,
+          0.2837859283889075,
+          1.996281632906728,
+          2.009304941043692,
+          2.022160153761784
+        ],
+        "params": {
+          "f_Goss": 0.87,
+          "theta_0_deg": 4.0,
+          "halfwidth_deg": 6.0,
+          "Si_content": 3.1
+        },
+        "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+        "orientations_sha256": "59565bfa6d8865ed05a403364ed1a768d8521d0f80795f68dda6be1ff5d52af6",
+        "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+        "jobs": [
+          {
+            "grain_id": 1,
+            "table_sha256": "f393ff89950caabea41a197270a621e5f8cb0a1ec98a44494d42759adc784ef5",
+            "script_sha256": "9d54f02099d45be85932d3ead77cc43ddb7fc4b0a6618409294231b558446713",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.4404209468058456e-05
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "1fb8e27df0546ef912f4213e671f25fab0f59f1b09bf210e8349fb02a86c54b0",
+            "script_sha256": "e77aa7e417c00bf299130e2baf4761aa60553fdda860119f8d59461082c00c2a",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.6909926544727127e-16
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "1e2a5c0139517bc5e01281b49d0550db7cb993bcd205104765def175c6e652cc",
+            "script_sha256": "7551e932610648d9fe69acd30cc08263284933db1d1a180c803b71ad0504a2b2",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "42c76929d710ddc23c0fd0a19c9c3a8abcac91cbabe0d513ebcb1a61548bf74c",
+            "script_sha256": "46efe8bea26b3fa74f22791f38d0c274913d8c0eb111f32726eadbcf20bc7f66",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.9807499202342e-16
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "d1852faa8d16959010991eddac752e2d296d84adfa24c42c0b234dc7b82fc612",
+            "script_sha256": "89b0bdc9c8f68ceadf99fdb40a4b493761d7a4b477b3eabad33118ca7c04bc14",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "c2317af0c02780715e4872a2dc480061eb3e187a35e0e193420824e034399d14",
+            "script_sha256": "f789ebb8e037ce281d9c8fb08440d35fe65ddf5853f0fee62e93a7a0f3b778d0",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.9807499202342e-16
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "da7cf31401c1ec4d1d1f1124ee284be3bdbdbfcca23554684709f8803c3b535d",
+            "script_sha256": "1d50ce1e4c17c6874c339c9db5bd784f19964f9030fff6c25d94d7ef52bd4884",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.705068711952743e-05
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "929af5cab0ff928f26387dc4274cf010a9d63b8d97b677c284ba00dfd129e0e7",
+            "script_sha256": "192757f52ba22a1d1e0acebab30ce09a4614159f235bbada5295e48d26aa3cc4",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          }
+        ]
+      },
+      "TD": {
+        "seed": 20261003,
+        "n_grains": 8,
+        "native_execution_count": 8,
+        "imported_evidence_count": 0,
+        "material_seed": 20261004,
+        "texture_sampling_version": "legacy_multi_peak_importance_v1",
+        "texture_distribution_sha256": null,
+        "texture_module_sha256": null,
+        "unguarded_ensemble_mean_B_T": [
+          0.0,
+          0.1219969807072591,
+          0.12199710637096471,
+          0.1219974757240055,
+          0.12199809641160503,
+          0.12199966125229468,
+          0.12200424792271287,
+          0.12201088728380573,
+          0.12202497085670712,
+          0.12209778454978569,
+          0.12220601649647819,
+          0.12234575080611206,
+          0.12303272171253432,
+          0.12372219953479822,
+          0.12404790561235006,
+          0.12514032947973103,
+          0.12620647196430404,
+          0.12838572896938688,
+          0.1331212509350374,
+          0.14107839302229458,
+          0.6551139161491153,
+          1.6180557462991927,
+          1.8600818823076457,
+          1.8733256328158956,
+          1.8862091305779964,
+          1.8989154501881758
+        ],
+        "params": {
+          "f_Goss": 0.87,
+          "theta_0_deg": 4.0,
+          "halfwidth_deg": 6.0,
+          "Si_content": 3.1
+        },
+        "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+        "orientations_sha256": "59565bfa6d8865ed05a403364ed1a768d8521d0f80795f68dda6be1ff5d52af6",
+        "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+        "jobs": [
+          {
+            "grain_id": 1,
+            "table_sha256": "8d3dc960f0d89394359363dad4bb39222585b8c648f7c1960e2a1d6a5f5b459d",
+            "script_sha256": "5a6e50c16a59560c64de368d9525399f134426daf286c4c1da18b423277a33aa",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.1269836654725936e-06
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "3596bb05f053dbc9c479967da216c13575e3f6844c1d619e1d7b7557bcdffc5a",
+            "script_sha256": "b0ff5f3c8d8000ae154ca23a91c0faf6754c4deb5826b1b62734a39566eb43ac",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 0.0035453279664077186
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "999fc8b560ee86e6e3ab27e560dd74b5b7e5c4dc4deec587f602c9bd15a9fdc4",
+            "script_sha256": "25d660397f0df750d67a37c6f1b070aee6ec7f079972e4ba77d3c2e2df121476",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "f50e025ff8e14207bf61c960a3222d5fe5d21dccc5294f7465b2005f7912f75a",
+            "script_sha256": "22e838777daa73e795e568781525907aa0d7185cb968052236238e64f96b992c",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.690979948978504e-16
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "121adf9057a9323fe3479f96a425af5eef9d1d2e0b9126decd6be684306a3047",
+            "script_sha256": "cfbc055fc8ea58e6ef3628701dd1fc9aea50c052c50807ac39b0ecd2a3ed8a55",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.7052882659194367e-06
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "7991b1f7b9f322fb6781b66fb4761e8c3e96210acf37cb304568894f71786b39",
+            "script_sha256": "d0cc4cb242c10ae6fe276542094e1b79b0018eff00885cacd40a54fd6a8afa80",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.450442270107817e-07
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "03767fe2942726ceef909f584b3e544c7f39b0277adadd35f285ee7ccc1dea63",
+            "script_sha256": "b380b1f71f580c4fa325f7cd186da0fc8ca56831852bf1077f55493287407523",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "0403f841103f07c0dd750d1c501a8a1064b54eaa7ba019b63d2d98f133f6a786",
+            "script_sha256": "1fd3930382fb36c2d136329a79c5aa0d749eb93abef52fc26cfbc20ee8fc555b",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          }
+        ]
+      }
+    },
+    "independently_validated": false,
+    "screening_is_not_material_validation": true,
+    "native_H0_is_not_measured_Br": true,
+    "no_grain_removed": true,
+    "no_offset_correction_applied": true,
+    "quality_sha256": "dc089f70b1421cd9b19b9edd8258fee083d061776eb9938818d199476147a2d7"
+  },
+  "B27R095": {
+    "contract_version": "native_quality_contract_v1",
+    "material_id": "B27R095",
+    "status": "numerical_screen_failed",
+    "verified_native_source": true,
+    "strict_training_eligible": false,
+    "source_manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+    "producer_sha256": {
+      "modules/native_quality.py": "d2b63599c3862246b7fea37c19bfc7ed7fb1360647c5833ae6cb1c081be4ca83",
+      "modules/native_loop_diagnostics.py": "748d8a58bef265dc709226c4309fee9746a13147b29ea4d66584bbad9846f2e0",
+      "modules/material_calibration.py": "f08cec15c1832003bf3a0b2bd596b1ddb773c47283489325c6839bdacbfaf334",
+      "tools/analyze_sampling_convergence.py": "e27b6d06091c761ff55c9d3e9172aa47faf1ae724f241e1a164e87909ed50ca9",
+      "tools/run_calibration_pilot.py": "c450b71bed5b69b521f01bfeb670331a0cdc00349e104bca9629f6674f247a30"
+    },
+    "physics_version": "cubic_sample_frame_v2",
+    "texture_sampling_version": "legacy_multi_peak_importance_v1",
+    "H_axis": "physical_A_per_m",
+    "gates": {
+      "min_signed_endpoint_m_projection": 0.95,
+      "max_branch_inversion_error_T": 0.02,
+      "max_residual_torque_T": 1e-05
+    },
+    "directions": {
+      "RD": {
+        "grains": 8,
+        "grain_details": [
+          {
+            "grain_id": 1,
+            "table_sha256": "7f2fd2d2e502fe34c27fbea773d56e5ebe40634236b288111431ad7700a30066",
+            "min_signed_endpoint_m_projection": 0.99915874,
+            "max_branch_inversion_error_T": 0.00012226726749409167,
+            "native_unforced_midpoint_H0_T": 0.0,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "c39900a75fcc70034413f4fdc0a66966146dc55d3ba6f2038694346d2303c976",
+            "min_signed_endpoint_m_projection": 0.999221,
+            "max_branch_inversion_error_T": 6.93965250797568e-06,
+            "native_unforced_midpoint_H0_T": 1.9603538159440603e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "6e13bc1255aee8e9a7827584a8ede7d36ed07c35b1cfdb5792920da7356e4515",
+            "min_signed_endpoint_m_projection": 0.9990674,
+            "max_branch_inversion_error_T": 0.00011448466284513792,
+            "native_unforced_midpoint_H0_T": 2.3524245773565156e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "ff1dc1d3473eee2f5b3cd90cf87c39fedaa8b13bacf9ea866e5a7d0634a236db",
+            "min_signed_endpoint_m_projection": 0.99942386,
+            "max_branch_inversion_error_T": 9.331284163405229e-05,
+            "native_unforced_midpoint_H0_T": 2.450442269097408e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "ec7d24edb60bf4d8fcb2d2d7520ce68666d311ef9531ab3b0bf3a39d41ff8126",
+            "min_signed_endpoint_m_projection": 0.99489933,
+            "max_branch_inversion_error_T": 3.655780790572435,
+            "native_unforced_midpoint_H0_T": 1.764318434238632e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "d25982f73b575ce2fbdc3b873357a51765b597208471c734cf1da67957ac6ac3",
+            "min_signed_endpoint_m_projection": 0.9994358,
+            "max_branch_inversion_error_T": 7.286635133474384e-05,
+            "native_unforced_midpoint_H0_T": 1.8192083411028293e-05,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "cb8103d1b8b23e30fdd3111e36219aff58654babd2611ef8900e8305e71bfa0a",
+            "min_signed_endpoint_m_projection": 0.9999112,
+            "max_branch_inversion_error_T": 4.01872532251879e-06,
+            "native_unforced_midpoint_H0_T": 9.801769074169187e-08,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "b8915171a30a5c74bfb53f7b73e14903f386b1869487d7ba44b07a287c562bbd",
+            "min_signed_endpoint_m_projection": 0.99940574,
+            "max_branch_inversion_error_T": 8.339345132601927e-05,
+            "native_unforced_midpoint_H0_T": 0.0,
+            "max_residual_torque_T": null
+          }
+        ],
+        "guarded_mean_B_T": [
+          0.0,
+          2.717006406610656e-06,
+          2.8426701127542476e-06,
+          3.219661231185022e-06,
+          3.847979761902981e-06,
+          5.104616823338898e-06,
+          8.874528007649344e-06,
+          1.515771331482893e-05,
+          3.536578767851923e-05,
+          0.00014773600288202414,
+          0.0002274440516908824,
+          0.00036640509200275284,
+          0.0010453372729820887,
+          0.001745681387713638,
+          0.0020586386806151075,
+          0.0031406332683600047,
+          0.004192252313660563,
+          0.0063104513763685005,
+          0.010638738555257057,
+          0.016343431371805203,
+          0.022626527418289563,
+          0.26849293518504785,
+          0.2865549828606062,
+          1.99403790635386,
+          2.0076251775011693,
+          2.0208635240774675
+        ],
+        "endpoint_failed_grain_ids": [],
+        "inversion_failed_grain_ids": [
+          5
+        ],
+        "torque_unknown_grain_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "torque_failed_grain_ids": [],
+        "max_abs_unforced_midpoint_H0_T": 1.8192083411028293e-05
+      },
+      "TD": {
+        "grains": 8,
+        "grain_details": [
+          {
+            "grain_id": 1,
+            "table_sha256": "54e24f192905510a8a140a5c479140b32389c69092f6122f1e15db908ab607fb",
+            "min_signed_endpoint_m_projection": 0.9996176,
+            "max_branch_inversion_error_T": 0.00029072047088907205,
+            "native_unforced_midpoint_H0_T": 6.98866135346865e-05,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "5dfda35155b9f57107046e8405913872acebb8a642aa2e1e7fc4262072308f38",
+            "min_signed_endpoint_m_projection": 0.99967194,
+            "max_branch_inversion_error_T": 1.1003579276760647,
+            "native_unforced_midpoint_H0_T": 1.078194598713722e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "a9473c65791c3868eae5a95a08e0b2ccde3c67f627fbc9bb9164349052582ad0",
+            "min_signed_endpoint_m_projection": 0.9995483,
+            "max_branch_inversion_error_T": 1.617291898070583e-05,
+            "native_unforced_midpoint_H0_T": -8.13546833566825e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "b6940afea6998adb103f0e86850685d2f855f6ebcc1797b34c895b205e776eeb",
+            "min_signed_endpoint_m_projection": 0.9996356,
+            "max_branch_inversion_error_T": 0.00029130857703374424,
+            "native_unforced_midpoint_H0_T": 1.2840317494822173e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "547d26d2a78a807b24fa1cf206eb761f94734024c1edde6cce6729cc7ba85251",
+            "min_signed_endpoint_m_projection": 0.99743116,
+            "max_branch_inversion_error_T": 0.8812797239920753,
+            "native_unforced_midpoint_H0_T": 9.213662934826061e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "fd759bf60458c29203b0989cc5d06156c4b045d5dc18b3836f09fd273c5eb5e5",
+            "min_signed_endpoint_m_projection": 0.9996414,
+            "max_branch_inversion_error_T": 1.125194885191846,
+            "native_unforced_midpoint_H0_T": 2.5484599597280777e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "c6e949208dbd3a89f11db38ecab3ae60b4d21ac92c3bccea960405e7db27e5e8",
+            "min_signed_endpoint_m_projection": 0.9999236,
+            "max_branch_inversion_error_T": 3.92037574377904,
+            "native_unforced_midpoint_H0_T": 0.0,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "64d67c3cff3b4b3748aa77735bc7b39aef44049351fad9a88b5c213c1fb3eaab",
+            "min_signed_endpoint_m_projection": 0.999713,
+            "max_branch_inversion_error_T": 2.160309905052671e-05,
+            "native_unforced_midpoint_H0_T": -1.5094724382658242e-06,
+            "max_residual_torque_T": null
+          }
+        ],
+        "guarded_mean_B_T": [
+          0.0,
+          9.303795227825334e-06,
+          9.429458933968924e-06,
+          9.806450052399703e-06,
+          1.0434768583117653e-05,
+          1.1691405644553577e-05,
+          1.5461316828862672e-05,
+          2.174450213604226e-05,
+          3.431087275040143e-05,
+          0.00010532376226260711,
+          0.0004938144784423472,
+          0.0006470395540792706,
+          0.001680953841184274,
+          0.0026697309716502554,
+          0.003270105555589292,
+          0.005093926125536094,
+          0.006851090150216926,
+          0.010547997674569765,
+          0.01954760673111794,
+          0.14131452466733846,
+          1.131939361592587,
+          1.7289394031710548,
+          1.9815945947376699,
+          1.995668664620125,
+          2.0090016399641772,
+          2.0220053298364338
+        ],
+        "endpoint_failed_grain_ids": [],
+        "inversion_failed_grain_ids": [
+          2,
+          5,
+          6,
+          7
+        ],
+        "torque_unknown_grain_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "torque_failed_grain_ids": [],
+        "max_abs_unforced_midpoint_H0_T": 6.98866135346865e-05
+      }
+    },
+    "source_native_evidence": {
+      "RD": {
+        "seed": 20261003,
+        "n_grains": 8,
+        "native_execution_count": 8,
+        "imported_evidence_count": 0,
+        "material_seed": 20261005,
+        "texture_sampling_version": "legacy_multi_peak_importance_v1",
+        "texture_distribution_sha256": null,
+        "texture_module_sha256": null,
+        "unguarded_ensemble_mean_B_T": [
+          0.0,
+          2.717006406610656e-06,
+          2.8426701124406595e-06,
+          3.219661230929871e-06,
+          3.847979761800735e-06,
+          5.1046168230983735e-06,
+          8.8745280075464e-06,
+          1.5157713314589705e-05,
+          3.536578767826537e-05,
+          0.00014773600288199573,
+          0.00022744405169085324,
+          0.00036640509200275284,
+          0.0010453372729820887,
+          0.001745681387713638,
+          0.0020586386806151075,
+          0.0031406332683600047,
+          0.004192252313660563,
+          0.0063104513763685005,
+          0.010638738555257057,
+          0.016343431371805203,
+          0.022626527418289563,
+          0.26849293518504785,
+          0.2865549828606062,
+          1.99403790635386,
+          2.0076251775011693,
+          2.0208635240774675
+        ],
+        "params": {
+          "f_Goss": 0.84,
+          "theta_0_deg": 5.0,
+          "halfwidth_deg": 7.0,
+          "Si_content": 3.1
+        },
+        "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+        "orientations_sha256": "a00716d86fac5fe34509dac581f133958f8bed0e41f2aa98137027ff20df7b02",
+        "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+        "jobs": [
+          {
+            "grain_id": 1,
+            "table_sha256": "7f2fd2d2e502fe34c27fbea773d56e5ebe40634236b288111431ad7700a30066",
+            "script_sha256": "803d92ae42727c449797998fb4ffc30250179dfedd870810d4622f6946bd1dd8",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.6909926544727127e-16
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "c39900a75fcc70034413f4fdc0a66966146dc55d3ba6f2038694346d2303c976",
+            "script_sha256": "feb48e940988370c701326a0a484f0d44ec33cb6024711807a0870d26fcab404",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 4.801215679097869e-16
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "6e13bc1255aee8e9a7827584a8ede7d36ed07c35b1cfdb5792920da7356e4515",
+            "script_sha256": "c5467756a7df52cb5db4740370a3b89e869db824620c86dd08eb6eb0f74c96cc",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "ff1dc1d3473eee2f5b3cd90cf87c39fedaa8b13bacf9ea866e5a7d0634a236db",
+            "script_sha256": "42170a27dd26370218e47912d2fb0d837c731d17b29b3f12b0498fd76a677a7f",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.6909926544727127e-16
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "ec7d24edb60bf4d8fcb2d2d7520ce68666d311ef9531ab3b0bf3a39d41ff8126",
+            "script_sha256": "2d5547814600419408a9c1f503c991b607043bf09230ea71d8ab9ababc13af5f",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.6617403716392855e-16
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "d25982f73b575ce2fbdc3b873357a51765b597208471c734cf1da67957ac6ac3",
+            "script_sha256": "6c1976e62fea91ffc1d3e5f936e2ee14848440dc7a0ddfe24a9f9c93a7638786",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "cb8103d1b8b23e30fdd3111e36219aff58654babd2611ef8900e8305e71bfa0a",
+            "script_sha256": "94e6ab9820a45c7a1b32969940a317447a0f191b126e6d5b093a91af9cb2e8ef",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "b8915171a30a5c74bfb53f7b73e14903f386b1869487d7ba44b07a287c562bbd",
+            "script_sha256": "feeda40ee228d888593a2d8cfbf3e524709eb4e9cba31020c682e63a0835cd46",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          }
+        ]
+      },
+      "TD": {
+        "seed": 20261003,
+        "n_grains": 8,
+        "native_execution_count": 8,
+        "imported_evidence_count": 0,
+        "material_seed": 20261005,
+        "texture_sampling_version": "legacy_multi_peak_importance_v1",
+        "texture_distribution_sha256": null,
+        "texture_module_sha256": null,
+        "unguarded_ensemble_mean_B_T": [
+          0.0,
+          9.013417818892755e-06,
+          9.139081524736636e-06,
+          9.51607264321197e-06,
+          1.0144391174068956e-05,
+          1.1401028235366595e-05,
+          1.51709394198285e-05,
+          2.1454124726857926e-05,
+          3.402049534116658e-05,
+          0.00010513507912687792,
+          0.0004938144784423087,
+          0.0006470395540792706,
+          0.001680953841184274,
+          0.0026697309716502554,
+          0.003270105555589292,
+          0.005093926125536094,
+          0.006851090150216926,
+          0.010547997674569765,
+          0.01954760673111794,
+          0.14131452466733846,
+          1.131939361592587,
+          1.7289394031710548,
+          1.9815945947376699,
+          1.995668664620125,
+          2.0090016399641772,
+          2.0220053298364338
+        ],
+        "params": {
+          "f_Goss": 0.84,
+          "theta_0_deg": 5.0,
+          "halfwidth_deg": 7.0,
+          "Si_content": 3.1
+        },
+        "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+        "orientations_sha256": "a00716d86fac5fe34509dac581f133958f8bed0e41f2aa98137027ff20df7b02",
+        "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+        "jobs": [
+          {
+            "grain_id": 1,
+            "table_sha256": "54e24f192905510a8a140a5c479140b32389c69092f6122f1e15db908ab607fb",
+            "script_sha256": "fbce3d162c7b1e8cfde309614df845c43ac0c1a5a2b3190b866347a12f667a79",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 4.801118270308935e-16
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "5dfda35155b9f57107046e8405913872acebb8a642aa2e1e7fc4262072308f38",
+            "script_sha256": "32622730b8fd16562236de1b29fb18dbf6952b197c8dfc9642785fa52a6889f4",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "a9473c65791c3868eae5a95a08e0b2ccde3c67f627fbc9bb9164349052582ad0",
+            "script_sha256": "ac2252681bc52beb8a8807de45be6108a17a2228351e7233cbd0e800c143eec0",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 8.135468337469867e-07
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "b6940afea6998adb103f0e86850685d2f855f6ebcc1797b34c895b205e776eeb",
+            "script_sha256": "f196347dbf4d6c3f88d5bdfc567d92c468b673386dba15dfb2eeb4122c477cd0",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "547d26d2a78a807b24fa1cf206eb761f94734024c1edde6cce6729cc7ba85251",
+            "script_sha256": "3aebd2c576ba643966a300386ac5748c7d3c8eddedb2a8271177304065ad4744",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.9807499202342e-16
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "fd759bf60458c29203b0989cc5d06156c4b045d5dc18b3836f09fd273c5eb5e5",
+            "script_sha256": "be10df48b676f39c44cad2d7ef5e7e8d5b6281f209a1473768bd4fc5b2ad186b",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "c6e949208dbd3a89f11db38ecab3ae60b4d21ac92c3bccea960405e7db27e5e8",
+            "script_sha256": "6f8e9c56aeb00993db9b991988b95f294ef7c9d4ec9e21d6cb25eb630e9a069c",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "64d67c3cff3b4b3748aa77735bc7b39aef44049351fad9a88b5c213c1fb3eaab",
+            "script_sha256": "37555b7acec2fb6fb0cf495391b7a220be3a17954ced6a92241baeda0cb336b6",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 1.509472438366865e-06
+          }
+        ]
+      }
+    },
+    "independently_validated": false,
+    "screening_is_not_material_validation": true,
+    "native_H0_is_not_measured_Br": true,
+    "no_grain_removed": true,
+    "no_offset_correction_applied": true,
+    "quality_sha256": "21ebf03776f07daee711ef2da7d61a34acc696d58388fc609e96e9bd63bc8cb4"
+  },
+  "B30P105": {
+    "contract_version": "native_quality_contract_v1",
+    "material_id": "B30P105",
+    "status": "numerical_screen_failed",
+    "verified_native_source": true,
+    "strict_training_eligible": false,
+    "source_manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+    "producer_sha256": {
+      "modules/native_quality.py": "d2b63599c3862246b7fea37c19bfc7ed7fb1360647c5833ae6cb1c081be4ca83",
+      "modules/native_loop_diagnostics.py": "748d8a58bef265dc709226c4309fee9746a13147b29ea4d66584bbad9846f2e0",
+      "modules/material_calibration.py": "f08cec15c1832003bf3a0b2bd596b1ddb773c47283489325c6839bdacbfaf334",
+      "tools/analyze_sampling_convergence.py": "e27b6d06091c761ff55c9d3e9172aa47faf1ae724f241e1a164e87909ed50ca9",
+      "tools/run_calibration_pilot.py": "c450b71bed5b69b521f01bfeb670331a0cdc00349e104bca9629f6674f247a30"
+    },
+    "physics_version": "cubic_sample_frame_v2",
+    "texture_sampling_version": "legacy_multi_peak_importance_v1",
+    "H_axis": "physical_A_per_m",
+    "gates": {
+      "min_signed_endpoint_m_projection": 0.95,
+      "max_branch_inversion_error_T": 0.02,
+      "max_residual_torque_T": 1e-05
+    },
+    "directions": {
+      "RD": {
+        "grains": 8,
+        "grain_details": [
+          {
+            "grain_id": 1,
+            "table_sha256": "302f4816c3d793949e81568abed6bc5e5ab55ffc27a103e9c836b174ef37c5e3",
+            "min_signed_endpoint_m_projection": 0.99901867,
+            "max_branch_inversion_error_T": 0.0001032322319420853,
+            "native_unforced_midpoint_H0_T": -2.6464776503587473e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "081834a8e450416f2538b05422bf08e27b8a09b23802b037ad9a19ab7ef7dc11",
+            "min_signed_endpoint_m_projection": 0.99843097,
+            "max_branch_inversion_error_T": 0.0001597688359908922,
+            "native_unforced_midpoint_H0_T": -2.3524245795769616e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "1106925f79d9d3498db8fce64be57b41b733208e8a58fab3b3322b9db2edd00e",
+            "min_signed_endpoint_m_projection": 0.9896164,
+            "max_branch_inversion_error_T": 0.00011428862746321045,
+            "native_unforced_midpoint_H0_T": 4.763659772533124e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "8d757b5bd2ec291dfdd6ad9930198ac3b50cd1bf6640e78e5a3dfbab95ae059e",
+            "min_signed_endpoint_m_projection": 0.99991477,
+            "max_branch_inversion_error_T": 8.821592172303383e-07,
+            "native_unforced_midpoint_H0_T": 0.0,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "662757152dee64e45ac23868c71e8c1c8afec9e8d26c3db09371e5e828beaf93",
+            "min_signed_endpoint_m_projection": 0.9998892,
+            "max_branch_inversion_error_T": 9.801769079276212e-06,
+            "native_unforced_midpoint_H0_T": 9.801769074169187e-08,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "acdd6c6da677f255b10b5110179e48c258322fd8a81c860c522c692c4f6939f1",
+            "min_signed_endpoint_m_projection": 0.99908626,
+            "max_branch_inversion_error_T": 8.488332022604794e-06,
+            "native_unforced_midpoint_H0_T": -5.881061446721958e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "9da152e60c742e6e45adcfc4d3cb8dc2f06d13bf91b179205c6544a5d73c331e",
+            "min_signed_endpoint_m_projection": -0.0062801368,
+            "max_branch_inversion_error_T": 1.9716291523010785,
+            "native_unforced_midpoint_H0_T": 0.97730401238411,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "1a3969b91e3206b154d032bbfcc93d19fc10b2e987c4fd5d4554a6ceb93f3e72",
+            "min_signed_endpoint_m_projection": 0.9956219,
+            "max_branch_inversion_error_T": 1.1879744124199121e-05,
+            "native_unforced_midpoint_H0_T": 1.617291898070583e-06,
+            "max_residual_torque_T": null
+          }
+        ],
+        "guarded_mean_B_T": [
+          0.0,
+          0.12216393708289017,
+          0.12216406274659632,
+          0.12216443973771475,
+          0.12216506805624545,
+          0.12216632469330689,
+          0.1221700946044912,
+          0.12217637778979838,
+          0.12219348605487924,
+          0.12230080958369303,
+          0.12237342730349847,
+          0.12303106243200322,
+          0.12448599823955876,
+          0.12573394084156322,
+          0.1267581340918567,
+          0.12915487780307805,
+          0.1315010549908726,
+          0.13624033501282265,
+          0.14606297283130287,
+          0.1595696754545607,
+          0.17679313611014846,
+          0.37888623227756113,
+          0.6364101646207838,
+          1.8623892973813732,
+          1.8804359078994697,
+          1.8957963172553196
+        ],
+        "endpoint_failed_grain_ids": [
+          7
+        ],
+        "inversion_failed_grain_ids": [
+          7
+        ],
+        "torque_unknown_grain_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "torque_failed_grain_ids": [],
+        "max_abs_unforced_midpoint_H0_T": 0.97730401238411
+      },
+      "TD": {
+        "grains": 8,
+        "grain_details": [
+          {
+            "grain_id": 1,
+            "table_sha256": "0a32c4c514f1962f567524665a5985717385dbd41e9f4fdea7591122de8fb3b6",
+            "min_signed_endpoint_m_projection": 0.9993801,
+            "max_branch_inversion_error_T": 1.0589894632596097,
+            "native_unforced_midpoint_H0_T": -6.175114519946234e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "c5bf3d01d671d91b170af174a15151bb99215affdbb80320b4dd42426a0e6800",
+            "min_signed_endpoint_m_projection": 0.99933356,
+            "max_branch_inversion_error_T": 0.0004063813460237764,
+            "native_unforced_midpoint_H0_T": -0.00019387899238676454,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "84952338c79247bc63c8d838ea24c4c211c885b47aa05786ede91db7263cf76d",
+            "min_signed_endpoint_m_projection": 0.99724936,
+            "max_branch_inversion_error_T": 6.941612861899316e-05,
+            "native_unforced_midpoint_H0_T": 3.695266942882469e-06,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "00c52111e56170a601e6d6c05a9a2a31326c2459fc3d231bcc73c2512f40c827",
+            "min_signed_endpoint_m_projection": 0.99980533,
+            "max_branch_inversion_error_T": 2.3524245791328724e-06,
+            "native_unforced_midpoint_H0_T": 3.9207076318881207e-07,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "fa5a707577e663180e0c81eb14eec2187e2a0c1cb1760fdfee12f9c5b94c6748",
+            "min_signed_endpoint_m_projection": -0.0063098352,
+            "max_branch_inversion_error_T": 1.9717782089796785,
+            "native_unforced_midpoint_H0_T": 0.9777942790327616,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "070d98ead36b4302ef31b55ddd22a33dbcc737e13617cc6ae4f35035ec96d4f9",
+            "min_signed_endpoint_m_projection": 0.99959123,
+            "max_branch_inversion_error_T": 0.0002808990982721138,
+            "native_unforced_midpoint_H0_T": 0.00014044954913594587,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "29194f0ccf9afd103ab17391afb13079acfb7eb95234e9656f9c00b2c524400e",
+            "min_signed_endpoint_m_projection": 0.99974287,
+            "max_branch_inversion_error_T": 3.8265793416693015,
+            "native_unforced_midpoint_H0_T": -6.648539966414013e-05,
+            "max_residual_torque_T": null
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "808ec4156b30fa1b0e321a9a5f00ab32831a7dd28af7524991ff06fde6f1a985",
+            "min_signed_endpoint_m_projection": 0.9983397,
+            "max_branch_inversion_error_T": 1.082249100491628,
+            "native_unforced_midpoint_H0_T": 0.00016800232201741316,
+            "max_residual_torque_T": null
+          }
+        ],
+        "guarded_mean_B_T": [
+          0.0,
+          0.12226347794390888,
+          0.12226360360761503,
+          0.12226398059873346,
+          0.12226460891726416,
+          0.12226586555432559,
+          0.12226963546550991,
+          0.12227591865081708,
+          0.12228848502143147,
+          0.12238373399803897,
+          0.12251625402066033,
+          0.12355573912316,
+          0.12575324840772634,
+          0.12764086870280472,
+          0.1291999053081478,
+          0.13290640904293433,
+          0.13656879846956577,
+          0.144229420028748,
+          0.16228130892954074,
+          0.5798859927453339,
+          1.329293317155091,
+          1.572627315959764,
+          1.5910102330362292,
+          1.8663839786786371,
+          1.8845336290411971,
+          1.8987605220260202
+        ],
+        "endpoint_failed_grain_ids": [
+          5
+        ],
+        "inversion_failed_grain_ids": [
+          1,
+          5,
+          7,
+          8
+        ],
+        "torque_unknown_grain_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "torque_failed_grain_ids": [],
+        "max_abs_unforced_midpoint_H0_T": 0.9777942790327616
+      }
+    },
+    "source_native_evidence": {
+      "RD": {
+        "seed": 20261003,
+        "n_grains": 8,
+        "native_execution_count": 8,
+        "imported_evidence_count": 0,
+        "material_seed": 20261006,
+        "texture_sampling_version": "legacy_multi_peak_importance_v1",
+        "texture_distribution_sha256": null,
+        "texture_module_sha256": null,
+        "unguarded_ensemble_mean_B_T": [
+          0.0,
+          0.12216380108334429,
+          0.12216392674705012,
+          0.12216430373816786,
+          0.12216491666999187,
+          0.12216615789896548,
+          0.12216988164649244,
+          0.12217608792327442,
+          0.12219307165179916,
+          0.1223000407693391,
+          0.12237188862287708,
+          0.12302798518509205,
+          0.12448450579549081,
+          0.12573394084156322,
+          0.12675505683949218,
+          0.12915368108974162,
+          0.1315010549908726,
+          0.13624033501282265,
+          0.14606258537597505,
+          0.15956270195296357,
+          0.1767742517574426,
+          0.37883173745236387,
+          0.6363089683972318,
+          1.8621747383195881,
+          1.8800926028805605,
+          1.8953157777518945
+        ],
+        "params": {
+          "f_Goss": 0.79,
+          "theta_0_deg": 6.0,
+          "halfwidth_deg": 8.0,
+          "Si_content": 3.0
+        },
+        "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+        "orientations_sha256": "ee2f74e5a18f302541ee05e7bd1ad44a037c039c52c2a6a1cff205f247d33586",
+        "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+        "jobs": [
+          {
+            "grain_id": 1,
+            "table_sha256": "302f4816c3d793949e81568abed6bc5e5ab55ffc27a103e9c836b174ef37c5e3",
+            "script_sha256": "0b5fc82f6e4efb0fa2047b86c86ddb887323919a26a3e7fd58a0d298759f447e",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.646477651369156e-07
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "081834a8e450416f2538b05422bf08e27b8a09b23802b037ad9a19ab7ef7dc11",
+            "script_sha256": "69cd855e9b34f0b1ed68eb3294747299e2eef903a127d38a436f3369c4651ded",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.3524245814078313e-07
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "1106925f79d9d3498db8fce64be57b41b733208e8a58fab3b3322b9db2edd00e",
+            "script_sha256": "a1bb9b151203dca16fe51abf5810c1c72893783cb9e9881ee53c96edd214049a",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.9782356051819003e-16
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "8d757b5bd2ec291dfdd6ad9930198ac3b50cd1bf6640e78e5a3dfbab95ae059e",
+            "script_sha256": "248a006d60886864cd685ce3d50407932092f2107e2ce51fb293e3d355b6f012",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.6909926544727127e-16
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "662757152dee64e45ac23868c71e8c1c8afec9e8d26c3db09371e5e828beaf93",
+            "script_sha256": "a62deea5843174bbb7aff651111dc8cb3762b0fdae712cfd37f74e7e0230e566",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.6909926544727127e-16
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "acdd6c6da677f255b10b5110179e48c258322fd8a81c860c522c692c4f6939f1",
+            "script_sha256": "04f143f3acab4aae693cc07a1ef1d11367ce4647f5383aeef724e8a50f14d17f",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 5.88106144884259e-07
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "9da152e60c742e6e45adcfc4d3cb8dc2f06d13bf91b179205c6544a5d73c331e",
+            "script_sha256": "6df5f1f3b88763db9e1d7a19621931dad9911c9716c93c771e0e3e951c4e507a",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 0.003844316027402206
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "1a3969b91e3206b154d032bbfcc93d19fc10b2e987c4fd5d4554a6ceb93f3e72",
+            "script_sha256": "761110683cc5d1fd0afd4b779d320683ed62f91f44c609321a401a89c4a66ca9",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          }
+        ]
+      },
+      "TD": {
+        "seed": 20261003,
+        "n_grains": 8,
+        "native_execution_count": 8,
+        "imported_evidence_count": 0,
+        "material_seed": 20261006,
+        "texture_sampling_version": "legacy_multi_peak_importance_v1",
+        "texture_distribution_sha256": null,
+        "texture_module_sha256": null,
+        "unguarded_ensemble_mean_B_T": [
+          0.0,
+          0.12223016050558759,
+          0.12223028616929346,
+          0.12223066316041191,
+          0.12223129147894275,
+          0.12223254811600105,
+          0.12223622567124934,
+          0.12224243186243502,
+          0.1222548442449339,
+          0.12237463792137294,
+          0.1225146989335315,
+          0.12355264376861247,
+          0.12575075864719815,
+          0.12764086870280472,
+          0.12919682414595685,
+          0.13290371021585728,
+          0.13656610862695506,
+          0.1442258606220987,
+          0.16227238953856854,
+          0.5798651239269621,
+          1.329255884272676,
+          1.5725467892590594,
+          1.5908772746897357,
+          1.8661295919352194,
+          1.8841452445174407,
+          1.8982313233640002
+        ],
+        "params": {
+          "f_Goss": 0.79,
+          "theta_0_deg": 6.0,
+          "halfwidth_deg": 8.0,
+          "Si_content": 3.0
+        },
+        "manifest_sha256": "f5d5e98074a902c61490e91c844886e39294a9b6552d8fd5e5f115e810d36417",
+        "orientations_sha256": "ee2f74e5a18f302541ee05e7bd1ad44a037c039c52c2a6a1cff205f247d33586",
+        "mumax_binary_sha256": "c3860bb48b6f2f6f52c61093bc5f71e3abedb77049bc186759f9059ea2528476",
+        "jobs": [
+          {
+            "grain_id": 1,
+            "table_sha256": "0a32c4c514f1962f567524665a5985717385dbd41e9f4fdea7591122de8fb3b6",
+            "script_sha256": "d13ea3dffe38909245362e322f079de91eb2e46d71e2ac86bec4ca6847b71c80",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 6.175114520047275e-06
+          },
+          {
+            "grain_id": 2,
+            "table_sha256": "c5bf3d01d671d91b170af174a15151bb99215affdbb80320b4dd42426a0e6800",
+            "script_sha256": "b5886b8131c40db490bd3e474b4c30c51748d2cb7d3bc7dfaab52157ce2a8efc",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 0.00019387899238686558
+          },
+          {
+            "grain_id": 3,
+            "table_sha256": "84952338c79247bc63c8d838ea24c4c211c885b47aa05786ede91db7263cf76d",
+            "script_sha256": "631d6e3ddfe63fca2959257ee2b7f620c6c3577d4a0099a09a9c1f12d756c325",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.9807499202342e-16
+          },
+          {
+            "grain_id": 4,
+            "table_sha256": "00c52111e56170a601e6d6c05a9a2a31326c2459fc3d231bcc73c2512f40c827",
+            "script_sha256": "ec518616137861d9587856797ccb4d51a52fd3bed3faba5f5de8407c6b0b57f1",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 2.8705268956090435e-16
+          },
+          {
+            "grain_id": 5,
+            "table_sha256": "fa5a707577e663180e0c81eb14eec2187e2a0c1cb1760fdfee12f9c5b94c6748",
+            "script_sha256": "98e0fc89a9c6c1b8368e377253967c414c89349f966076680e6282bff26b10b1",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 0.004233589296160911
+          },
+          {
+            "grain_id": 6,
+            "table_sha256": "070d98ead36b4302ef31b55ddd22a33dbcc737e13617cc6ae4f35035ec96d4f9",
+            "script_sha256": "2c025fe2372e53888e03b6ffbdfae3ea0d138fbe2f8aef8a86d2ad01124bd619",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.980919326823651e-16
+          },
+          {
+            "grain_id": 7,
+            "table_sha256": "29194f0ccf9afd103ab17391afb13079acfb7eb95234e9656f9c00b2c524400e",
+            "script_sha256": "a861adf7617dba917ce7a6c22125e5da3f72e526e11dd8453bad7bcf323e6e66",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 6.648539966424118e-05
+          },
+          {
+            "grain_id": 8,
+            "table_sha256": "808ec4156b30fa1b0e321a9a5f00ab32831a7dd28af7524991ff06fde6f1a985",
+            "script_sha256": "c596517933112dafa1e7f41c3e0052665c3f14328ec288a7618c8fd4ae372393",
+            "execution_kind": "native",
+            "max_imposed_guard_change_T": 3.661892837569791e-16
+          }
+        ]
+      }
+    },
+    "independently_validated": false,
+    "screening_is_not_material_validation": true,
+    "native_H0_is_not_measured_Br": true,
+    "no_grain_removed": true,
+    "no_offset_correction_applied": true,
+    "quality_sha256": "27788935a4622136908cb8ceaa18c25e0b5ba00d474b018260babddcfd22ca78"
+  }
+}

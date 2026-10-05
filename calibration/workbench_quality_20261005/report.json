@@ -1,0 +1,84 @@
+{
+  "contract_version": "native_quality_contract_v1",
+  "role": "source_quality_and_transport_diagnostics_not_material_validation",
+  "native_quality_sha256": "72426477f783d521a4e4261a0fbc23fc74aa4e071fe21e64322456f2bbc968c1",
+  "producer_sha256": {
+    "modules/native_quality.py": "d2b63599c3862246b7fea37c19bfc7ed7fb1360647c5833ae6cb1c081be4ca83",
+    "modules/calibration_workbench.py": "9ec786fde2d47acc2deb033c820880819d14728023298c5ca4283ef399f4e1c4",
+    "modules/maxwell_exporter.py": "ee298f355f98f21877c1a4b5bbe5303a1b2697a1ca1e241d5d3d6f42f9c10d39",
+    "modules/dataset_contract.py": "3241d492cd0113b842feb990a959ca175fd5fab8def1360047b29d4b3b34b9b0",
+    "modules/workbench_routes.py": "929cb273fbf11c2a0f72e00b86221442e727ee26b972051b70095271a62cfb49",
+    "modules/workbench_cpu_policy.py": "1161332dcdde9bfba16cd9fb124352d69b7754e227e9edee26b9a002b3f87d40",
+    "tools/start_workbench.py": "4bcb3dd32e7380280a3f819190143e5dc1c1501a7f95155981b4429a046e8fc5",
+    "tools/audit_workbench_native_quality.py": "f9d7d71de6b730634cd1dc9bf949b968b6bc4162223b7641afb26592f46977b4",
+    "templates/workbench.html": "a884e858fbda2933bd19a88c0303fbd8903a4761f3fa08160314b8337d000737"
+  },
+  "grains": 64,
+  "endpoint_screen_failures": 5,
+  "inversion_screen_failures": 18,
+  "torque_unknown_grains": 64,
+  "strict_training_eligible": false,
+  "existing_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "existing_material_holdout": {
+    "mean_rmse_T": 0.04404264729019529,
+    "max_abs_B800_error_T": 0.10615668757659735,
+    "B800_0_05T_pass_all": false
+  },
+  "curve_identity": [
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "calibration_fit_max_abs_delta_T": 0.0,
+      "material_holdout_max_abs_delta_T": 0.0
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "calibration_fit_max_abs_delta_T": 0.0,
+      "material_holdout_max_abs_delta_T": 0.0
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "calibration_fit_max_abs_delta_T": 0.0,
+      "material_holdout_max_abs_delta_T": 0.0
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "calibration_fit_max_abs_delta_T": 0.0,
+      "material_holdout_max_abs_delta_T": 0.0
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "calibration_fit_max_abs_delta_T": 0.0,
+      "material_holdout_max_abs_delta_T": 0.0
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "calibration_fit_max_abs_delta_T": 0.0,
+      "material_holdout_max_abs_delta_T": 0.0
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "calibration_fit_max_abs_delta_T": 0.0,
+      "material_holdout_max_abs_delta_T": 0.0
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "calibration_fit_max_abs_delta_T": 0.0,
+      "material_holdout_max_abs_delta_T": 0.0
+    }
+  ],
+  "new_MuMax_solves": 0,
+  "new_Maxwell_solves": 0,
+  "GPU_used": false,
+  "model_changed": false,
+  "no_grain_removed": true,
+  "no_offset_correction_applied": true,
+  "independently_validated": false
+}
