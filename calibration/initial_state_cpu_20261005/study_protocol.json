@@ -1,0 +1,32 @@
+{
+  "diagnostic_version": "directional_native_loop_audit_v1",
+  "H_axis": "physical_A_per_m",
+  "selection": "all four confirmed materials and RD/TD; fixed grain_id=1 for prepared controls",
+  "audit_scope": "all 64 complete legacy n8 major loops; no result-based exclusions",
+  "conditions": [
+    "strict_major_loop",
+    "zero_transverse_pair"
+  ],
+  "matched_solver": {
+    "MinimizerStop": 1e-07,
+    "MinimizerSamples": 20,
+    "hmax_A_per_m": 50000
+  },
+  "planned_native_jobs": 16,
+  "actually_executed_native_jobs": 0,
+  "native_execution_allowed": false,
+  "resource_constraint": "User GPU restriction: preparation and CPU analysis only; explicit user resumption required",
+  "controls_are_not_material_curves": true,
+  "no_reference_curve_used": true,
+  "gates": {
+    "min_signed_endpoint_m_projection": 0.95,
+    "max_branch_inversion_error_T": 0.02,
+    "max_residual_torque_T": 1e-05
+  },
+  "limitations": [
+    "initial transverse pair is not certified demagnetization or a virgin curve",
+    "single fixed grain is a state/path diagnostic, not a material ensemble",
+    "strict solver alone does not establish torque convergence",
+    "no calibration promotion, material export, Hc, Br or loss inference"
+  ]
+}

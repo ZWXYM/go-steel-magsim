@@ -1,0 +1,139 @@
+{
+  "role": "posthoc_native_H0_decomposition_diagnostic_not_a_correction",
+  "input_report_sha256": "e8ea18436a40b13544e430f7c6a19c4477abbb620317bf0d9c77705e17b50c76",
+  "high_H0_screen_T": 0.02,
+  "H0_screen_reason": "same 0.02 T numerical scale used by existing inversion screening; no accuracy certification",
+  "rows": [
+    {
+      "grade": "B23R075",
+      "direction": "RD",
+      "high_unforced_H0_grain_ids": [
+        8
+      ],
+      "mean_unforced_H0_T": 0.12215873402175251,
+      "mean_native_B800_T": 0.12350881228084999,
+      "mean_B800_minus_unforced_H0_diagnostic_T": 0.0013500782590974841,
+      "grain_B800_std_T": 0.3453529206219146,
+      "grain_B800_minus_H0_std_T": 0.0005363555103710286,
+      "endpoint_failures": 2,
+      "inversion_failures": 2,
+      "torque_recorded": false,
+      "no_offset_subtraction_applied": true,
+      "no_grain_removed": true
+    },
+    {
+      "grade": "B23R075",
+      "direction": "TD",
+      "high_unforced_H0_grain_ids": [],
+      "mean_unforced_H0_T": 2.4222621836378355e-06,
+      "mean_native_B800_T": 0.0019765203968978295,
+      "mean_B800_minus_unforced_H0_diagnostic_T": 0.0019740981347141917,
+      "grain_B800_std_T": 0.0015032243152187372,
+      "grain_B800_minus_H0_std_T": 0.0015042875264888675,
+      "endpoint_failures": 0,
+      "inversion_failures": 3,
+      "torque_recorded": false,
+      "no_offset_subtraction_applied": true,
+      "no_grain_removed": true
+    },
+    {
+      "grade": "B27R090",
+      "direction": "RD",
+      "high_unforced_H0_grain_ids": [],
+      "mean_unforced_H0_T": -5.044235412351994e-06,
+      "mean_native_B800_T": 0.0016940076804974613,
+      "mean_B800_minus_unforced_H0_diagnostic_T": 0.0016990519159098133,
+      "grain_B800_std_T": 0.001259525030873707,
+      "grain_B800_minus_H0_std_T": 0.001259388323368821,
+      "endpoint_failures": 0,
+      "inversion_failures": 0,
+      "torque_recorded": false,
+      "no_offset_subtraction_applied": true,
+      "no_grain_removed": true
+    },
+    {
+      "grade": "B27R090",
+      "direction": "TD",
+      "high_unforced_H0_grain_ids": [
+        2
+      ],
+      "mean_unforced_H0_T": 0.12199685504355279,
+      "mean_native_B800_T": 0.12372219953479822,
+      "mean_B800_minus_unforced_H0_diagnostic_T": 0.0017253444912454369,
+      "grain_B800_std_T": 0.3448838442661991,
+      "grain_B800_minus_H0_std_T": 0.0006978311620353838,
+      "endpoint_failures": 1,
+      "inversion_failures": 3,
+      "torque_recorded": false,
+      "no_offset_subtraction_applied": true,
+      "no_grain_removed": true
+    },
+    {
+      "grade": "B27R095",
+      "direction": "RD",
+      "high_unforced_H0_grain_ids": [],
+      "mean_unforced_H0_T": 2.591342700281052e-06,
+      "mean_native_B800_T": 0.001745681387713638,
+      "mean_B800_minus_unforced_H0_diagnostic_T": 0.0017430900450133568,
+      "grain_B800_std_T": 0.0010877847630902358,
+      "grain_B800_minus_H0_std_T": 0.0010882095944744572,
+      "endpoint_failures": 0,
+      "inversion_failures": 1,
+      "torque_recorded": false,
+      "no_offset_subtraction_applied": true,
+      "no_grain_removed": true
+    },
+    {
+      "grade": "B27R095",
+      "direction": "TD",
+      "high_unforced_H0_grain_ids": [],
+      "mean_unforced_H0_T": 8.887754112563151e-06,
+      "mean_native_B800_T": 0.0026697309716502554,
+      "mean_B800_minus_unforced_H0_diagnostic_T": 0.0026608432175376923,
+      "grain_B800_std_T": 0.0022140739270667727,
+      "grain_B800_minus_H0_std_T": 0.0022155458955227915,
+      "endpoint_failures": 0,
+      "inversion_failures": 4,
+      "torque_recorded": false,
+      "no_offset_subtraction_applied": true,
+      "no_grain_removed": true
+    },
+    {
+      "grade": "B30P105",
+      "direction": "RD",
+      "high_unforced_H0_grain_ids": [
+        7
+      ],
+      "mean_unforced_H0_T": 0.12216367541963796,
+      "mean_native_B800_T": 0.12573394084156322,
+      "mean_B800_minus_unforced_H0_diagnostic_T": 0.0035702654219252616,
+      "grain_B800_std_T": 0.3445470210095593,
+      "grain_B800_minus_H0_std_T": 0.005492235974921392,
+      "endpoint_failures": 1,
+      "inversion_failures": 1,
+      "torque_recorded": false,
+      "no_offset_subtraction_applied": true,
+      "no_grain_removed": true
+    },
+    {
+      "grade": "B30P105",
+      "direction": "TD",
+      "high_unforced_H0_grain_ids": [
+        5
+      ],
+      "mean_unforced_H0_T": 0.12223003484188127,
+      "mean_native_B800_T": 0.12764086870280472,
+      "mean_B800_minus_unforced_H0_diagnostic_T": 0.005410833860923447,
+      "grain_B800_std_T": 0.34400691263948724,
+      "grain_B800_minus_H0_std_T": 0.007730347930779061,
+      "endpoint_failures": 1,
+      "inversion_failures": 4,
+      "torque_recorded": false,
+      "no_offset_subtraction_applied": true,
+      "no_grain_removed": true
+    }
+  ],
+  "no_reference_targets_used": true,
+  "model_changed": false,
+  "new_native_jobs": 0
+}

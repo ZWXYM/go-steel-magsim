@@ -1,0 +1,7 @@
+{
+  "path": "tools/decompose_zero_state_audit.py",
+  "sha256": "e5f9903d841c27d11ff79d604159509b822e819a7a94ef1b32315816ad0220fe",
+  "input_report_sha256": "e8ea18436a40b13544e430f7c6a19c4477abbb620317bf0d9c77705e17b50c76",
+  "output_sha256": "eca34222642d93eba4a770293f2624e9620d32cf20755259fbd3a5ee714284c4",
+  "independent_CLI_byte_reproduced": true
+}

@@ -19,3 +19,6 @@ modules/maxwell_exporter.py -text
 tools/run_calibration_transfer.py -text
 modules/calibration_sensitivity.py -text
 tools/audit_calibration_native_sensitivity.py -text
+modules/native_loop_diagnostics.py -text
+tools/prepare_initial_state_audit.py -text
+tools/decompose_zero_state_audit.py -text
