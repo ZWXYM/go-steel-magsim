@@ -1,0 +1,203 @@
+{
+  "protocol": "uniform_flux_directional_controls_v1",
+  "cases": [
+    {
+      "case_id": "td_global_y",
+      "mean_B_vector_T": [
+        0.00015925054121426144,
+        1.5105147284422107,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        0.0724573636851486,
+        403.7440102880068,
+        0.0
+      ],
+      "H_parallel_A_per_m": 403.7440102880068,
+      "checks": {
+        "B_target": false,
+        "B_direction": false,
+        "H_direction": false,
+        "H_uniform": false,
+        "H_source_bracket": true
+      },
+      "passed": false,
+      "native_validation": 1,
+      "saved_project_sha256": "854abb3d2f2ab2f246ae81be4f67ca0229af482cff83e9ad6da1fb2c7b3d5ca4",
+      "actual_object_CS": "Global",
+      "field_sha256": {
+        "B": "5812b075e59c611c3203352b46932498c4b0d9a3ea8e9a71e87dc43ef2dbee29",
+        "H": "8d5f2deed7d398e4b6d959a841ce4f4177e9022b9b901bf5b52698cce974e2af"
+      }
+    },
+    {
+      "case_id": "rd_rotated_y",
+      "mean_B_vector_T": [
+        0.00023836909645153897,
+        1.5096775719009912,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        0.06720777345163786,
+        26.17532412920208,
+        0.0
+      ],
+      "H_parallel_A_per_m": 26.17532412920208,
+      "checks": {
+        "B_target": false,
+        "B_direction": false,
+        "H_direction": false,
+        "H_uniform": false,
+        "H_source_bracket": false,
+        "H_source_knot": false
+      },
+      "passed": false,
+      "native_validation": 1,
+      "saved_project_sha256": "a05374689952e05088200e80a77d9b14599d674c2ef111f8cd16e769d2b0ac69",
+      "actual_object_CS": "RD90",
+      "field_sha256": {
+        "B": "3615d580af3fa69bea0dadb76c958326dcf8a5c1f013a7901e316c6997fe0858",
+        "H": "6a6d4d51b32044eba887bdb77a2d34f6f2fec86a2dd731256a12c381b189d620"
+      }
+    },
+    {
+      "case_id": "rd_swapped_y",
+      "mean_B_vector_T": [
+        0.00021206942278399266,
+        1.5105452939119237,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        0.05963822056227889,
+        26.204276401734937,
+        0.0
+      ],
+      "H_parallel_A_per_m": 26.204276401734933,
+      "checks": {
+        "B_target": false,
+        "B_direction": false,
+        "H_direction": false,
+        "H_uniform": false,
+        "H_source_bracket": false,
+        "H_source_knot": false
+      },
+      "passed": false,
+      "native_validation": 1,
+      "saved_project_sha256": "cffeecb38c72afb8c206d8c3c10feaeb881d09dfa9534aa181398843fcdebcc7",
+      "actual_object_CS": "Global",
+      "field_sha256": {
+        "B": "d219bdb4db7f727a34997d92b6028d76f5c4f0b17819cf084c5be0b4c834faf1",
+        "H": "b1eda5dd9123db38192ebea0aa1e0324e8f900789b21e24c53b5ddd23b26df54"
+      }
+    },
+    {
+      "case_id": "rd_isotropic_y",
+      "mean_B_vector_T": [
+        0.0006679043580821229,
+        1.513298817799248,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        0.011612822040939644,
+        26.29641344917682,
+        0.0
+      ],
+      "H_parallel_A_per_m": 26.296413449176818,
+      "checks": {
+        "B_target": false,
+        "B_direction": false,
+        "H_direction": false,
+        "H_uniform": false,
+        "H_source_bracket": false,
+        "H_source_knot": false
+      },
+      "passed": false,
+      "native_validation": 1,
+      "saved_project_sha256": "f99687334dbefbabbab88ee40e823533f0160f1cf3e76d01bf0354c0111c2f99",
+      "actual_object_CS": "Global",
+      "field_sha256": {
+        "B": "78c9f2b3ff69448232403d3fb17fb2348b11b791e630b9846fab16cc39a89905",
+        "H": "ae39ee43fb3c7fe0465586dcdccb87aa87b32f41c9e5d891cd4254b830db655f"
+      }
+    },
+    {
+      "case_id": "rd_isotropic_rotated_y",
+      "mean_B_vector_T": [
+        0.0006679043580821229,
+        1.513298817799248,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        0.011612822040939644,
+        26.29641344917682,
+        0.0
+      ],
+      "H_parallel_A_per_m": 26.296413449176818,
+      "checks": {
+        "B_target": false,
+        "B_direction": false,
+        "H_direction": false,
+        "H_uniform": false,
+        "H_source_bracket": false,
+        "H_source_knot": false
+      },
+      "passed": false,
+      "native_validation": 1,
+      "saved_project_sha256": "163b351bf9db9672a89d4b6fdbc87d0b41404578dc96c058c2766115a1af5b28",
+      "actual_object_CS": "RD90",
+      "field_sha256": {
+        "B": "78c9f2b3ff69448232403d3fb17fb2348b11b791e630b9846fab16cc39a89905",
+        "H": "ae39ee43fb3c7fe0465586dcdccb87aa87b32f41c9e5d891cd4254b830db655f"
+      }
+    },
+    {
+      "case_id": "rd_global_x",
+      "mean_B_vector_T": [
+        1.5130764153792962,
+        0.00020786244650281317,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        26.288929637009684,
+        0.058678603279239634,
+        0.0
+      ],
+      "H_parallel_A_per_m": 26.28892963700968,
+      "checks": {
+        "B_target": false,
+        "B_direction": false,
+        "H_direction": false,
+        "H_uniform": false,
+        "H_source_bracket": false,
+        "H_source_knot": false
+      },
+      "passed": false,
+      "native_validation": 1,
+      "saved_project_sha256": "4d636080a3a92148ff5cead28860873a9a291b0582c786b8764abc74692c21f3",
+      "actual_object_CS": "Global",
+      "field_sha256": {
+        "B": "320c7c66bccbc6a1cf69e8d2ae718c4f594e19b6cfec24789d33ad1fac5b6347",
+        "H": "1f31bc7c69d69353547fa6b3113464ad29e9311b405a1c373c0f23c3ea61f5f7"
+      }
+    }
+  ],
+  "equivalent_RD_controls": {
+    "rd_rotated_y": true,
+    "rd_swapped_y": true,
+    "rd_isotropic_y": true,
+    "rd_isotropic_rotated_y": true,
+    "rd_global_x": true
+  },
+  "TD_RD_H_ratio": 15.42460403909865,
+  "axis_aligned_field_verified": false,
+  "motor_geometry_direction_verified": false,
+  "oblique_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "passed": false,
+  "new_field_solves": 6,
+  "new_motor_solves": 0,
+  "cumulative_motor_solves": 4,
+  "cumulative_Maxwell_success": 10,
+  "cumulative_MuMax_success": 680
+}

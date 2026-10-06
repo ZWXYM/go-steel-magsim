@@ -1,0 +1,442 @@
+$begin 'Control_original'
+
+				CoordinateSystemType='Cartesian'
+				BulkOrSurfaceType=1
+				$begin 'PhysicsTypes'
+					set('Electromagnetic')
+				$end 'PhysicsTypes'
+				permittivity='1'
+				$begin 'permeability'
+					property_type='AnisoProperty'
+					unit=''
+					$begin 'component1'
+						property_type='nonlinear'
+						BTypeForSingleCurve='normal'
+						HUnit='A_per_meter'
+						BUnit='tesla'
+						IsTemperatureDependent=false
+						$begin 'BHCoordinates'
+							DimUnits[2: '', '']
+							Points[52: 0, 0, 0.1, 0.000125663706143592, 0.2, 0.000251327412287183, 0.5, 0.000628318530717959, 1, 0.00125663706143592, 2, 0.00251327412287183, 5, 0.00628318530717959, 10, 0.0125663706143592, 20, 0.0251327412287183, 50, 0.0628318530717959, 100, 0.125663706143592, 200, 0.251327412287183, 500, 0.628318530717959, 800, 1.00530964914873, 1000, 1.25663706143592, 1500, 1.88495559215388, 2000, 2.51327412287183, 3000, 3.76991118430775, 5000, 6.28318530717959, 7500, 9.42477796076938, 10000, 12.5663706143592, 15000, 18.8495559215388, 20000, 25.1327412287183, 30000, 37.6991118430775, 40000, 50.2654824574367, 50000, 62.8318530717959]
+						$end 'BHCoordinates'
+						$begin 'Temperatures'
+						$end 'Temperatures'
+						RecoilPermeability='1'
+					$end 'component1'
+					$begin 'component2'
+						property_type='nonlinear'
+						BTypeForSingleCurve='normal'
+						HUnit='A_per_meter'
+						BUnit='tesla'
+						IsTemperatureDependent=false
+						$begin 'BHCoordinates'
+							DimUnits[2: '', '']
+							Points[52: 0, 0, 0.1, 1.25663706143592e-05, 0.2, 2.51327412287184e-05, 0.5, 6.28318530717959e-05, 1, 0.000125663706143592, 2, 0.000251327412287183, 5, 0.000628318530717959, 10, 0.00125663706143592, 20, 0.00251327412287183, 50, 0.00628318530717959, 100, 0.0125663706143592, 200, 0.0251327412287183, 500, 0.0628318530717959, 800, 0.100530964914873, 1000, 0.125663706143592, 1500, 0.188495559215388, 2000, 0.251327412287183, 3000, 0.376991118430775, 5000, 0.628318530717959, 7500, 0.942477796076938, 10000, 1.25663706143592, 15000, 1.88495559215388, 20000, 2.51327412287183, 30000, 3.76991118430775, 40000, 5.02654824574367, 50000, 6.28318530717959]
+						$end 'BHCoordinates'
+						$begin 'Temperatures'
+						$end 'Temperatures'
+						RecoilPermeability='1'
+					$end 'component2'
+					component3='1000'
+				$end 'permeability'
+				conductivity='2000000'
+				$begin 'core_loss_type'
+					property_type='ChoiceProperty'
+					Choice='Electrical Steel'
+				$end 'core_loss_type'
+				core_loss_kh='0'
+				core_loss_kc='0'
+				core_loss_ke='0'
+				core_loss_kdc='0'
+				mass_density='7650'
+				core_loss_equiv_cut_depth='0.00023meter'
+				ModTime=1791269888
+				Library=''
+				LibLocation='Project'
+				ModSinceLib=false
+
+$end 'Control_original'
+
+$begin 'ModelSetup'
+
+			$begin 'DesignDatasets'
+				NextUniqueID=0
+				MoveBackwards=false
+				DatasetType='DesignDatasetType'
+				$begin 'DatasetDefinitions'
+				$end 'DatasetDefinitions'
+			$end 'DesignDatasets'
+			VariableOrders[0:]
+			$begin 'Editor3D Doc Preferences'
+				BackgroundColorVersion=1
+				'Plane Background'=0
+				'Need Lights'=true
+				'Ambient Light'=8355711
+				'Num Lights'=1
+				Light0[4: 16777215, 0.75, -0.150000005960464, -0.629999995231628]
+				Ver=2
+			$end 'Editor3D Doc Preferences'
+			SnapMode=31
+			WorkingCS=1
+			$begin 'GeometryCore'
+				BlockVersionID=3
+				DataVersion=1
+				NativeKernel='PARASOLID'
+				NativeKernelVersionID=25
+				Units='meter'
+				ModelExtents=10000
+				InstanceID=-1
+				$begin 'ValidationOptions'
+					EntityCheckLevel='Strict'
+					IgnoreUnclassifiedObjects=false
+					SkipIntersectionChecks=false
+				$end 'ValidationOptions'
+				ContainsGeomLinkUDM=false
+				$begin 'GeometryOperations'
+					BlockVersionID=2
+					$begin 'AnsoftRangedIDServerManager'
+						$begin 'AnsoftRangedIDServer'
+							IDServerObjectTypeID=0
+							IDServerRangeMin=0
+							IDServerRangeMax=2146483647
+							NextUniqueID=17
+							MoveBackwards=false
+						$end 'AnsoftRangedIDServer'
+						$begin 'AnsoftRangedIDServer'
+							IDServerObjectTypeID=1
+							IDServerRangeMin=2146483648
+							IDServerRangeMax=2146485547
+							NextUniqueID=2146483654
+							MoveBackwards=false
+						$end 'AnsoftRangedIDServer'
+					$end 'AnsoftRangedIDServerManager'
+					StartBackGroundFaceID=2146483648
+					$begin 'CoordinateSystems'
+					$end 'CoordinateSystems'
+					$begin 'OperandCSs'
+					$end 'OperandCSs'
+					$begin 'SubModelDefinitions'
+					$end 'SubModelDefinitions'
+					$begin 'Groups'
+					$end 'Groups'
+					$begin 'UserDefinedModels'
+					$end 'UserDefinedModels'
+					$begin 'OperandUserDefinedModels'
+					$end 'OperandUserDefinedModels'
+					$begin 'ToplevelParts'
+						$begin 'GeometryPart'
+							$begin 'Attributes'
+								Name='Coupon'
+								Flags=''
+								Color='(230 230 230)'
+								Transparency=0.8
+								PartCoordinateSystem=1
+								UDMId=-1
+								GroupId=-1
+								MaterialValue='"Control_original"'
+								SurfaceMaterialValue='"Steel-oxidised-surface"'
+								SolveInside=true
+								ShellElement=false
+								ShellElementThickness='0mm'
+								ReferenceTemperature='20cel'
+								IsMaterialEditable=true
+								IsSurfaceMaterialEditable=true
+								UseMaterialAppearance=false
+								IsLightweight=false
+								IsAlwaysHidden=false
+							$end 'Attributes'
+							$begin 'PhysicsAttributes'
+								SuppressedForPhysics='False'
+								SuppressedForPhysicsEditable=true
+							$end 'PhysicsAttributes'
+							$begin 'Operations'
+								$begin 'Operation'
+									OperationType='Rectangle'
+									ID=5
+									ReferenceCoordSystemID=1
+									$begin 'RectangleParameters'
+										KernelVersion=25
+										XStart='0meter'
+										YStart='0meter'
+										ZStart='0meter'
+										Width='0.02meter'
+										Height='0.02meter'
+										WhichAxis='Z'
+									$end 'RectangleParameters'
+									ParentPartID=6
+									ReferenceUDMID=-1
+									IsSuppressed=false
+									$begin 'OperationIdentity'
+										$begin 'Topology'
+											NumLumps=1
+											NumShells=1
+											NumFaces=0
+											NumWires=1
+											NumLoops=0
+											NumCoedges=0
+											NumEdges=4
+											NumVertices=4
+										$end 'Topology'
+										BodyID=6
+										StartFaceID=-1
+										StartEdgeID=7
+										StartVertexID=11
+										NumNewFaces=0
+										NumNewEdges=4
+										NumNewVertices=4
+										FaceNameAndIDMap()
+										EdgeNameAndIDMap()
+										VertexNameAndIDMap()
+									$end 'OperationIdentity'
+								$end 'Operation'
+								$begin 'Operation'
+									OperationType='CoverLines'
+									ID=15
+									$begin 'LocalOperationParameters'
+										KernelVersion=25
+										LocalOpPart=6
+									$end 'LocalOperationParameters'
+									ParentPartID=6
+									ReferenceUDMID=-1
+									IsSuppressed=false
+									$begin 'OperationIdentity'
+										$begin 'Topology'
+											NumLumps=1
+											NumShells=1
+											NumFaces=1
+											NumWires=0
+											NumLoops=1
+											NumCoedges=4
+											NumEdges=4
+											NumVertices=4
+										$end 'Topology'
+										BodyID=-1
+										StartFaceID=16
+										StartEdgeID=-1
+										StartVertexID=-1
+										NumNewFaces=1
+										NumNewEdges=0
+										NumNewVertices=0
+										FaceNameAndIDMap()
+										EdgeNameAndIDMap()
+										VertexNameAndIDMap()
+										$begin 'GeomTopolBasedOperationIdentityHelper'
+											$begin 'NewFaces'
+												$begin 'Face'
+													NormalizedSerialNum=0
+													ID=16
+													$begin 'FaceGeomTopol'
+														FaceTopol(1, 4, 4, 4)
+														$begin 'FaceGeometry'
+															Area=0.0004
+															FcUVMid(0.01, 0.01, 0)
+															$begin 'FcTolVts'
+																TolVt(0, 0, 0, 5e-07)
+																TolVt(0.02, 0, 0, 5e-07)
+																TolVt(0.02, 0.02, 0, 5e-07)
+																TolVt(0, 0.02, 0, 5e-07)
+															$end 'FcTolVts'
+														$end 'FaceGeometry'
+													$end 'FaceGeomTopol'
+												$end 'Face'
+											$end 'NewFaces'
+											$begin 'NewEdges'
+											$end 'NewEdges'
+											$begin 'NewVertices'
+											$end 'NewVertices'
+										$end 'GeomTopolBasedOperationIdentityHelper'
+									$end 'OperationIdentity'
+									ParentOperationID=5
+								$end 'Operation'
+							$end 'Operations'
+							$begin 'SubregionDependencyInformation'
+								ChildSubregions[0:]
+							$end 'SubregionDependencyInformation'
+						$end 'GeometryPart'
+					$end 'ToplevelParts'
+					$begin 'OperandParts'
+					$end 'OperandParts'
+					$begin 'Planes'
+					$end 'Planes'
+					$begin 'Points'
+					$end 'Points'
+					$begin 'GeometryEntityLists'
+					$end 'GeometryEntityLists'
+					$begin 'CachedNames'
+						$begin 'allobjects'
+							allobjects(-1)
+						$end 'allobjects'
+						$begin 'coupon'
+							coupon(-1)
+						$end 'coupon'
+						$begin 'global'
+							global(-1)
+						$end 'global'
+						$begin 'model'
+							model(-1)
+						$end 'model'
+					$end 'CachedNames'
+				$end 'GeometryOperations'
+				$begin 'GeometryDependencies'
+					$begin 'DependencyInformation'
+						NumParents=1
+						DependencyObject('GeometryBodyOperation', 5)
+						DependencyObject('CoordinateSystem', 1)
+					$end 'DependencyInformation'
+					$begin 'DependencyInformation'
+						NumParents=1
+						DependencyObject('GeometryBodyOperation', 15)
+						DependencyObject('GeometryBodyOperation', 5)
+					$end 'DependencyInformation'
+				$end 'GeometryDependencies'
+			$end 'GeometryCore'
+			$begin 'AssignedEntities'
+				AssignedObject[1: 6]
+				$begin 'AssignedEdge'
+					kID=7
+					$begin 'EdgeData'
+						ParentObjectID=6
+						ParentFaces[1: 16]
+						$begin 'EdgeGeomTopol'
+							EdgeFaces(16)
+							$begin 'EdTolVts'
+								TolVt(0, 0, 0, 5e-07)
+								TolVt(0.02, 0, 0, 5e-07)
+							$end 'EdTolVts'
+							EdgeMidPoint(0.01, 0, 0)
+						$end 'EdgeGeomTopol'
+					$end 'EdgeData'
+				$end 'AssignedEdge'
+				$begin 'AssignedEdge'
+					kID=8
+					$begin 'EdgeData'
+						ParentObjectID=6
+						ParentFaces[1: 16]
+						$begin 'EdgeGeomTopol'
+							EdgeFaces(16)
+							$begin 'EdTolVts'
+								TolVt(0.02, 0, 0, 5e-07)
+								TolVt(0.02, 0.02, 0, 5e-07)
+							$end 'EdTolVts'
+							EdgeMidPoint(0.02, 0.01, 0)
+						$end 'EdgeGeomTopol'
+					$end 'EdgeData'
+				$end 'AssignedEdge'
+				$begin 'AssignedEdge'
+					kID=9
+					$begin 'EdgeData'
+						ParentObjectID=6
+						ParentFaces[1: 16]
+						$begin 'EdgeGeomTopol'
+							EdgeFaces(16)
+							$begin 'EdTolVts'
+								TolVt(0.02, 0.02, 0, 5e-07)
+								TolVt(0, 0.02, 0, 5e-07)
+							$end 'EdTolVts'
+							EdgeMidPoint(0.01, 0.02, 0)
+						$end 'EdgeGeomTopol'
+					$end 'EdgeData'
+				$end 'AssignedEdge'
+				$begin 'AssignedEdge'
+					kID=10
+					$begin 'EdgeData'
+						ParentObjectID=6
+						ParentFaces[1: 16]
+						$begin 'EdgeGeomTopol'
+							EdgeFaces(16)
+							$begin 'EdTolVts'
+								TolVt(0, 0, 0, 5e-07)
+								TolVt(0, 0.02, 0, 5e-07)
+							$end 'EdTolVts'
+							EdgeMidPoint(0, 0.01, 0)
+						$end 'EdgeGeomTopol'
+					$end 'EdgeData'
+				$end 'AssignedEdge'
+			$end 'AssignedEntities'
+			GroupByMaterial=true
+			GroupSheetByMaterial=true
+			GroupCompByDefID=true
+			DoNotOrganizeUnderGroup=false
+			DoNotOrganizeUnderComponent=false
+			OrganizeLightweight=false
+			ShowGroup=true
+			$begin 'LastUserInputs'
+			$end 'LastUserInputs'
+
+$end 'ModelSetup'
+
+$begin 'BoundarySetup'
+
+			$begin 'GlobalBoundData'
+				$begin 'OP_Option'
+					LinkType='None'
+				$end 'OP_Option'
+				$begin 'MuLinkSrcObjs'
+					Objs[0:]
+				$end 'MuLinkSrcObjs'
+			$end 'GlobalBoundData'
+			$begin 'Boundaries'
+				NextUniqueID=3
+				MoveBackwards=false
+				$begin 'A0'
+					ID=0
+					BoundType='Vector Potential'
+					IsComponent=false
+					Edges(10)
+					ParentBndID=-1
+					Value='0'
+					CoordinateSystem=-1
+				$end 'A0'
+				$begin 'A1'
+					ID=1
+					BoundType='Vector Potential'
+					IsComponent=false
+					Edges(8)
+					ParentBndID=-1
+					Value='-0.000502654824574367'
+					CoordinateSystem=-1
+				$end 'A1'
+				$begin 'NormalFlux'
+					ID=2
+					BoundType='Symmetry'
+					IsComponent=false
+					Edges(7, 9)
+					ParentBndID=-1
+					IsOdd=false
+				$end 'NormalFlux'
+			$end 'Boundaries'
+			$begin 'ProductSpecificData'
+			$end 'ProductSpecificData'
+
+$end 'BoundarySetup'
+
+$begin 'AnalysisSetup'
+
+			$begin 'SolveSetups'
+				NextUniqueID=1
+				MoveBackwards=false
+				$begin 'ControlSetup'
+					ID=0
+					SetupType='Magnetostatic'
+					Enabled=true
+					$begin 'MeshLink'
+						ImportMesh=false
+					$end 'MeshLink'
+					MaximumPasses=6
+					MinimumPasses=2
+					MinimumConvergedPasses=1
+					PercentRefinement=30
+					SolveFieldOnly=false
+					PercentError=0.1
+					SolveMatrixAtLast=true
+					UseNonLinearIterNum=false
+					NonLinearResidual=1e-06
+					RelaxationFactor=1
+					SmoothBHCurve=false
+					$begin 'MuOption'
+						MuNonLinearBH=true
+					$end 'MuOption'
+				$end 'ControlSetup'
+			$end 'SolveSetups'
+
+$end 'AnalysisSetup'

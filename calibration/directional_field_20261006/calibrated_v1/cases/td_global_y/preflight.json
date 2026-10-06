@@ -1,0 +1,73 @@
+{
+  "validation": 1,
+  "material": {
+    "material_name": "Control_original",
+    "serialized_transport_verified": true,
+    "curve_points": {
+      "RD": 26,
+      "TD": 26
+    },
+    "axis_mapping": {
+      "RD": "component1/local_x",
+      "TD": "component2/local_y",
+      "ND": "component3/local_z"
+    },
+    "directional_field_verified": false,
+    "loss_calibration_verified": false,
+    "motor_ranking_eligible": false
+  },
+  "actual_object_CS": "Global",
+  "edges_m": {
+    "9": [
+      0.01,
+      0.02,
+      0.0
+    ],
+    "8": [
+      0.02,
+      0.01,
+      0.0
+    ],
+    "7": [
+      0.01,
+      0.0,
+      0.0
+    ],
+    "10": [
+      0.0,
+      0.01,
+      0.0
+    ]
+  },
+  "boundary": {
+    "low": 10,
+    "high": 8,
+    "normal": [
+      7,
+      9
+    ],
+    "A1_Wb_per_m": -0.0303095230836
+  },
+  "setup_properties": {
+    "Enabled": true,
+    "MeshLink": {
+      "ImportMesh": false
+    },
+    "MaximumPasses": 6,
+    "MinimumPasses": 2,
+    "MinimumConvergedPasses": 1,
+    "PercentRefinement": 30,
+    "SolveFieldOnly": false,
+    "PercentError": 0.1,
+    "SolveMatrixAtLast": true,
+    "UseIterativeSolver": false,
+    "RelativeResidual": 1e-08,
+    "NonLinearResidual": 1e-06,
+    "SmoothBHCurve": false,
+    "MuOption": {
+      "MuNonLinearBH": true
+    },
+    "Name": "ControlSetup"
+  },
+  "saved_project_sha256": "c0bb75e6bc7a3cf88541b08e8b18a92752fdeef1987484acc02f3aeccef69660"
+}

@@ -1,0 +1,20 @@
+Setup : ControlSetup
+
+==================
+Number of Passes
+Completed : 6
+Maximum   : 6
+Minimum   : 2
+==================
+Criterion : Energy Error/Delta Energy (%)
+Target    : (0.1, 0.1)
+Current   : (1.0395, 8.8268)
+==================
+Pass|Triangles|Total Energy (J)|Energy Error (%)|Delta Energy (%)|
+   1|      360|       0.0082643|          0.0332|             N/A|
+   2|      469|        0.008086|        0.001895|          2.1578|
+   3|      611|       0.0085316|          4.0541|          5.5113|
+   4|      795|       0.0092492|         0.54041|          8.4105|
+   5|     1034|       0.0086545|         0.75993|            6.43|
+   6|     1346|       0.0094184|          1.0395|          8.8268|
+

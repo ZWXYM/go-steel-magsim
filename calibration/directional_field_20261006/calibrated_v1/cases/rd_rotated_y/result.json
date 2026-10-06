@@ -1,0 +1,30 @@
+{
+  "case_id": "rd_rotated_y",
+  "mean_B_vector_T": [
+    0.00023836909645153897,
+    1.5096775719009912,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    0.06720777345163786,
+    26.17532412920208,
+    0.0
+  ],
+  "H_parallel_A_per_m": 26.17532412920208,
+  "checks": {
+    "B_target": false,
+    "B_direction": false,
+    "H_direction": false,
+    "H_uniform": false,
+    "H_source_bracket": false,
+    "H_source_knot": false
+  },
+  "passed": false,
+  "native_validation": 1,
+  "saved_project_sha256": "a05374689952e05088200e80a77d9b14599d674c2ef111f8cd16e769d2b0ac69",
+  "actual_object_CS": "RD90",
+  "field_sha256": {
+    "B": "3615d580af3fa69bea0dadb76c958326dcf8a5c1f013a7901e316c6997fe0858",
+    "H": "6a6d4d51b32044eba887bdb77a2d34f6f2fec86a2dd731256a12c381b189d620"
+  }
+}

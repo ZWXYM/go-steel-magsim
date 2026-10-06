@@ -44,3 +44,8 @@ calibration/motor_review_preflight_20261005/** -text
 modules/maxwell_material_transport.py -text
 tools/preflight_calibrated_materials.py -text
 calibration/material_transport_20261005/** -text
+modules/maxwell_directional_controls.py -text
+modules/maxwell_native_convergence.py -text
+tools/run_directional_field_controls.py -text
+tools/audit_directional_controls.py -text
+calibration/directional_field_20261006/** -text

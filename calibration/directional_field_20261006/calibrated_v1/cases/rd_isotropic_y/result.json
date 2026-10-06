@@ -1,0 +1,30 @@
+{
+  "case_id": "rd_isotropic_y",
+  "mean_B_vector_T": [
+    0.0006679043580821229,
+    1.513298817799248,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    0.011612822040939644,
+    26.29641344917682,
+    0.0
+  ],
+  "H_parallel_A_per_m": 26.296413449176818,
+  "checks": {
+    "B_target": false,
+    "B_direction": false,
+    "H_direction": false,
+    "H_uniform": false,
+    "H_source_bracket": false,
+    "H_source_knot": false
+  },
+  "passed": false,
+  "native_validation": 1,
+  "saved_project_sha256": "f99687334dbefbabbab88ee40e823533f0160f1cf3e76d01bf0354c0111c2f99",
+  "actual_object_CS": "Global",
+  "field_sha256": {
+    "B": "78c9f2b3ff69448232403d3fb17fb2348b11b791e630b9846fab16cc39a89905",
+    "H": "ae39ee43fb3c7fe0465586dcdccb87aa87b32f41c9e5d891cd4254b830db655f"
+  }
+}

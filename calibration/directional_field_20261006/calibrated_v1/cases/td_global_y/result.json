@@ -1,0 +1,29 @@
+{
+  "case_id": "td_global_y",
+  "mean_B_vector_T": [
+    0.00015925054121426144,
+    1.5105147284422107,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    0.0724573636851486,
+    403.7440102880068,
+    0.0
+  ],
+  "H_parallel_A_per_m": 403.7440102880068,
+  "checks": {
+    "B_target": false,
+    "B_direction": false,
+    "H_direction": false,
+    "H_uniform": false,
+    "H_source_bracket": true
+  },
+  "passed": false,
+  "native_validation": 1,
+  "saved_project_sha256": "854abb3d2f2ab2f246ae81be4f67ca0229af482cff83e9ad6da1fb2c7b3d5ca4",
+  "actual_object_CS": "Global",
+  "field_sha256": {
+    "B": "5812b075e59c611c3203352b46932498c4b0d9a3ea8e9a71e87dc43ef2dbee29",
+    "H": "8d5f2deed7d398e4b6d959a841ce4f4177e9022b9b901bf5b52698cce974e2af"
+  }
+}

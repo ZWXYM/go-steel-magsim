@@ -1,0 +1,30 @@
+{
+  "case_id": "rd_swapped_y",
+  "mean_B_vector_T": [
+    0.00021206942278399266,
+    1.5105452939119237,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    0.05963822056227889,
+    26.204276401734937,
+    0.0
+  ],
+  "H_parallel_A_per_m": 26.204276401734933,
+  "checks": {
+    "B_target": false,
+    "B_direction": false,
+    "H_direction": false,
+    "H_uniform": false,
+    "H_source_bracket": false,
+    "H_source_knot": false
+  },
+  "passed": false,
+  "native_validation": 1,
+  "saved_project_sha256": "cffeecb38c72afb8c206d8c3c10feaeb881d09dfa9534aa181398843fcdebcc7",
+  "actual_object_CS": "Global",
+  "field_sha256": {
+    "B": "d219bdb4db7f727a34997d92b6028d76f5c4f0b17819cf084c5be0b4c834faf1",
+    "H": "b1eda5dd9123db38192ebea0aa1e0324e8f900789b21e24c53b5ddd23b26df54"
+  }
+}

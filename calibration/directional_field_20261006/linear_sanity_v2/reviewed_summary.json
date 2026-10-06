@@ -1,0 +1,131 @@
+{
+  "protocol": "uniform_flux_directional_controls_v2",
+  "mode": "analytic_linear_sanity",
+  "cases": [
+    {
+      "case_id": "td_global_y",
+      "mean_B_vector_T": [
+        -2.440403028691758e-09,
+        0.025132741183169167,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        1.3905581621382973e-13,
+        200.0,
+        0.0
+      ],
+      "H_parallel_A_per_m": 200.0,
+      "checks": {
+        "B_target": true,
+        "B_direction": true,
+        "H_direction": true,
+        "H_uniform": true,
+        "H_source_bracket": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          6.3606e-27,
+          1.4829e-13
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 5.6693e-27,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 471,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 6.3606e-27,
+            "delta_energy_percent": 1.4829e-13
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      }
+    },
+    {
+      "case_id": "rd_rotated_y",
+      "mean_B_vector_T": [
+        -2.2130342227207924e-10,
+        0.025132744971454304,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        1.6892667336288423e-14,
+        20.0,
+        0.0
+      ],
+      "H_parallel_A_per_m": 20.0,
+      "checks": {
+        "B_target": true,
+        "B_direction": true,
+        "H_direction": true,
+        "H_uniform": true,
+        "H_source_bracket": true,
+        "H_source_knot": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          7.2257e-27,
+          1.0785e-13
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 4.8432e-27,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 7.2257e-27,
+            "delta_energy_percent": 1.0785e-13
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      }
+    }
+  ],
+  "equivalent_RD_controls": {
+    "rd_rotated_y": true
+  },
+  "TD_RD_H_ratio": 10.0,
+  "axis_aligned_field_verified": true,
+  "native_convergence_verified": true,
+  "calibrated_material_field_verified": false,
+  "motor_geometry_direction_verified": false,
+  "oblique_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "passed": true,
+  "new_field_solves": 2,
+  "new_motor_solves": 0,
+  "old_source_files_unchanged": 217,
+  "native_owned_sessions_released": 2,
+  "material_holdout_metrics_unchanged": true,
+  "interpretation": "Interface and numerical diagnostics only; no new measured samples or motor ranking"
+}

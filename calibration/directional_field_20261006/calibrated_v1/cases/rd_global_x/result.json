@@ -1,0 +1,30 @@
+{
+  "case_id": "rd_global_x",
+  "mean_B_vector_T": [
+    1.5130764153792962,
+    0.00020786244650281317,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    26.288929637009684,
+    0.058678603279239634,
+    0.0
+  ],
+  "H_parallel_A_per_m": 26.28892963700968,
+  "checks": {
+    "B_target": false,
+    "B_direction": false,
+    "H_direction": false,
+    "H_uniform": false,
+    "H_source_bracket": false,
+    "H_source_knot": false
+  },
+  "passed": false,
+  "native_validation": 1,
+  "saved_project_sha256": "4d636080a3a92148ff5cead28860873a9a291b0582c786b8764abc74692c21f3",
+  "actual_object_CS": "Global",
+  "field_sha256": {
+    "B": "320c7c66bccbc6a1cf69e8d2ae718c4f594e19b6cfec24789d33ad1fac5b6347",
+    "H": "1f31bc7c69d69353547fa6b3113464ad29e9311b405a1c373c0f23c3ea61f5f7"
+  }
+}

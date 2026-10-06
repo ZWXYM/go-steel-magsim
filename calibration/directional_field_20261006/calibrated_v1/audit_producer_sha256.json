@@ -1,0 +1,5 @@
+{
+  "modules/maxwell_directional_controls.py": "572f68e85a1a2df2a1f9731a11d183f3f3c85afe6e797945794e1a2e61f44f13",
+  "modules/maxwell_native_convergence.py": "2c23062e09982af4869df8f10ede541a1e92327268182a1b047fa6d3cc4c5a11",
+  "tools/audit_directional_controls.py": "4cea950c8af0e5d0336d86b5a2d6c2241acf7af291962af91b20c06cc517b7de"
+}
