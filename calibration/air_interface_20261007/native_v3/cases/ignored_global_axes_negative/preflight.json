@@ -1,0 +1,180 @@
+{
+  "validation": 1,
+  "native_edges": [
+    {
+      "id": 9,
+      "object": "MaterialHalf",
+      "vertices_mm": [
+        [
+          -10.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": 8,
+      "object": "MaterialHalf",
+      "vertices_mm": [
+        [
+          0.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          -10.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": 7,
+      "object": "MaterialHalf",
+      "vertices_mm": [
+        [
+          0.0,
+          -10.0,
+          0.0
+        ],
+        [
+          -10.0,
+          -10.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": 10,
+      "object": "MaterialHalf",
+      "vertices_mm": [
+        [
+          -10.0,
+          10.0,
+          0.0
+        ],
+        [
+          -10.0,
+          -10.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": 21,
+      "object": "AirHalf",
+      "vertices_mm": [
+        [
+          0.0,
+          10.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": 20,
+      "object": "AirHalf",
+      "vertices_mm": [
+        [
+          10.0,
+          10.0,
+          0.0
+        ],
+        [
+          10.0,
+          -10.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": 19,
+      "object": "AirHalf",
+      "vertices_mm": [
+        [
+          10.0,
+          -10.0,
+          0.0
+        ],
+        [
+          0.0,
+          -10.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": 22,
+      "object": "AirHalf",
+      "vertices_mm": [
+        [
+          0.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          -10.0,
+          0.0
+        ]
+      ]
+    }
+  ],
+  "topology": {
+    "exterior_edge_ids": [
+      9,
+      7,
+      10,
+      21,
+      20,
+      19
+    ],
+    "excluded_shared_edge_ids": [
+      8,
+      22
+    ]
+  },
+  "boundary_expression": "0.02513274122871835tesla*Y - 0.021956113879997925tesla*min(X,0meter)",
+  "boundary_coordinate_system": "Global",
+  "native_material_orientation": "Global",
+  "native_air_orientation": "Global",
+  "saved_model_depth": "1meter",
+  "material_mu_r": [
+    1000.0,
+    100.0,
+    1000.0
+  ],
+  "setup_properties": {
+    "Enabled": true,
+    "MeshLink": {
+      "ImportMesh": false
+    },
+    "MaximumPasses": 6,
+    "MinimumPasses": 2,
+    "MinimumConvergedPasses": 1,
+    "PercentRefinement": 30,
+    "SolveFieldOnly": false,
+    "PercentError": 0.1,
+    "SolveMatrixAtLast": true,
+    "UseIterativeSolver": false,
+    "RelativeResidual": 1e-08,
+    "NonLinearResidual": 1e-06,
+    "SmoothBHCurve": false,
+    "MuOption": {
+      "MuNonLinearBH": true
+    },
+    "Name": "ControlSetup"
+  },
+  "boundary_expression_saved": true,
+  "internal_boundary_assigned": false
+}

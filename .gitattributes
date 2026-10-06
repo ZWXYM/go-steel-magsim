@@ -67,3 +67,6 @@ modules/maxwell_air_interface.py -text
 tools/prepare_air_interface_controls.py -text
 tools/audit_calibrated_curve_segments.py -text
 calibration/linear_and_air_20261007/** -text
+tools/run_air_interface_controls.py -text
+tools/audit_air_interface_controls.py -text
+calibration/air_interface_20261007/** -text

@@ -1,0 +1,10 @@
+{
+  "status": "development_preparation_failure",
+  "error": "Failed to execute gRPC AEDT command: SetDesignSettings",
+  "new_field_solves": 0,
+  "solve_started": false,
+  "second_and_third_not_dispatched": true,
+  "dedicated_session_released": true,
+  "cleanup_scope": "Native API release after exact PID and create-time verification; only this newly created session",
+  "interpretation": "SetDesignSettings before vacuum creation failed with background material missing. v3 verifies existing saved 1meter depth. No physical gate relaxation."
+}

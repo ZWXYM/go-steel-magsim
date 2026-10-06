@@ -1,0 +1,26 @@
+{
+  "protocol": "anisotropic_air_native_controls_v2",
+  "cases": [],
+  "failures": [
+    {
+      "case_id": "explicit_object_axes",
+      "error": "Failed to execute gRPC AEDT command: SetDesignSettings"
+    }
+  ],
+  "skipped_not_dispatched": [
+    "relative_axes",
+    "ignored_global_axes_negative"
+  ],
+  "new_field_solves": 0,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 36,
+  "cumulative_motor_solves": 4,
+  "cumulative_MuMax_success": 680,
+  "linear_air_independent_B_controls_verified": false,
+  "full_direction_H_export_interface_verified": false,
+  "real_material_field_verified": false,
+  "all_48_motor_CS_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false
+}

@@ -1,0 +1,83 @@
+{
+  "case_id": "ignored_global_axes_negative",
+  "should_match_manufactured_solution": false,
+  "checks": {
+    "material_B_match": false,
+    "material_B_uniform": false,
+    "air_B_match": false,
+    "air_B_uniform": false,
+    "native_energy_match": false,
+    "adaptive_converged": true
+  },
+  "metrics": {
+    "material_max_B_error_T": 0.00015105751893610626,
+    "material_B_uniformity_relative": 0.005049923025541759,
+    "material_mean_B_T": [
+      0.02513269114169636,
+      0.02182562770964057,
+      0.0
+    ],
+    "air_max_B_error_T": 0.0001783790377240809,
+    "air_B_uniformity_relative": 0.008094351369671965,
+    "air_mean_B_T": [
+      0.02513285832118857,
+      0.00012520499139701753,
+      0.0
+    ],
+    "native_total_energy_J": 0.050697,
+    "expected_total_energy_J": 0.05036338956072162,
+    "native_energy_relative_error": 0.006624066453592278
+  },
+  "manufactured_B_matched": false,
+  "control_success": true,
+  "native_convergence": {
+    "completed_passes": 2,
+    "maximum_passes": 6,
+    "minimum_passes": 2,
+    "targets_percent": [
+      0.1,
+      0.1
+    ],
+    "final_percent": [
+      5.0382e-07,
+      1.8967e-06
+    ],
+    "passes": [
+      {
+        "pass_number": 1,
+        "triangles": 476,
+        "energy_J": 0.050697,
+        "energy_error_percent": 1.1173e-06,
+        "delta_energy_percent": null
+      },
+      {
+        "pass_number": 2,
+        "triangles": 620,
+        "energy_J": 0.050697,
+        "energy_error_percent": 5.0382e-07,
+        "delta_energy_percent": 1.8967e-06
+      }
+    ],
+    "adaptive_converged": true,
+    "reached_maximum_passes": false
+  },
+  "native_H_used_for_B_or_energy_gate": false,
+  "real_material_field_verified": false,
+  "motor_ranking_eligible": false,
+  "scope": "Constant linear manufactured solution; not real BH curves or all 48 motor coordinate systems",
+  "native_validation": 1,
+  "saved_project_sha256": "39293ec7fae6b7c66660c5233cebd613fb27ab24e19fd76ce6dd8749835968a2",
+  "exported_native_H_diagnostic_only": {
+    "material_mean_A_per_m": [
+      19.99995864984182,
+      173.68285034775147,
+      0.0
+    ],
+    "air_mean_A_per_m": [
+      20000.09262810521,
+      99.63429302687757,
+      0.0
+    ]
+  },
+  "runtime_boundary_expression_and_shared_edge_topology_verified": true
+}

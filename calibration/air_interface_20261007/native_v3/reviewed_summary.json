@@ -1,0 +1,274 @@
+{
+  "protocol": "anisotropic_air_native_controls_v2",
+  "cases": [
+    {
+      "case_id": "explicit_object_axes",
+      "should_match_manufactured_solution": true,
+      "checks": {
+        "material_B_match": true,
+        "material_B_uniform": true,
+        "air_B_match": true,
+        "air_B_uniform": true,
+        "native_energy_match": true,
+        "adaptive_converged": true
+      },
+      "metrics": {
+        "material_max_B_error_T": 1.925486406603449e-08,
+        "material_B_uniformity_relative": 1.124566805948548e-06,
+        "material_mean_B_T": [
+          0.02513273885812766,
+          0.021956114847777985,
+          0.0
+        ],
+        "air_max_B_error_T": 1.800245420523851e-08,
+        "air_B_uniformity_relative": 1.4681014208444934e-06,
+        "air_mean_B_T": [
+          0.025132742894372,
+          -2.504405532840176e-09,
+          0.0
+        ],
+        "native_total_energy_J": 0.050363,
+        "expected_total_energy_J": 0.05036338956072162,
+        "native_energy_relative_error": 7.734998081406821e-06
+      },
+      "manufactured_B_matched": true,
+      "control_success": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          5.1311e-20,
+          2.7555e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 476,
+            "energy_J": 0.050363,
+            "energy_error_percent": 1.1571e-19,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 620,
+            "energy_J": 0.050363,
+            "energy_error_percent": 5.1311e-20,
+            "delta_energy_percent": 2.7555e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "native_H_used_for_B_or_energy_gate": false,
+      "real_material_field_verified": false,
+      "motor_ranking_eligible": false,
+      "scope": "Constant linear manufactured solution; not real BH curves or all 48 motor coordinate systems",
+      "exported_native_H_diagnostic_only": {
+        "material_mean_A_per_m": [
+          20.0,
+          174.72120666503906,
+          0.0
+        ],
+        "air_mean_A_per_m": [
+          20000.0,
+          -3.161314672750307e-05,
+          0.0
+        ]
+      },
+      "native_H_constitutive_comparison_diagnostic_only": {
+        "planned_material_frame_relative_error": 4.511420063229256,
+        "global_diagonal_tensor_relative_error": 7.899875081183539e-07
+      },
+      "native_H_comparison_scope": "Analytic candidate comparison only; raw exported H retained, never replaced or used to certify B/energy controls"
+    },
+    {
+      "case_id": "relative_axes",
+      "should_match_manufactured_solution": true,
+      "checks": {
+        "material_B_match": true,
+        "material_B_uniform": true,
+        "air_B_match": true,
+        "air_B_uniform": true,
+        "native_energy_match": true,
+        "adaptive_converged": true
+      },
+      "metrics": {
+        "material_max_B_error_T": 1.925486406603449e-08,
+        "material_B_uniformity_relative": 1.124566805948548e-06,
+        "material_mean_B_T": [
+          0.02513273885812766,
+          0.021956114847777985,
+          0.0
+        ],
+        "air_max_B_error_T": 1.800245420523851e-08,
+        "air_B_uniformity_relative": 1.4681014208444934e-06,
+        "air_mean_B_T": [
+          0.025132742894372,
+          -2.504405532840176e-09,
+          0.0
+        ],
+        "native_total_energy_J": 0.050363,
+        "expected_total_energy_J": 0.05036338956072162,
+        "native_energy_relative_error": 7.734998081406821e-06
+      },
+      "manufactured_B_matched": true,
+      "control_success": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          5.1311e-20,
+          2.7555e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 476,
+            "energy_J": 0.050363,
+            "energy_error_percent": 1.1571e-19,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 620,
+            "energy_J": 0.050363,
+            "energy_error_percent": 5.1311e-20,
+            "delta_energy_percent": 2.7555e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "native_H_used_for_B_or_energy_gate": false,
+      "real_material_field_verified": false,
+      "motor_ranking_eligible": false,
+      "scope": "Constant linear manufactured solution; not real BH curves or all 48 motor coordinate systems",
+      "exported_native_H_diagnostic_only": {
+        "material_mean_A_per_m": [
+          20.0,
+          174.72120666503906,
+          0.0
+        ],
+        "air_mean_A_per_m": [
+          20000.0,
+          -3.161314672750307e-05,
+          0.0
+        ]
+      },
+      "native_H_constitutive_comparison_diagnostic_only": {
+        "planned_material_frame_relative_error": 4.511420063229256,
+        "global_diagonal_tensor_relative_error": 7.899875081183539e-07
+      },
+      "native_H_comparison_scope": "Analytic candidate comparison only; raw exported H retained, never replaced or used to certify B/energy controls"
+    },
+    {
+      "case_id": "ignored_global_axes_negative",
+      "should_match_manufactured_solution": false,
+      "checks": {
+        "material_B_match": false,
+        "material_B_uniform": false,
+        "air_B_match": false,
+        "air_B_uniform": false,
+        "native_energy_match": false,
+        "adaptive_converged": true
+      },
+      "metrics": {
+        "material_max_B_error_T": 0.00015105751893610626,
+        "material_B_uniformity_relative": 0.005049923025541759,
+        "material_mean_B_T": [
+          0.02513269114169636,
+          0.02182562770964057,
+          0.0
+        ],
+        "air_max_B_error_T": 0.0001783790377240809,
+        "air_B_uniformity_relative": 0.008094351369671965,
+        "air_mean_B_T": [
+          0.02513285832118857,
+          0.00012520499139701753,
+          0.0
+        ],
+        "native_total_energy_J": 0.050697,
+        "expected_total_energy_J": 0.05036338956072162,
+        "native_energy_relative_error": 0.006624066453592278
+      },
+      "manufactured_B_matched": false,
+      "control_success": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          5.0382e-07,
+          1.8967e-06
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 476,
+            "energy_J": 0.050697,
+            "energy_error_percent": 1.1173e-06,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 620,
+            "energy_J": 0.050697,
+            "energy_error_percent": 5.0382e-07,
+            "delta_energy_percent": 1.8967e-06
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "native_H_used_for_B_or_energy_gate": false,
+      "real_material_field_verified": false,
+      "motor_ranking_eligible": false,
+      "scope": "Constant linear manufactured solution; not real BH curves or all 48 motor coordinate systems",
+      "exported_native_H_diagnostic_only": {
+        "material_mean_A_per_m": [
+          19.99995864984182,
+          173.68285034775147,
+          0.0
+        ],
+        "air_mean_A_per_m": [
+          20000.09262810521,
+          99.63429302687757,
+          0.0
+        ]
+      },
+      "native_H_constitutive_comparison_diagnostic_only": {
+        "planned_material_frame_relative_error": 8.802381247661745e-07,
+        "global_diagonal_tensor_relative_error": 8.802381247661745e-07
+      },
+      "native_H_comparison_scope": "Analytic candidate comparison only; raw exported H retained, never replaced or used to certify B/energy controls"
+    }
+  ],
+  "incomplete_cases": [],
+  "new_field_solves": 3,
+  "dedicated_sessions_released": 3,
+  "cumulative_Maxwell_completed": 39,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "old_source_files_unchanged": 1465,
+  "linear_air_independent_B_controls_verified": true,
+  "full_direction_H_export_interface_verified": false,
+  "real_material_field_verified": false,
+  "all_48_motor_CS_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "interpretation": "Independent native B and official total energy only; native H kept separately. Constant linear direction controls do not certify real BH, loss, or all motor CS."
+}

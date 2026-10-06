@@ -1,64 +1,10 @@
 """Manufactured anisotropic/air interface solution and independent B gates."""
 from copy import deepcopy
 import math
-import re
 import numpy as np
 from modules.maxwell_interface_controls import cs_frame, MU0
-from modules.motor_model_audit import one, value, blocks
 
 VERSION = 'anisotropic_air_manufactured_solution_v1'
-
-
-def verify_air_material(text):
-    """Bind omitted scalars only to AEDT's unmodified system vacuum reference."""
-    body=one(text,'vacuum')
-    if (value(body,'Library'),value(body,'LibLocation'),value(body,'ModSinceLib')) != ('Materials','SysLibrary','false'):
-        raise ValueError('Need the unmodified system vacuum library reference')
-    omitted=[]
-    for field,expected in (('permeability',1.),('conductivity',0.)):
-        if blocks(body,field):raise ValueError('Vacuum contains a non-scalar override')
-        scalar=value(body,field)
-        if scalar is None:omitted.append(field)
-        elif float(scalar)!=expected:raise ValueError('Vacuum scalar override differs')
-    return dict(system_vacuum_reference_verified=True, omitted_default_fields=omitted,
-        omitted_field_scope='System-library defaults; not explicitly serialized scalar proof',
-        expected_library_mu_r=1.,expected_library_conductivity_S_per_m=0.)
-
-
-def verify_explicit_object_axes(text, expected_frame):
-    """Decode new axes including AEDT's normalized secondary vector.
-
-    A complete unitless vector must have unit length. It is never interpreted
-    as absolute meter coordinates or used to reinterpret old motor records.
-    """
-    cs=one(text,'ObjectCSParameters')
-    if any(value(cs,k)!=v for k,v in (('DrivenByXAxis','true'),('ReverseXAxis','false'),('ReverseYAxis','false'))):
-        raise ValueError('New explicit object-axis settings differ')
-    expected=np.asarray(expected_frame,float)
-    if expected.shape!=(3,3) or not np.allclose(expected.T@expected,np.eye(3),atol=1e-12,rtol=0):
-        raise ValueError('Invalid expected explicit frame')
-    scopes={}
-    for i,label in enumerate(('xAxis','yAxis')):
-        body=one(cs,label)
-        if value(body,'DirectionType')!='AbsoluteDirection':raise ValueError('Unsupported new axis definition')
-        coordinates=[];dimensional=False;bare_nonzero=False
-        for key in ('xDirection','yDirection','zDirection'):
-            match=re.fullmatch(r'([0-9.eE+-]+)(meter|mm|m)?',value(body,key) or '')
-            if not match:raise ValueError('Need literal axis components')
-            number=float(match[1]);unit=match[2]
-            if not math.isfinite(number):raise ValueError('Nonfinite axis component')
-            dimensional |= unit is not None and number!=0
-            bare_nonzero |= unit is None and number!=0
-            coordinates.append(number*{'meter':1.,'mm':.001,'m':1.,None:1.}[unit])
-        if dimensional and bare_nonzero:raise ValueError('Mixed dimensional and unitless nonzero axis components')
-        axis=np.asarray(coordinates);norm=float(np.linalg.norm(axis))
-        if norm<=1e-12:raise ValueError('Degenerate saved explicit axis')
-        if bare_nonzero and not math.isclose(norm,1.,rel_tol=0,abs_tol=1e-12):
-            raise ValueError('Unitless axis must be a normalized native direction')
-        if not np.allclose(axis/norm,expected[:,i],atol=1e-12,rtol=0):
-            raise ValueError('Saved explicit axis direction differs')
-        scopes[label]='native_normalized_unitless_direction' if bare_nonzero else 'explicit_dimensional_direction'
-    return dict(native_axis_directions_verified=True,scopes=scopes,legacy_motor_CS_reinterpreted=False)
 
 
 def manufactured_fields(rotation, Bx=.02513274122871835):
