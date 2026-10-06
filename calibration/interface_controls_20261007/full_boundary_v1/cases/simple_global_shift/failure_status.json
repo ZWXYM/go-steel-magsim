@@ -1,0 +1,8 @@
+{
+  "case_id": "simple_global_shift",
+  "status": "native_failed",
+  "error": "Native solve failed",
+  "TAU_mesh_failure": true,
+  "native_validation": 1,
+  "saved_project_sha256": "f0971de0beea2c2867403650bdbf8389f1007ef28b7855fd34873f1fc1695361"
+}

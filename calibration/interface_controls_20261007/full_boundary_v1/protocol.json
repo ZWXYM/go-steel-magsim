@@ -1,0 +1,1617 @@
+{
+  "protocol": "full_boundary_interface_controls_v1",
+  "cases": [
+    {
+      "case_id": "simple_global_origin",
+      "material_kind": "simple",
+      "material": {
+        "transport_version": "aedt_directional_transport_v1",
+        "material_name": "Interface_simple_global_origin",
+        "curves": {
+          "RD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              8.8e-05,
+              0.000349185259991,
+              0.00213930493274,
+              0.00827544698229,
+              0.0308149997721,
+              0.150101668723,
+              0.650142276271,
+              1.51547615418,
+              1.83925565419,
+              1.91933623035,
+              1.94791023538,
+              1.96098213437,
+              1.96135912549,
+              1.9616104529,
+              1.96223877143,
+              1.96286708996,
+              1.96412372702,
+              1.96663700115,
+              1.9697785938,
+              1.97292018645,
+              1.97920337176,
+              1.98548655707,
+              1.99805292768,
+              2.0106192983,
+              2.02318566891
+            ]
+          },
+          "TD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              0.000201,
+              0.00040520352385,
+              0.00103482623318,
+              0.00213864232481,
+              0.00454864642597,
+              0.0133250671637,
+              0.0326328240082,
+              0.0853067701857,
+              0.348992109643,
+              0.795940064212,
+              1.27933157849,
+              1.61973433704,
+              1.70021030007,
+              1.73973905122,
+              1.78032500716,
+              1.8195982979,
+              1.85990697552,
+              1.89984411358,
+              1.92646560556,
+              1.9397088727,
+              1.94795948692,
+              1.9544919855,
+              1.96705835612,
+              1.97962472673,
+              1.99219109735
+            ]
+          },
+          "ND_mu_r": 1000.0,
+          "zero_loss_placeholders": true,
+          "core_loss_equiv_cut_depth": "0.00023meter",
+          "core_loss_equiv_cut_depth_m": 0.00023,
+          "conductivity_S_per_m": 2000000.0,
+          "mass_density_kg_per_m3": 7650.0
+        },
+        "amat_sha256": "6c4de0d8c3e87e965d980154c1492ab49319718977368b8dcd79116a684b6202",
+        "metadata_sha256": "b32b655accf963919d5262a50a118090450f317eecfe3dbe6a6fc0767e96df65",
+        "calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "reference_correction_version": "fixed_h_nested_transfer_v2",
+        "axis_mapping": {
+          "RD": "component1/local_x",
+          "TD": "component2/local_y",
+          "ND": "component3/local_z"
+        },
+        "mapping_scope": "serialized components only; physical field response not yet verified",
+        "directional_field_verified": false,
+        "motor_ranking_eligible": false,
+        "loss_calibration_verified": false
+      },
+      "CS_kind": "global",
+      "object_CS": null,
+      "mu_r": [
+        1000.0,
+        100.0,
+        1000.0
+      ],
+      "origin_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "side_m": 0.02,
+      "target_B_vector_T": [
+        0.025132741228718343,
+        0.0,
+        0.0
+      ],
+      "expected_H_hypotheses": {
+        "specified_frame": [
+          20.0,
+          0.0,
+          0.0
+        ]
+      },
+      "boundary_expression": "0.025132741228718343tesla*(Y - (0meter))",
+      "boundary_CS": "Global",
+      "boundary_kind": "all_edges_vector_potential",
+      "sample_points_m": [
+        [
+          0.005,
+          0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.01,
+          0.0
+        ],
+        [
+          0.005,
+          0.015,
+          0.0
+        ],
+        [
+          0.01,
+          0.005,
+          0.0
+        ],
+        [
+          0.01,
+          0.01,
+          0.0
+        ],
+        [
+          0.01,
+          0.015,
+          0.0
+        ],
+        [
+          0.015,
+          0.005,
+          0.0
+        ],
+        [
+          0.015,
+          0.01,
+          0.0
+        ],
+        [
+          0.015,
+          0.015,
+          0.0
+        ]
+      ],
+      "setup": {
+        "MaximumPasses": 6,
+        "MinimumPasses": 2,
+        "MinimumConvergedPasses": 1,
+        "PercentError": 0.1,
+        "RelativeResidual": 1e-08,
+        "NonLinearResidual": 1e-06,
+        "SmoothBHCurve": false
+      },
+      "maximum_mesh_length_m": 0.002,
+      "maximum_mesh_elements": 1000,
+      "gates": {
+        "B_absolute_error_T": 0.0001,
+        "B_transverse_T": 0.0001,
+        "H_transverse_relative": 0.001,
+        "H_uniformity_relative": 0.001,
+        "equivalent_H_relative": 0.01,
+        "knot_H_relative": 0.01,
+        "TD_RD_minimum_ratio": 5.0
+      }
+    },
+    {
+      "case_id": "simple_global_shift",
+      "material_kind": "simple",
+      "material": {
+        "transport_version": "aedt_directional_transport_v1",
+        "material_name": "Interface_simple_global_shift",
+        "curves": {
+          "RD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              8.8e-05,
+              0.000349185259991,
+              0.00213930493274,
+              0.00827544698229,
+              0.0308149997721,
+              0.150101668723,
+              0.650142276271,
+              1.51547615418,
+              1.83925565419,
+              1.91933623035,
+              1.94791023538,
+              1.96098213437,
+              1.96135912549,
+              1.9616104529,
+              1.96223877143,
+              1.96286708996,
+              1.96412372702,
+              1.96663700115,
+              1.9697785938,
+              1.97292018645,
+              1.97920337176,
+              1.98548655707,
+              1.99805292768,
+              2.0106192983,
+              2.02318566891
+            ]
+          },
+          "TD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              0.000201,
+              0.00040520352385,
+              0.00103482623318,
+              0.00213864232481,
+              0.00454864642597,
+              0.0133250671637,
+              0.0326328240082,
+              0.0853067701857,
+              0.348992109643,
+              0.795940064212,
+              1.27933157849,
+              1.61973433704,
+              1.70021030007,
+              1.73973905122,
+              1.78032500716,
+              1.8195982979,
+              1.85990697552,
+              1.89984411358,
+              1.92646560556,
+              1.9397088727,
+              1.94795948692,
+              1.9544919855,
+              1.96705835612,
+              1.97962472673,
+              1.99219109735
+            ]
+          },
+          "ND_mu_r": 1000.0,
+          "zero_loss_placeholders": true,
+          "core_loss_equiv_cut_depth": "0.00023meter",
+          "core_loss_equiv_cut_depth_m": 0.00023,
+          "conductivity_S_per_m": 2000000.0,
+          "mass_density_kg_per_m3": 7650.0
+        },
+        "amat_sha256": "6c4de0d8c3e87e965d980154c1492ab49319718977368b8dcd79116a684b6202",
+        "metadata_sha256": "b32b655accf963919d5262a50a118090450f317eecfe3dbe6a6fc0767e96df65",
+        "calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "reference_correction_version": "fixed_h_nested_transfer_v2",
+        "axis_mapping": {
+          "RD": "component1/local_x",
+          "TD": "component2/local_y",
+          "ND": "component3/local_z"
+        },
+        "mapping_scope": "serialized components only; physical field response not yet verified",
+        "directional_field_verified": false,
+        "motor_ranking_eligible": false,
+        "loss_calibration_verified": false
+      },
+      "CS_kind": "global",
+      "object_CS": null,
+      "mu_r": [
+        1000.0,
+        100.0,
+        1000.0
+      ],
+      "origin_m": [
+        -0.0414054484623454,
+        -0.00864994685701577,
+        0.0
+      ],
+      "side_m": 0.02,
+      "target_B_vector_T": [
+        0.025132741228718343,
+        0.0,
+        0.0
+      ],
+      "expected_H_hypotheses": {
+        "specified_frame": [
+          20.0,
+          0.0,
+          0.0
+        ]
+      },
+      "boundary_expression": "0.025132741228718343tesla*(Y - (-0.0086499468570157695meter))",
+      "boundary_CS": "Global",
+      "boundary_kind": "all_edges_vector_potential",
+      "sample_points_m": [
+        [
+          -0.036405448462345405,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.036405448462345405,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.036405448462345405,
+          0.00635005314298423,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          0.00635005314298423,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          0.00635005314298423,
+          0.0
+        ]
+      ],
+      "setup": {
+        "MaximumPasses": 6,
+        "MinimumPasses": 2,
+        "MinimumConvergedPasses": 1,
+        "PercentError": 0.1,
+        "RelativeResidual": 1e-08,
+        "NonLinearResidual": 1e-06,
+        "SmoothBHCurve": false
+      },
+      "maximum_mesh_length_m": 0.002,
+      "maximum_mesh_elements": 1000,
+      "gates": {
+        "B_absolute_error_T": 0.0001,
+        "B_transverse_T": 0.0001,
+        "H_transverse_relative": 0.001,
+        "H_uniformity_relative": 0.001,
+        "equivalent_H_relative": 0.01,
+        "knot_H_relative": 0.01,
+        "TD_RD_minimum_ratio": 5.0
+      }
+    },
+    {
+      "case_id": "simple_object_shift",
+      "material_kind": "simple",
+      "material": {
+        "transport_version": "aedt_directional_transport_v1",
+        "material_name": "Interface_simple_object_shift",
+        "curves": {
+          "RD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              8.8e-05,
+              0.000349185259991,
+              0.00213930493274,
+              0.00827544698229,
+              0.0308149997721,
+              0.150101668723,
+              0.650142276271,
+              1.51547615418,
+              1.83925565419,
+              1.91933623035,
+              1.94791023538,
+              1.96098213437,
+              1.96135912549,
+              1.9616104529,
+              1.96223877143,
+              1.96286708996,
+              1.96412372702,
+              1.96663700115,
+              1.9697785938,
+              1.97292018645,
+              1.97920337176,
+              1.98548655707,
+              1.99805292768,
+              2.0106192983,
+              2.02318566891
+            ]
+          },
+          "TD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              0.000201,
+              0.00040520352385,
+              0.00103482623318,
+              0.00213864232481,
+              0.00454864642597,
+              0.0133250671637,
+              0.0326328240082,
+              0.0853067701857,
+              0.348992109643,
+              0.795940064212,
+              1.27933157849,
+              1.61973433704,
+              1.70021030007,
+              1.73973905122,
+              1.78032500716,
+              1.8195982979,
+              1.85990697552,
+              1.89984411358,
+              1.92646560556,
+              1.9397088727,
+              1.94795948692,
+              1.9544919855,
+              1.96705835612,
+              1.97962472673,
+              1.99219109735
+            ]
+          },
+          "ND_mu_r": 1000.0,
+          "zero_loss_placeholders": true,
+          "core_loss_equiv_cut_depth": "0.00023meter",
+          "core_loss_equiv_cut_depth_m": 0.00023,
+          "conductivity_S_per_m": 2000000.0,
+          "mass_density_kg_per_m3": 7650.0
+        },
+        "amat_sha256": "6c4de0d8c3e87e965d980154c1492ab49319718977368b8dcd79116a684b6202",
+        "metadata_sha256": "b32b655accf963919d5262a50a118090450f317eecfe3dbe6a6fc0767e96df65",
+        "calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "reference_correction_version": "fixed_h_nested_transfer_v2",
+        "axis_mapping": {
+          "RD": "component1/local_x",
+          "TD": "component2/local_y",
+          "ND": "component3/local_z"
+        },
+        "mapping_scope": "serialized components only; physical field response not yet verified",
+        "directional_field_verified": false,
+        "motor_ranking_eligible": false,
+        "loss_calibration_verified": false
+      },
+      "CS_kind": "object",
+      "object_CS": {
+        "object": "GOES_V3_01",
+        "object_id": 2104,
+        "CS": "GOES_V3_01_CS",
+        "CS_id": 2776,
+        "origin_m": [
+          -0.0314054484623454,
+          0.00135005314298423,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0324054484623454,
+          0.00135005314298423,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0314054484623454,
+          0.000350053142984227,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "false",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0368650070377351,
+            0.00160250495174995,
+            0.0
+          ],
+          [
+            -0.0205710083780374,
+            0.0016025049517498899,
+            0.0
+          ],
+          [
+            -0.020362864011863,
+            0.0011,
+            0.0
+          ],
+          [
+            -0.036883417798088,
+            0.0011,
+            0.0
+          ],
+          [
+            -0.036879464266944606,
+            0.0012308852026620002,
+            0.0
+          ],
+          [
+            -0.036870929281404105,
+            0.00146442375174353,
+            0.0
+          ],
+          [
+            -0.0368650070377351,
+            0.00160250495174995,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "mu_r": [
+        1000.0,
+        100.0,
+        1000.0
+      ],
+      "origin_m": [
+        -0.0414054484623454,
+        -0.00864994685701577,
+        0.0
+      ],
+      "side_m": 0.02,
+      "target_B_vector_T": [
+        0.025132741228718343,
+        0.0,
+        0.0
+      ],
+      "expected_H_hypotheses": {
+        "absolute_point": [
+          20.0,
+          0.0,
+          0.0
+        ],
+        "direction_vector": [
+          199.97763975714884,
+          -2.0060767016084404,
+          0.0
+        ],
+        "direction_vector_x_primary_legacy": [
+          20.31187820466604,
+          7.486040931316247,
+          0.0
+        ]
+      },
+      "boundary_expression": "0.025132741228718343tesla*(Y - (-0.0086499468570157695meter))",
+      "boundary_CS": "Global",
+      "boundary_kind": "all_edges_vector_potential",
+      "sample_points_m": [
+        [
+          -0.036405448462345405,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.036405448462345405,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.036405448462345405,
+          0.00635005314298423,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          0.00635005314298423,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          0.00635005314298423,
+          0.0
+        ]
+      ],
+      "setup": {
+        "MaximumPasses": 6,
+        "MinimumPasses": 2,
+        "MinimumConvergedPasses": 1,
+        "PercentError": 0.1,
+        "RelativeResidual": 1e-08,
+        "NonLinearResidual": 1e-06,
+        "SmoothBHCurve": false
+      },
+      "maximum_mesh_length_m": 0.002,
+      "maximum_mesh_elements": 1000,
+      "gates": {
+        "B_absolute_error_T": 0.0001,
+        "B_transverse_T": 0.0001,
+        "H_transverse_relative": 0.001,
+        "H_uniformity_relative": 0.001,
+        "equivalent_H_relative": 0.01,
+        "knot_H_relative": 0.01,
+        "TD_RD_minimum_ratio": 5.0
+      }
+    },
+    {
+      "case_id": "simple_relative_shift",
+      "material_kind": "simple",
+      "material": {
+        "transport_version": "aedt_directional_transport_v1",
+        "material_name": "Interface_simple_relative_shift",
+        "curves": {
+          "RD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              8.8e-05,
+              0.000349185259991,
+              0.00213930493274,
+              0.00827544698229,
+              0.0308149997721,
+              0.150101668723,
+              0.650142276271,
+              1.51547615418,
+              1.83925565419,
+              1.91933623035,
+              1.94791023538,
+              1.96098213437,
+              1.96135912549,
+              1.9616104529,
+              1.96223877143,
+              1.96286708996,
+              1.96412372702,
+              1.96663700115,
+              1.9697785938,
+              1.97292018645,
+              1.97920337176,
+              1.98548655707,
+              1.99805292768,
+              2.0106192983,
+              2.02318566891
+            ]
+          },
+          "TD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              0.000201,
+              0.00040520352385,
+              0.00103482623318,
+              0.00213864232481,
+              0.00454864642597,
+              0.0133250671637,
+              0.0326328240082,
+              0.0853067701857,
+              0.348992109643,
+              0.795940064212,
+              1.27933157849,
+              1.61973433704,
+              1.70021030007,
+              1.73973905122,
+              1.78032500716,
+              1.8195982979,
+              1.85990697552,
+              1.89984411358,
+              1.92646560556,
+              1.9397088727,
+              1.94795948692,
+              1.9544919855,
+              1.96705835612,
+              1.97962472673,
+              1.99219109735
+            ]
+          },
+          "ND_mu_r": 1000.0,
+          "zero_loss_placeholders": true,
+          "core_loss_equiv_cut_depth": "0.00023meter",
+          "core_loss_equiv_cut_depth_m": 0.00023,
+          "conductivity_S_per_m": 2000000.0,
+          "mass_density_kg_per_m3": 7650.0
+        },
+        "amat_sha256": "6c4de0d8c3e87e965d980154c1492ab49319718977368b8dcd79116a684b6202",
+        "metadata_sha256": "b32b655accf963919d5262a50a118090450f317eecfe3dbe6a6fc0767e96df65",
+        "calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "reference_correction_version": "fixed_h_nested_transfer_v2",
+        "axis_mapping": {
+          "RD": "component1/local_x",
+          "TD": "component2/local_y",
+          "ND": "component3/local_z"
+        },
+        "mapping_scope": "serialized components only; physical field response not yet verified",
+        "directional_field_verified": false,
+        "motor_ranking_eligible": false,
+        "loss_calibration_verified": false
+      },
+      "CS_kind": "relative",
+      "object_CS": {
+        "object": "GOES_V3_01",
+        "object_id": 2104,
+        "CS": "GOES_V3_01_CS",
+        "CS_id": 2776,
+        "origin_m": [
+          -0.0314054484623454,
+          0.00135005314298423,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0324054484623454,
+          0.00135005314298423,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0314054484623454,
+          0.000350053142984227,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "false",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0368650070377351,
+            0.00160250495174995,
+            0.0
+          ],
+          [
+            -0.0205710083780374,
+            0.0016025049517498899,
+            0.0
+          ],
+          [
+            -0.020362864011863,
+            0.0011,
+            0.0
+          ],
+          [
+            -0.036883417798088,
+            0.0011,
+            0.0
+          ],
+          [
+            -0.036879464266944606,
+            0.0012308852026620002,
+            0.0
+          ],
+          [
+            -0.036870929281404105,
+            0.00146442375174353,
+            0.0
+          ],
+          [
+            -0.0368650070377351,
+            0.00160250495174995,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "mu_r": [
+        1000.0,
+        100.0,
+        1000.0
+      ],
+      "origin_m": [
+        -0.0414054484623454,
+        -0.00864994685701577,
+        0.0
+      ],
+      "side_m": 0.02,
+      "target_B_vector_T": [
+        0.025132741228718343,
+        0.0,
+        0.0
+      ],
+      "expected_H_hypotheses": {
+        "specified_frame": [
+          20.0,
+          0.0,
+          0.0
+        ]
+      },
+      "boundary_expression": "0.025132741228718343tesla*(Y - (-0.0086499468570157695meter))",
+      "boundary_CS": "Global",
+      "boundary_kind": "all_edges_vector_potential",
+      "sample_points_m": [
+        [
+          -0.036405448462345405,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.036405448462345405,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.036405448462345405,
+          0.00635005314298423,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.0314054484623454,
+          0.00635005314298423,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          -0.0036499468570157694,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          0.0013500531429842307,
+          0.0
+        ],
+        [
+          -0.026405448462345403,
+          0.00635005314298423,
+          0.0
+        ]
+      ],
+      "setup": {
+        "MaximumPasses": 6,
+        "MinimumPasses": 2,
+        "MinimumConvergedPasses": 1,
+        "PercentError": 0.1,
+        "RelativeResidual": 1e-08,
+        "NonLinearResidual": 1e-06,
+        "SmoothBHCurve": false
+      },
+      "maximum_mesh_length_m": 0.002,
+      "maximum_mesh_elements": 1000,
+      "gates": {
+        "B_absolute_error_T": 0.0001,
+        "B_transverse_T": 0.0001,
+        "H_transverse_relative": 0.001,
+        "H_uniformity_relative": 0.001,
+        "equivalent_H_relative": 0.01,
+        "knot_H_relative": 0.01,
+        "TD_RD_minimum_ratio": 5.0
+      }
+    },
+    {
+      "case_id": "scalar_RD_full_boundary",
+      "material_kind": "scalar_rd",
+      "material": {
+        "transport_version": "aedt_directional_transport_v1",
+        "material_name": "Interface_scalar_RD_full_boundary",
+        "curves": {
+          "RD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              8.8e-05,
+              0.000349185259991,
+              0.00213930493274,
+              0.00827544698229,
+              0.0308149997721,
+              0.150101668723,
+              0.650142276271,
+              1.51547615418,
+              1.83925565419,
+              1.91933623035,
+              1.94791023538,
+              1.96098213437,
+              1.96135912549,
+              1.9616104529,
+              1.96223877143,
+              1.96286708996,
+              1.96412372702,
+              1.96663700115,
+              1.9697785938,
+              1.97292018645,
+              1.97920337176,
+              1.98548655707,
+              1.99805292768,
+              2.0106192983,
+              2.02318566891
+            ]
+          },
+          "TD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              0.000201,
+              0.00040520352385,
+              0.00103482623318,
+              0.00213864232481,
+              0.00454864642597,
+              0.0133250671637,
+              0.0326328240082,
+              0.0853067701857,
+              0.348992109643,
+              0.795940064212,
+              1.27933157849,
+              1.61973433704,
+              1.70021030007,
+              1.73973905122,
+              1.78032500716,
+              1.8195982979,
+              1.85990697552,
+              1.89984411358,
+              1.92646560556,
+              1.9397088727,
+              1.94795948692,
+              1.9544919855,
+              1.96705835612,
+              1.97962472673,
+              1.99219109735
+            ]
+          },
+          "ND_mu_r": 1000.0,
+          "zero_loss_placeholders": true,
+          "core_loss_equiv_cut_depth": "0.00023meter",
+          "core_loss_equiv_cut_depth_m": 0.00023,
+          "conductivity_S_per_m": 2000000.0,
+          "mass_density_kg_per_m3": 7650.0
+        },
+        "amat_sha256": "6c4de0d8c3e87e965d980154c1492ab49319718977368b8dcd79116a684b6202",
+        "metadata_sha256": "b32b655accf963919d5262a50a118090450f317eecfe3dbe6a6fc0767e96df65",
+        "calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "reference_correction_version": "fixed_h_nested_transfer_v2",
+        "axis_mapping": {
+          "RD": "component1/local_x",
+          "TD": "component2/local_y",
+          "ND": "component3/local_z"
+        },
+        "mapping_scope": "serialized components only; physical field response not yet verified",
+        "directional_field_verified": false,
+        "motor_ranking_eligible": false,
+        "loss_calibration_verified": false
+      },
+      "CS_kind": "global",
+      "object_CS": null,
+      "mu_r": [
+        1000.0,
+        100.0,
+        1000.0
+      ],
+      "origin_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "side_m": 0.02,
+      "target_B_vector_T": [
+        1.51547615418,
+        0.0,
+        0.0
+      ],
+      "expected_H_hypotheses": {
+        "source_RD_knot": [
+          20.0,
+          0.0,
+          0.0
+        ]
+      },
+      "boundary_expression": "1.5154761541799999tesla*(Y - (0meter))",
+      "boundary_CS": "Global",
+      "boundary_kind": "all_edges_vector_potential",
+      "sample_points_m": [
+        [
+          0.005,
+          0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.01,
+          0.0
+        ],
+        [
+          0.005,
+          0.015,
+          0.0
+        ],
+        [
+          0.01,
+          0.005,
+          0.0
+        ],
+        [
+          0.01,
+          0.01,
+          0.0
+        ],
+        [
+          0.01,
+          0.015,
+          0.0
+        ],
+        [
+          0.015,
+          0.005,
+          0.0
+        ],
+        [
+          0.015,
+          0.01,
+          0.0
+        ],
+        [
+          0.015,
+          0.015,
+          0.0
+        ]
+      ],
+      "setup": {
+        "MaximumPasses": 6,
+        "MinimumPasses": 2,
+        "MinimumConvergedPasses": 1,
+        "PercentError": 0.1,
+        "RelativeResidual": 1e-08,
+        "NonLinearResidual": 1e-06,
+        "SmoothBHCurve": false
+      },
+      "maximum_mesh_length_m": 0.002,
+      "maximum_mesh_elements": 1000,
+      "gates": {
+        "B_absolute_error_T": 0.0001,
+        "B_transverse_T": 0.0001,
+        "H_transverse_relative": 0.001,
+        "H_uniformity_relative": 0.001,
+        "equivalent_H_relative": 0.01,
+        "knot_H_relative": 0.01,
+        "TD_RD_minimum_ratio": 5.0
+      }
+    },
+    {
+      "case_id": "tensor_RD_full_boundary",
+      "material_kind": "tensor",
+      "material": {
+        "transport_version": "aedt_directional_transport_v1",
+        "material_name": "Interface_tensor_RD_full_boundary",
+        "curves": {
+          "RD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              8.8e-05,
+              0.000349185259991,
+              0.00213930493274,
+              0.00827544698229,
+              0.0308149997721,
+              0.150101668723,
+              0.650142276271,
+              1.51547615418,
+              1.83925565419,
+              1.91933623035,
+              1.94791023538,
+              1.96098213437,
+              1.96135912549,
+              1.9616104529,
+              1.96223877143,
+              1.96286708996,
+              1.96412372702,
+              1.96663700115,
+              1.9697785938,
+              1.97292018645,
+              1.97920337176,
+              1.98548655707,
+              1.99805292768,
+              2.0106192983,
+              2.02318566891
+            ]
+          },
+          "TD": {
+            "H": [
+              0.0,
+              0.1,
+              0.2,
+              0.5,
+              1.0,
+              2.0,
+              5.0,
+              10.0,
+              20.0,
+              50.0,
+              100.0,
+              200.0,
+              500.0,
+              800.0,
+              1000.0,
+              1500.0,
+              2000.0,
+              3000.0,
+              5000.0,
+              7500.0,
+              10000.0,
+              15000.0,
+              20000.0,
+              30000.0,
+              40000.0,
+              50000.0
+            ],
+            "B": [
+              0.0,
+              0.000201,
+              0.00040520352385,
+              0.00103482623318,
+              0.00213864232481,
+              0.00454864642597,
+              0.0133250671637,
+              0.0326328240082,
+              0.0853067701857,
+              0.348992109643,
+              0.795940064212,
+              1.27933157849,
+              1.61973433704,
+              1.70021030007,
+              1.73973905122,
+              1.78032500716,
+              1.8195982979,
+              1.85990697552,
+              1.89984411358,
+              1.92646560556,
+              1.9397088727,
+              1.94795948692,
+              1.9544919855,
+              1.96705835612,
+              1.97962472673,
+              1.99219109735
+            ]
+          },
+          "ND_mu_r": 1000.0,
+          "zero_loss_placeholders": true,
+          "core_loss_equiv_cut_depth": "0.00023meter",
+          "core_loss_equiv_cut_depth_m": 0.00023,
+          "conductivity_S_per_m": 2000000.0,
+          "mass_density_kg_per_m3": 7650.0
+        },
+        "amat_sha256": "6c4de0d8c3e87e965d980154c1492ab49319718977368b8dcd79116a684b6202",
+        "metadata_sha256": "b32b655accf963919d5262a50a118090450f317eecfe3dbe6a6fc0767e96df65",
+        "calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "reference_correction_version": "fixed_h_nested_transfer_v2",
+        "axis_mapping": {
+          "RD": "component1/local_x",
+          "TD": "component2/local_y",
+          "ND": "component3/local_z"
+        },
+        "mapping_scope": "serialized components only; physical field response not yet verified",
+        "directional_field_verified": false,
+        "motor_ranking_eligible": false,
+        "loss_calibration_verified": false
+      },
+      "CS_kind": "global",
+      "object_CS": null,
+      "mu_r": [
+        1000.0,
+        100.0,
+        1000.0
+      ],
+      "origin_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "side_m": 0.02,
+      "target_B_vector_T": [
+        1.51547615418,
+        0.0,
+        0.0
+      ],
+      "expected_H_hypotheses": {
+        "source_RD_knot": [
+          20.0,
+          0.0,
+          0.0
+        ]
+      },
+      "boundary_expression": "1.5154761541799999tesla*(Y - (0meter))",
+      "boundary_CS": "Global",
+      "boundary_kind": "all_edges_vector_potential",
+      "sample_points_m": [
+        [
+          0.005,
+          0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.01,
+          0.0
+        ],
+        [
+          0.005,
+          0.015,
+          0.0
+        ],
+        [
+          0.01,
+          0.005,
+          0.0
+        ],
+        [
+          0.01,
+          0.01,
+          0.0
+        ],
+        [
+          0.01,
+          0.015,
+          0.0
+        ],
+        [
+          0.015,
+          0.005,
+          0.0
+        ],
+        [
+          0.015,
+          0.01,
+          0.0
+        ],
+        [
+          0.015,
+          0.015,
+          0.0
+        ]
+      ],
+      "setup": {
+        "MaximumPasses": 6,
+        "MinimumPasses": 2,
+        "MinimumConvergedPasses": 1,
+        "PercentError": 0.1,
+        "RelativeResidual": 1e-08,
+        "NonLinearResidual": 1e-06,
+        "SmoothBHCurve": false
+      },
+      "maximum_mesh_length_m": 0.002,
+      "maximum_mesh_elements": 1000,
+      "gates": {
+        "B_absolute_error_T": 0.0001,
+        "B_transverse_T": 0.0001,
+        "H_transverse_relative": 0.001,
+        "H_uniformity_relative": 0.001,
+        "equivalent_H_relative": 0.01,
+        "knot_H_relative": 0.01,
+        "TD_RD_minimum_ratio": 5.0
+      }
+    }
+  ],
+  "maximum_solve_attempts": 6,
+  "case_timeout_seconds": 120,
+  "cores": 2,
+  "GPUs": 0,
+  "retry_allowed": false,
+  "motor_solves": 0,
+  "nonlinear_requires_passed": [
+    "simple_global_origin",
+    "simple_global_shift",
+    "simple_relative_shift"
+  ],
+  "scope": "Full Dirichlet analytic controls and unchanged-source nonlinear diagnostics; no measured-material, loss or motor ranking claim",
+  "producer_sha256": {
+    "modules/maxwell_interface_controls.py": "cc1be1a8e3eb0b9df4394e29cfc6a6ffedf5b71362d00e6892fbf66f12ee8cc9",
+    "modules/maxwell_nonlinear_controls.py": "ca397a533ee80f2903b5a233284d22aad6ca75502a90d2d94f7f3d30f74d64a1",
+    "modules/maxwell_directional_controls.py": "572f68e85a1a2df2a1f9731a11d183f3f3c85afe6e797945794e1a2e61f44f13",
+    "modules/maxwell_material_transport.py": "f7633a06f9893970024dc15049afee28cb3789306cabd480f4224708cb6dc01d",
+    "modules/maxwell_native_convergence.py": "2c23062e09982af4869df8f10ede541a1e92327268182a1b047fa6d3cc4c5a11",
+    "modules/motor_model_audit.py": "f106bf390736815c8ac8298a6ffbe0f5cf793622eb4cd1b329732300ad1c7ee6",
+    "modules/motor_workbench.py": "61c85211b7ba0167cc737d31a88265a9656f3783ca6c71d0b2732b919fa60f4d",
+    "modules/motor_queue.py": "d8a06c676310ba77c7807af9573779cb323775214a84b04cbb07ea79e5496766",
+    "tools/run_maxwell_interface_controls.py": "2a658f4e268a9b510210d09460a9967a699f4a97766e240dd9f8ce02d19dabce"
+  },
+  "cumulative_Maxwell_completed_before": 17,
+  "cumulative_motor_solves_before": 4,
+  "cumulative_MuMax_success_before": 680
+}

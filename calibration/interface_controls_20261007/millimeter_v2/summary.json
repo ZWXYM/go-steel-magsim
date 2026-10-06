@@ -1,0 +1,434 @@
+{
+  "protocol": "full_boundary_interface_controls_v2",
+  "cases": [
+    {
+      "case_id": "simple_global_origin",
+      "mean_B_vector_T": [
+        0.025132742337082067,
+        5.591444630055961e-10,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.0,
+        1.3212082904994963e-14,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "specified_frame": 1.5972043750479027e-13
+      },
+      "matched_H_hypothesis": "specified_frame",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          4.1814e-26,
+          5.3924e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 2.9794e-26,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 4.1814e-26,
+            "delta_energy_percent": 5.3924e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "81581d0143e8e6481f212963e9d06b727ee1cbe779963208fc0f926dd5747512",
+      "native_validation": 1
+    },
+    {
+      "case_id": "simple_global_shift",
+      "mean_B_vector_T": [
+        0.025132741076135418,
+        5.915449518151815e-10,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.00000000145091,
+        2.3334816239222015e-13,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "specified_frame": 6.529097308606813e-10
+      },
+      "matched_H_hypothesis": "specified_frame",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          5.1817e-26,
+          1.8873e-13
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 3.103e-26,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 5.1817e-26,
+            "delta_energy_percent": 1.8873e-13
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "c41c3402810a88248e6cc0534849d753dfda3a69d700772c732dce59fbb98e76",
+      "native_validation": 1
+    },
+    {
+      "case_id": "simple_object_shift",
+      "mean_B_vector_T": [
+        0.025132747000117465,
+        9.113667119489993e-09,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        19.99999999983264,
+        -2.723189215446698e-13,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "absolute_point": 7.53122305683801e-11,
+        "direction_vector": 0.8999994409325306,
+        "direction_vector_x_primary_legacy": 0.3461158630131239
+      },
+      "matched_H_hypothesis": "absolute_point",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          4.7575e-26,
+          2.6548e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.0001021,
+            "energy_error_percent": 2.6635e-26,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.0001021,
+            "energy_error_percent": 4.7575e-26,
+            "delta_energy_percent": 2.6548e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "8399c9033c36c7e19a9dbd0b1c839e6cdddfee795e36d566b44254c54794862c",
+      "native_validation": 1
+    },
+    {
+      "case_id": "simple_relative_shift",
+      "mean_B_vector_T": [
+        0.025132744626694396,
+        6.652801010727909e-09,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.00000000145091,
+        2.404625631142807e-13,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "specified_frame": 6.529097315378172e-10
+      },
+      "matched_H_hypothesis": "specified_frame",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          6.8891e-26,
+          4.0443e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 3.0523e-26,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 472,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 6.8891e-26,
+            "delta_energy_percent": 4.0443e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "f3cc342569e37a3212f6315e4a0bf5d68eacac1d8aca607abca0b6ee5b4e8c33",
+      "native_validation": 1
+    },
+    {
+      "case_id": "scalar_RD_full_boundary",
+      "mean_B_vector_T": [
+        1.5080567261114763,
+        -0.002985694599541628,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        26.123367028046676,
+        -0.05119613492383913,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "source_RD_knot": 0.3222860870889981
+      },
+      "matched_H_hypothesis": null,
+      "checks": {
+        "B_vector": false,
+        "H_uniform": false,
+        "unique_H_hypothesis": false,
+        "adaptive_converged": false
+      },
+      "passed": false,
+      "native_convergence": {
+        "completed_passes": 6,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          3.737,
+          56.755
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.031707,
+            "energy_error_percent": 38.155,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.015003,
+            "energy_error_percent": 32.085,
+            "delta_energy_percent": 52.681
+          },
+          {
+            "pass_number": 3,
+            "triangles": 609,
+            "energy_J": 0.029563,
+            "energy_error_percent": 55.327,
+            "delta_energy_percent": 97.042
+          },
+          {
+            "pass_number": 4,
+            "triangles": 792,
+            "energy_J": 0.029179,
+            "energy_error_percent": 28.906,
+            "delta_energy_percent": 1.2987
+          },
+          {
+            "pass_number": 5,
+            "triangles": 1030,
+            "energy_J": 0.015847,
+            "energy_error_percent": 41.283,
+            "delta_energy_percent": 45.69
+          },
+          {
+            "pass_number": 6,
+            "triangles": 1340,
+            "energy_J": 0.024841,
+            "energy_error_percent": 3.737,
+            "delta_energy_percent": 56.755
+          }
+        ],
+        "adaptive_converged": false,
+        "reached_maximum_passes": true
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "30f5ba43a34139545c021bf244ba688d4bcdf349761cbccba47eb0e2fd3b9daa",
+      "native_validation": 1
+    },
+    {
+      "case_id": "tensor_RD_full_boundary",
+      "mean_B_vector_T": [
+        1.514291683637139,
+        0.0006355836551876678,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        26.329795730850144,
+        0.1792125378069922,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "source_RD_knot": 0.3195329403436681
+      },
+      "matched_H_hypothesis": null,
+      "checks": {
+        "B_vector": false,
+        "H_uniform": false,
+        "unique_H_hypothesis": false,
+        "adaptive_converged": false
+      },
+      "passed": false,
+      "native_convergence": {
+        "completed_passes": 6,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          0.070558,
+          3.1786
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.0080276,
+            "energy_error_percent": 0.20694,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.0080246,
+            "energy_error_percent": 1.074,
+            "delta_energy_percent": 0.037439
+          },
+          {
+            "pass_number": 3,
+            "triangles": 609,
+            "energy_J": 0.0080158,
+            "energy_error_percent": 0.027728,
+            "delta_energy_percent": 0.11003
+          },
+          {
+            "pass_number": 4,
+            "triangles": 793,
+            "energy_J": 0.0082993,
+            "energy_error_percent": 5.3553,
+            "delta_energy_percent": 3.5376
+          },
+          {
+            "pass_number": 5,
+            "triangles": 1031,
+            "energy_J": 0.0082819,
+            "energy_error_percent": 1.3712,
+            "delta_energy_percent": 0.21004
+          },
+          {
+            "pass_number": 6,
+            "triangles": 1342,
+            "energy_J": 0.0080186,
+            "energy_error_percent": 0.070558,
+            "delta_energy_percent": 3.1786
+          }
+        ],
+        "adaptive_converged": false,
+        "reached_maximum_passes": true
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "3f754bd7c5a992900e6f1ef8becd132c8d2654cf21cabb7959a6b201bd16e4a2",
+      "native_validation": 1
+    }
+  ],
+  "failures": [],
+  "skipped": [],
+  "new_field_solves": 6,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 24,
+  "cumulative_motor_solves": 4,
+  "cumulative_MuMax_success": 680,
+  "calibrated_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false
+}

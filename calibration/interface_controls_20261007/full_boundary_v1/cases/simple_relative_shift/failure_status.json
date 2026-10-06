@@ -1,0 +1,8 @@
+{
+  "case_id": "simple_relative_shift",
+  "status": "native_failed",
+  "error": "Native solve failed",
+  "TAU_mesh_failure": true,
+  "native_validation": 1,
+  "saved_project_sha256": "fb5ebeed8ce0add4a904042f2a82c2193daa79b2c3bb73e0037157cc12020d50"
+}

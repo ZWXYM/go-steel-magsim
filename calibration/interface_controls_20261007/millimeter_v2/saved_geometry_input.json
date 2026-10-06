@@ -1,0 +1,2306 @@
+[
+  {
+    "object": "GOES_V3_01",
+    "object_id": 2104,
+    "CS": "GOES_V3_01_CS",
+    "CS_id": 2776,
+    "origin_m": [
+      -0.0314054484623454,
+      0.00135005314298423,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0324054484623454,
+      0.00135005314298423,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0314054484623454,
+      0.000350053142984227,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0368650070377351,
+        0.00160250495174995,
+        0.0
+      ],
+      [
+        -0.0205710083780374,
+        0.0016025049517498899,
+        0.0
+      ],
+      [
+        -0.020362864011863,
+        0.0011,
+        0.0
+      ],
+      [
+        -0.036883417798088,
+        0.0011,
+        0.0
+      ],
+      [
+        -0.036879464266944606,
+        0.0012308852026620002,
+        0.0
+      ],
+      [
+        -0.036870929281404105,
+        0.00146442375174353,
+        0.0
+      ],
+      [
+        -0.0368650070377351,
+        0.00160250495174995,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_02",
+    "object_id": 2120,
+    "CS": "GOES_V3_02_CS",
+    "CS_id": 2786,
+    "origin_m": [
+      -0.0159574762365756,
+      0.00575247321422036,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0152797350936765,
+      0.00648777379440632,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0166927768167615,
+      0.00643021435711947,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0201780881053607,
+        0.0011765366864730101,
+        0.0
+      ],
+      [
+        -0.0203862324715352,
+        0.00167904163822291,
+        0.0
+      ],
+      [
+        -0.0118104545141844,
+        0.010254819595573901,
+        0.0
+      ],
+      [
+        -0.011455129855222101,
+        0.00989949493661167,
+        0.0
+      ],
+      [
+        -0.0201780881053607,
+        0.0011765366864730101,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_03",
+    "object_id": 2132,
+    "CS": "GOES_V3_03_CS",
+    "CS_id": 2796,
+    "origin_m": [
+      -0.0317585153825195,
+      0.007344731606960381,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0327585153825195,
+      0.007344731606960381,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0317585153825195,
+      0.0063447316069603805,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.023056289752276003,
+        0.0076025049517498295,
+        0.0
+      ],
+      [
+        -0.0228481453861016,
+        0.007100000000000011,
+        0.0
+      ],
+      [
+        -0.0362102992280675,
+        0.007100000000000011,
+        0.0
+      ],
+      [
+        -0.0361877725652884,
+        0.007214920532652371,
+        0.0
+      ],
+      [
+        -0.0361404263532112,
+        0.00744845920561024,
+        0.0
+      ],
+      [
+        -0.036108159010172204,
+        0.00760250495174986,
+        0.0
+      ],
+      [
+        -0.023056289752276003,
+        0.0076025049517498295,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_04",
+    "object_id": 2148,
+    "CS": "GOES_V3_04_CS",
+    "CS_id": 2806,
+    "origin_m": [
+      -0.0193214372672545,
+      0.010873793557779999,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0186512723342464,
+      0.011616005766360701,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0200636494758352,
+      0.0115439584907881,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0156977705423413,
+        0.014142135623731001,
+        0.0
+      ],
+      [
+        -0.0226633694795993,
+        0.007176536686473021,
+        0.0
+      ],
+      [
+        -0.022871513845773697,
+        0.007679041638222851,
+        0.0
+      ],
+      [
+        -0.016053095201303498,
+        0.0144974602826931,
+        0.0
+      ],
+      [
+        -0.0156977705423413,
+        0.014142135623731001,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_05",
+    "object_id": 2160,
+    "CS": "GOES_V3_05_CS",
+    "CS_id": 2816,
+    "origin_m": [
+      -0.0314165288104973,
+      0.0133394286618,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0324165288104973,
+      0.0133394286618,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0314165288104973,
+      0.0123394286618,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0255415711265146,
+        0.0136025049517499,
+        0.0
+      ],
+      [
+        -0.0253334267603401,
+        0.0131,
+        0.0
+      ],
+      [
+        -0.034496154192763695,
+        0.0131,
+        0.0
+      ],
+      [
+        -0.0344586136140111,
+        0.0131990115279906,
+        0.0
+      ],
+      [
+        -0.0343682490610829,
+        0.0134325505393099,
+        0.0
+      ],
+      [
+        -0.0343011581082715,
+        0.0136025049517499,
+        0.0
+      ],
+      [
+        -0.0255415711265146,
+        0.0136025049517499,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_06",
+    "object_id": 2176,
+    "CS": "GOES_V3_06_CS",
+    "CS_id": 2826,
+    "origin_m": [
+      -0.00575247321422043,
+      0.0159574762365756,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.00501717263403447,
+      0.0166352173794747,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.00643021435711954,
+      0.0166927768167615,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.010254819595573901,
+        0.0118104545141843,
+        0.0
+      ],
+      [
+        -0.00167904163822313,
+        0.0203862324715352,
+        0.0
+      ],
+      [
+        -0.00117653668647304,
+        0.0201780881053607,
+        0.0
+      ],
+      [
+        -0.00989949493661166,
+        0.011455129855222101,
+        0.0
+      ],
+      [
+        -0.010254819595573901,
+        0.0118104545141843,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_07",
+    "object_id": 2188,
+    "CS": "GOES_V3_07_CS",
+    "CS_id": 2836,
+    "origin_m": [
+      -0.0226853982979334,
+      0.015995113901339602,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.022028060857718898,
+      0.0167487102718803,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0234389946684742,
+      0.0166524513415542,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0199404112294606,
+        0.018384776310850198,
+        0.0
+      ],
+      [
+        -0.0251486508538379,
+        0.013176536686473,
+        0.0
+      ],
+      [
+        -0.0253567952200123,
+        0.013679041638222901,
+        0.0
+      ],
+      [
+        -0.0202957358884229,
+        0.0187401009698124,
+        0.0
+      ],
+      [
+        -0.0199404112294606,
+        0.018384776310850198,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_08",
+    "object_id": 2200,
+    "CS": "GOES_V3_08_CS",
+    "CS_id": 2846,
+    "origin_m": [
+      -0.010873793557779999,
+      0.0193214372672545,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0101315813491993,
+      0.019991602200262602,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0115439584907881,
+      0.0200636494758352,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0144974602826931,
+        0.0160530952013036,
+        0.0
+      ],
+      [
+        -0.0076790416382230805,
+        0.0228715138457738,
+        0.0
+      ],
+      [
+        -0.007176536686473051,
+        0.0226633694795993,
+        0.0
+      ],
+      [
+        -0.0141421356237309,
+        0.0156977705423414,
+        0.0
+      ],
+      [
+        -0.0144974602826931,
+        0.0160530952013036,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_09",
+    "object_id": 2212,
+    "CS": "GOES_V3_09_CS",
+    "CS_id": 2856,
+    "origin_m": [
+      -0.0159951139013397,
+      0.0226853982979334,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.015241517530798901,
+      0.023342735738148,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0166524513415542,
+      0.0234389946684741,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0187401009698124,
+        0.020295735888422803,
+        0.0
+      ],
+      [
+        -0.013679041638223,
+        0.0253567952200123,
+        0.0
+      ],
+      [
+        -0.0131765366864731,
+        0.0251486508538379,
+        0.0
+      ],
+      [
+        -0.018384776310850198,
+        0.0199404112294606,
+        0.0
+      ],
+      [
+        -0.0187401009698124,
+        0.020295735888422803,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_10",
+    "object_id": 2224,
+    "CS": "GOES_V3_10_CS",
+    "CS_id": 2866,
+    "origin_m": [
+      -0.0013500531429843702,
+      0.0314054484623454,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0013500531429843702,
+      0.030405448462345403,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.000350053142984373,
+      0.0314054484623454,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0012308852026622701,
+        0.036879464266944606,
+        0.0
+      ],
+      [
+        -0.0011,
+        0.036883417798088,
+        0.0
+      ],
+      [
+        -0.0011,
+        0.0203628640118629,
+        0.0
+      ],
+      [
+        -0.00160250495175011,
+        0.020571008378037502,
+        0.0
+      ],
+      [
+        -0.00160250495175011,
+        0.0368650070377351,
+        0.0
+      ],
+      [
+        -0.00146442375174374,
+        0.036870929281404105,
+        0.0
+      ],
+      [
+        -0.0012308852026622701,
+        0.036879464266944606,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_11",
+    "object_id": 2240,
+    "CS": "GOES_V3_11_CS",
+    "CS_id": 2876,
+    "origin_m": [
+      -0.00734473160696047,
+      0.0317585153825195,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.00734473160696047,
+      0.030758515382519502,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.00634473160696047,
+      0.0317585153825195,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0070999999999999995,
+        0.0362102992280675,
+        0.0
+      ],
+      [
+        -0.0070999999999999995,
+        0.0228481453861015,
+        0.0
+      ],
+      [
+        -0.00760250495175006,
+        0.023056289752276003,
+        0.0
+      ],
+      [
+        -0.00760250495175004,
+        0.0361081590101721,
+        0.0
+      ],
+      [
+        -0.00744845920561035,
+        0.0361404263532112,
+        0.0
+      ],
+      [
+        -0.00721492053265234,
+        0.0361877725652884,
+        0.0
+      ],
+      [
+        -0.0070999999999999995,
+        0.0362102992280675,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_12",
+    "object_id": 2256,
+    "CS": "GOES_V3_12_CS",
+    "CS_id": 2886,
+    "origin_m": [
+      -0.013339428661800101,
+      0.0314165288104973,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.013339428661800101,
+      0.030416528810497303,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0123394286618001,
+      0.0314165288104973,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        -0.0131,
+        0.034496154192763695,
+        0.0
+      ],
+      [
+        -0.0131,
+        0.0253334267603401,
+        0.0
+      ],
+      [
+        -0.01360250495175,
+        0.0255415711265146,
+        0.0
+      ],
+      [
+        -0.01360250495175,
+        0.0343011581082715,
+        0.0
+      ],
+      [
+        -0.0134325505393101,
+        0.0343682490610828,
+        0.0
+      ],
+      [
+        -0.0131990115279905,
+        0.0344586136140112,
+        0.0
+      ],
+      [
+        -0.0131,
+        0.034496154192763695,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_13",
+    "object_id": 2272,
+    "CS": "GOES_V3_13_CS",
+    "CS_id": 2896,
+    "origin_m": [
+      0.0314054484623454,
+      0.00135005314298439,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.030405448462345403,
+      0.0013500531429843801,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0314054484623454,
+      0.000350053142984386,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.036879464266944606,
+        0.0012308852026623601,
+        0.0
+      ],
+      [
+        0.036883417798088,
+        0.00110000000000008,
+        0.0
+      ],
+      [
+        0.020362864011863,
+        0.0011000000000000402,
+        0.0
+      ],
+      [
+        0.020571008378037502,
+        0.00160250495175016,
+        0.0
+      ],
+      [
+        0.0368650070377351,
+        0.00160250495174999,
+        0.0
+      ],
+      [
+        0.0368709292814042,
+        0.00146442375174369,
+        0.0
+      ],
+      [
+        0.036879464266944606,
+        0.0012308852026623601,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_14",
+    "object_id": 2288,
+    "CS": "GOES_V3_14_CS",
+    "CS_id": 2906,
+    "origin_m": [
+      0.0159574762365756,
+      0.0057524732142204705,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0166352173794747,
+      0.00501717263403451,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.016692776816761602,
+      0.00643021435711958,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.0118104545141843,
+        0.010254819595573901,
+        0.0
+      ],
+      [
+        0.0203862324715353,
+        0.00167904163822318,
+        0.0
+      ],
+      [
+        0.0201780881053607,
+        0.00117653668647309,
+        0.0
+      ],
+      [
+        0.011455129855222101,
+        0.00989949493661168,
+        0.0
+      ],
+      [
+        0.0118104545141843,
+        0.010254819595573901,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_15",
+    "object_id": 2300,
+    "CS": "GOES_V3_15_CS",
+    "CS_id": 2916,
+    "origin_m": [
+      0.0317585153825195,
+      0.00734473160696046,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.030758515382519502,
+      0.007344731606960451,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0317585153825195,
+      0.00634473160696046,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.0362102992280675,
+        0.007100000000000079,
+        0.0
+      ],
+      [
+        0.0228481453861016,
+        0.007100000000000051,
+        0.0
+      ],
+      [
+        0.0230562897522761,
+        0.0076025049517501105,
+        0.0
+      ],
+      [
+        0.036108159010172204,
+        0.00760250495174997,
+        0.0
+      ],
+      [
+        0.036140426353211304,
+        0.00744845920561028,
+        0.0
+      ],
+      [
+        0.0361877725652884,
+        0.00721492053265225,
+        0.0
+      ],
+      [
+        0.0362102992280675,
+        0.007100000000000079,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_16",
+    "object_id": 2316,
+    "CS": "GOES_V3_16_CS",
+    "CS_id": 2926,
+    "origin_m": [
+      0.0193214372672545,
+      0.010873793557780101,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.019991602200262602,
+      0.010131581349199401,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0200636494758353,
+      0.0115439584907882,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.0156977705423414,
+        0.0141421356237309,
+        0.0
+      ],
+      [
+        0.0160530952013036,
+        0.0144974602826932,
+        0.0
+      ],
+      [
+        0.0228715138457738,
+        0.00767904163822313,
+        0.0
+      ],
+      [
+        0.0226633694795993,
+        0.0071765366864731004,
+        0.0
+      ],
+      [
+        0.0156977705423414,
+        0.0141421356237309,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_17",
+    "object_id": 2328,
+    "CS": "GOES_V3_17_CS",
+    "CS_id": 2936,
+    "origin_m": [
+      0.0314165288104973,
+      0.013339428661800101,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0304165288104974,
+      0.013339428661800101,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.031416528810497404,
+      0.0123394286618001,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.034496154192763695,
+        0.0131000000000001,
+        0.0
+      ],
+      [
+        0.0253334267603402,
+        0.0131000000000001,
+        0.0
+      ],
+      [
+        0.0255415711265146,
+        0.01360250495175,
+        0.0
+      ],
+      [
+        0.0343011581082716,
+        0.0136025049517499,
+        0.0
+      ],
+      [
+        0.0343682490610826,
+        0.013432550539310901,
+        0.0
+      ],
+      [
+        0.0344586136140115,
+        0.0131990115279898,
+        0.0
+      ],
+      [
+        0.034496154192763695,
+        0.0131000000000001,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_18",
+    "object_id": 2344,
+    "CS": "GOES_V3_18_CS",
+    "CS_id": 2946,
+    "origin_m": [
+      0.00575247321422037,
+      0.0159574762365756,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.00648777379440633,
+      0.0152797350936765,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.00643021435711948,
+      0.016692776816761602,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.0011765366864730101,
+        0.0201780881053607,
+        0.0
+      ],
+      [
+        0.00167904163822291,
+        0.0203862324715352,
+        0.0
+      ],
+      [
+        0.010254819595573901,
+        0.0118104545141844,
+        0.0
+      ],
+      [
+        0.009899494936611691,
+        0.011455129855222101,
+        0.0
+      ],
+      [
+        0.0011765366864730101,
+        0.0201780881053607,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_19",
+    "object_id": 2356,
+    "CS": "GOES_V3_19_CS",
+    "CS_id": 2956,
+    "origin_m": [
+      0.0226853982979334,
+      0.0159951139013397,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.023342735738148,
+      0.015241517530799,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0234389946684741,
+      0.0166524513415543,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.0199404112294606,
+        0.018384776310850198,
+        0.0
+      ],
+      [
+        0.020295735888422803,
+        0.0187401009698125,
+        0.0
+      ],
+      [
+        0.0253567952200123,
+        0.013679041638223,
+        0.0
+      ],
+      [
+        0.0251486508538379,
+        0.0131765366864731,
+        0.0
+      ],
+      [
+        0.0199404112294606,
+        0.018384776310850198,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_20",
+    "object_id": 2368,
+    "CS": "GOES_V3_20_CS",
+    "CS_id": 2966,
+    "origin_m": [
+      0.010873793557779999,
+      0.0193214372672545,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.011616005766360701,
+      0.0186512723342464,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0115439584907881,
+      0.0200636494758352,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.007176536686473009,
+        0.0226633694795993,
+        0.0
+      ],
+      [
+        0.00767904163822284,
+        0.0228715138457738,
+        0.0
+      ],
+      [
+        0.0144974602826932,
+        0.0160530952013036,
+        0.0
+      ],
+      [
+        0.014142135623731001,
+        0.0156977705423413,
+        0.0
+      ],
+      [
+        0.007176536686473009,
+        0.0226633694795993,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_21",
+    "object_id": 2380,
+    "CS": "GOES_V3_21_CS",
+    "CS_id": 2976,
+    "origin_m": [
+      0.015995113901339602,
+      0.0226853982979335,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0167487102718803,
+      0.022028060857718898,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0166524513415542,
+      0.0234389946684742,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.013176536686473,
+        0.0251486508538379,
+        0.0
+      ],
+      [
+        0.013679041638222901,
+        0.025356795220012402,
+        0.0
+      ],
+      [
+        0.0187401009698124,
+        0.0202957358884229,
+        0.0
+      ],
+      [
+        0.018384776310850198,
+        0.019940411229460702,
+        0.0
+      ],
+      [
+        0.013176536686473,
+        0.0251486508538379,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_22",
+    "object_id": 2392,
+    "CS": "GOES_V3_22_CS",
+    "CS_id": 2986,
+    "origin_m": [
+      0.0013500531429841301,
+      0.0314054484623454,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0013500531429841301,
+      0.0324054484623454,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.000350053142984134,
+      0.0314054484623454,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.00160250495174977,
+        0.0368650070377351,
+        0.0
+      ],
+      [
+        0.0016025049517498899,
+        0.0205710083780374,
+        0.0
+      ],
+      [
+        0.0011,
+        0.020362864011863,
+        0.0
+      ],
+      [
+        0.00109999999999995,
+        0.036883417798088,
+        0.0
+      ],
+      [
+        0.00123088520266184,
+        0.036879464266944606,
+        0.0
+      ],
+      [
+        0.0014644237517433601,
+        0.0368709292814042,
+        0.0
+      ],
+      [
+        0.00160250495174977,
+        0.0368650070377351,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_23",
+    "object_id": 2408,
+    "CS": "GOES_V3_23_CS",
+    "CS_id": 2996,
+    "origin_m": [
+      0.00734473160696032,
+      0.0317585153825195,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.00734473160696031,
+      0.0327585153825195,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.00634473160696032,
+      0.0317585153825195,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.00760250495174982,
+        0.023056289752276003,
+        0.0
+      ],
+      [
+        0.0070999999999999995,
+        0.0228481453861016,
+        0.0
+      ],
+      [
+        0.00709999999999997,
+        0.0362102992280675,
+        0.0
+      ],
+      [
+        0.0072149205326523,
+        0.0361877725652884,
+        0.0
+      ],
+      [
+        0.0074484592056101,
+        0.036140426353211304,
+        0.0
+      ],
+      [
+        0.00760250495174971,
+        0.036108159010172204,
+        0.0
+      ],
+      [
+        0.00760250495174982,
+        0.023056289752276003,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_24",
+    "object_id": 2424,
+    "CS": "GOES_V3_24_CS",
+    "CS_id": 3006,
+    "origin_m": [
+      0.0133394286618002,
+      0.0314165288104973,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0133394286618002,
+      0.0324165288104973,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.012339428661800201,
+      0.0314165288104973,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "Polyline",
+      "CoverLines"
+    ],
+    "polyline_points_m": [
+      [
+        0.0136025049517499,
+        0.0255415711265146,
+        0.0
+      ],
+      [
+        0.0131,
+        0.0253334267603402,
+        0.0
+      ],
+      [
+        0.0130999999999999,
+        0.034496154192763695,
+        0.0
+      ],
+      [
+        0.0131990115279911,
+        0.034458613614011,
+        0.0
+      ],
+      [
+        0.0134325505393101,
+        0.0343682490610829,
+        0.0
+      ],
+      [
+        0.01360250495175,
+        0.0343011581082715,
+        0.0
+      ],
+      [
+        0.0136025049517499,
+        0.0255415711265146,
+        0.0
+      ]
+    ],
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_01_1",
+    "object_id": 2441,
+    "CS": "GOES_V3_01_1_CS",
+    "CS_id": 2781,
+    "origin_m": [
+      0.0314054484623454,
+      -0.00135005314298423,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0324054484623454,
+      -0.00135005314298423,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0314054484623454,
+      -0.000350053142984227,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_02_1",
+    "object_id": 2457,
+    "CS": "GOES_V3_02_1_CS",
+    "CS_id": 2791,
+    "origin_m": [
+      0.0159574762365756,
+      -0.00575247321422036,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0152797350936765,
+      -0.00648777379440632,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0166927768167615,
+      -0.00643021435711947,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_03_1",
+    "object_id": 2469,
+    "CS": "GOES_V3_03_1_CS",
+    "CS_id": 2801,
+    "origin_m": [
+      0.0317585153825195,
+      -0.007344731606960381,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0327585153825195,
+      -0.007344731606960381,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0317585153825195,
+      -0.0063447316069603805,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_04_1",
+    "object_id": 2485,
+    "CS": "GOES_V3_04_1_CS",
+    "CS_id": 2811,
+    "origin_m": [
+      0.0193214372672545,
+      -0.010873793557779999,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0186512723342464,
+      -0.011616005766360701,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0200636494758352,
+      -0.0115439584907881,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_05_1",
+    "object_id": 2497,
+    "CS": "GOES_V3_05_1_CS",
+    "CS_id": 2821,
+    "origin_m": [
+      0.0314165288104973,
+      -0.0133394286618,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0324165288104973,
+      -0.0133394286618,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0314165288104973,
+      -0.0123394286618,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_06_1",
+    "object_id": 2513,
+    "CS": "GOES_V3_06_1_CS",
+    "CS_id": 2831,
+    "origin_m": [
+      0.00575247321422043,
+      -0.0159574762365756,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.00501717263403447,
+      -0.0166352173794747,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.00643021435711954,
+      -0.0166927768167615,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_07_1",
+    "object_id": 2525,
+    "CS": "GOES_V3_07_1_CS",
+    "CS_id": 2841,
+    "origin_m": [
+      0.0226853982979334,
+      -0.015995113901339602,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.022028060857718898,
+      -0.0167487102718803,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0234389946684742,
+      -0.0166524513415542,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_08_1",
+    "object_id": 2537,
+    "CS": "GOES_V3_08_1_CS",
+    "CS_id": 2851,
+    "origin_m": [
+      0.010873793557779999,
+      -0.0193214372672545,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0101315813491993,
+      -0.019991602200262602,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0115439584907881,
+      -0.0200636494758352,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_09_1",
+    "object_id": 2549,
+    "CS": "GOES_V3_09_1_CS",
+    "CS_id": 2861,
+    "origin_m": [
+      0.0159951139013397,
+      -0.0226853982979334,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.015241517530798901,
+      -0.023342735738148,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0166524513415542,
+      -0.0234389946684741,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_10_1",
+    "object_id": 2561,
+    "CS": "GOES_V3_10_1_CS",
+    "CS_id": 2871,
+    "origin_m": [
+      0.0013500531429843702,
+      -0.0314054484623454,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.0013500531429843702,
+      -0.030405448462345403,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.000350053142984373,
+      -0.0314054484623454,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_11_1",
+    "object_id": 2577,
+    "CS": "GOES_V3_11_1_CS",
+    "CS_id": 2881,
+    "origin_m": [
+      0.00734473160696047,
+      -0.0317585153825195,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.00734473160696047,
+      -0.030758515382519502,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.00634473160696047,
+      -0.0317585153825195,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_12_1",
+    "object_id": 2593,
+    "CS": "GOES_V3_12_1_CS",
+    "CS_id": 2891,
+    "origin_m": [
+      0.013339428661800101,
+      -0.0314165288104973,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      0.013339428661800101,
+      -0.030416528810497303,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      0.0123394286618001,
+      -0.0314165288104973,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_13_1",
+    "object_id": 2609,
+    "CS": "GOES_V3_13_1_CS",
+    "CS_id": 2901,
+    "origin_m": [
+      -0.0314054484623454,
+      -0.00135005314298439,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.030405448462345403,
+      -0.0013500531429843801,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0314054484623454,
+      -0.000350053142984386,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_14_1",
+    "object_id": 2625,
+    "CS": "GOES_V3_14_1_CS",
+    "CS_id": 2911,
+    "origin_m": [
+      -0.0159574762365756,
+      -0.0057524732142204705,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0166352173794747,
+      -0.00501717263403451,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.016692776816761602,
+      -0.00643021435711958,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_15_1",
+    "object_id": 2637,
+    "CS": "GOES_V3_15_1_CS",
+    "CS_id": 2921,
+    "origin_m": [
+      -0.0317585153825195,
+      -0.00734473160696046,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.030758515382519502,
+      -0.00734473160696046,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0317585153825195,
+      -0.00634473160696046,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_16_1",
+    "object_id": 2653,
+    "CS": "GOES_V3_16_1_CS",
+    "CS_id": 2931,
+    "origin_m": [
+      -0.0193214372672545,
+      -0.010873793557780101,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.019991602200262602,
+      -0.010131581349199401,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0200636494758353,
+      -0.0115439584907882,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_17_1",
+    "object_id": 2665,
+    "CS": "GOES_V3_17_1_CS",
+    "CS_id": 2941,
+    "origin_m": [
+      -0.0314165288104973,
+      -0.013339428661800101,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0304165288104974,
+      -0.013339428661800101,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.031416528810497404,
+      -0.0123394286618001,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_18_1",
+    "object_id": 2681,
+    "CS": "GOES_V3_18_1_CS",
+    "CS_id": 2951,
+    "origin_m": [
+      -0.00575247321422037,
+      -0.0159574762365756,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.00648777379440633,
+      -0.0152797350936765,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.00643021435711948,
+      -0.016692776816761602,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_19_1",
+    "object_id": 2693,
+    "CS": "GOES_V3_19_1_CS",
+    "CS_id": 2961,
+    "origin_m": [
+      -0.0226853982979334,
+      -0.0159951139013397,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.023342735738148,
+      -0.015241517530799,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0234389946684741,
+      -0.0166524513415543,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_20_1",
+    "object_id": 2705,
+    "CS": "GOES_V3_20_1_CS",
+    "CS_id": 2971,
+    "origin_m": [
+      -0.010873793557779999,
+      -0.0193214372672545,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.011616005766360701,
+      -0.0186512723342464,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0115439584907881,
+      -0.0200636494758352,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_21_1",
+    "object_id": 2717,
+    "CS": "GOES_V3_21_1_CS",
+    "CS_id": 2981,
+    "origin_m": [
+      -0.015995113901339602,
+      -0.0226853982979335,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0167487102718803,
+      -0.022028060857718898,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.0166524513415542,
+      -0.0234389946684742,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_22_1",
+    "object_id": 2729,
+    "CS": "GOES_V3_22_1_CS",
+    "CS_id": 2991,
+    "origin_m": [
+      -0.0013500531429841301,
+      -0.0314054484623454,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0013500531429841301,
+      -0.0324054484623454,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.000350053142984134,
+      -0.0314054484623454,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_23_1",
+    "object_id": 2745,
+    "CS": "GOES_V3_23_1_CS",
+    "CS_id": 3001,
+    "origin_m": [
+      -0.00734473160696032,
+      -0.0317585153825195,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.00734473160696031,
+      -0.0327585153825195,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.00634473160696032,
+      -0.0317585153825195,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  },
+  {
+    "object": "GOES_V3_24_1",
+    "object_id": 2761,
+    "CS": "GOES_V3_24_1_CS",
+    "CS_id": 3011,
+    "origin_m": [
+      -0.0133394286618002,
+      -0.0314165288104973,
+      0.0
+    ],
+    "x_axis_absolute_m": [
+      -0.0133394286618002,
+      -0.0324165288104973,
+      0.0
+    ],
+    "y_axis_absolute_m": [
+      -0.012339428661800201,
+      -0.0314165288104973,
+      0.0
+    ],
+    "settings": {
+      "ReverseXAxis": "false",
+      "ReverseYAxis": "false",
+      "DrivenByXAxis": "false",
+      "MoveToEnd": "true"
+    },
+    "serialized_operation_types": [
+      "DuplicateBodyAroundAxis"
+    ],
+    "polyline_points_m": null,
+    "current_global_vertices_verified": false
+  }
+]

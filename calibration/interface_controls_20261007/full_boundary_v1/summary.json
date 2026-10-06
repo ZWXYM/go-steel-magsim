@@ -1,0 +1,98 @@
+{
+  "protocol": "full_boundary_interface_controls_v1",
+  "cases": [
+    {
+      "case_id": "simple_global_origin",
+      "mean_B_vector_T": [
+        0.025132742337082067,
+        5.591444630055961e-10,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.0,
+        1.3212082904994963e-14,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "specified_frame": 1.5972043750479027e-13
+      },
+      "matched_H_hypothesis": "specified_frame",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          4.1814e-26,
+          5.3924e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 2.9794e-26,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 4.1814e-26,
+            "delta_energy_percent": 5.3924e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "fabd716ed2504f823fdb9631db62c8355b6b4f20d63f22c69716fad04fefe2b4",
+      "native_validation": 1
+    }
+  ],
+  "failures": [
+    {
+      "case_id": "simple_global_shift",
+      "error": "Native solve failed"
+    },
+    {
+      "case_id": "simple_object_shift",
+      "error": "Native solve failed"
+    },
+    {
+      "case_id": "simple_relative_shift",
+      "error": "Native solve failed"
+    }
+  ],
+  "skipped": [
+    {
+      "case_id": "scalar_RD_full_boundary",
+      "reason": "Analytic full-boundary baseline gate failed"
+    },
+    {
+      "case_id": "tensor_RD_full_boundary",
+      "reason": "Analytic full-boundary baseline gate failed"
+    }
+  ],
+  "new_field_solves": 1,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 18,
+  "cumulative_motor_solves": 4,
+  "cumulative_MuMax_success": 680,
+  "calibrated_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false
+}

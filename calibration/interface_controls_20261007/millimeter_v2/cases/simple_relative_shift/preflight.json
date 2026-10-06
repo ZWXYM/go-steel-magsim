@@ -1,0 +1,77 @@
+{
+  "validation": 1,
+  "boundary_edges": [
+    9,
+    8,
+    7,
+    10
+  ],
+  "boundary_expression": "0.025132741228718343tesla*(Y - (-0.0086499468570157695meter))",
+  "native_CS": {
+    "Type": "Relative",
+    "Name": "ProbeCS",
+    "Reference CS": "Global",
+    "Reference CS/Choices": "Global",
+    "Mode": "Axis/Position",
+    "Mode/Choices": [
+      "Axis/Position",
+      "Euler Angle ZYZ",
+      "Euler Angle ZXZ"
+    ],
+    "Origin": [
+      "X:=",
+      "-31.4054484623454mm",
+      "Y:=",
+      "1.35005314298423mm",
+      "Z:=",
+      "0mm"
+    ],
+    "Origin/X": "-31.4054484623454mm",
+    "Origin/Y": "1.35005314298423mm",
+    "Origin/Z": "0mm",
+    "X Axis": [
+      "X:=",
+      "-1mm",
+      "Y:=",
+      "0mm",
+      "Z:=",
+      "0mm"
+    ],
+    "X Axis/X": "-1mm",
+    "X Axis/Y": "0mm",
+    "X Axis/Z": "0mm",
+    "Y Point": [
+      "X:=",
+      "0mm",
+      "Y:=",
+      "-1mm",
+      "Z:=",
+      "0mm"
+    ],
+    "Y Point/X": "0mm",
+    "Y Point/Y": "-1mm",
+    "Y Point/Z": "0mm"
+  },
+  "native_orientation": "ProbeCS",
+  "setup_properties": {
+    "Enabled": true,
+    "MeshLink": {
+      "ImportMesh": false
+    },
+    "MaximumPasses": 6,
+    "MinimumPasses": 2,
+    "MinimumConvergedPasses": 1,
+    "PercentRefinement": 30,
+    "SolveFieldOnly": false,
+    "PercentError": 0.1,
+    "SolveMatrixAtLast": true,
+    "UseIterativeSolver": false,
+    "RelativeResidual": 1e-08,
+    "NonLinearResidual": 1e-06,
+    "SmoothBHCurve": false,
+    "MuOption": {
+      "MuNonLinearBH": true
+    },
+    "Name": "ControlSetup"
+  }
+}

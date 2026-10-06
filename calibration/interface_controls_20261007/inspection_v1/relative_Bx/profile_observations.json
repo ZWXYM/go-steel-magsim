@@ -1,0 +1,8 @@
+{
+  "original_profile_sha256": "457d71046f6a10686e27ccc2999ab9f7e39d23be96fcf5ebea7018d48169daa7",
+  "profile_kept_private": true,
+  "matrix_calls_per_pass": [],
+  "adaptive_passes_converged": true,
+  "adaptive_passes_did_not_converge": false,
+  "normal_completion": true
+}

@@ -1,0 +1,9 @@
+{
+  "readonly_inspections": 3,
+  "new_field_solves": 0,
+  "all_dedicated_sessions_released": true,
+  "all_original_files_unchanged": true,
+  "H_and_H_Vector_do_not_resolve_energy_discrepancy": true,
+  "nonlinear_iteration_cap_independently_identified": false,
+  "motor_ranking_eligible": false
+}

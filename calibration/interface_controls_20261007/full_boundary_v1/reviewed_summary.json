@@ -1,0 +1,133 @@
+{
+  "protocol": "full_boundary_interface_controls_v1",
+  "mode": "meter_geometry",
+  "cases": [
+    {
+      "case_id": "simple_global_origin",
+      "mean_B_vector_T": [
+        0.025132742337082067,
+        5.591444630055961e-10,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.0,
+        1.3212082904994963e-14,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "specified_frame": 1.5972043750479027e-13
+      },
+      "matched_H_hypothesis": "specified_frame",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          4.1814e-26,
+          5.3924e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 2.9794e-26,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 4.1814e-26,
+            "delta_energy_percent": 5.3924e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": true,
+        "relative_tolerance": 0.0001,
+        "native_total_energy_J": 0.00010053,
+        "sampled_half_B_dot_H_energy_J": 0.00010053096934832826,
+        "field_energy_relative_error": 9.642378675651349e-06,
+        "expected_energy_J": {
+          "specified_frame": 0.00010053096491487337
+        },
+        "energy_hypothesis_relative_errors": {
+          "specified_frame": 9.598277861051471e-06
+        },
+        "matched_energy_hypothesis": "specified_frame",
+        "field_energy_consistent": true,
+        "H_and_energy_hypotheses_agree": true,
+        "interface_response_verified": true,
+        "calibrated_material_field_verified": false,
+        "motor_ranking_eligible": false
+      },
+      "producer_pass_is_direction_certification": false
+    }
+  ],
+  "incomplete_cases": [
+    {
+      "case_id": "simple_global_shift",
+      "status": "native_failed",
+      "error": "Native solve failed",
+      "TAU_mesh_failure": true,
+      "native_validation": 1,
+      "saved_project_sha256": "f0971de0beea2c2867403650bdbf8389f1007ef28b7855fd34873f1fc1695361"
+    },
+    {
+      "case_id": "simple_object_shift",
+      "status": "native_failed",
+      "error": "Native solve failed",
+      "TAU_mesh_failure": true,
+      "native_validation": 1,
+      "saved_project_sha256": "c8f02fbf73186086cf35b942904bd53e04a151af543f95680bb450662421f67d"
+    },
+    {
+      "case_id": "simple_relative_shift",
+      "status": "native_failed",
+      "error": "Native solve failed",
+      "TAU_mesh_failure": true,
+      "native_validation": 1,
+      "saved_project_sha256": "fb5ebeed8ce0add4a904042f2a82c2193daa79b2c3bb73e0037157cc12020d50"
+    },
+    {
+      "case_id": "scalar_RD_full_boundary",
+      "reason": "Analytic full-boundary baseline gate failed",
+      "status": "skipped_not_executed"
+    },
+    {
+      "case_id": "tensor_RD_full_boundary",
+      "reason": "Analytic full-boundary baseline gate failed",
+      "status": "skipped_not_executed"
+    }
+  ],
+  "new_field_solves": 1,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 18,
+  "original_producer_pass_count": 1,
+  "linear_field_and_energy_pass_count": 1,
+  "old_source_files_unchanged": 1277,
+  "dedicated_sessions_released": 4,
+  "calibrated_material_field_verified": false,
+  "object_CS_direction_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "interpretation": "Original producer results retained. Linear energy is an additional veto; nonlinear and real-material gates remain unmet."
+}

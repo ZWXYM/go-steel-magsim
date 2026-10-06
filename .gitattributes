@@ -56,3 +56,8 @@ tools/run_nonlinear_field_probe.py -text
 
 tools/audit_nonlinear_field_probe.py -text
 calibration/nonlinear_field_20261007/** -text
+modules/maxwell_interface_controls.py -text
+tools/run_maxwell_interface_controls.py -text
+tools/audit_maxwell_interface_controls.py -text
+tools/inspect_maxwell_interface_results.py -text
+calibration/interface_controls_20261007/** -text

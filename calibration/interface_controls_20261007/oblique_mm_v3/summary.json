@@ -1,0 +1,262 @@
+{
+  "protocol": "full_boundary_interface_controls_v3",
+  "cases": [
+    {
+      "case_id": "oblique_object_Bx",
+      "mean_B_vector_T": [
+        0.02513274107564094,
+        5.917321480338238e-10,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.000000001085375,
+        4.585685600561946e-13,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "absolute_point": 0.8962011346832852,
+        "direction_vector": 0.8993330039762617,
+        "direction_vector_x_primary_legacy": 0.8760321266784998,
+        "global_orientation_ignored": 4.884180336534253e-10
+      },
+      "matched_H_hypothesis": "global_orientation_ignored",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          1.2215e-26,
+          1.1354e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00023873,
+            "energy_error_percent": 5.8632e-27,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00023873,
+            "energy_error_percent": 1.2215e-26,
+            "delta_energy_percent": 1.1354e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "f35ee39c64418afb964fd49d515efef9d4955352618b89db69768e759588dfb0",
+      "native_validation": 1
+    },
+    {
+      "case_id": "oblique_relative_Bx",
+      "mean_B_vector_T": [
+        0.025132741075640928,
+        5.91732148033824e-10,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.000000001085375,
+        -3.955099133646424e-13,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "specified_frame": 0.896201134683273
+      },
+      "matched_H_hypothesis": null,
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": false,
+        "adaptive_converged": true
+      },
+      "passed": false,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          1.5377e-27,
+          7.3541e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00058972,
+            "energy_error_percent": 7.8054e-28,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00058972,
+            "energy_error_percent": 1.5377e-27,
+            "delta_energy_percent": 7.3541e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "97189271a28089a5cf2f31010d93c9b8c9badb363d5fcef42a5827533b919d54",
+      "native_validation": 1
+    },
+    {
+      "case_id": "oblique_object_By",
+      "mean_B_vector_T": [
+        -8.567787726500386e-09,
+        0.025132741230812747,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        2.297161472756914e-13,
+        200.00000001085374,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "absolute_point": 0.9707390925803102,
+        "direction_vector": 2.261433073698478,
+        "direction_vector_x_primary_legacy": 0.38179589301427186,
+        "global_orientation_ignored": 4.884181237231347e-10
+      },
+      "matched_H_hypothesis": "global_orientation_ignored",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          9.874e-28,
+          0.0
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00086711,
+            "energy_error_percent": 4.4928e-28,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00086711,
+            "energy_error_percent": 9.874e-28,
+            "delta_energy_percent": 0.0
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "d086f1fccf4cd16f1634de90eaf7dc588bf03c5ee8077c3544567c1735827485",
+      "native_validation": 1
+    },
+    {
+      "case_id": "oblique_object_isotropic_Bx",
+      "mean_B_vector_T": [
+        0.02513274498232237,
+        4.684172682801004e-09,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.000000001085375,
+        -1.1558982895900904e-14,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "isotropic_response": 4.884180172926841e-10
+      },
+      "matched_H_hypothesis": "isotropic_response",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          1.3672e-27,
+          9.4367e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 5.458e-28,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00010053,
+            "energy_error_percent": 1.3672e-27,
+            "delta_energy_percent": 9.4367e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "saved_project_sha256": "ee4a746271a02e8eab02ff6f32846ee4e1d1ad232381b272bff110a4303a8b96",
+      "native_validation": 1
+    }
+  ],
+  "failures": [],
+  "skipped": [],
+  "new_field_solves": 4,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 28,
+  "cumulative_motor_solves": 4,
+  "cumulative_MuMax_success": 680,
+  "calibrated_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false
+}

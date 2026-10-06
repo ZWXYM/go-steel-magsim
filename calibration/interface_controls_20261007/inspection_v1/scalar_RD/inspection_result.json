@@ -1,0 +1,54 @@
+{
+  "profile_export": true,
+  "field_exports": {
+    "H": true,
+    "H_Vector": true,
+    "Energy": true,
+    "coEnergy": true,
+    "B_dot_H_half": true
+  },
+  "setup_props": {
+    "ID": 0,
+    "SetupType": "Magnetostatic",
+    "Enabled": true,
+    "MeshLink": {
+      "ImportMesh": false
+    },
+    "MaximumPasses": 6,
+    "MinimumPasses": 2,
+    "MinimumConvergedPasses": 1,
+    "PercentRefinement": 30,
+    "SolveFieldOnly": false,
+    "PercentError": 0.1,
+    "SolveMatrixAtLast": true,
+    "UseNonLinearIterNum": false,
+    "NonLinearResidual": 1e-06,
+    "RelaxationFactor": 1,
+    "SmoothBHCurve": false,
+    "MuOption": {
+      "MuNonLinearBH": true
+    }
+  },
+  "setup_native_properties": {
+    "Name": "ControlSetup",
+    "Enabled": true,
+    "Max. Number of Passes": "6",
+    "Percent Error": "0.1",
+    "Percent Refine": "30",
+    "Min. Number of Passes": "2",
+    "Min. Converged Passes": "1",
+    "Relaxation Factor": "1",
+    "Nonlinear Solver Residual": "1e-06",
+    "Smooth BH Curve": false,
+    "Use Nonlinear Iteration": false
+  },
+  "native_messages": [
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [error]  Script macro error: Abnormal script termination. (02:28:53 AM  Oct 07, 2026)",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [error]  Script macro error: Abnormal script termination. (02:28:53 AM  Oct 07, 2026)"
+  ],
+  "original_H_sha256": "057b3ff5cd56c55dade5a64796dfe01060a77926dc458604d6eb62fc8dd305a0",
+  "cloned_H_same_bytes": true,
+  "case_id": "scalar_RD_full_boundary",
+  "new_field_solves": 0,
+  "original_source_unchanged_files": 54
+}

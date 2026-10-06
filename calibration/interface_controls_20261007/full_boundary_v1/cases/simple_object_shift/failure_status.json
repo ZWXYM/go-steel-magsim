@@ -1,0 +1,8 @@
+{
+  "case_id": "simple_object_shift",
+  "status": "native_failed",
+  "error": "Native solve failed",
+  "TAU_mesh_failure": true,
+  "native_validation": 1,
+  "saved_project_sha256": "c8f02fbf73186086cf35b942904bd53e04a151af543f95680bb450662421f67d"
+}

@@ -1,0 +1,33 @@
+{
+  "validation": 1,
+  "boundary_edges": [
+    9,
+    8,
+    7,
+    10
+  ],
+  "boundary_expression": "0.025132741228718343tesla*(Y - (-0.0086499468570157695meter))",
+  "native_CS": {},
+  "native_orientation": "Global",
+  "setup_properties": {
+    "Enabled": true,
+    "MeshLink": {
+      "ImportMesh": false
+    },
+    "MaximumPasses": 6,
+    "MinimumPasses": 2,
+    "MinimumConvergedPasses": 1,
+    "PercentRefinement": 30,
+    "SolveFieldOnly": false,
+    "PercentError": 0.1,
+    "SolveMatrixAtLast": true,
+    "UseIterativeSolver": false,
+    "RelativeResidual": 1e-08,
+    "NonLinearResidual": 1e-06,
+    "SmoothBHCurve": false,
+    "MuOption": {
+      "MuNonLinearBH": true
+    },
+    "Name": "ControlSetup"
+  }
+}

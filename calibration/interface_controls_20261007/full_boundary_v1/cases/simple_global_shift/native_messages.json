@@ -1,0 +1,13 @@
+{
+  "design": [
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [error]  TAU: Surface Mesh Generation Failed. (02:10:16 AM  Oct 07, 2026)",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [error]  Simulation completed with execution error on server: Local Machine. (02:10:17 AM  Oct 07, 2026)",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [error]  Script macro error: Simulation for control : UniformFlux : ControlSetup has failed with execution error.  (02:10:17 AM  Oct 07, 2026)"
+  ],
+  "global": [
+    "Project: *Global - Messages, [info]  GRPC server running on port: 6906.\n",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [error]  TAU: Surface Mesh Generation Failed. (02:10:16 AM  Oct 07, 2026)",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [error]  Simulation completed with execution error on server: Local Machine. (02:10:17 AM  Oct 07, 2026)",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [error]  Script macro error: Simulation for control : UniformFlux : ControlSetup has failed with execution error.  (02:10:17 AM  Oct 07, 2026)"
+  ]
+}
