@@ -1,0 +1,11 @@
+{
+  "design": [
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [warning]  Adaptive Passes did not converge based on specified criteria. (02:45:11 AM  Oct 07, 2026)",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [info]  Normal completion of simulation on server: Local Machine. (02:45:12 AM  Oct 07, 2026)"
+  ],
+  "global": [
+    "Project: *Global - Messages, [info]  GRPC server running on port: 2565.\n",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [warning]  Adaptive Passes did not converge based on specified criteria. (02:45:11 AM  Oct 07, 2026)",
+    "Project: control, Design: UniformFlux (Magnetostatic, XY), [info]  Normal completion of simulation on server: Local Machine. (02:45:12 AM  Oct 07, 2026)"
+  ]
+}

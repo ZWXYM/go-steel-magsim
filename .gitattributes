@@ -61,3 +61,5 @@ tools/run_maxwell_interface_controls.py -text
 tools/audit_maxwell_interface_controls.py -text
 tools/inspect_maxwell_interface_results.py -text
 calibration/interface_controls_20261007/** -text
+modules/calibration_domain.py -text
+calibration/axis_and_support_20261007/** -text

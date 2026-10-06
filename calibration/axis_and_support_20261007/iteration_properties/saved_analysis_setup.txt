@@ -1,0 +1,29 @@
+
+			$begin 'SolveSetups'
+				NextUniqueID=1
+				MoveBackwards=false
+				$begin 'ControlSetup'
+					ID=0
+					SetupType='Magnetostatic'
+					Enabled=true
+					$begin 'MeshLink'
+						ImportMesh=false
+					$end 'MeshLink'
+					MaximumPasses=6
+					MinimumPasses=2
+					MinimumConvergedPasses=1
+					PercentRefinement=30
+					SolveFieldOnly=false
+					PercentError=0.1
+					SolveMatrixAtLast=true
+					UseNonLinearIterNum=true
+					MinIterNum=1
+					MaxIterNum=100
+					NonLinearResidual=1e-06
+					RelaxationFactor=1
+					SmoothBHCurve=false
+					$begin 'MuOption'
+						MuNonLinearBH=true
+					$end 'MuOption'
+				$end 'ControlSetup'
+			$end 'SolveSetups'

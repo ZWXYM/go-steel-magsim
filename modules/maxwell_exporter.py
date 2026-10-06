@@ -349,6 +349,10 @@ def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
         'excluded_grades': rd['excluded_grades'], 'exported_directions': ['RD', 'TD'],
         'ND_status': 'scalar_prior_1000_not_measured',
         'outside_feature_box': rd['outside_feature_box'] or td['outside_feature_box']}
+    if rd.get('parameter_support')!=td.get('parameter_support'):
+        raise ValueError('RD/TD parameter-support provenance differs')
+    if rd.get('parameter_support') is not None:
+        metadata['parameter_support']=rd['parameter_support']
     metadata.update(native_quality=quality,native_quality_status=quality['status'],
         native_quality_contract_version=quality['contract_version'],native_quality_sha256=quality['quality_sha256'],
         calibration_native_quality_sha256=rd.get('calibration_native_quality_sha256','legacy_unassessed'),

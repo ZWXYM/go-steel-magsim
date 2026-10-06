@@ -20,6 +20,7 @@ from modules.calibration_transfer import (VERSION as TRANSFER_VERSION, TransferB
     load_bank, nested_validation, protocol, digest, select_candidate)
 from modules.maxwell_exporter import export_calibrated_pair
 from modules.native_quality import audit_pilot, unassessed_quality
+from modules.calibration_domain import bank_parameter_support
 from tools.analyze_sampling_convergence import read_ensemble
 from tools.run_calibration_pilot import H_GRID, metrics,write_json,write_csv
 
@@ -291,6 +292,7 @@ class CalibrationWorkbench:
         if not np.isfinite(thickness) or thickness<=0:
             raise ValueError('厚度必须为有限正值')
         result={}
+        parameter_support=bank_parameter_support(bank,pair['params'])
         for d in ('RD','TD'):
             h,b=validated_curve(pair[d]['H'],pair[d]['B'])
             if not np.all(np.isfinite(b)):
@@ -298,6 +300,7 @@ class CalibrationWorkbench:
             result[d]=bank.correct(h,b,pair['params'],direction=d,texture_sampling_version=bank.texture_sampling_version)
             result[d]['native_quality']=pair['native_quality']
             result[d]['calibration_native_quality_sha256']=calibration_report.get('native_quality_sha256','legacy_unassessed')
+            result[d]['parameter_support']=parameter_support
         pred_id='pred_'+uuid.uuid4().hex[:12]
         out=directory/pred_id
         out.mkdir()
@@ -309,6 +312,7 @@ class CalibrationWorkbench:
             params=pair['params'],AMAT_file=Path(path).name,loss_status='uncalibrated_BH_only',
             source_input_sha256=file_hash(out/'input_raw_pair.json'),native_quality=pair['native_quality'],
             strict_training_eligible=False)
+        result['parameter_support']=parameter_support
         write_json(out/'prediction.json',result)
         write_csv(out/'curves.csv',(dict(direction=d,H_A_per_m=h,B_raw_T=raw,B_corrected_T=b)
             for d in ('RD','TD') for h,raw,b in zip(result[d]['H'],result[d]['B_raw'],result[d]['B'])))

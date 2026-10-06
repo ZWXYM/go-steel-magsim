@@ -1,0 +1,84 @@
+{
+  "case_id": "normalized_relative_Bxy",
+  "mean_B_vector_T": [
+    0.0177715246727016,
+    0.01777153168378342,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    14.14213562088466,
+    141.42135620884662,
+    0.0
+  ],
+  "hypothesis_relative_errors": {
+    "desired_direction": 6.13382414082971,
+    "global_orientation_ignored": 2.5553167088628395e-10
+  },
+  "matched_H_hypothesis": "global_orientation_ignored",
+  "checks": {
+    "B_vector": true,
+    "H_uniform": true,
+    "unique_H_hypothesis": true,
+    "adaptive_converged": true
+  },
+  "passed": true,
+  "native_convergence": {
+    "completed_passes": 2,
+    "maximum_passes": 6,
+    "minimum_passes": 2,
+    "targets_percent": [
+      0.1,
+      0.1
+    ],
+    "final_percent": [
+      1.5231e-26,
+      1.1955e-13
+    ],
+    "passes": [
+      {
+        "pass_number": 1,
+        "triangles": 360,
+        "energy_J": 0.00010203,
+        "energy_error_percent": 8.4489e-27,
+        "delta_energy_percent": null
+      },
+      {
+        "pass_number": 2,
+        "triangles": 468,
+        "energy_J": 0.00010203,
+        "energy_error_percent": 1.5231e-26,
+        "delta_energy_percent": 1.1955e-13
+      }
+    ],
+    "adaptive_converged": true,
+    "reached_maximum_passes": false
+  },
+  "calibrated_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "energy_review": {
+    "applicable": true,
+    "relative_tolerance": 0.0001,
+    "native_total_energy_J": 0.00010203,
+    "sampled_half_B_dot_H_energy_J": 0.0005529202849480765,
+    "field_energy_relative_error": 4.419193226973208,
+    "expected_energy_J": {
+      "desired_direction": 0.00010202977098687754,
+      "global_orientation_ignored": 0.0005529203070318036
+    },
+    "energy_hypothesis_relative_errors": {
+      "desired_direction": 2.2445665241379234e-06,
+      "global_orientation_ignored": 4.419193443416677
+    },
+    "matched_energy_hypothesis": "desired_direction",
+    "field_energy_consistent": false,
+    "H_and_energy_hypotheses_agree": false,
+    "interface_response_verified": false,
+    "calibrated_material_field_verified": false,
+    "motor_ranking_eligible": false
+  },
+  "energy_direction_matches_desired": true,
+  "direction_certified": false,
+  "saved_project_sha256": "396803c352f43b844b81a2eeb933e67d2fbdccfa9906a89fb20eef24d642c31a",
+  "native_validation": 1
+}

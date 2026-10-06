@@ -1,0 +1,38 @@
+[
+  {
+    "grade": "B23R075",
+    "params": {
+      "f_Goss": 0.91,
+      "theta_0_deg": 3.0,
+      "halfwidth_deg": 5.0,
+      "Si_content": 3.1
+    }
+  },
+  {
+    "grade": "B27R090",
+    "params": {
+      "f_Goss": 0.87,
+      "theta_0_deg": 4.0,
+      "halfwidth_deg": 6.0,
+      "Si_content": 3.1
+    }
+  },
+  {
+    "grade": "B27R095",
+    "params": {
+      "f_Goss": 0.84,
+      "theta_0_deg": 5.0,
+      "halfwidth_deg": 7.0,
+      "Si_content": 3.1
+    }
+  },
+  {
+    "grade": "B30P105",
+    "params": {
+      "f_Goss": 0.79,
+      "theta_0_deg": 6.0,
+      "halfwidth_deg": 8.0,
+      "Si_content": 3.0
+    }
+  }
+]

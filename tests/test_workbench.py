@@ -53,6 +53,11 @@ class Workbench(unittest.TestCase):
             pair=json.loads((manager.pilot/'B30P105/raw_pair.json').read_text())
             result=manager.predict(report['id'],pair)
             self.assertTrue((manager.get(report['id'])/result['id']/result['AMAT_file']).exists())
+            self.assertTrue(result['parameter_support']['inside_joint_parameter_support'])
+            self.assertIn('B30P105',result['parameter_support']['matched_anchor_grades'])
+            metadata=json.loads((manager.get(report['id'])/result['id']/result['AMAT_file']).with_suffix('.metadata.json').read_text())
+            self.assertEqual(metadata['parameter_support'],result['parameter_support'])
+            self.assertFalse(metadata['parameter_support']['independent_material_accuracy_verified'])
             changed={**pair,'simulation_physics_version':'legacy_uniaxial'}
             with self.assertRaisesRegex(ValueError,'物理版本'):
                 manager.predict(report['id'],changed)

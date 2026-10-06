@@ -1,0 +1,8 @@
+{
+  "maximum_new_solves": 0,
+  "source_project_sha256": "30f5ba43a34139545c021bf244ba688d4bcdf349761cbccba47eb0e2fd3b9daa",
+  "source_project": "calibration/diagnostics/interface_controls_20261007/millimeter_v2/private_native/scalar_RD_full_boundary/control.aedt",
+  "producer_sha256": "2e4fe0108c0ff2910c0bc36542f139b896e8c4a853ba654a1840a5a2f2d8fa79",
+  "maximum_native_sessions": 1,
+  "scope": "Prepare-only cloned configuration; no analyze call"
+}

@@ -1,0 +1,204 @@
+{
+  "protocol": "full_boundary_interface_controls_v5",
+  "mode": "explicit_iterations_millimeter",
+  "cases": [
+    {
+      "case_id": "scalar_RD_iterations100",
+      "mean_B_vector_T": [
+        1.5080567261114763,
+        -0.002985694599541628,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        26.123367028046676,
+        -0.05119613492383913,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "source_RD_knot": 0.3222860870889981
+      },
+      "matched_H_hypothesis": null,
+      "checks": {
+        "B_vector": false,
+        "H_uniform": false,
+        "unique_H_hypothesis": false,
+        "adaptive_converged": false
+      },
+      "passed": false,
+      "native_convergence": {
+        "completed_passes": 6,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          3.737,
+          56.755
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.031707,
+            "energy_error_percent": 38.155,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.015003,
+            "energy_error_percent": 32.085,
+            "delta_energy_percent": 52.681
+          },
+          {
+            "pass_number": 3,
+            "triangles": 609,
+            "energy_J": 0.029563,
+            "energy_error_percent": 55.327,
+            "delta_energy_percent": 97.042
+          },
+          {
+            "pass_number": 4,
+            "triangles": 792,
+            "energy_J": 0.029179,
+            "energy_error_percent": 28.906,
+            "delta_energy_percent": 1.2987
+          },
+          {
+            "pass_number": 5,
+            "triangles": 1030,
+            "energy_J": 0.015847,
+            "energy_error_percent": 41.283,
+            "delta_energy_percent": 45.69
+          },
+          {
+            "pass_number": 6,
+            "triangles": 1340,
+            "energy_J": 0.024841,
+            "energy_error_percent": 3.737,
+            "delta_energy_percent": 56.755
+          }
+        ],
+        "adaptive_converged": false,
+        "reached_maximum_passes": true
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": false,
+        "reason": "Nonlinear energy needs constitutive integration",
+        "interface_response_verified": false
+      },
+      "producer_pass_is_direction_certification": false
+    },
+    {
+      "case_id": "tensor_RD_iterations100",
+      "mean_B_vector_T": [
+        1.514291683637139,
+        0.0006355836551876678,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        26.329795730850144,
+        0.1792125378069922,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "source_RD_knot": 0.3195329403436681
+      },
+      "matched_H_hypothesis": null,
+      "checks": {
+        "B_vector": false,
+        "H_uniform": false,
+        "unique_H_hypothesis": false,
+        "adaptive_converged": false
+      },
+      "passed": false,
+      "native_convergence": {
+        "completed_passes": 6,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          0.070558,
+          3.1786
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.0080276,
+            "energy_error_percent": 0.20694,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.0080246,
+            "energy_error_percent": 1.074,
+            "delta_energy_percent": 0.037439
+          },
+          {
+            "pass_number": 3,
+            "triangles": 609,
+            "energy_J": 0.0080158,
+            "energy_error_percent": 0.027728,
+            "delta_energy_percent": 0.11003
+          },
+          {
+            "pass_number": 4,
+            "triangles": 793,
+            "energy_J": 0.0082993,
+            "energy_error_percent": 5.3553,
+            "delta_energy_percent": 3.5376
+          },
+          {
+            "pass_number": 5,
+            "triangles": 1031,
+            "energy_J": 0.0082819,
+            "energy_error_percent": 1.3712,
+            "delta_energy_percent": 0.21004
+          },
+          {
+            "pass_number": 6,
+            "triangles": 1342,
+            "energy_J": 0.0080186,
+            "energy_error_percent": 0.070558,
+            "delta_energy_percent": 3.1786
+          }
+        ],
+        "adaptive_converged": false,
+        "reached_maximum_passes": true
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": false,
+        "reason": "Nonlinear energy needs constitutive integration",
+        "interface_response_verified": false
+      },
+      "producer_pass_is_direction_certification": false
+    }
+  ],
+  "incomplete_cases": [],
+  "new_field_solves": 2,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 34,
+  "original_producer_pass_count": 0,
+  "linear_field_and_energy_pass_count": 0,
+  "old_source_files_unchanged": 1281,
+  "dedicated_sessions_released": 2,
+  "calibrated_material_field_verified": false,
+  "object_CS_direction_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "interpretation": "Original producer results retained. Linear energy is an additional veto; nonlinear and real-material gates remain unmet."
+}

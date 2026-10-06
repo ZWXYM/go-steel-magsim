@@ -1,0 +1,88 @@
+{
+  "case_id": "tensor_RD_iterations100",
+  "mean_B_vector_T": [
+    1.514291683637139,
+    0.0006355836551876678,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    26.329795730850144,
+    0.1792125378069922,
+    0.0
+  ],
+  "hypothesis_relative_errors": {
+    "source_RD_knot": 0.3195329403436681
+  },
+  "matched_H_hypothesis": null,
+  "checks": {
+    "B_vector": false,
+    "H_uniform": false,
+    "unique_H_hypothesis": false,
+    "adaptive_converged": false
+  },
+  "passed": false,
+  "native_convergence": {
+    "completed_passes": 6,
+    "maximum_passes": 6,
+    "minimum_passes": 2,
+    "targets_percent": [
+      0.1,
+      0.1
+    ],
+    "final_percent": [
+      0.070558,
+      3.1786
+    ],
+    "passes": [
+      {
+        "pass_number": 1,
+        "triangles": 360,
+        "energy_J": 0.0080276,
+        "energy_error_percent": 0.20694,
+        "delta_energy_percent": null
+      },
+      {
+        "pass_number": 2,
+        "triangles": 468,
+        "energy_J": 0.0080246,
+        "energy_error_percent": 1.074,
+        "delta_energy_percent": 0.037439
+      },
+      {
+        "pass_number": 3,
+        "triangles": 609,
+        "energy_J": 0.0080158,
+        "energy_error_percent": 0.027728,
+        "delta_energy_percent": 0.11003
+      },
+      {
+        "pass_number": 4,
+        "triangles": 793,
+        "energy_J": 0.0082993,
+        "energy_error_percent": 5.3553,
+        "delta_energy_percent": 3.5376
+      },
+      {
+        "pass_number": 5,
+        "triangles": 1031,
+        "energy_J": 0.0082819,
+        "energy_error_percent": 1.3712,
+        "delta_energy_percent": 0.21004
+      },
+      {
+        "pass_number": 6,
+        "triangles": 1342,
+        "energy_J": 0.0080186,
+        "energy_error_percent": 0.070558,
+        "delta_energy_percent": 3.1786
+      }
+    ],
+    "adaptive_converged": false,
+    "reached_maximum_passes": true
+  },
+  "calibrated_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "saved_project_sha256": "39c5de127b935acae09d5e39b6c5385f918c4ffb7168682f5b9be1e3a201abec",
+  "native_validation": 1
+}

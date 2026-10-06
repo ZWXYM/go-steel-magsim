@@ -1,0 +1,32 @@
+{
+  "before": {
+    "Name": "ControlSetup",
+    "Enabled": true,
+    "Max. Number of Passes": "6",
+    "Percent Error": "0.1",
+    "Percent Refine": "30",
+    "Min. Number of Passes": "2",
+    "Min. Converged Passes": "1",
+    "Relaxation Factor": "1",
+    "Nonlinear Solver Residual": "1e-06",
+    "Smooth BH Curve": false,
+    "Use Nonlinear Iteration": false
+  },
+  "after": {
+    "Name": "ControlSetup",
+    "Enabled": true,
+    "Max. Number of Passes": "6",
+    "Percent Error": "0.1",
+    "Percent Refine": "30",
+    "Min. Number of Passes": "2",
+    "Min. Converged Passes": "1",
+    "Relaxation Factor": "1",
+    "Nonlinear Solver Residual": "1e-06",
+    "Smooth BH Curve": false,
+    "Use Nonlinear Iteration": true
+  },
+  "saved_project_sha256": "4bef079384da88a4ff64d87983477f2ff1a1fa1df7c24d40ad5a8ab2fb7beaf8",
+  "native_validation": 1,
+  "new_field_solves": 0,
+  "native_messages": []
+}

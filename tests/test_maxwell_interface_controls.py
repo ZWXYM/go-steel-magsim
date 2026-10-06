@@ -91,5 +91,30 @@ class InterfaceControls(unittest.TestCase):
         result=review_energy(case,None,None,{})
         self.assertFalse(result['applicable']);self.assertFalse(result['interface_response_verified'])
 
+    def test_explicit_vectors_keep_origin_and_freeze_diagonal_cross_term(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source=load_contract(fixture(tmp));record=CS();before=repr(record)
+            protocol=make_protocol(source,record,'axis_vectors_millimeter')
+            self.assertEqual(repr(record),before)
+            self.assertEqual(protocol['maximum_solve_attempts'],4)
+            for c in protocol['cases']:
+                self.assertEqual(c['original_geometry_CS_record'],record)
+                if c['CS_kind']=='object':
+                    self.assertEqual(c['object_CS']['origin_m'],record['origin_m'])
+                    R=cs_frame(c['object_CS'],'direction_vector_x_primary_legacy')
+                    np.testing.assert_allclose(R,c['desired_frame_global'],atol=1e-12)
+            c=protocol['cases'][2]
+            self.assertEqual(c['target_B_vector_T'][0],c['target_B_vector_T'][1])
+
+    def test_native_discovered_iteration_keys_freeze_two_unchanged_curve_controls(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source=load_contract(fixture(tmp));source['curves']['RD']={'H':[0.,20.,100.],'B':[0.,1.5,1.9]}
+            protocol=make_protocol(source,CS(),'explicit_iterations_millimeter')
+            self.assertEqual(protocol['maximum_solve_attempts'],2)
+            self.assertEqual(protocol['nonlinear_requires_passed'],[])
+            for c in protocol['cases']:
+                self.assertTrue(c['setup']['UseNonLinearIterNum']);self.assertEqual(c['setup']['MaxIterNum'],100)
+                self.assertEqual(c['material']['curves'],source['curves'])
+
 
 if __name__=='__main__':unittest.main()

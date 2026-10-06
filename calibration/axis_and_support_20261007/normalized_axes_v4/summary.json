@@ -1,0 +1,352 @@
+{
+  "protocol": "full_boundary_interface_controls_v4",
+  "cases": [
+    {
+      "case_id": "normalized_object_Bx",
+      "mean_B_vector_T": [
+        0.025132741075640928,
+        5.91732148033824e-10,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.000000001085375,
+        -3.955099133646424e-13,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "desired_direction": 0.896201134683273,
+        "global_orientation_ignored": 4.884180224166522e-10
+      },
+      "matched_H_hypothesis": "global_orientation_ignored",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          1.5377e-27,
+          7.3541e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00058972,
+            "energy_error_percent": 7.8054e-28,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.00058972,
+            "energy_error_percent": 1.5377e-27,
+            "delta_energy_percent": 7.3541e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": true,
+        "relative_tolerance": 0.0001,
+        "native_total_energy_J": 0.00058972,
+        "sampled_half_B_dot_H_energy_J": 0.00010053096430801938,
+        "field_energy_relative_error": 0.8295276329308495,
+        "expected_energy_J": {
+          "desired_direction": 0.0005897148904118084,
+          "global_orientation_ignored": 0.00010053096491487337
+        },
+        "energy_hypothesis_relative_errors": {
+          "desired_direction": 8.664430902077668e-06,
+          "global_orientation_ignored": 0.829527631901795
+        },
+        "matched_energy_hypothesis": "desired_direction",
+        "field_energy_consistent": false,
+        "H_and_energy_hypotheses_agree": false,
+        "interface_response_verified": false,
+        "calibrated_material_field_verified": false,
+        "motor_ranking_eligible": false
+      },
+      "energy_direction_matches_desired": true,
+      "direction_certified": false,
+      "saved_project_sha256": "3c577b010faf79174ee925d74dea7b8efddf5ca5868ee18b94aa979bde50dab1",
+      "native_validation": 1
+    },
+    {
+      "case_id": "normalized_object_By",
+      "mean_B_vector_T": [
+        -6.192963352861831e-09,
+        0.02513274533482212,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        1.1147065847928621e-13,
+        200.00000001085374,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "desired_direction": 0.9707390925803098,
+        "global_orientation_ignored": 4.884181237230223e-10
+      },
+      "matched_H_hypothesis": "global_orientation_ignored",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          2.1357e-27,
+          1.2604e-13
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00051613,
+            "energy_error_percent": 1.201e-27,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 470,
+            "energy_J": 0.00051613,
+            "energy_error_percent": 2.1357e-27,
+            "delta_energy_percent": 1.2604e-13
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": true,
+        "relative_tolerance": 0.0001,
+        "native_total_energy_J": 0.00051613,
+        "sampled_half_B_dot_H_energy_J": 0.0010053098134474418,
+        "field_energy_relative_error": 0.9477841114592097,
+        "expected_energy_J": {
+          "desired_direction": 0.0005161257236517986,
+          "global_orientation_ignored": 0.0010053096491487337
+        },
+        "energy_hypothesis_relative_errors": {
+          "desired_direction": 8.285409104934522e-06,
+          "global_orientation_ignored": 0.9477837931310596
+        },
+        "matched_energy_hypothesis": "desired_direction",
+        "field_energy_consistent": false,
+        "H_and_energy_hypotheses_agree": false,
+        "interface_response_verified": false,
+        "calibrated_material_field_verified": false,
+        "motor_ranking_eligible": false
+      },
+      "energy_direction_matches_desired": true,
+      "direction_certified": false,
+      "saved_project_sha256": "0264c28ff5abc38795671a0e643d133706193c7ba88163c6a020ff1b481fbe0f",
+      "native_validation": 1
+    },
+    {
+      "case_id": "normalized_object_Bxy",
+      "mean_B_vector_T": [
+        0.0177715246727016,
+        0.01777153168378342,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        14.14213562088466,
+        141.42135620884662,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "desired_direction": 6.13382414082971,
+        "global_orientation_ignored": 2.5553167088628395e-10
+      },
+      "matched_H_hypothesis": "global_orientation_ignored",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          1.5231e-26,
+          1.1955e-13
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010203,
+            "energy_error_percent": 8.4489e-27,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.00010203,
+            "energy_error_percent": 1.5231e-26,
+            "delta_energy_percent": 1.1955e-13
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": true,
+        "relative_tolerance": 0.0001,
+        "native_total_energy_J": 0.00010203,
+        "sampled_half_B_dot_H_energy_J": 0.0005529202849480765,
+        "field_energy_relative_error": 4.419193226973208,
+        "expected_energy_J": {
+          "desired_direction": 0.00010202977098687754,
+          "global_orientation_ignored": 0.0005529203070318036
+        },
+        "energy_hypothesis_relative_errors": {
+          "desired_direction": 2.2445665241379234e-06,
+          "global_orientation_ignored": 4.419193443416677
+        },
+        "matched_energy_hypothesis": "desired_direction",
+        "field_energy_consistent": false,
+        "H_and_energy_hypotheses_agree": false,
+        "interface_response_verified": false,
+        "calibrated_material_field_verified": false,
+        "motor_ranking_eligible": false
+      },
+      "energy_direction_matches_desired": true,
+      "direction_certified": false,
+      "saved_project_sha256": "f4e9ff623c77c8fcc3629e453966511e26241f8ecda79b0aa243dfec6dcd0480",
+      "native_validation": 1
+    },
+    {
+      "case_id": "normalized_relative_Bxy",
+      "mean_B_vector_T": [
+        0.0177715246727016,
+        0.01777153168378342,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        14.14213562088466,
+        141.42135620884662,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "desired_direction": 6.13382414082971,
+        "global_orientation_ignored": 2.5553167088628395e-10
+      },
+      "matched_H_hypothesis": "global_orientation_ignored",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          1.5231e-26,
+          1.1955e-13
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.00010203,
+            "energy_error_percent": 8.4489e-27,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.00010203,
+            "energy_error_percent": 1.5231e-26,
+            "delta_energy_percent": 1.1955e-13
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": true,
+        "relative_tolerance": 0.0001,
+        "native_total_energy_J": 0.00010203,
+        "sampled_half_B_dot_H_energy_J": 0.0005529202849480765,
+        "field_energy_relative_error": 4.419193226973208,
+        "expected_energy_J": {
+          "desired_direction": 0.00010202977098687754,
+          "global_orientation_ignored": 0.0005529203070318036
+        },
+        "energy_hypothesis_relative_errors": {
+          "desired_direction": 2.2445665241379234e-06,
+          "global_orientation_ignored": 4.419193443416677
+        },
+        "matched_energy_hypothesis": "desired_direction",
+        "field_energy_consistent": false,
+        "H_and_energy_hypotheses_agree": false,
+        "interface_response_verified": false,
+        "calibrated_material_field_verified": false,
+        "motor_ranking_eligible": false
+      },
+      "energy_direction_matches_desired": true,
+      "direction_certified": false,
+      "saved_project_sha256": "396803c352f43b844b81a2eeb933e67d2fbdccfa9906a89fb20eef24d642c31a",
+      "native_validation": 1
+    }
+  ],
+  "failures": [],
+  "skipped": [],
+  "new_field_solves": 4,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 32,
+  "cumulative_motor_solves": 4,
+  "cumulative_MuMax_success": 680,
+  "calibrated_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false
+}
