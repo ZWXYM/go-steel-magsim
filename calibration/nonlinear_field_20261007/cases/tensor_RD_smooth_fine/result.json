@@ -1,0 +1,102 @@
+{
+  "case_id": "tensor_RD_smooth_fine",
+  "mean_B_vector_T": [
+    1.5142181478488288,
+    -2.7354312901048204e-05,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    27.112878157558455,
+    -0.006384047948756333,
+    0.0
+  ],
+  "H_parallel_A_per_m": 27.112878157558455,
+  "checks": {
+    "B_target": false,
+    "B_direction": true,
+    "H_direction": true,
+    "H_uniform": true,
+    "H_source_bracket": false,
+    "H_source_knot": false
+  },
+  "passed": false,
+  "native_convergence": {
+    "completed_passes": 8,
+    "maximum_passes": 8,
+    "minimum_passes": 2,
+    "targets_percent": [
+      0.1,
+      0.1
+    ],
+    "final_percent": [
+      1.1986,
+      59.458
+    ],
+    "passes": [
+      {
+        "pass_number": 1,
+        "triangles": 1444,
+        "energy_J": 0.011371,
+        "energy_error_percent": 0.86721,
+        "delta_energy_percent": null
+      },
+      {
+        "pass_number": 2,
+        "triangles": 1879,
+        "energy_J": 0.0087984,
+        "energy_error_percent": 3.8439,
+        "delta_energy_percent": 22.624
+      },
+      {
+        "pass_number": 3,
+        "triangles": 2444,
+        "energy_J": 0.0086275,
+        "energy_error_percent": 2.1982,
+        "delta_energy_percent": 1.9423
+      },
+      {
+        "pass_number": 4,
+        "triangles": 3179,
+        "energy_J": 0.0093698,
+        "energy_error_percent": 3.9952,
+        "delta_energy_percent": 8.6034
+      },
+      {
+        "pass_number": 5,
+        "triangles": 4134,
+        "energy_J": 0.0081628,
+        "energy_error_percent": 0.00098096,
+        "delta_energy_percent": 12.882
+      },
+      {
+        "pass_number": 6,
+        "triangles": 5376,
+        "energy_J": 0.0097384,
+        "energy_error_percent": 0.60293,
+        "delta_energy_percent": 19.302
+      },
+      {
+        "pass_number": 7,
+        "triangles": 6989,
+        "energy_J": 0.022947,
+        "energy_error_percent": 28.744,
+        "delta_energy_percent": 135.64
+      },
+      {
+        "pass_number": 8,
+        "triangles": 9087,
+        "energy_J": 0.0093031,
+        "energy_error_percent": 1.1986,
+        "delta_energy_percent": 59.458
+      }
+    ],
+    "adaptive_converged": false,
+    "reached_maximum_passes": true
+  },
+  "field_and_source_knot_passed": false,
+  "calibrated_RD_TD_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "saved_project_sha256": "6c194e06e2ff10274fce4d296056959f0750930ea41fe87e64ac3d8d6bfccd3a",
+  "native_validation": 1
+}

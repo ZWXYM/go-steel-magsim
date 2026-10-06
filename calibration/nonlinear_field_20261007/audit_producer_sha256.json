@@ -1,0 +1,4 @@
+{
+  "modules/maxwell_nonlinear_controls.py": "ca397a533ee80f2903b5a233284d22aad6ca75502a90d2d94f7f3d30f74d64a1",
+  "tools/audit_nonlinear_field_probe.py": "669696c31c3f406e17d0ad2ddb093c8bcf760465ec9e5a4ec6e2480198ecdf7b"
+}

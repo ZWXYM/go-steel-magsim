@@ -1,0 +1,47 @@
+{
+  "validation": 1,
+  "edges_m": {
+    "9": [
+      -0.031405448462,
+      0.011350053143,
+      0.0
+    ],
+    "8": [
+      -0.021405448462,
+      0.001350053143,
+      0.0
+    ],
+    "7": [
+      -0.031405448462,
+      -0.008649946857,
+      0.0
+    ],
+    "10": [
+      -0.041405448462,
+      0.001350053143,
+      0.0
+    ]
+  },
+  "setup_properties": {
+    "Enabled": true,
+    "MeshLink": {
+      "ImportMesh": false
+    },
+    "MaximumPasses": 8,
+    "MinimumPasses": 2,
+    "MinimumConvergedPasses": 1,
+    "PercentRefinement": 30,
+    "SolveFieldOnly": false,
+    "PercentError": 0.1,
+    "SolveMatrixAtLast": true,
+    "UseIterativeSolver": false,
+    "RelativeResidual": 1e-08,
+    "NonLinearResidual": 1e-06,
+    "SmoothBHCurve": false,
+    "MuOption": {
+      "MuNonLinearBH": true
+    },
+    "Name": "ControlSetup"
+  },
+  "material_kind": "object_cs_linear"
+}

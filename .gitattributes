@@ -49,3 +49,10 @@ modules/maxwell_native_convergence.py -text
 tools/run_directional_field_controls.py -text
 tools/audit_directional_controls.py -text
 calibration/directional_field_20261006/** -text
+
+modules/maxwell_nonlinear_controls.py -text
+
+tools/run_nonlinear_field_probe.py -text
+
+tools/audit_nonlinear_field_probe.py -text
+calibration/nonlinear_field_20261007/** -text

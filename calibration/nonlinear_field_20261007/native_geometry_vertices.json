@@ -1,0 +1,3416 @@
+{
+  "native_model_units": "mm",
+  "working_CS": "Global",
+  "inserts": [
+    {
+      "object": "GOES_V3_01",
+      "native_CS": "GOES_V3_01_CS",
+      "native_vertices_m": [
+        [
+          -0.036865007037735,
+          0.00160250495175,
+          0.0
+        ],
+        [
+          -0.020571008378037,
+          0.00160250495175,
+          0.0
+        ],
+        [
+          -0.020362864011863,
+          0.0011,
+          0.0
+        ],
+        [
+          -0.036883417798088,
+          0.0011,
+          0.0
+        ],
+        [
+          -0.036879464266945,
+          0.0012308852026620002,
+          0.0
+        ],
+        [
+          -0.036870929281404,
+          0.001464423751744,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_01",
+          "CS": "GOES_V3_01_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999999997921056,
+            -2.0390903944505924e-05,
+            0.0
+          ],
+          "RD_axis_global": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+          "shape_aspect_SVD": 35.81866959026352,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_01",
+          "CS": "GOES_V3_01_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999999997921056,
+            -2.0390903944505924e-05,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.999133296065851,
+            0.04162519300361713,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.3844688213157474,
+          "shape_aspect_SVD": 35.81866959026352,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_02",
+      "native_CS": "GOES_V3_02_CS",
+      "native_vertices_m": [
+        [
+          -0.020178088105360998,
+          0.0011765366864730001,
+          0.0
+        ],
+        [
+          -0.020386232471535,
+          0.001679041638223,
+          0.0
+        ],
+        [
+          -0.011810454514184,
+          0.010254819595574,
+          0.0
+        ],
+        [
+          -0.011455129855221999,
+          0.009899494936612,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_02",
+          "CS": "GOES_V3_02_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7068592056307419,
+            0.7073542700903677,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.6777411428991051,
+            0.7353005801859637,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.312563683865252,
+          "shape_aspect_SVD": 24.344801549305675,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_02",
+          "CS": "GOES_V3_02_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7068592056307419,
+            0.7073542700903677,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.9204634419682419,
+            0.3908286734618853,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 68.02612887052828,
+          "shape_aspect_SVD": 24.344801549305675,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_03",
+      "native_CS": "GOES_V3_03_CS",
+      "native_vertices_m": [
+        [
+          -0.023056289752276003,
+          0.00760250495175,
+          0.0
+        ],
+        [
+          -0.022848145386102,
+          0.0070999999999999995,
+          0.0
+        ],
+        [
+          -0.036210299228067004,
+          0.0070999999999999995,
+          0.0
+        ],
+        [
+          -0.036187772565288004,
+          0.007214920532652,
+          0.0
+        ],
+        [
+          -0.036140426353211,
+          0.00744845920561,
+          0.0
+        ],
+        [
+          -0.036108159010172,
+          0.00760250495175,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_03",
+          "CS": "GOES_V3_03_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999997881794205,
+            0.0006508771881967929,
+            0.0
+          ],
+          "RD_axis_global": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+          "shape_aspect_SVD": 28.817178358580342,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_03",
+          "CS": "GOES_V3_03_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999997881794205,
+            0.0006508771881967929,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.9757749171698078,
+            0.21877685211707013,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 12.674494315537816,
+          "shape_aspect_SVD": 28.817178358580342,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_04",
+      "native_CS": "GOES_V3_04_CS",
+      "native_vertices_m": [
+        [
+          -0.015697770542341002,
+          0.014142135623731001,
+          0.0
+        ],
+        [
+          -0.022663369479599002,
+          0.007176536686473,
+          0.0
+        ],
+        [
+          -0.022871513845774002,
+          0.007679041638223,
+          0.0
+        ],
+        [
+          -0.016053095201303002,
+          0.014497460282693,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_04",
+          "CS": "GOES_V3_04_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7067164667569258,
+            0.7074968802861303,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.6701649330081011,
+            0.7422122085807047,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.8885864554523786,
+          "shape_aspect_SVD": 19.39969350373383,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_04",
+          "CS": "GOES_V3_04_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7067164667569258,
+            0.7074968802861303,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.8488366754490793,
+            0.5286551791220384,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 76.94625351325841,
+          "shape_aspect_SVD": 19.39969350373383,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_05",
+      "native_CS": "GOES_V3_05_CS",
+      "native_vertices_m": [
+        [
+          -0.025541571126515,
+          0.01360250495175,
+          0.0
+        ],
+        [
+          -0.025333426760340002,
+          0.0131,
+          0.0
+        ],
+        [
+          -0.034496154192764,
+          0.0131,
+          0.0
+        ],
+        [
+          -0.034458613614011,
+          0.013199011527991002,
+          0.0
+        ],
+        [
+          -0.034368249061082996,
+          0.013432550539310001,
+          0.0
+        ],
+        [
+          -0.034301158108270995,
+          0.01360250495175,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_05",
+          "CS": "GOES_V3_05_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999978894369503,
+            0.002054536844354619,
+            0.0
+          ],
+          "RD_axis_global": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.11771637285211746,
+          "shape_aspect_SVD": 19.539994643775724,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_05",
+          "CS": "GOES_V3_05_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999978894369503,
+            0.002054536844354619,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.9247639868159812,
+            0.3805411524240338,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 22.484923281127454,
+          "shape_aspect_SVD": 19.539994643775724,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_06",
+      "native_CS": "GOES_V3_06_CS",
+      "native_vertices_m": [
+        [
+          -0.010254819595574,
+          0.011810454514184,
+          0.0
+        ],
+        [
+          -0.001679041638223,
+          0.020386232471535,
+          0.0
+        ],
+        [
+          -0.0011765366864730001,
+          0.020178088105360998,
+          0.0
+        ],
+        [
+          -0.009899494936612,
+          0.011455129855221999,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_06",
+          "CS": "GOES_V3_06_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7073542700903674,
+            0.7068592056307419,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.7353005801859654,
+            0.6777411428991033,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.312563683865567,
+          "shape_aspect_SVD": 24.344801549305725,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_06",
+          "CS": "GOES_V3_06_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7073542700903674,
+            0.7068592056307419,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.28875246844500246,
+            0.9574037873159464,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 61.803340022692694,
+          "shape_aspect_SVD": 24.344801549305725,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_07",
+      "native_CS": "GOES_V3_07_CS",
+      "native_vertices_m": [
+        [
+          -0.019940411229461,
+          0.01838477631085,
+          0.0
+        ],
+        [
+          -0.025148650853838,
+          0.013176536686473,
+          0.0
+        ],
+        [
+          -0.025356795220012,
+          0.013679041638223,
+          0.0
+        ],
+        [
+          -0.020295735888423,
+          0.018740100969812,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_07",
+          "CS": "GOES_V3_07_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7064020401729801,
+            0.7078108205159422,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.6573374402145454,
+            0.7535963705407484,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 3.8457987472251087,
+          "shape_aspect_SVD": 14.455052116426563,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_07",
+          "CS": "GOES_V3_07_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7064020401729801,
+            0.7078108205159422,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.7960336283389579,
+            0.605252395743721,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 82.30408193523932,
+          "shape_aspect_SVD": 14.455052116426563,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_08",
+      "native_CS": "GOES_V3_08_CS",
+      "native_vertices_m": [
+        [
+          -0.014497460282693,
+          0.016053095201304,
+          0.0
+        ],
+        [
+          -0.007679041638223,
+          0.022871513845774002,
+          0.0
+        ],
+        [
+          -0.007176536686473,
+          0.022663369479599002,
+          0.0
+        ],
+        [
+          -0.014142135623731001,
+          0.015697770542341002,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_08",
+          "CS": "GOES_V3_08_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7074968802861547,
+            0.7067164667569014,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.7422122085807014,
+            0.6701649330081046,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.8885864554502327,
+          "shape_aspect_SVD": 19.399693503719654,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_08",
+          "CS": "GOES_V3_08_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7074968802861547,
+            0.7067164667569014,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.45205365394723923,
+            0.8919907476834891,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 71.90713864823566,
+          "shape_aspect_SVD": 19.399693503719654,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_09",
+      "native_CS": "GOES_V3_09_CS",
+      "native_vertices_m": [
+        [
+          -0.018740100969812,
+          0.020295735888423,
+          0.0
+        ],
+        [
+          -0.013679041638223,
+          0.025356795220012,
+          0.0
+        ],
+        [
+          -0.013176536686473,
+          0.025148650853838,
+          0.0
+        ],
+        [
+          -0.01838477631085,
+          0.019940411229461,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_09",
+          "CS": "GOES_V3_09_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7078108205159422,
+            0.7064020401729801,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.7535963705407419,
+            0.6573374402145528,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 3.84579874722454,
+          "shape_aspect_SVD": 14.455052116426527,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_09",
+          "CS": "GOES_V3_09_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7078108205159422,
+            0.7064020401729801,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.5467205509703441,
+            0.8373151372969936,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 78.19939432388348,
+          "shape_aspect_SVD": 14.455052116426527,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_10",
+      "native_CS": "GOES_V3_10_CS",
+      "native_vertices_m": [
+        [
+          -0.0012308852026620002,
+          0.036879464266945,
+          0.0
+        ],
+        [
+          -0.0011,
+          0.036883417798088,
+          0.0
+        ],
+        [
+          -0.0011,
+          0.020362864011863,
+          0.0
+        ],
+        [
+          -0.00160250495175,
+          0.020571008378038002,
+          0.0
+        ],
+        [
+          -0.00160250495175,
+          0.036865007037735,
+          0.0
+        ],
+        [
+          -0.001464423751744,
+          0.036870929281404,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_10",
+          "CS": "GOES_V3_10_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            2.039090394521547e-05,
+            -0.9999999997921056,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+          "shape_aspect_SVD": 35.81866959026244,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_10",
+          "CS": "GOES_V3_10_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            2.039090394521547e-05,
+            -0.9999999997921056,
+            -0.0
+          ],
+          "RD_axis_global": [
+            -0.04435798037446081,
+            0.9990157003656643,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.541190952958896,
+          "shape_aspect_SVD": 35.81866959026244,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_11",
+      "native_CS": "GOES_V3_11_CS",
+      "native_vertices_m": [
+        [
+          -0.0070999999999999995,
+          0.036210299228068,
+          0.0
+        ],
+        [
+          -0.0070999999999999995,
+          0.022848145386102,
+          0.0
+        ],
+        [
+          -0.00760250495175,
+          0.023056289752276003,
+          0.0
+        ],
+        [
+          -0.00760250495175,
+          0.036108159010172,
+          0.0
+        ],
+        [
+          -0.00744845920561,
+          0.036140426353211,
+          0.0
+        ],
+        [
+          -0.007214920532652,
+          0.036187772565288004,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_11",
+          "CS": "GOES_V3_11_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -0.0006508771881978233,
+            -0.9999997881794205,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+          "shape_aspect_SVD": 28.817178358580907,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_11",
+          "CS": "GOES_V3_11_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -0.0006508771881978233,
+            -0.9999997881794205,
+            -0.0
+          ],
+          "RD_axis_global": [
+            -0.23225716609743852,
+            0.9726544138574537,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 13.467289581137099,
+          "shape_aspect_SVD": 28.817178358580907,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_12",
+      "native_CS": "GOES_V3_12_CS",
+      "native_vertices_m": [
+        [
+          -0.0131,
+          0.034496154192764,
+          0.0
+        ],
+        [
+          -0.0131,
+          0.025333426760340002,
+          0.0
+        ],
+        [
+          -0.01360250495175,
+          0.025541571126515,
+          0.0
+        ],
+        [
+          -0.01360250495175,
+          0.034301158108272,
+          0.0
+        ],
+        [
+          -0.013432550539310001,
+          0.034368249061082996,
+          0.0
+        ],
+        [
+          -0.01319901152799,
+          0.034458613614011,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_12",
+          "CS": "GOES_V3_12_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -0.0020545368443804918,
+            -0.9999978894369502,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.1177163728552136,
+          "shape_aspect_SVD": 19.539994643766878,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_12",
+          "CS": "GOES_V3_12_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -0.0020545368443804918,
+            -0.9999978894369502,
+            -0.0
+          ],
+          "RD_axis_global": [
+            -0.40163235124509783,
+            0.9158009906269671,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 23.79798074199141,
+          "shape_aspect_SVD": 19.539994643766878,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_13",
+      "native_CS": "GOES_V3_13_CS",
+      "native_vertices_m": [
+        [
+          0.036879464266945,
+          0.0012308852026620002,
+          0.0
+        ],
+        [
+          0.036883417798088,
+          0.0011,
+          0.0
+        ],
+        [
+          0.020362864011863,
+          0.0011,
+          0.0
+        ],
+        [
+          0.020571008378038002,
+          0.00160250495175,
+          0.0
+        ],
+        [
+          0.036865007037735,
+          0.00160250495175,
+          0.0
+        ],
+        [
+          0.036870929281404,
+          0.001464423751744,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_13",
+          "CS": "GOES_V3_13_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999999997921056,
+            2.039090394521095e-05,
+            0.0
+          ],
+          "RD_axis_global": [
+            -1.0,
+            -9.974659986866666e-15,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+          "shape_aspect_SVD": 35.81866959026244,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_13",
+          "CS": "GOES_V3_13_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999999997921056,
+            2.039090394521095e-05,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.9990157003656643,
+            0.04435798037446114,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.541190952958896,
+          "shape_aspect_SVD": 35.81866959026244,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_14",
+      "native_CS": "GOES_V3_14_CS",
+      "native_vertices_m": [
+        [
+          0.011810454514184,
+          0.010254819595574,
+          0.0
+        ],
+        [
+          0.020386232471535,
+          0.001679041638223,
+          0.0
+        ],
+        [
+          0.020178088105360998,
+          0.0011765366864730001,
+          0.0
+        ],
+        [
+          0.011455129855221999,
+          0.009899494936612,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_14",
+          "CS": "GOES_V3_14_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7068592056307417,
+            -0.7073542700903676,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.6777411428991028,
+            -0.7353005801859658,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.312563683865567,
+          "shape_aspect_SVD": 24.344801549305675,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_14",
+          "CS": "GOES_V3_14_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7068592056307417,
+            -0.7073542700903676,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.9574037873159457,
+            0.2887524684450045,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 61.803340022692836,
+          "shape_aspect_SVD": 24.344801549305675,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_15",
+      "native_CS": "GOES_V3_15_CS",
+      "native_vertices_m": [
+        [
+          0.036210299228068,
+          0.0070999999999999995,
+          0.0
+        ],
+        [
+          0.022848145386102,
+          0.0070999999999999995,
+          0.0
+        ],
+        [
+          0.023056289752276003,
+          0.00760250495175,
+          0.0
+        ],
+        [
+          0.036108159010172,
+          0.00760250495175,
+          0.0
+        ],
+        [
+          0.036140426353211,
+          0.00744845920561,
+          0.0
+        ],
+        [
+          0.036187772565288004,
+          0.007214920532652,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_15",
+          "CS": "GOES_V3_15_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999997881794205,
+            -0.0006508771881978194,
+            0.0
+          ],
+          "RD_axis_global": [
+            -1.0,
+            -9.540979117872431e-15,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+          "shape_aspect_SVD": 28.81717835858091,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_15",
+          "CS": "GOES_V3_15_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999997881794205,
+            -0.0006508771881978194,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.9726544138574539,
+            0.23225716609743796,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 13.467289581137042,
+          "shape_aspect_SVD": 28.81717835858091,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_16",
+      "native_CS": "GOES_V3_16_CS",
+      "native_vertices_m": [
+        [
+          0.015697770542341002,
+          0.014142135623731001,
+          0.0
+        ],
+        [
+          0.016053095201304,
+          0.014497460282693,
+          0.0
+        ],
+        [
+          0.022871513845774002,
+          0.007679041638223,
+          0.0
+        ],
+        [
+          0.022663369479599002,
+          0.007176536686473,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_16",
+          "CS": "GOES_V3_16_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7067164667569015,
+            -0.7074968802861548,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.6701649330081038,
+            -0.7422122085807021,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.8885864554501066,
+          "shape_aspect_SVD": 19.399693503719643,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_16",
+          "CS": "GOES_V3_16_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7067164667569015,
+            -0.7074968802861548,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.8919907476834872,
+            0.4520536539472428,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 71.90713864823589,
+          "shape_aspect_SVD": 19.399693503719643,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_17",
+      "native_CS": "GOES_V3_17_CS",
+      "native_vertices_m": [
+        [
+          0.034496154192764,
+          0.0131,
+          0.0
+        ],
+        [
+          0.025333426760340002,
+          0.0131,
+          0.0
+        ],
+        [
+          0.025541571126515,
+          0.01360250495175,
+          0.0
+        ],
+        [
+          0.034301158108272,
+          0.01360250495175,
+          0.0
+        ],
+        [
+          0.034368249061082996,
+          0.013432550539311,
+          0.0
+        ],
+        [
+          0.034458613614011,
+          0.01319901152799,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_17",
+          "CS": "GOES_V3_17_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999978894369503,
+            -0.0020545368443529374,
+            0.0
+          ],
+          "RD_axis_global": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.11771637285211746,
+          "shape_aspect_SVD": 19.539994643759975,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_17",
+          "CS": "GOES_V3_17_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999978894369503,
+            -0.0020545368443529374,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.9158009906269675,
+            0.4016323512450968,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 23.79798074198975,
+          "shape_aspect_SVD": 19.539994643759975,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_18",
+      "native_CS": "GOES_V3_18_CS",
+      "native_vertices_m": [
+        [
+          0.0011765366864730001,
+          0.020178088105360998,
+          0.0
+        ],
+        [
+          0.001679041638223,
+          0.020386232471535,
+          0.0
+        ],
+        [
+          0.010254819595574,
+          0.011810454514184,
+          0.0
+        ],
+        [
+          0.009899494936612,
+          0.011455129855221999,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_18",
+          "CS": "GOES_V3_18_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7073542700903678,
+            -0.7068592056307417,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.735300580185964,
+            -0.6777411428991047,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.312563683865252,
+          "shape_aspect_SVD": 24.344801549305625,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_18",
+          "CS": "GOES_V3_18_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7073542700903678,
+            -0.7068592056307417,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.3908286734618859,
+            0.9204634419682417,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 68.02612887052835,
+          "shape_aspect_SVD": 24.344801549305625,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_19",
+      "native_CS": "GOES_V3_19_CS",
+      "native_vertices_m": [
+        [
+          0.019940411229461,
+          0.01838477631085,
+          0.0
+        ],
+        [
+          0.020295735888423,
+          0.018740100969813,
+          0.0
+        ],
+        [
+          0.025356795220012,
+          0.013679041638223,
+          0.0
+        ],
+        [
+          0.025148650853838,
+          0.013176536686473,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_19",
+          "CS": "GOES_V3_19_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7064020401729433,
+            -0.707810820515979,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.6573374402146017,
+            -0.7535963705406993,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 3.8457987472179007,
+          "shape_aspect_SVD": 14.45505211641725,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_19",
+          "CS": "GOES_V3_19_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7064020401729433,
+            -0.707810820515979,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.837315137296992,
+            0.5467205509703467,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 78.19939432388664,
+          "shape_aspect_SVD": 14.45505211641725,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_20",
+      "native_CS": "GOES_V3_20_CS",
+      "native_vertices_m": [
+        [
+          0.007176536686473,
+          0.022663369479599002,
+          0.0
+        ],
+        [
+          0.007679041638223,
+          0.022871513845774002,
+          0.0
+        ],
+        [
+          0.014497460282693,
+          0.016053095201304,
+          0.0
+        ],
+        [
+          0.014142135623731001,
+          0.015697770542341002,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_20",
+          "CS": "GOES_V3_20_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7074968802861548,
+            -0.7067164667569014,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.7422122085807047,
+            -0.6701649330081011,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.888586455450359,
+          "shape_aspect_SVD": 19.39969350371962,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_20",
+          "CS": "GOES_V3_20_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7074968802861548,
+            -0.7067164667569014,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.5286551791220384,
+            0.8488366754490793,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 76.9462535132604,
+          "shape_aspect_SVD": 19.39969350371962,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_21",
+      "native_CS": "GOES_V3_21_CS",
+      "native_vertices_m": [
+        [
+          0.013176536686473,
+          0.025148650853838,
+          0.0
+        ],
+        [
+          0.013679041638223,
+          0.025356795220012,
+          0.0
+        ],
+        [
+          0.018740100969812,
+          0.020295735888423,
+          0.0
+        ],
+        [
+          0.01838477631085,
+          0.019940411229461,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_21",
+          "CS": "GOES_V3_21_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.707810820515942,
+            -0.7064020401729805,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.7535963705406985,
+            -0.6573374402146026,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 3.8457987472207464,
+          "shape_aspect_SVD": 14.45505211642656,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_21",
+          "CS": "GOES_V3_21_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.707810820515942,
+            -0.7064020401729805,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.605252395743721,
+            0.7960336283389579,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 82.30408193523932,
+          "shape_aspect_SVD": 14.45505211642656,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_22",
+      "native_CS": "GOES_V3_22_CS",
+      "native_vertices_m": [
+        [
+          0.00160250495175,
+          0.036865007037735,
+          0.0
+        ],
+        [
+          0.00160250495175,
+          0.020571008378037,
+          0.0
+        ],
+        [
+          0.0011,
+          0.020362864011863,
+          0.0
+        ],
+        [
+          0.0011,
+          0.036883417798088,
+          0.0
+        ],
+        [
+          0.0012308852026620002,
+          0.036879464266945,
+          0.0
+        ],
+        [
+          0.0014644237517430002,
+          0.036870929281404,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_22",
+          "CS": "GOES_V3_22_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -2.0390903929271132e-05,
+            -0.9999999997921056,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+          "shape_aspect_SVD": 35.81866959027814,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_22",
+          "CS": "GOES_V3_22_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -2.0390903929271132e-05,
+            -0.9999999997921056,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.04162519300361406,
+            0.9991332960658512,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.384468821316359,
+          "shape_aspect_SVD": 35.81866959027814,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_23",
+      "native_CS": "GOES_V3_23_CS",
+      "native_vertices_m": [
+        [
+          0.00760250495175,
+          0.023056289752276003,
+          0.0
+        ],
+        [
+          0.0070999999999999995,
+          0.022848145386102,
+          0.0
+        ],
+        [
+          0.0070999999999999995,
+          0.036210299228068,
+          0.0
+        ],
+        [
+          0.007214920532652,
+          0.036187772565288004,
+          0.0
+        ],
+        [
+          0.00744845920561,
+          0.036140426353211,
+          0.0
+        ],
+        [
+          0.00760250495175,
+          0.036108159010172,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_23",
+          "CS": "GOES_V3_23_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.0006508771881978194,
+            -0.9999997881794205,
+            -0.0
+          ],
+          "RD_axis_global": [
+            -9.540979117872497e-15,
+            1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+          "shape_aspect_SVD": 28.817178358580907,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_23",
+          "CS": "GOES_V3_23_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.0006508771881978194,
+            -0.9999997881794205,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.21877685211706818,
+            0.9757749171698085,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 12.674494315537702,
+          "shape_aspect_SVD": 28.817178358580907,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_24",
+      "native_CS": "GOES_V3_24_CS",
+      "native_vertices_m": [
+        [
+          0.01360250495175,
+          0.025541571126515,
+          0.0
+        ],
+        [
+          0.0131,
+          0.025333426760340002,
+          0.0
+        ],
+        [
+          0.0131,
+          0.034496154192764,
+          0.0
+        ],
+        [
+          0.013199011527991002,
+          0.034458613614011,
+          0.0
+        ],
+        [
+          0.013432550539310001,
+          0.034368249061082996,
+          0.0
+        ],
+        [
+          0.01360250495175,
+          0.034301158108272,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_24",
+          "CS": "GOES_V3_24_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.0020545368443520427,
+            -0.9999978894369502,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.1177163728552136,
+          "shape_aspect_SVD": 19.539994643776215,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_24",
+          "CS": "GOES_V3_24_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.0020545368443520427,
+            -0.9999978894369502,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.3805411524240387,
+            0.9247639868159792,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 22.48492328112762,
+          "shape_aspect_SVD": 19.539994643776215,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_01_1",
+      "native_CS": "GOES_V3_01_1_CS",
+      "native_vertices_m": [
+        [
+          0.036865007037735,
+          -0.00160250495175,
+          0.0
+        ],
+        [
+          0.020571008378037,
+          -0.00160250495175,
+          0.0
+        ],
+        [
+          0.020362864011863,
+          -0.0011,
+          0.0
+        ],
+        [
+          0.036883417798088,
+          -0.0011,
+          0.0
+        ],
+        [
+          0.036879464266945,
+          -0.0012308852026620002,
+          0.0
+        ],
+        [
+          0.036870929281404,
+          -0.001464423751744,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_01_1",
+          "CS": "GOES_V3_01_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999999997921056,
+            -2.0390903944505924e-05,
+            0.0
+          ],
+          "RD_axis_global": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+          "shape_aspect_SVD": 35.81866959026353,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_01_1",
+          "CS": "GOES_V3_01_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999999997921056,
+            -2.0390903944505924e-05,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.999133296065851,
+            -0.04162519300361713,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.3844688213157474,
+          "shape_aspect_SVD": 35.81866959026353,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_02_1",
+      "native_CS": "GOES_V3_02_1_CS",
+      "native_vertices_m": [
+        [
+          0.020178088105360998,
+          -0.0011765366864730001,
+          0.0
+        ],
+        [
+          0.020386232471535,
+          -0.001679041638223,
+          0.0
+        ],
+        [
+          0.011810454514184,
+          -0.010254819595574,
+          0.0
+        ],
+        [
+          0.011455129855221999,
+          -0.009899494936612,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_02_1",
+          "CS": "GOES_V3_02_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7068592056307417,
+            0.7073542700903676,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.6777411428991051,
+            -0.7353005801859637,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.3125636838654096,
+          "shape_aspect_SVD": 24.344801549305675,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_02_1",
+          "CS": "GOES_V3_02_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7068592056307417,
+            0.7073542700903676,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.9204634419682419,
+            -0.3908286734618853,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 68.0261288705283,
+          "shape_aspect_SVD": 24.344801549305675,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_03_1",
+      "native_CS": "GOES_V3_03_1_CS",
+      "native_vertices_m": [
+        [
+          0.023056289752276003,
+          -0.00760250495175,
+          0.0
+        ],
+        [
+          0.022848145386102,
+          -0.0070999999999999995,
+          0.0
+        ],
+        [
+          0.036210299228068,
+          -0.0070999999999999995,
+          0.0
+        ],
+        [
+          0.036187772565288004,
+          -0.007214920532652,
+          0.0
+        ],
+        [
+          0.036140426353211,
+          -0.00744845920561,
+          0.0
+        ],
+        [
+          0.036108159010172,
+          -0.00760250495175,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_03_1",
+          "CS": "GOES_V3_03_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999997881794205,
+            0.0006508771881978194,
+            0.0
+          ],
+          "RD_axis_global": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+          "shape_aspect_SVD": 28.81717835858091,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_03_1",
+          "CS": "GOES_V3_03_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999997881794205,
+            0.0006508771881978194,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.9757749171698078,
+            -0.21877685211707013,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 12.674494315537874,
+          "shape_aspect_SVD": 28.81717835858091,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_04_1",
+      "native_CS": "GOES_V3_04_1_CS",
+      "native_vertices_m": [
+        [
+          0.015697770542341002,
+          -0.014142135623731001,
+          0.0
+        ],
+        [
+          0.022663369479599002,
+          -0.007176536686473,
+          0.0
+        ],
+        [
+          0.022871513845774002,
+          -0.007679041638223,
+          0.0
+        ],
+        [
+          0.016053095201303002,
+          -0.014497460282693,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_04_1",
+          "CS": "GOES_V3_04_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7067164667569259,
+            0.7074968802861302,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.6701649330081011,
+            -0.7422122085807047,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.8885864554523786,
+          "shape_aspect_SVD": 19.39969350373381,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_04_1",
+          "CS": "GOES_V3_04_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7067164667569259,
+            0.7074968802861302,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.8488366754490793,
+            -0.5286551791220384,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 76.9462535132584,
+          "shape_aspect_SVD": 19.39969350373381,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_05_1",
+      "native_CS": "GOES_V3_05_1_CS",
+      "native_vertices_m": [
+        [
+          0.025541571126515,
+          -0.01360250495175,
+          0.0
+        ],
+        [
+          0.025333426760340002,
+          -0.0131,
+          0.0
+        ],
+        [
+          0.034496154192764,
+          -0.0131,
+          0.0
+        ],
+        [
+          0.034458613614011,
+          -0.013199011527991002,
+          0.0
+        ],
+        [
+          0.034368249061082996,
+          -0.013432550539310001,
+          0.0
+        ],
+        [
+          0.034301158108272,
+          -0.01360250495175,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_05_1",
+          "CS": "GOES_V3_05_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999978894369503,
+            0.0020545368443520362,
+            0.0
+          ],
+          "RD_axis_global": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.11771637285211746,
+          "shape_aspect_SVD": 19.539994643776208,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_05_1",
+          "CS": "GOES_V3_05_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999978894369503,
+            0.0020545368443520362,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.9247639868159812,
+            -0.3805411524240338,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 22.4849232811273,
+          "shape_aspect_SVD": 19.539994643776208,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_06_1",
+      "native_CS": "GOES_V3_06_1_CS",
+      "native_vertices_m": [
+        [
+          0.010254819595574,
+          -0.011810454514184,
+          0.0
+        ],
+        [
+          0.001679041638223,
+          -0.020386232471535,
+          0.0
+        ],
+        [
+          0.0011765366864730001,
+          -0.020178088105360998,
+          0.0
+        ],
+        [
+          0.009899494936612,
+          -0.011455129855221999,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_06_1",
+          "CS": "GOES_V3_06_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7073542700903678,
+            0.7068592056307417,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.7353005801859654,
+            -0.6777411428991033,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.3125636838654096,
+          "shape_aspect_SVD": 24.344801549305625,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_06_1",
+          "CS": "GOES_V3_06_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7073542700903678,
+            0.7068592056307417,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.28875246844500246,
+            -0.9574037873159464,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 61.80334002269271,
+          "shape_aspect_SVD": 24.344801549305625,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_07_1",
+      "native_CS": "GOES_V3_07_1_CS",
+      "native_vertices_m": [
+        [
+          0.019940411229461,
+          -0.01838477631085,
+          0.0
+        ],
+        [
+          0.025148650853838,
+          -0.013176536686473,
+          0.0
+        ],
+        [
+          0.025356795220012,
+          -0.013679041638223,
+          0.0
+        ],
+        [
+          0.020295735888423,
+          -0.018740100969812,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_07_1",
+          "CS": "GOES_V3_07_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7064020401729801,
+            0.7078108205159422,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.6573374402145454,
+            -0.7535963705407484,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 3.8457987472251087,
+          "shape_aspect_SVD": 14.455052116426563,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_07_1",
+          "CS": "GOES_V3_07_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7064020401729801,
+            0.7078108205159422,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.7960336283389579,
+            -0.605252395743721,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 82.30408193523932,
+          "shape_aspect_SVD": 14.455052116426563,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_08_1",
+      "native_CS": "GOES_V3_08_1_CS",
+      "native_vertices_m": [
+        [
+          0.014497460282693,
+          -0.016053095201304,
+          0.0
+        ],
+        [
+          0.007679041638223,
+          -0.022871513845774002,
+          0.0
+        ],
+        [
+          0.007176536686473,
+          -0.022663369479599002,
+          0.0
+        ],
+        [
+          0.014142135623731001,
+          -0.015697770542341002,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_08_1",
+          "CS": "GOES_V3_08_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7074968802861548,
+            0.7067164667569014,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.7422122085807014,
+            -0.6701649330081046,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.8885864554502327,
+          "shape_aspect_SVD": 19.39969350371962,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_08_1",
+          "CS": "GOES_V3_08_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7074968802861548,
+            0.7067164667569014,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.45205365394723923,
+            -0.8919907476834891,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 71.90713864823566,
+          "shape_aspect_SVD": 19.39969350371962,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_09_1",
+      "native_CS": "GOES_V3_09_1_CS",
+      "native_vertices_m": [
+        [
+          0.018740100969812,
+          -0.020295735888423,
+          0.0
+        ],
+        [
+          0.013679041638223,
+          -0.025356795220012,
+          0.0
+        ],
+        [
+          0.013176536686473,
+          -0.025148650853838,
+          0.0
+        ],
+        [
+          0.01838477631085,
+          -0.019940411229461,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_09_1",
+          "CS": "GOES_V3_09_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.707810820515942,
+            0.7064020401729805,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.7535963705407419,
+            -0.6573374402145528,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 3.84579874722454,
+          "shape_aspect_SVD": 14.45505211642656,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_09_1",
+          "CS": "GOES_V3_09_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.707810820515942,
+            0.7064020401729805,
+            0.0
+          ],
+          "RD_axis_global": [
+            0.5467205509703441,
+            -0.8373151372969936,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 78.19939432388347,
+          "shape_aspect_SVD": 14.45505211642656,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_10_1",
+      "native_CS": "GOES_V3_10_1_CS",
+      "native_vertices_m": [
+        [
+          0.0012308852026620002,
+          -0.036879464266945,
+          0.0
+        ],
+        [
+          0.0011,
+          -0.036883417798088,
+          0.0
+        ],
+        [
+          0.0011,
+          -0.020362864011863,
+          0.0
+        ],
+        [
+          0.00160250495175,
+          -0.020571008378037,
+          0.0
+        ],
+        [
+          0.00160250495175,
+          -0.036865007037735,
+          0.0
+        ],
+        [
+          0.001464423751744,
+          -0.036870929281404,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_10_1",
+          "CS": "GOES_V3_10_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            2.0390903944506907e-05,
+            -0.9999999997921054,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.0011683130416335554,
+          "shape_aspect_SVD": 35.81866959026352,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_10_1",
+          "CS": "GOES_V3_10_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            2.0390903944506907e-05,
+            -0.9999999997921054,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.04435798037446081,
+            -0.9990157003656643,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.541190952959183,
+          "shape_aspect_SVD": 35.81866959026352,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_11_1",
+      "native_CS": "GOES_V3_11_1_CS",
+      "native_vertices_m": [
+        [
+          0.0070999999999999995,
+          -0.036210299228067004,
+          0.0
+        ],
+        [
+          0.0070999999999999995,
+          -0.022848145386101,
+          0.0
+        ],
+        [
+          0.00760250495175,
+          -0.023056289752276003,
+          0.0
+        ],
+        [
+          0.00760250495175,
+          -0.036108159010172,
+          0.0
+        ],
+        [
+          0.00744845920561,
+          -0.036140426353211,
+          0.0
+        ],
+        [
+          0.007214920532652,
+          -0.036187772565288004,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_11_1",
+          "CS": "GOES_V3_11_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -0.0006508771881956858,
+            -0.9999997881794207,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.03729251848117666,
+          "shape_aspect_SVD": 28.81717835858144,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_11_1",
+          "CS": "GOES_V3_11_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -0.0006508771881956858,
+            -0.9999997881794207,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.23225716609743852,
+            -0.9726544138574537,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 13.467289581136907,
+          "shape_aspect_SVD": 28.81717835858144,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_12_1",
+      "native_CS": "GOES_V3_12_1_CS",
+      "native_vertices_m": [
+        [
+          0.0131,
+          -0.034496154192764,
+          0.0
+        ],
+        [
+          0.0131,
+          -0.025333426760340002,
+          0.0
+        ],
+        [
+          0.01360250495175,
+          -0.025541571126515,
+          0.0
+        ],
+        [
+          0.01360250495175,
+          -0.034301158108270995,
+          0.0
+        ],
+        [
+          0.013432550539310001,
+          -0.034368249061082996,
+          0.0
+        ],
+        [
+          0.01319901152799,
+          -0.034458613614011,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_12_1",
+          "CS": "GOES_V3_12_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -0.0020545368443830813,
+            -0.9999978894369502,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.1177163728552136,
+          "shape_aspect_SVD": 19.53999464376639,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_12_1",
+          "CS": "GOES_V3_12_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -0.0020545368443830813,
+            -0.9999978894369502,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.40163235124509783,
+            -0.9158009906269671,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 23.797980741991566,
+          "shape_aspect_SVD": 19.53999464376639,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_13_1",
+      "native_CS": "GOES_V3_13_1_CS",
+      "native_vertices_m": [
+        [
+          -0.036879464266945,
+          -0.0012308852026620002,
+          0.0
+        ],
+        [
+          -0.036883417798088,
+          -0.0011,
+          0.0
+        ],
+        [
+          -0.020362864011863,
+          -0.0011,
+          0.0
+        ],
+        [
+          -0.020571008378037,
+          -0.00160250495175,
+          0.0
+        ],
+        [
+          -0.036865007037735,
+          -0.00160250495175,
+          0.0
+        ],
+        [
+          -0.036870929281404,
+          -0.001464423751744,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_13_1",
+          "CS": "GOES_V3_13_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999999997921056,
+            2.0390903944505924e-05,
+            0.0
+          ],
+          "RD_axis_global": [
+            1.0,
+            9.974659986866666e-15,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+          "shape_aspect_SVD": 35.81866959026352,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_13_1",
+          "CS": "GOES_V3_13_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999999997921056,
+            2.0390903944505924e-05,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.9990157003656643,
+            -0.04435798037446114,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.541190952958896,
+          "shape_aspect_SVD": 35.81866959026352,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_14_1",
+      "native_CS": "GOES_V3_14_1_CS",
+      "native_vertices_m": [
+        [
+          -0.011810454514184,
+          -0.010254819595574,
+          0.0
+        ],
+        [
+          -0.020386232471535,
+          -0.001679041638223,
+          0.0
+        ],
+        [
+          -0.020178088105360998,
+          -0.0011765366864730001,
+          0.0
+        ],
+        [
+          -0.011455129855221999,
+          -0.009899494936612,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_14_1",
+          "CS": "GOES_V3_14_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7068592056307419,
+            -0.7073542700903677,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.6777411428991028,
+            0.7353005801859658,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.312563683865252,
+          "shape_aspect_SVD": 24.344801549305675,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_14_1",
+          "CS": "GOES_V3_14_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7068592056307419,
+            -0.7073542700903677,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.9574037873159457,
+            -0.2887524684450045,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 61.80334002269282,
+          "shape_aspect_SVD": 24.344801549305675,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_15_1",
+      "native_CS": "GOES_V3_15_1_CS",
+      "native_vertices_m": [
+        [
+          -0.036210299228067004,
+          -0.0070999999999999995,
+          0.0
+        ],
+        [
+          -0.022848145386102,
+          -0.0070999999999999995,
+          0.0
+        ],
+        [
+          -0.023056289752276003,
+          -0.00760250495175,
+          0.0
+        ],
+        [
+          -0.036108159010172,
+          -0.00760250495175,
+          0.0
+        ],
+        [
+          -0.036140426353211,
+          -0.00744845920561,
+          0.0
+        ],
+        [
+          -0.036187772565288004,
+          -0.007214920532652,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_15_1",
+          "CS": "GOES_V3_15_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999997881794205,
+            -0.0006508771881967929,
+            0.0
+          ],
+          "RD_axis_global": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+          "shape_aspect_SVD": 28.817178358580342,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_15_1",
+          "CS": "GOES_V3_15_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999997881794205,
+            -0.0006508771881967929,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.9726544138574539,
+            -0.23225716609743827,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 13.467289581136988,
+          "shape_aspect_SVD": 28.817178358580342,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_16_1",
+      "native_CS": "GOES_V3_16_1_CS",
+      "native_vertices_m": [
+        [
+          -0.015697770542341002,
+          -0.014142135623731001,
+          0.0
+        ],
+        [
+          -0.016053095201304,
+          -0.014497460282693,
+          0.0
+        ],
+        [
+          -0.022871513845774002,
+          -0.007679041638223,
+          0.0
+        ],
+        [
+          -0.022663369479599002,
+          -0.007176536686473,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_16_1",
+          "CS": "GOES_V3_16_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7067164667569014,
+            -0.7074968802861548,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.6701649330081038,
+            0.7422122085807021,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.888586455450359,
+          "shape_aspect_SVD": 19.39969350371965,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_16_1",
+          "CS": "GOES_V3_16_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7067164667569014,
+            -0.7074968802861548,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.8919907476834872,
+            -0.4520536539472428,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 71.90713864823589,
+          "shape_aspect_SVD": 19.39969350371965,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_17_1",
+      "native_CS": "GOES_V3_17_1_CS",
+      "native_vertices_m": [
+        [
+          -0.034496154192764,
+          -0.0131,
+          0.0
+        ],
+        [
+          -0.025333426760340002,
+          -0.0131,
+          0.0
+        ],
+        [
+          -0.025541571126515,
+          -0.01360250495175,
+          0.0
+        ],
+        [
+          -0.034301158108272,
+          -0.01360250495175,
+          0.0
+        ],
+        [
+          -0.034368249061082996,
+          -0.013432550539311,
+          0.0
+        ],
+        [
+          -0.034458613614011,
+          -0.01319901152799,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_17_1",
+          "CS": "GOES_V3_17_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999978894369503,
+            -0.0020545368443529452,
+            0.0
+          ],
+          "RD_axis_global": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.11771637285211746,
+          "shape_aspect_SVD": 19.539994643759982,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_17_1",
+          "CS": "GOES_V3_17_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.9999978894369503,
+            -0.0020545368443529452,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.9158009906269675,
+            -0.4016323512450968,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 23.79798074198975,
+          "shape_aspect_SVD": 19.539994643759982,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_18_1",
+      "native_CS": "GOES_V3_18_1_CS",
+      "native_vertices_m": [
+        [
+          -0.0011765366864730001,
+          -0.020178088105360998,
+          0.0
+        ],
+        [
+          -0.001679041638223,
+          -0.020386232471535,
+          0.0
+        ],
+        [
+          -0.010254819595574,
+          -0.011810454514184,
+          0.0
+        ],
+        [
+          -0.009899494936612,
+          -0.011455129855221999,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_18_1",
+          "CS": "GOES_V3_18_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7073542700903674,
+            -0.7068592056307419,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.735300580185964,
+            0.6777411428991047,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.312563683865567,
+          "shape_aspect_SVD": 24.344801549305725,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_18_1",
+          "CS": "GOES_V3_18_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7073542700903674,
+            -0.7068592056307419,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.3908286734618859,
+            -0.9204634419682417,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 68.02612887052832,
+          "shape_aspect_SVD": 24.344801549305725,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_19_1",
+      "native_CS": "GOES_V3_19_1_CS",
+      "native_vertices_m": [
+        [
+          -0.019940411229461,
+          -0.01838477631085,
+          0.0
+        ],
+        [
+          -0.020295735888423,
+          -0.018740100969812,
+          0.0
+        ],
+        [
+          -0.025356795220012,
+          -0.013679041638223,
+          0.0
+        ],
+        [
+          -0.025148650853838,
+          -0.013176536686473,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_19_1",
+          "CS": "GOES_V3_19_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7064020401729801,
+            -0.7078108205159422,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.6573374402146017,
+            0.7535963705406993,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 3.8457987472207464,
+          "shape_aspect_SVD": 14.455052116426563,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_19_1",
+          "CS": "GOES_V3_19_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7064020401729801,
+            -0.7078108205159422,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.837315137296992,
+            -0.5467205509703467,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 78.19939432388367,
+          "shape_aspect_SVD": 14.455052116426563,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_20_1",
+      "native_CS": "GOES_V3_20_1_CS",
+      "native_vertices_m": [
+        [
+          -0.007176536686473,
+          -0.022663369479599002,
+          0.0
+        ],
+        [
+          -0.007679041638223,
+          -0.022871513845774002,
+          0.0
+        ],
+        [
+          -0.014497460282693,
+          -0.016053095201304,
+          0.0
+        ],
+        [
+          -0.014142135623731001,
+          -0.015697770542341002,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_20_1",
+          "CS": "GOES_V3_20_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7074968802861547,
+            -0.7067164667569014,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.7422122085807047,
+            0.6701649330081011,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.888586455450359,
+          "shape_aspect_SVD": 19.399693503719654,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_20_1",
+          "CS": "GOES_V3_20_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7074968802861547,
+            -0.7067164667569014,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.5286551791220384,
+            -0.8488366754490793,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 76.94625351326039,
+          "shape_aspect_SVD": 19.399693503719654,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_21_1",
+      "native_CS": "GOES_V3_21_1_CS",
+      "native_vertices_m": [
+        [
+          -0.013176536686473,
+          -0.025148650853838,
+          0.0
+        ],
+        [
+          -0.013679041638223,
+          -0.025356795220012,
+          0.0
+        ],
+        [
+          -0.018740100969812,
+          -0.020295735888423,
+          0.0
+        ],
+        [
+          -0.01838477631085,
+          -0.019940411229461,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_21_1",
+          "CS": "GOES_V3_21_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7078108205159422,
+            -0.7064020401729801,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.7535963705406985,
+            0.6573374402146026,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 3.8457987472207464,
+          "shape_aspect_SVD": 14.455052116426527,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_21_1",
+          "CS": "GOES_V3_21_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 4,
+          "major_axis_global": [
+            0.7078108205159422,
+            -0.7064020401729801,
+            0.0
+          ],
+          "RD_axis_global": [
+            -0.605252395743721,
+            -0.7960336283389579,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 82.30408193523932,
+          "shape_aspect_SVD": 14.455052116426527,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_22_1",
+      "native_CS": "GOES_V3_22_1_CS",
+      "native_vertices_m": [
+        [
+          -0.00160250495175,
+          -0.036865007037735,
+          0.0
+        ],
+        [
+          -0.00160250495175,
+          -0.020571008378037,
+          0.0
+        ],
+        [
+          -0.0011,
+          -0.020362864011863,
+          0.0
+        ],
+        [
+          -0.0011,
+          -0.036883417798088,
+          0.0
+        ],
+        [
+          -0.0012308852026620002,
+          -0.036879464266945,
+          0.0
+        ],
+        [
+          -0.0014644237517430002,
+          -0.036870929281404,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_22_1",
+          "CS": "GOES_V3_22_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -2.0390903929273683e-05,
+            -0.9999999997921056,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+          "shape_aspect_SVD": 35.81866959027815,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_22_1",
+          "CS": "GOES_V3_22_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            -2.0390903929273683e-05,
+            -0.9999999997921056,
+            -0.0
+          ],
+          "RD_axis_global": [
+            -0.04162519300361406,
+            -0.9991332960658512,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 2.384468821316359,
+          "shape_aspect_SVD": 35.81866959027815,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_23_1",
+      "native_CS": "GOES_V3_23_1_CS",
+      "native_vertices_m": [
+        [
+          -0.00760250495175,
+          -0.023056289752276003,
+          0.0
+        ],
+        [
+          -0.0070999999999999995,
+          -0.022848145386102,
+          0.0
+        ],
+        [
+          -0.0070999999999999995,
+          -0.036210299228067004,
+          0.0
+        ],
+        [
+          -0.007214920532652,
+          -0.036187772565288004,
+          0.0
+        ],
+        [
+          -0.00744845920561,
+          -0.036140426353211,
+          0.0
+        ],
+        [
+          -0.00760250495175,
+          -0.036108159010172,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_23_1",
+          "CS": "GOES_V3_23_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.0006508771881967911,
+            -0.9999997881794205,
+            -0.0
+          ],
+          "RD_axis_global": [
+            9.540979117872497e-15,
+            -1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+          "shape_aspect_SVD": 28.81717835858035,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_23_1",
+          "CS": "GOES_V3_23_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.0006508771881967911,
+            -0.9999997881794205,
+            -0.0
+          ],
+          "RD_axis_global": [
+            -0.21877685211706818,
+            -0.9757749171698085,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 12.674494315537643,
+          "shape_aspect_SVD": 28.81717835858035,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    },
+    {
+      "object": "GOES_V3_24_1",
+      "native_CS": "GOES_V3_24_1_CS",
+      "native_vertices_m": [
+        [
+          -0.01360250495175,
+          -0.025541571126515,
+          0.0
+        ],
+        [
+          -0.0131,
+          -0.025333426760340002,
+          0.0
+        ],
+        [
+          -0.0131,
+          -0.034496154192764,
+          0.0
+        ],
+        [
+          -0.013199011527991002,
+          -0.034458613614011,
+          0.0
+        ],
+        [
+          -0.013432550539310001,
+          -0.034368249061082996,
+          0.0
+        ],
+        [
+          -0.01360250495175,
+          -0.034301158108270995,
+          0.0
+        ]
+      ],
+      "hypotheses": {
+        "absolute_point": {
+          "object": "GOES_V3_24_1",
+          "CS": "GOES_V3_24_1_CS",
+          "CS_interpretation": "absolute_point",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.0020545368443546205,
+            -0.9999978894369502,
+            -0.0
+          ],
+          "RD_axis_global": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 0.1177163728552136,
+          "shape_aspect_SVD": 19.539994643775724,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        },
+        "direction_vector": {
+          "object": "GOES_V3_24_1",
+          "CS": "GOES_V3_24_1_CS",
+          "CS_interpretation": "direction_vector",
+          "vertex_count": 6,
+          "major_axis_global": [
+            0.0020545368443546205,
+            -0.9999978894369502,
+            -0.0
+          ],
+          "RD_axis_global": [
+            -0.3805411524240387,
+            -0.9247639868159792,
+            0.0
+          ],
+          "RD_major_axis_unsigned_angle_deg": 22.48492328112777,
+          "shape_aspect_SVD": 19.539994643775724,
+          "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+        }
+      }
+    }
+  ],
+  "new_field_solves": 0,
+  "new_motor_solves": 0
+}
