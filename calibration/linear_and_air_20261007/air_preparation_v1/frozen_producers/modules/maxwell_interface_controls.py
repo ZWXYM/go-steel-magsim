@@ -6,7 +6,7 @@ from modules.maxwell_directional_controls import GATES
 from modules.maxwell_nonlinear_controls import payload as nonlinear_payload,verify_definition as verify_nonlinear
 from modules.motor_model_audit import one,value,blocks
 
-VERSION='full_boundary_interface_controls_v7'
+VERSION='full_boundary_interface_controls_v5'
 MU0=4e-7*math.pi
 
 
@@ -35,7 +35,7 @@ def expected_H(rotation,B,mu=(1000.,100.,1000.)):
 
 
 def make_protocol(source,record,mode='meter_geometry'):
-    if mode not in ('meter_geometry','millimeter_geometry','oblique_millimeter','axis_vectors_millimeter','explicit_iterations_millimeter','high_mu_millimeter'):raise ValueError('Unknown geometry-unit control')
+    if mode not in ('meter_geometry','millimeter_geometry','oblique_millimeter','axis_vectors_millimeter','explicit_iterations_millimeter'):raise ValueError('Unknown geometry-unit control')
     origin=np.asarray(record['origin_m'])-np.array([.01,.01,0.]);cases=[]
     plan=[('simple_global_origin','simple','global',False),('simple_global_shift','simple','global',True),
           ('simple_object_shift','simple','object',True),('simple_relative_shift','simple','relative',True),
@@ -48,8 +48,6 @@ def make_protocol(source,record,mode='meter_geometry'):
               ('normalized_object_Bxy','simple','object',True),('normalized_relative_Bxy','simple','relative',True)]
     if mode=='explicit_iterations_millimeter':
         plan=[('scalar_RD_iterations100','scalar_rd','global',False),('tensor_RD_iterations100','tensor','global',False)]
-    if mode=='high_mu_millimeter':
-        plan=[('source_H20_secant_linear','simple','global',False),('source_H20_interval_linear','simple','global',False)]
     for name,kind,cs,shift in plan:
         p=origin.tolist() if shift else [0.,0.,0.]
         contract=deepcopy(source);contract['material_name']='Interface_'+name
@@ -57,14 +55,6 @@ def make_protocol(source,record,mode='meter_geometry'):
         B=[0.,target,0.] if name.endswith('_By') else [target,0.,0.]
         if name.endswith('_Bxy'):B=[target/math.sqrt(2),target/math.sqrt(2),0.]
         mu=[1000.,1000.,1000.] if 'isotropic' in name else [1000.,100.,1000.]
-        if mode=='high_mu_millimeter':
-            target=source['curves']['RD']['B'][source['curves']['RD']['H'].index(20.)]
-            B=[target,0.,0.];mu=[]
-            for direction in ('RD','TD'):
-                curve=source['curves'][direction];i=curve['H'].index(20.)
-                slope=curve['B'][i]/20. if 'secant' in name else (curve['B'][i]-curve['B'][i-1])/(20.-curve['H'][i-1])
-                mu.append(slope/MU0)
-            mu.append(1000.)
         hypotheses={'specified_frame':expected_H(np.eye(3),B,mu)}
         if cs=='relative':hypotheses={'specified_frame':expected_H(cs_frame(record,'absolute_point'),B)}
         elif cs=='object':hypotheses={s:expected_H(cs_frame(record,s),B,mu) for s in ('absolute_point','direction_vector','direction_vector_x_primary_legacy')}
@@ -101,7 +91,7 @@ def make_protocol(source,record,mode='meter_geometry'):
             cases[-1]['setup'].update(UseNonLinearIterNum=True,MinIterNum=1,MaxIterNum=100)
     return dict(protocol=VERSION,mode=mode,cases=cases,maximum_solve_attempts=len(cases),case_timeout_seconds=120,
         cores=2,GPUs=0,retry_allowed=False,motor_solves=0,
-        nonlinear_requires_passed=[] if mode in ('oblique_millimeter','axis_vectors_millimeter','explicit_iterations_millimeter','high_mu_millimeter') else ['simple_global_origin','simple_global_shift','simple_relative_shift'],
+        nonlinear_requires_passed=[] if mode in ('oblique_millimeter','axis_vectors_millimeter','explicit_iterations_millimeter') else ['simple_global_origin','simple_global_shift','simple_relative_shift'],
         scope='Full Dirichlet analytic controls and unchanged-source nonlinear diagnostics; no measured-material, loss or motor ranking claim')
 
 
@@ -125,9 +115,7 @@ def verify_material(text,case):
     if value(body,'CoordinateSystemType')!='Cartesian' or value(mu,'property_type')!='AnisoProperty' or blocks(mu,'BHCoordinates'):
         raise ValueError('Simple analytic tensor not saved')
     for i,expected in enumerate(case['mu_r'],1):
-        # AEDT rounds scalar literals on save. Bind derived constants to 12
-        # relative digits; this does not alter the physical field/energy gates.
-        if not math.isclose(float(value(mu,'component'+str(i))),expected,rel_tol=1e-12,abs_tol=0.):raise ValueError('Analytic tensor changed')
+        if float(value(mu,'component'+str(i)))!=expected:raise ValueError('Analytic tensor changed')
     for key in ('conductivity','core_loss_kh','core_loss_kc','core_loss_ke','core_loss_kdc'):
         if float(value(body,key))!=0:raise ValueError('Analytic control scalar changed')
     return dict(simple_tensor_saved=True,mu_r=case['mu_r'],material_accuracy_verified=False,motor_ranking_eligible=False)

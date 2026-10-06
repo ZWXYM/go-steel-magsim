@@ -1,0 +1,60 @@
+{
+  "case_id": "source_H20_interval_linear",
+  "mean_B_vector_T": [
+    1.515476622859241,
+    2.4279902998784016e-07,
+    0.0
+  ],
+  "mean_H_vector_A_per_m": [
+    17.513195037841797,
+    -2.523802493429509e-13,
+    0.0
+  ],
+  "hypothesis_relative_errors": {
+    "specified_frame": 3.729043867322369e-08
+  },
+  "matched_H_hypothesis": "specified_frame",
+  "checks": {
+    "B_vector": true,
+    "H_uniform": true,
+    "unique_H_hypothesis": true,
+    "adaptive_converged": true
+  },
+  "passed": true,
+  "native_convergence": {
+    "completed_passes": 2,
+    "maximum_passes": 6,
+    "minimum_passes": 2,
+    "targets_percent": [
+      0.1,
+      0.1
+    ],
+    "final_percent": [
+      1.4294e-25,
+      8.1701e-14
+    ],
+    "passes": [
+      {
+        "pass_number": 1,
+        "triangles": 360,
+        "energy_J": 0.0053082,
+        "energy_error_percent": 9.6199e-26,
+        "delta_energy_percent": null
+      },
+      {
+        "pass_number": 2,
+        "triangles": 469,
+        "energy_J": 0.0053082,
+        "energy_error_percent": 1.4294e-25,
+        "delta_energy_percent": 8.1701e-14
+      }
+    ],
+    "adaptive_converged": true,
+    "reached_maximum_passes": false
+  },
+  "calibrated_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "saved_project_sha256": "af52a27dcca9877e063e1c5067c088366d511f072ab382ec23687df8adcc9f66",
+  "native_validation": 1
+}

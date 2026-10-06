@@ -1,0 +1,8 @@
+{
+  "status": "failed_before_native_preflight_or_solve",
+  "error": "Analytic tensor changed",
+  "new_field_solves": 0,
+  "original_failure_preserved": true,
+  "second_case_not_dispatched": true,
+  "explanation": "AEDT decimal serialization differed by about 4.8e-16 relative; v7 only changed scalar transmission comparison to 1e-12 relative tolerance. Physical gates unchanged."
+}

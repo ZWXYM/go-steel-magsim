@@ -1,0 +1,15 @@
+{
+  "status": "CPU_reproduced_local_checkpoint",
+  "main_tests_last_checkpoint": 181,
+  "new_field_solves_since_public_884d7cf": 2,
+  "cumulative_Maxwell_completed": 36,
+  "cumulative_motor_solves": 4,
+  "cumulative_MuMax_success": 680,
+  "high_mu_linear_full_gate_passes": 2,
+  "source_curves": 8,
+  "source_points_per_curve": 26,
+  "air_preparation_native_solves": 0,
+  "real_material_field_verified": false,
+  "direction_interface_verified": false,
+  "motor_ranking_eligible": false
+}

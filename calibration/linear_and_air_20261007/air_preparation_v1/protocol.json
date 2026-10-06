@@ -1,0 +1,647 @@
+{
+  "protocol": "anisotropic_air_manufactured_solution_v1",
+  "status": "prepared_not_executed",
+  "cases": [
+    {
+      "case_id": "explicit_object_axes",
+      "CS_kind": "object",
+      "should_match_manufactured_solution": true,
+      "object_CS_origin_m": [
+        -0.0159574762365756,
+        0.00575247321422036,
+        0.0
+      ],
+      "explicit_x_direction_m": [
+        0.0006777411428991393,
+        0.0007353005801859324,
+        0.0
+      ],
+      "explicit_y_direction_m": [
+        -0.0007353005801859322,
+        0.0006777411428991393,
+        0.0
+      ],
+      "desired_frame_global": [
+        [
+          0.6777411428991392,
+          -0.7353005801859323,
+          0.0
+        ],
+        [
+          0.7353005801859324,
+          0.6777411428991392,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "actual_planned_frame_global": [
+        [
+          0.6777411428991392,
+          -0.7353005801859323,
+          0.0
+        ],
+        [
+          0.7353005801859324,
+          0.6777411428991392,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": {
+        "material_B_T": [
+          0.02513274122871835,
+          0.021956113879997925,
+          0.0
+        ],
+        "material_H_analytic_A_per_m": [
+          38.955998629006935,
+          6.583014573545709e-16,
+          0.0
+        ],
+        "air_B_T": [
+          0.02513274122871835,
+          0.0,
+          0.0
+        ],
+        "air_H_analytic_A_per_m": [
+          20000.000000000004,
+          0.0,
+          0.0
+        ],
+        "reluctivity_global_per_H": [
+          [
+            4668.016461565308,
+            -3569.122094156256,
+            0.0
+          ],
+          [
+            -3569.122094156256,
+            4085.5054084889357,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            795.7747154594767
+          ]
+        ],
+        "expected_total_energy_J": 0.05036338956072162,
+        "normal_B_continuity_verified": true,
+        "tangential_H_continuity_verified": true,
+        "H_scope": "Analytic preparation only; never substitute for exported native H"
+      },
+      "negative_control_interface_Hy_analytic": 6.583014573545709e-16,
+      "material_sample_points_m": [
+        [
+          -0.0075,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.0075,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0075,
+          0.005,
+          0.0
+        ],
+        [
+          -0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.005,
+          0.0,
+          0.0
+        ],
+        [
+          -0.005,
+          0.005,
+          0.0
+        ],
+        [
+          -0.0025,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.0025,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0025,
+          0.005,
+          0.0
+        ]
+      ],
+      "air_sample_points_m": [
+        [
+          0.0025,
+          -0.005,
+          0.0
+        ],
+        [
+          0.0025,
+          0.0,
+          0.0
+        ],
+        [
+          0.0025,
+          0.005,
+          0.0
+        ],
+        [
+          0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.0,
+          0.0
+        ],
+        [
+          0.005,
+          0.005,
+          0.0
+        ],
+        [
+          0.0075,
+          -0.005,
+          0.0
+        ],
+        [
+          0.0075,
+          0.0,
+          0.0
+        ],
+        [
+          0.0075,
+          0.005,
+          0.0
+        ]
+      ]
+    },
+    {
+      "case_id": "relative_axes",
+      "CS_kind": "relative",
+      "should_match_manufactured_solution": true,
+      "object_CS_origin_m": [
+        -0.0159574762365756,
+        0.00575247321422036,
+        0.0
+      ],
+      "explicit_x_direction_m": [
+        0.0006777411428991393,
+        0.0007353005801859324,
+        0.0
+      ],
+      "explicit_y_direction_m": [
+        -0.0007353005801859322,
+        0.0006777411428991393,
+        0.0
+      ],
+      "desired_frame_global": [
+        [
+          0.6777411428991392,
+          -0.7353005801859323,
+          0.0
+        ],
+        [
+          0.7353005801859324,
+          0.6777411428991392,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "actual_planned_frame_global": [
+        [
+          0.6777411428991392,
+          -0.7353005801859323,
+          0.0
+        ],
+        [
+          0.7353005801859324,
+          0.6777411428991392,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": {
+        "material_B_T": [
+          0.02513274122871835,
+          0.021956113879997925,
+          0.0
+        ],
+        "material_H_analytic_A_per_m": [
+          38.955998629006935,
+          6.583014573545709e-16,
+          0.0
+        ],
+        "air_B_T": [
+          0.02513274122871835,
+          0.0,
+          0.0
+        ],
+        "air_H_analytic_A_per_m": [
+          20000.000000000004,
+          0.0,
+          0.0
+        ],
+        "reluctivity_global_per_H": [
+          [
+            4668.016461565308,
+            -3569.122094156256,
+            0.0
+          ],
+          [
+            -3569.122094156256,
+            4085.5054084889357,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            795.7747154594767
+          ]
+        ],
+        "expected_total_energy_J": 0.05036338956072162,
+        "normal_B_continuity_verified": true,
+        "tangential_H_continuity_verified": true,
+        "H_scope": "Analytic preparation only; never substitute for exported native H"
+      },
+      "negative_control_interface_Hy_analytic": 6.583014573545709e-16,
+      "material_sample_points_m": [
+        [
+          -0.0075,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.0075,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0075,
+          0.005,
+          0.0
+        ],
+        [
+          -0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.005,
+          0.0,
+          0.0
+        ],
+        [
+          -0.005,
+          0.005,
+          0.0
+        ],
+        [
+          -0.0025,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.0025,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0025,
+          0.005,
+          0.0
+        ]
+      ],
+      "air_sample_points_m": [
+        [
+          0.0025,
+          -0.005,
+          0.0
+        ],
+        [
+          0.0025,
+          0.0,
+          0.0
+        ],
+        [
+          0.0025,
+          0.005,
+          0.0
+        ],
+        [
+          0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.0,
+          0.0
+        ],
+        [
+          0.005,
+          0.005,
+          0.0
+        ],
+        [
+          0.0075,
+          -0.005,
+          0.0
+        ],
+        [
+          0.0075,
+          0.0,
+          0.0
+        ],
+        [
+          0.0075,
+          0.005,
+          0.0
+        ]
+      ]
+    },
+    {
+      "case_id": "ignored_global_axes_negative",
+      "CS_kind": "global",
+      "should_match_manufactured_solution": false,
+      "object_CS_origin_m": [
+        -0.0159574762365756,
+        0.00575247321422036,
+        0.0
+      ],
+      "explicit_x_direction_m": [
+        0.0006777411428991393,
+        0.0007353005801859324,
+        0.0
+      ],
+      "explicit_y_direction_m": [
+        -0.0007353005801859322,
+        0.0006777411428991393,
+        0.0
+      ],
+      "desired_frame_global": [
+        [
+          0.6777411428991392,
+          -0.7353005801859323,
+          0.0
+        ],
+        [
+          0.7353005801859324,
+          0.6777411428991392,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "actual_planned_frame_global": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": {
+        "material_B_T": [
+          0.02513274122871835,
+          0.021956113879997925,
+          0.0
+        ],
+        "material_H_analytic_A_per_m": [
+          38.955998629006935,
+          6.583014573545709e-16,
+          0.0
+        ],
+        "air_B_T": [
+          0.02513274122871835,
+          0.0,
+          0.0
+        ],
+        "air_H_analytic_A_per_m": [
+          20000.000000000004,
+          0.0,
+          0.0
+        ],
+        "reluctivity_global_per_H": [
+          [
+            4668.016461565308,
+            -3569.122094156256,
+            0.0
+          ],
+          [
+            -3569.122094156256,
+            4085.5054084889357,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            795.7747154594767
+          ]
+        ],
+        "expected_total_energy_J": 0.05036338956072162,
+        "normal_B_continuity_verified": true,
+        "tangential_H_continuity_verified": true,
+        "H_scope": "Analytic preparation only; never substitute for exported native H"
+      },
+      "negative_control_interface_Hy_analytic": 174.72120275451215,
+      "material_sample_points_m": [
+        [
+          -0.0075,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.0075,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0075,
+          0.005,
+          0.0
+        ],
+        [
+          -0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.005,
+          0.0,
+          0.0
+        ],
+        [
+          -0.005,
+          0.005,
+          0.0
+        ],
+        [
+          -0.0025,
+          -0.005,
+          0.0
+        ],
+        [
+          -0.0025,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0025,
+          0.005,
+          0.0
+        ]
+      ],
+      "air_sample_points_m": [
+        [
+          0.0025,
+          -0.005,
+          0.0
+        ],
+        [
+          0.0025,
+          0.0,
+          0.0
+        ],
+        [
+          0.0025,
+          0.005,
+          0.0
+        ],
+        [
+          0.005,
+          -0.005,
+          0.0
+        ],
+        [
+          0.005,
+          0.0,
+          0.0
+        ],
+        [
+          0.005,
+          0.005,
+          0.0
+        ],
+        [
+          0.0075,
+          -0.005,
+          0.0
+        ],
+        [
+          0.0075,
+          0.0,
+          0.0
+        ],
+        [
+          0.0075,
+          0.005,
+          0.0
+        ]
+      ]
+    }
+  ],
+  "model_units": "mm",
+  "material_mu_r": [
+    1000.0,
+    100.0,
+    1000.0
+  ],
+  "air_mu_r": 1.0,
+  "material_rectangle_m": [
+    [
+      -0.01,
+      -0.01,
+      0.0
+    ],
+    [
+      0.01,
+      0.02
+    ]
+  ],
+  "air_rectangle_m": [
+    [
+      0.0,
+      -0.01,
+      0.0
+    ],
+    [
+      0.01,
+      0.02
+    ]
+  ],
+  "boundary_expression": "0.02513274122871835tesla*Y - 0.021956113879997925tesla*min(X,0meter)",
+  "boundary_coordinate_system": "Global",
+  "boundary_edges": "six exterior edges only; exclude shared x=0 interface",
+  "sample_point_units": "meter",
+  "export_reference_CS": "Global",
+  "maximum_native_attempts": 3,
+  "cores": 2,
+  "GPUs": 0,
+  "case_timeout_seconds": 120,
+  "maximum_passes": 6,
+  "minimum_passes": 2,
+  "adaptive_percent_error": 0.1,
+  "maximum_mesh_length_m": 0.002,
+  "maximum_mesh_elements": 1000,
+  "retries_allowed": false,
+  "planned_gates": {
+    "B_vector_absolute_error_T": 0.0001,
+    "B_uniformity_relative": 0.001,
+    "native_energy_relative_error": 0.0001,
+    "adaptive_converged_required": true
+  },
+  "runtime_boundary_expression_and_shared_edge_topology_verified": false,
+  "native_execution_entrypoint_available": false,
+  "new_field_solves": 0,
+  "material_accuracy_verified": false,
+  "direction_interface_verified": false,
+  "motor_ranking_eligible": false,
+  "purpose": "Use independent B response across an air interface; homogeneous full-boundary B alone cannot identify its tensor",
+  "source_geometry_sha256": "0d9ea749a87e456c122cac2fcc22d99e9c6e3317f398c0fda32d79872ec5c3b0",
+  "source_geometry": "calibration/diagnostics/nonlinear_field_20261007/ready_v2/saved_geometry_input.json",
+  "source_object": "GOES_V3_02",
+  "producer_sha256": {
+    "modules/maxwell_air_interface.py": "b33b9ecd1ce15fddb7baf43fa1c6410f2409ab30bfc8e05f792b060881aa4160",
+    "modules/maxwell_interface_controls.py": "4a8bfda45aa56de00ca34d9559255617442a18336082d6e2b50c10aa699fe60b",
+    "tools/prepare_air_interface_controls.py": "d2044f4a1997918f7a9eb53a4a63065caa7b1b84fe4a54cc307e5f167f44fd06"
+  }
+}

@@ -6,7 +6,7 @@ from modules.maxwell_directional_controls import GATES
 from modules.maxwell_nonlinear_controls import payload as nonlinear_payload,verify_definition as verify_nonlinear
 from modules.motor_model_audit import one,value,blocks
 
-VERSION='full_boundary_interface_controls_v7'
+VERSION='full_boundary_interface_controls_v6'
 MU0=4e-7*math.pi
 
 
@@ -125,9 +125,7 @@ def verify_material(text,case):
     if value(body,'CoordinateSystemType')!='Cartesian' or value(mu,'property_type')!='AnisoProperty' or blocks(mu,'BHCoordinates'):
         raise ValueError('Simple analytic tensor not saved')
     for i,expected in enumerate(case['mu_r'],1):
-        # AEDT rounds scalar literals on save. Bind derived constants to 12
-        # relative digits; this does not alter the physical field/energy gates.
-        if not math.isclose(float(value(mu,'component'+str(i))),expected,rel_tol=1e-12,abs_tol=0.):raise ValueError('Analytic tensor changed')
+        if float(value(mu,'component'+str(i)))!=expected:raise ValueError('Analytic tensor changed')
     for key in ('conductivity','core_loss_kh','core_loss_kc','core_loss_ke','core_loss_kdc'):
         if float(value(body,key))!=0:raise ValueError('Analytic control scalar changed')
     return dict(simple_tensor_saved=True,mu_r=case['mu_r'],material_accuracy_verified=False,motor_ranking_eligible=False)

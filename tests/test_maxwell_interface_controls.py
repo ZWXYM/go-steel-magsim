@@ -47,6 +47,9 @@ class InterfaceControls(unittest.TestCase):
         self.assertIn('component1:=',mu);self.assertFalse(any(isinstance(a,list) for a in mu))
         text="$begin 'Interface_simple_global_origin'\nCoordinateSystemType='Cartesian'\n$begin 'permeability'\nproperty_type='AnisoProperty'\ncomponent1='1000'\ncomponent2='100'\ncomponent3='1000'\n$end 'permeability'\nconductivity='0'\ncore_loss_kh='0'\ncore_loss_kc='0'\ncore_loss_ke='0'\ncore_loss_kdc='0'\n$end 'Interface_simple_global_origin'"
         self.assertTrue(verify_material(text,case)['simple_tensor_saved'])
+        rounded=dict(case,mu_r=[1000.0000000000005,100.,1000.])
+        self.assertTrue(verify_material(text,rounded)['simple_tensor_saved'])
+        with self.assertRaises(ValueError):verify_material(text,dict(case,mu_r=[1000.00000005,100.,1000.]))
         with self.assertRaises(ValueError):verify_material(text.replace("component2='100'","component2='1000'"),case)
 
     def test_oblique_H_is_permitted_only_when_full_vector_matches_tensor(self):
@@ -115,6 +118,17 @@ class InterfaceControls(unittest.TestCase):
             for c in protocol['cases']:
                 self.assertTrue(c['setup']['UseNonLinearIterNum']);self.assertEqual(c['setup']['MaxIterNum'],100)
                 self.assertEqual(c['material']['curves'],source['curves'])
+
+    def test_large_mu_linear_control_has_its_own_expected_H_without_reference_relabel(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source=load_contract(fixture(tmp))
+            source['curves']['RD']={'H':[0.,10.,20.,100.],'B':[0.,.65,1.5,1.9]}
+            source['curves']['TD']={'H':[0.,10.,20.,100.],'B':[0.,.05,.15,.5]}
+            p=make_protocol(source,CS(),'high_mu_millimeter')
+            self.assertEqual(p['maximum_solve_attempts'],2)
+            self.assertAlmostEqual(p['cases'][0]['expected_H_hypotheses']['specified_frame'][0],20.)
+            self.assertAlmostEqual(p['cases'][1]['expected_H_hypotheses']['specified_frame'][0],1.5/.085)
+            self.assertGreater(p['cases'][0]['mu_r'][0],50000.)
 
 
 if __name__=='__main__':unittest.main()

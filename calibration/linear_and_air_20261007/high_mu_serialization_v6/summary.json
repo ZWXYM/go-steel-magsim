@@ -1,0 +1,20 @@
+{
+  "protocol": "full_boundary_interface_controls_v6",
+  "cases": [],
+  "failures": [
+    {
+      "case_id": "source_H20_secant_linear",
+      "error": "Analytic tensor changed"
+    }
+  ],
+  "skipped": [],
+  "new_field_solves": 0,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 34,
+  "cumulative_motor_solves": 4,
+  "cumulative_MuMax_success": 680,
+  "calibrated_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false
+}

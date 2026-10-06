@@ -1,0 +1,176 @@
+{
+  "protocol": "full_boundary_interface_controls_v7",
+  "mode": "high_mu_millimeter",
+  "cases": [
+    {
+      "case_id": "source_H20_secant_linear",
+      "mean_B_vector_T": [
+        1.5154770696049258,
+        3.354915640323094e-07,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        20.0,
+        7.879680200877688e-13,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "specified_frame": 2.806948463258455e-13
+      },
+      "matched_H_hypothesis": "specified_frame",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          2.2229e-25,
+          1.5739e-13
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.0060619,
+            "energy_error_percent": 1.027e-25,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 468,
+            "energy_J": 0.0060619,
+            "energy_error_percent": 2.2229e-25,
+            "delta_energy_percent": 1.5739e-13
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": true,
+        "relative_tolerance": 0.0001,
+        "native_total_energy_J": 0.0060619,
+        "sampled_half_B_dot_H_energy_J": 0.006061908278419703,
+        "field_energy_relative_error": 1.3656476851069326e-06,
+        "expected_energy_J": {
+          "specified_frame": 0.00606190461672
+        },
+        "energy_hypothesis_relative_errors": {
+          "specified_frame": 7.615961991043667e-07
+        },
+        "matched_energy_hypothesis": "specified_frame",
+        "field_energy_consistent": true,
+        "H_and_energy_hypotheses_agree": true,
+        "interface_response_verified": true,
+        "calibrated_material_field_verified": false,
+        "motor_ranking_eligible": false
+      },
+      "producer_pass_is_direction_certification": false
+    },
+    {
+      "case_id": "source_H20_interval_linear",
+      "mean_B_vector_T": [
+        1.515476622859241,
+        2.4279902998784016e-07,
+        0.0
+      ],
+      "mean_H_vector_A_per_m": [
+        17.513195037841797,
+        -2.523802493429509e-13,
+        0.0
+      ],
+      "hypothesis_relative_errors": {
+        "specified_frame": 3.729043867322369e-08
+      },
+      "matched_H_hypothesis": "specified_frame",
+      "checks": {
+        "B_vector": true,
+        "H_uniform": true,
+        "unique_H_hypothesis": true,
+        "adaptive_converged": true
+      },
+      "passed": true,
+      "native_convergence": {
+        "completed_passes": 2,
+        "maximum_passes": 6,
+        "minimum_passes": 2,
+        "targets_percent": [
+          0.1,
+          0.1
+        ],
+        "final_percent": [
+          1.4294e-25,
+          8.1701e-14
+        ],
+        "passes": [
+          {
+            "pass_number": 1,
+            "triangles": 360,
+            "energy_J": 0.0053082,
+            "energy_error_percent": 9.6199e-26,
+            "delta_energy_percent": null
+          },
+          {
+            "pass_number": 2,
+            "triangles": 469,
+            "energy_J": 0.0053082,
+            "energy_error_percent": 1.4294e-25,
+            "delta_energy_percent": 8.1701e-14
+          }
+        ],
+        "adaptive_converged": true,
+        "reached_maximum_passes": false
+      },
+      "calibrated_material_field_verified": false,
+      "loss_calibration_verified": false,
+      "motor_ranking_eligible": false,
+      "energy_review": {
+        "applicable": true,
+        "relative_tolerance": 0.0001,
+        "native_total_energy_J": 0.0053082,
+        "sampled_half_B_dot_H_energy_J": 0.00530816753428474,
+        "field_energy_relative_error": 6.116143939614765e-06,
+        "expected_energy_J": {
+          "specified_frame": 0.005308166090614391
+        },
+        "energy_hypothesis_relative_errors": {
+          "specified_frame": 6.3881137879747986e-06
+        },
+        "matched_energy_hypothesis": "specified_frame",
+        "field_energy_consistent": true,
+        "H_and_energy_hypotheses_agree": true,
+        "interface_response_verified": true,
+        "calibrated_material_field_verified": false,
+        "motor_ranking_eligible": false
+      },
+      "producer_pass_is_direction_certification": false
+    }
+  ],
+  "incomplete_cases": [],
+  "new_field_solves": 2,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 36,
+  "original_producer_pass_count": 2,
+  "linear_field_and_energy_pass_count": 2,
+  "old_source_files_unchanged": 1283,
+  "dedicated_sessions_released": 2,
+  "calibrated_material_field_verified": false,
+  "object_CS_direction_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "interpretation": "Original producer results retained. Linear energy is an additional veto; nonlinear and real-material gates remain unmet."
+}
