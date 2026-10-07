@@ -78,6 +78,18 @@ def create_workbench(project,storage=None,root=None):
     def motor_archive():
         return jsonify(motor.archived_results())
 
+    @bp.get('/api/workbench/motor/archive/<case_id>/files/<path:name>')
+    def motor_archive_file(case_id,name):
+        return send_file(motor.archive_file(case_id,name),as_attachment=True)
+
+    @bp.post('/api/workbench/motor/archive/export')
+    def motor_archive_export():
+        return jsonify(motor.export_archive())
+
+    @bp.get('/api/workbench/motor/archive/exports/<export_id>/<name>')
+    def motor_archive_export_file(export_id,name):
+        return send_file(motor.archive_export_path(export_id,name),as_attachment=True)
+
     @bp.get('/api/workbench/motor/jobs')
     def motor_jobs():
         return jsonify(motor.jobs())

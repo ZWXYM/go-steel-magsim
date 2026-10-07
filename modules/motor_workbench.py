@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import copy
+import hashlib
 import json
 import math
 import os
@@ -615,14 +616,26 @@ class MotorWorkbench:
             report=case/'final_resolved_official_report.json'
             if not report.exists():
                 continue
-            record=json.loads(report.read_text(encoding='utf-8'))
-            row=dict(case=case.name,version='V8_2',reported_metrics=record.get('thesis_metrics',{}),
-                report_sha256=file_hash(report),csv_verified=False)
+            row=dict(case=case.name,version='V8_2/final_resolved',reported_metrics={},
+                csv_verified=False,display_metrics={},metric_source='saved_report_only',
+                files={},measurement_protocol='v8_2_cycle1')
             try:
+                sources=self.archive_sources(case.name)
+                row['files']={name:dict(sha256=file_hash(p),bytes=p.stat().st_size) for name,p in sources.items()}
+                row['report_sha256']=row['files'][report.name]['sha256']
+                record=json.loads(report.read_text(encoding='utf-8'))
+                row['reported_metrics']=record.get('thesis_metrics',{})
+                # Keep the author's saved summary visible when its final CSV is absent.
+                # This is a report-only value, never a successful CSV verification.
+                for key in ('T_avg_Nm','K_T_ripple_pct','P_Fe_W','P_Cu_W','P_out_W'):
+                    value=row['reported_metrics'].get(key)
+                    row['display_metrics'][key]=value if isinstance(value,(int,float)) and math.isfinite(value) else None
+                value=row['reported_metrics'].get('eta_pct')
+                row['display_metrics']['eta_estimate_pct']=value if isinstance(value,(int,float)) and math.isfinite(value) else None
                 # Never fall back to a different report prefix or another case.
                 pair=case/'final_resolved_reports/Torque Plots.csv'
                 if not pair.exists():
-                    raise ValueError('该 final 版本官方 CSV 缺失；保留历史摘要，不参与当前可核验排名')
+                    raise ValueError('该 final 版本官方 CSV 缺失；显示原保存摘要，未做 CSV 复核')
                 # Same parser without copying anything back into the archive.
                 import tempfile,shutil
                 with tempfile.TemporaryDirectory() as tmp:
@@ -634,7 +647,8 @@ class MotorWorkbench:
                 for key,tol in [('T_avg_Nm',.00006),('K_T_ripple_pct',.006),('P_Fe_W',.0006),('P_Cu_W',.0006)]:
                     if abs(computed[key]-expected[key])>tol:
                         raise ValueError('官方 CSV 与该版本摘要不符: '+key)
-                row.update(csv_verified=True,metrics=computed)
+                row.update(csv_verified=True,metrics=computed,display_metrics=computed,
+                    metric_source='official_CSV_verified')
                 projects=list(case.glob('*.aedt'))
                 if len(projects)==1:
                     computed['model_physics_audit']=audit_project(projects[0])
@@ -643,3 +657,79 @@ class MotorWorkbench:
                 row['reason']=str(exc)
             result.append(row)
         return result
+
+    def archive_sources(self,case_id):
+        """Expose only the selected final report and its own CSV, never native assets."""
+        if not isinstance(case_id,str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,100}',case_id):
+            raise ValueError('无效历史算例 ID')
+        base=(self.root/'motor/v8_2/cases').resolve()
+        case=(base/case_id).resolve()
+        if case.parent!=base or not (case/'final_resolved_official_report.json').is_file():
+            raise ValueError('历史算例不存在')
+        files=[case/'final_resolved_official_report.json']
+        for folder in ('final_resolved_reports','final_resolved_maxwell_reports'):
+            files.extend(sorted((case/folder).glob('*.csv')))
+        if any(not p.resolve().is_relative_to(case) for p in files):
+            raise ValueError('证据路径不属于该历史算例')
+        return {p.relative_to(case).as_posix():p for p in files if p.is_file()}
+
+    def archive_file(self,case_id,name):
+        sources=self.archive_sources(case_id)
+        if name not in sources:
+            raise ValueError('仅可下载该 final 版本的摘要与 CSV')
+        return sources[name]
+
+    def archive_export_path(self,export_id,name=None):
+        if not isinstance(export_id,str) or not re.fullmatch(r'archive_[0-9a-f]{12}',export_id):
+            raise ValueError('无效历史汇总 ID')
+        path=self.storage/'archive_exports'/export_id
+        if name is not None:
+            if name not in ('summary.csv','summary.json','summary.md','provenance.json','reports_bundle.zip'):
+                raise ValueError('无效历史汇总文件')
+            path=path/name
+        return path
+
+    def export_archive(self):
+        """Create a new downloadable snapshot; leave all archived results untouched."""
+        rows=self.archived_results()
+        if not rows:
+            raise ValueError('没有可导出的 V8_2 final 历史结果')
+        export_id='archive_'+uuid.uuid4().hex[:12]
+        path=self.archive_export_path(export_id)
+        path.mkdir(parents=True)
+        write_json(path/'summary.json',rows)
+        fields=['case','version','measurement_protocol','metric_source','csv_verified',
+            'T_avg_Nm','K_T_ripple_pct','P_Fe_W','P_Cu_W','P_out_W','eta_estimate_pct','reason','report_sha256']
+        with (path/'summary.csv').open('w',encoding='utf-8-sig',newline='') as stream:
+            writer=csv.DictWriter(stream,fieldnames=fields,extrasaction='ignore')
+            writer.writeheader()
+            writer.writerows({**r,**r['display_metrics']} for r in rows)
+        verified=sum(r['csv_verified'] for r in rows)
+        lines=['# V8_2 final 历史结果汇总','',f'共 {len(rows)} 案；{verified} 案通过同版本 CSV 复核。',
+            '摘要来源和异常逐案保留，不混用其他版本；效率按原诊断口径显示。本汇总不包含新求解或最终优化排名。','',
+            '| 算例 | 指标来源 | 转矩 / N·m | 铁损 / W | 备注 |','| --- | --- | --- | --- |']
+        for r in rows:
+            clean=lambda value:str(value if value is not None else '—').replace('|','/').replace('\n',' ')
+            lines.append('| '+' | '.join(clean(v) for v in (r['case'],r['metric_source'],r['display_metrics'].get('T_avg_Nm'),r['display_metrics'].get('P_Fe_W'),r.get('reason','同版本 CSV 已复核')))+' |')
+        (path/'summary.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+        evidence={}
+        # Read and bind each payload before putting it in the bundle. A changed
+        # source aborts the export; partial output stays in its new directory.
+        with zipfile.ZipFile(path/'reports_bundle.zip','w',zipfile.ZIP_DEFLATED) as bundle:
+            for row in rows:
+                for name,meta in row['files'].items():
+                    data=self.archive_file(row['case'],name).read_bytes()
+                    digest=hashlib.sha256(data).hexdigest()
+                    if digest!=meta['sha256']:
+                        raise ValueError('历史证据在汇总期间改变，停止导出')
+                    archive_name=row['case']+'/'+name
+                    bundle.writestr(archive_name,data)
+                    evidence[archive_name]=digest
+            write_json(path/'provenance.json',dict(export_id=export_id,created_utc=datetime.now(timezone.utc).isoformat(),
+                source_version='V8_2/final_resolved',source_hashes=evidence,source_changed=False,
+                new_native_solves=0,producer_sha256=file_hash(Path(__file__))))
+            for name in ('summary.csv','summary.json','summary.md','provenance.json'):
+                bundle.write(path/name,name)
+        return dict(id=export_id,case_count=len(rows),csv_verified_count=verified,
+            files={name:f'/api/workbench/motor/archive/exports/{export_id}/{name}'
+                for name in ('summary.csv','summary.json','summary.md','provenance.json','reports_bundle.zip')})

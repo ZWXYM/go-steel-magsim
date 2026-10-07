@@ -8,7 +8,7 @@ def install_cpu_policy(app):
     def cpu_only_submissions():
         if request.method not in ('GET','HEAD','OPTIONS'):
             path=request.path
-            safe=request.method=='POST' and (path in ('/api/workbench/calibrate','/api/workbench/motor/jobs')
+            safe=request.method=='POST' and (path in ('/api/workbench/calibrate','/api/workbench/motor/jobs','/api/workbench/motor/archive/export')
                 or re.fullmatch(r'/api/workbench/calibrations/cal_[0-9a-f]{12}/predict(?:-excluded)?',path)
                 or re.fullmatch(r'/api/workbench/motor/jobs/scan_[0-9a-f]{12}/export',path))
             if not safe:
