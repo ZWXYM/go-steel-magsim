@@ -9,7 +9,7 @@ const html = fs.readFileSync(path.join(__dirname, '../templates/workbench.html')
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 const elements = new Map();
 const element = id => {
-  if (!elements.has(id)) elements.set(id, {innerHTML:'', textContent:'', style:{}, disabled:false, hidden:false});
+  if (!elements.has(id)) elements.set(id, {innerHTML:'', textContent:'', style:{}, disabled:false, hidden:false,classList:{add:()=>{},remove:()=>{}}});
   return elements.get(id);
 };
 let catalogFails = true;
@@ -28,6 +28,7 @@ const source = {
 const context = vm.createContext({
   document: {getElementById:element,querySelectorAll:()=>[]},
   setTimeout:()=>0,
+  location:{hash:''},addEventListener:()=>{},
   fetch:async url=>{
     const route=url.replace('/api/workbench/','');
     if(route==='motor/catalog'&&catalogFails) return {ok:false,json:async()=>({error:'测试目录不可访问'})};

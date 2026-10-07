@@ -7,6 +7,10 @@ from flask import Blueprint,jsonify,request,render_template,send_file
 from modules.calibration_workbench import CalibrationWorkbench
 from modules.motor_workbench import MotorWorkbench
 from modules.workbench_cpu_policy import install_cpu_policy
+from modules.system_runtime import runtime_identity
+from modules.motor_optimization import MotorOptimization
+from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnostics
+from modules.optimization_plans import OptimizationPlans
 
 
 def create_workbench(project,storage=None,root=None):
@@ -16,6 +20,9 @@ def create_workbench(project,storage=None,root=None):
     storage=Path(storage or os.environ.get('MAGSIM_WORKBENCH_DIR') or project/'data/workbench').resolve()
     calibration=CalibrationWorkbench(root,storage/'calibration')
     motor=MotorWorkbench(root,storage/'motor',project)
+    optimization=MotorOptimization(root,storage/'optimization',motor)
+    plans=OptimizationPlans(optimization)
+    identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
         bp.record_once(lambda state:install_cpu_policy(state.app))
@@ -29,6 +36,66 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/workbench')
     def page():
         return render_template('workbench.html')
+
+    @bp.get('/system')
+    def system_page():
+        return render_template('system.html')
+
+    @bp.get('/motor-optimization')
+    def optimization_page():
+        return render_template('motor_optimization.html')
+
+    @bp.get('/api/workbench/optimization/workflow')
+    def optimization_workflow():
+        return jsonify(optimization.workflow())
+
+    @bp.get('/api/workbench/optimization/sources/<source>/<name>')
+    def optimization_source(source,name):
+        return send_file(optimization.source_file(source,name),as_attachment=True)
+
+    @bp.get('/api/workbench/optimization/datasets')
+    def optimization_datasets():
+        return jsonify(optimization.datasets())
+
+    @bp.get('/api/workbench/optimization/datasets/<dataset_id>')
+    def optimization_dataset(dataset_id):
+        return jsonify(optimization.dataset(dataset_id))
+
+    @bp.post('/api/workbench/optimization/analyze')
+    def optimization_analyze():
+        return jsonify(optimization.analyze(request.get_json()))
+
+    @bp.get('/api/workbench/optimization/history')
+    def optimization_history():
+        return jsonify(optimization.history())
+
+    @bp.get('/api/workbench/optimization/<artifact_id>/files/<name>')
+    def optimization_file(artifact_id,name):
+        return send_file(optimization.artifact(artifact_id,name),as_attachment=True)
+
+    @bp.get('/api/workbench/optimization/plan-catalog')
+    def plan_catalog():
+        return jsonify(dict(motor.catalog(),cpu_only=os.environ.get('MAGSIM_CPU_ONLY')=='1'))
+
+    @bp.get('/api/workbench/optimization/plans')
+    def optimization_plans():
+        return jsonify(plans.records())
+
+    @bp.post('/api/workbench/optimization/plans')
+    def prepare_optimization_plan():
+        return jsonify(plans.prepare(request.get_json()))
+
+    @bp.post('/api/workbench/optimization/plans/<plan_id>/submit')
+    def submit_optimization_plan(plan_id):
+        return jsonify(plans.submit(plan_id))
+
+    @bp.post('/api/workbench/optimization/plans/<plan_id>/refresh')
+    def refresh_optimization_plan(plan_id):
+        return jsonify(plans.refresh(plan_id))
+
+    @bp.get('/api/workbench/runtime')
+    def runtime():
+        return jsonify(identity)
 
     @bp.get('/api/workbench/samples')
     def samples():
@@ -92,7 +159,7 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.get('/api/workbench/motor/jobs')
     def motor_jobs():
-        return jsonify(motor.jobs())
+        return jsonify([diagnose_job(motor,j) for j in motor.jobs()])
 
     @bp.get('/api/workbench/motor/queue')
     def queue_state():
@@ -108,7 +175,7 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.post('/api/workbench/motor/jobs/<job_id>/export')
     def export_motor(job_id):
-        return jsonify(motor.export_summary(job_id))
+        return jsonify(append_export_diagnostics(motor,motor.export_summary(job_id)))
 
     @bp.post('/api/workbench/motor/jobs')
     def prepare_motor():
@@ -117,7 +184,7 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.get('/api/workbench/motor/jobs/<job_id>')
     def motor_state(job_id):
-        return jsonify(motor.state(job_id))
+        return jsonify(diagnose_job(motor,motor.state(job_id)))
 
     @bp.post('/api/workbench/motor/jobs/<job_id>/submit')
     def submit_motor(job_id):
@@ -136,6 +203,7 @@ def create_workbench(project,storage=None,root=None):
             raise ValueError('文件路径不属于该任务')
         return send_file(path,as_attachment=True)
 
-    if os.environ.get('MAGSIM_CPU_ONLY') != '1' and ((storage/'motor/queue.lock').exists() or any(j['status'] in ('queued','starting','running') for j in motor.jobs())):
+    if os.environ.get('MAGSIM_CPU_ONLY') != '1' and os.environ.get('MAGSIM_AUTO_RESUME_QUEUE','1')=='1' and ((storage/'motor/queue.lock').exists() or any(j['status'] in ('queued','starting','running') for j in motor.jobs())):
         motor.start_queue_monitor()
+    plans.start_monitor()  # CPU derivation only; never dispatches or retries native tasks.
     return bp

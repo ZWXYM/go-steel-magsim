@@ -1,0 +1,156 @@
+{
+  "created_utc": "2026-10-07T18:05:11.084613+00:00",
+  "scope": "System workflow acceptance; library materials, single-cycle official CSV; no independent physical certification",
+  "native_attempts": 4,
+  "native_completed": 3,
+  "native_failed": 1,
+  "new_mumax": 0,
+  "new_training": 0,
+  "plans": {
+    "plan_fd851e488243": {
+      "status": "completed",
+      "job": "scan_bd3b82a53ef6",
+      "analysis": "opt_ae71bc27f709"
+    },
+    "plan_8d5c3b030bbc": {
+      "status": "completed",
+      "job": "scan_8605c25b1635",
+      "analysis": "opt_f688ec36630f"
+    }
+  },
+  "cases": [
+    {
+      "job": "scan_a300ab06268f",
+      "case": "case_01",
+      "status": "completed",
+      "material": "AK Steel - M-6 Carlite",
+      "measurement_protocol": "v8_2_cycle1",
+      "metrics": {
+        "T_avg_Nm": 1.8858847047904357,
+        "K_T_ripple_pct": 18.773465479209264,
+        "P_Fe_W": 18.73937404694166,
+        "P_Cu_W": 49.17506412530503,
+        "eta_estimate_pct": 89.71589514350151
+      },
+      "efficiency_scope": "Pout/(Pout+PFe+PCu), SolidLoss/mechanical/stray losses excluded; diagnostic estimate",
+      "official_csv": {
+        "CoreLoss.csv": {
+          "sha256": "8e44ceedac5475b6deae53e131b11a10678f01e74edcf35bc83b6157bfa2b2a8",
+          "bytes": 1011
+        },
+        "SolidLoss.csv": {
+          "sha256": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+          "bytes": 564
+        },
+        "StrandedLoss.csv": {
+          "sha256": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+          "bytes": 1029
+        },
+        "Drive Current Plots.csv": {
+          "sha256": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+          "bytes": 2198
+        },
+        "Torque Plots.csv": {
+          "sha256": "a1766bede06e4c3667adc8afa54e7cd689eda697520ec4f7ed6133f94e60b7d1",
+          "bytes": 1581
+        }
+      },
+      "source_result_sha256": "d171ccf1f7cef2d9462bc0559d4bbf26453ed923ad5618d2b4bae831a20607ca"
+    },
+    {
+      "job": "scan_bd3b82a53ef6",
+      "case": "case_01",
+      "status": "completed",
+      "material": "Nippon Steel - 23ZDKH75",
+      "measurement_protocol": "v8_2_cycle1",
+      "metrics": {
+        "T_avg_Nm": 1.8767621490203603,
+        "K_T_ripple_pct": 29.22879548082728,
+        "P_Fe_W": 18.761454569941538,
+        "P_Cu_W": 49.17506412530503,
+        "eta_estimate_pct": 89.66805833558215
+      },
+      "efficiency_scope": "Pout/(Pout+PFe+PCu), SolidLoss/mechanical/stray losses excluded; diagnostic estimate",
+      "official_csv": {
+        "CoreLoss.csv": {
+          "sha256": "8a265d020eadd2a3563ab4b970bcdaa7f2713f44db5748bbcbe8546756859b7c",
+          "bytes": 1011
+        },
+        "SolidLoss.csv": {
+          "sha256": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+          "bytes": 564
+        },
+        "StrandedLoss.csv": {
+          "sha256": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+          "bytes": 1029
+        },
+        "Drive Current Plots.csv": {
+          "sha256": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+          "bytes": 2198
+        },
+        "Torque Plots.csv": {
+          "sha256": "d2a19d16834f1069ff9d36f959c0734d4e14144fdcc01f072b5719da438d975c",
+          "bytes": 1580
+        }
+      },
+      "source_result_sha256": "412357648ded0dbacc84146a224cc666e30b138f2fa167bd00da2c086daa4f00"
+    },
+    {
+      "job": "scan_bd3b82a53ef6",
+      "case": "case_02",
+      "status": "failed",
+      "category": "factorization",
+      "failure": "MFS Solver failed: Find Factorization fail",
+      "source_sha256": "1afdab2a6f371ddcb0d0b480bc9bef80f99294c5bfd95f57a4e80ca9d904ad44"
+    },
+    {
+      "job": "scan_8605c25b1635",
+      "case": "case_01",
+      "status": "completed",
+      "material": "AK Steel - M-6 Carlite",
+      "measurement_protocol": "v8_2_cycle1",
+      "metrics": {
+        "T_avg_Nm": 1.8735372403302675,
+        "K_T_ripple_pct": 19.51755054162734,
+        "P_Fe_W": 18.002897007633013,
+        "P_Cu_W": 49.17506412530503,
+        "eta_estimate_pct": 89.75581927616274
+      },
+      "efficiency_scope": "Pout/(Pout+PFe+PCu), SolidLoss/mechanical/stray losses excluded; diagnostic estimate",
+      "official_csv": {
+        "CoreLoss.csv": {
+          "sha256": "7268fb309971ed0bbaa2c522866a004c45f740c664da2b9ac1d589951c8faa88",
+          "bytes": 1011
+        },
+        "SolidLoss.csv": {
+          "sha256": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+          "bytes": 564
+        },
+        "StrandedLoss.csv": {
+          "sha256": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+          "bytes": 1029
+        },
+        "Drive Current Plots.csv": {
+          "sha256": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+          "bytes": 2198
+        },
+        "Torque Plots.csv": {
+          "sha256": "26bafe204fe0dcea9d445fef54718347667895a200e5e25f5fed9264b12bb1a4",
+          "bytes": 1580
+        }
+      },
+      "source_result_sha256": "4e0619af8c244d5b87919958e80d5a008f69b79a3faab9bc25acf11282d47830"
+    }
+  ],
+  "tests": {
+    "main_passed": 244,
+    "public_passed": 243,
+    "public_private_skipped": 1
+  },
+  "original_scores_matched": 14,
+  "old_archive_files_verified": 36,
+  "old_scan_states_unchanged": 5,
+  "calibration": "cal_8fff23daed9e",
+  "whole_material_excluded_prediction": "pred_5a6fb5dab354",
+  "prediction_downloads_verified": 5
+}

@@ -82,3 +82,12 @@ tools/audit_prediction_scope.py -text
 tools/check_native_design_access.py -text
 calibration/prediction_scope_20261007/** -text
 tools/predict_calibrated_material.py -text
+
+calibration/system_flow_20261008/** -text
+modules/system_runtime.py -text
+modules/motor_optimization.py -text
+modules/motor_failure_diagnostics.py -text
+modules/optimization_plans.py -text
+templates/system.html -text
+templates/motor_optimization.html -text
+start_system.cmd -text
