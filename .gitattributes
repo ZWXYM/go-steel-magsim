@@ -70,3 +70,10 @@ calibration/linear_and_air_20261007/** -text
 tools/run_air_interface_controls.py -text
 tools/audit_air_interface_controls.py -text
 calibration/air_interface_20261007/** -text
+modules/maxwell_native_readiness.py -text
+modules/maxwell_bh_representation.py -text
+modules/motor_explicit_axes.py -text
+tools/run_bh_representation_controls.py -text
+tools/prepare_motor_explicit_axes.py -text
+tools/audit_bh_and_axes_preparation.py -text
+calibration/bh_and_axes_preparation_20261007/** -text

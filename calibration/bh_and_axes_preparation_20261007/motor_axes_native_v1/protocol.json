@@ -1,0 +1,6310 @@
+{
+  "protocol": "48_explicit_motor_axis_candidates_preflight_v1",
+  "candidates": [
+    {
+      "object": "GOES_V3_01",
+      "object_id": 2104,
+      "new_CS": "GOES_V3_01_ExplicitCandidate",
+      "old_CS": "GOES_V3_01_CS",
+      "frame_global": [
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_01",
+        "object_id": 2104,
+        "CS": "GOES_V3_01_CS",
+        "CS_id": 2776,
+        "origin_m": [
+          -0.0314054484623454,
+          0.00135005314298423,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0368650070377351,
+            0.00160250495174995,
+            0.0
+          ],
+          [
+            -0.0205710083780374,
+            0.0016025049517498899,
+            0.0
+          ],
+          [
+            -0.020362864011863,
+            0.0011,
+            0.0
+          ],
+          [
+            -0.036883417798088,
+            0.0011,
+            0.0
+          ],
+          [
+            -0.036879464266944606,
+            0.0012308852026620002,
+            0.0
+          ],
+          [
+            -0.036870929281404105,
+            0.00146442375174353,
+            0.0
+          ],
+          [
+            -0.0368650070377351,
+            0.00160250495174995,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.036865007037735,
+          0.00160250495175,
+          0.0
+        ],
+        [
+          -0.020571008378037,
+          0.00160250495175,
+          0.0
+        ],
+        [
+          -0.020362864011863,
+          0.0011,
+          0.0
+        ],
+        [
+          -0.036883417798088,
+          0.0011,
+          0.0
+        ],
+        [
+          -0.036879464266945,
+          0.0012308852026620002,
+          0.0
+        ],
+        [
+          -0.036870929281404,
+          0.001464423751744,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_01",
+        "CS": "GOES_V3_01_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999999997921056,
+          -2.0390903944505924e-05,
+          0.0
+        ],
+        "RD_axis_global": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+        "shape_aspect_SVD": 35.81866959026352,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_02",
+      "object_id": 2120,
+      "new_CS": "GOES_V3_02_ExplicitCandidate",
+      "old_CS": "GOES_V3_02_CS",
+      "frame_global": [
+        [
+          0.6777411428991392,
+          -0.7353005801859323,
+          0.0
+        ],
+        [
+          0.7353005801859324,
+          0.6777411428991392,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_02",
+        "object_id": 2120,
+        "CS": "GOES_V3_02_CS",
+        "CS_id": 2786,
+        "origin_m": [
+          -0.0159574762365756,
+          0.00575247321422036,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0006777411428991393,
+          0.0007353005801859324,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0007353005801859322,
+          0.0006777411428991393,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0201780881053607,
+            0.0011765366864730101,
+            0.0
+          ],
+          [
+            -0.0203862324715352,
+            0.00167904163822291,
+            0.0
+          ],
+          [
+            -0.0118104545141844,
+            0.010254819595573901,
+            0.0
+          ],
+          [
+            -0.011455129855222101,
+            0.00989949493661167,
+            0.0
+          ],
+          [
+            -0.0201780881053607,
+            0.0011765366864730101,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.020178088105360998,
+          0.0011765366864730001,
+          0.0
+        ],
+        [
+          -0.020386232471535,
+          0.001679041638223,
+          0.0
+        ],
+        [
+          -0.011810454514184,
+          0.010254819595574,
+          0.0
+        ],
+        [
+          -0.011455129855221999,
+          0.009899494936612,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_02",
+        "CS": "GOES_V3_02_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7068592056307419,
+          0.7073542700903677,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.6777411428991051,
+          0.7353005801859637,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.312563683865252,
+        "shape_aspect_SVD": 24.344801549305675,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_03",
+      "object_id": 2132,
+      "new_CS": "GOES_V3_03_ExplicitCandidate",
+      "old_CS": "GOES_V3_03_CS",
+      "frame_global": [
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_03",
+        "object_id": 2132,
+        "CS": "GOES_V3_03_CS",
+        "CS_id": 2796,
+        "origin_m": [
+          -0.0317585153825195,
+          0.007344731606960381,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.023056289752276003,
+            0.0076025049517498295,
+            0.0
+          ],
+          [
+            -0.0228481453861016,
+            0.007100000000000011,
+            0.0
+          ],
+          [
+            -0.0362102992280675,
+            0.007100000000000011,
+            0.0
+          ],
+          [
+            -0.0361877725652884,
+            0.007214920532652371,
+            0.0
+          ],
+          [
+            -0.0361404263532112,
+            0.00744845920561024,
+            0.0
+          ],
+          [
+            -0.036108159010172204,
+            0.00760250495174986,
+            0.0
+          ],
+          [
+            -0.023056289752276003,
+            0.0076025049517498295,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.023056289752276003,
+          0.00760250495175,
+          0.0
+        ],
+        [
+          -0.022848145386102,
+          0.0070999999999999995,
+          0.0
+        ],
+        [
+          -0.036210299228067004,
+          0.0070999999999999995,
+          0.0
+        ],
+        [
+          -0.036187772565288004,
+          0.007214920532652,
+          0.0
+        ],
+        [
+          -0.036140426353211,
+          0.00744845920561,
+          0.0
+        ],
+        [
+          -0.036108159010172,
+          0.00760250495175,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_03",
+        "CS": "GOES_V3_03_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999997881794205,
+          0.0006508771881967929,
+          0.0
+        ],
+        "RD_axis_global": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+        "shape_aspect_SVD": 28.817178358580342,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_04",
+      "object_id": 2148,
+      "new_CS": "GOES_V3_04_ExplicitCandidate",
+      "old_CS": "GOES_V3_04_CS",
+      "frame_global": [
+        [
+          0.6701649330081029,
+          -0.7422122085807031,
+          0.0
+        ],
+        [
+          0.742212208580703,
+          0.670164933008103,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_04",
+        "object_id": 2148,
+        "CS": "GOES_V3_04_CS",
+        "CS_id": 2806,
+        "origin_m": [
+          -0.0193214372672545,
+          0.010873793557779999,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0006701649330081029,
+          0.0007422122085807031,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0007422122085807032,
+          0.000670164933008103,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0156977705423413,
+            0.014142135623731001,
+            0.0
+          ],
+          [
+            -0.0226633694795993,
+            0.007176536686473021,
+            0.0
+          ],
+          [
+            -0.022871513845773697,
+            0.007679041638222851,
+            0.0
+          ],
+          [
+            -0.016053095201303498,
+            0.0144974602826931,
+            0.0
+          ],
+          [
+            -0.0156977705423413,
+            0.014142135623731001,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.015697770542341002,
+          0.014142135623731001,
+          0.0
+        ],
+        [
+          -0.022663369479599002,
+          0.007176536686473,
+          0.0
+        ],
+        [
+          -0.022871513845774002,
+          0.007679041638223,
+          0.0
+        ],
+        [
+          -0.016053095201303002,
+          0.014497460282693,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_04",
+        "CS": "GOES_V3_04_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7067164667569258,
+          0.7074968802861303,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.6701649330081011,
+          0.7422122085807047,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.8885864554523786,
+        "shape_aspect_SVD": 19.39969350373383,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_05",
+      "object_id": 2160,
+      "new_CS": "GOES_V3_05_ExplicitCandidate",
+      "old_CS": "GOES_V3_05_CS",
+      "frame_global": [
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_05",
+        "object_id": 2160,
+        "CS": "GOES_V3_05_CS",
+        "CS_id": 2816,
+        "origin_m": [
+          -0.0314165288104973,
+          0.0133394286618,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0255415711265146,
+            0.0136025049517499,
+            0.0
+          ],
+          [
+            -0.0253334267603401,
+            0.0131,
+            0.0
+          ],
+          [
+            -0.034496154192763695,
+            0.0131,
+            0.0
+          ],
+          [
+            -0.0344586136140111,
+            0.0131990115279906,
+            0.0
+          ],
+          [
+            -0.0343682490610829,
+            0.0134325505393099,
+            0.0
+          ],
+          [
+            -0.0343011581082715,
+            0.0136025049517499,
+            0.0
+          ],
+          [
+            -0.0255415711265146,
+            0.0136025049517499,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.025541571126515,
+          0.01360250495175,
+          0.0
+        ],
+        [
+          -0.025333426760340002,
+          0.0131,
+          0.0
+        ],
+        [
+          -0.034496154192764,
+          0.0131,
+          0.0
+        ],
+        [
+          -0.034458613614011,
+          0.013199011527991002,
+          0.0
+        ],
+        [
+          -0.034368249061082996,
+          0.013432550539310001,
+          0.0
+        ],
+        [
+          -0.034301158108270995,
+          0.01360250495175,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_05",
+        "CS": "GOES_V3_05_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999978894369503,
+          0.002054536844354619,
+          0.0
+        ],
+        "RD_axis_global": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.11771637285211746,
+        "shape_aspect_SVD": 19.539994643775724,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_06",
+      "object_id": 2176,
+      "new_CS": "GOES_V3_06_ExplicitCandidate",
+      "old_CS": "GOES_V3_06_CS",
+      "frame_global": [
+        [
+          0.7353005801859323,
+          -0.6777411428991392,
+          0.0
+        ],
+        [
+          0.6777411428991393,
+          0.7353005801859323,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_06",
+        "object_id": 2176,
+        "CS": "GOES_V3_06_CS",
+        "CS_id": 2826,
+        "origin_m": [
+          -0.00575247321422043,
+          0.0159574762365756,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0007353005801859322,
+          0.0006777411428991394,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0006777411428991393,
+          0.0007353005801859322,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.010254819595573901,
+            0.0118104545141843,
+            0.0
+          ],
+          [
+            -0.00167904163822313,
+            0.0203862324715352,
+            0.0
+          ],
+          [
+            -0.00117653668647304,
+            0.0201780881053607,
+            0.0
+          ],
+          [
+            -0.00989949493661166,
+            0.011455129855222101,
+            0.0
+          ],
+          [
+            -0.010254819595573901,
+            0.0118104545141843,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.010254819595574,
+          0.011810454514184,
+          0.0
+        ],
+        [
+          -0.001679041638223,
+          0.020386232471535,
+          0.0
+        ],
+        [
+          -0.0011765366864730001,
+          0.020178088105360998,
+          0.0
+        ],
+        [
+          -0.009899494936612,
+          0.011455129855221999,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_06",
+        "CS": "GOES_V3_06_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7073542700903674,
+          0.7068592056307419,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.7353005801859654,
+          0.6777411428991033,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.312563683865567,
+        "shape_aspect_SVD": 24.344801549305725,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_07",
+      "object_id": 2188,
+      "new_CS": "GOES_V3_07_ExplicitCandidate",
+      "old_CS": "GOES_V3_07_CS",
+      "frame_global": [
+        [
+          0.6573374402145491,
+          -0.7535963705407452,
+          0.0
+        ],
+        [
+          0.7535963705407452,
+          0.6573374402145491,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_07",
+        "object_id": 2188,
+        "CS": "GOES_V3_07_CS",
+        "CS_id": 2836,
+        "origin_m": [
+          -0.0226853982979334,
+          0.015995113901339602,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0006573374402145491,
+          0.0007535963705407453,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0007535963705407453,
+          0.0006573374402145491,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0199404112294606,
+            0.018384776310850198,
+            0.0
+          ],
+          [
+            -0.0251486508538379,
+            0.013176536686473,
+            0.0
+          ],
+          [
+            -0.0253567952200123,
+            0.013679041638222901,
+            0.0
+          ],
+          [
+            -0.0202957358884229,
+            0.0187401009698124,
+            0.0
+          ],
+          [
+            -0.0199404112294606,
+            0.018384776310850198,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.019940411229461,
+          0.01838477631085,
+          0.0
+        ],
+        [
+          -0.025148650853838,
+          0.013176536686473,
+          0.0
+        ],
+        [
+          -0.025356795220012,
+          0.013679041638223,
+          0.0
+        ],
+        [
+          -0.020295735888423,
+          0.018740100969812,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_07",
+        "CS": "GOES_V3_07_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7064020401729801,
+          0.7078108205159422,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.6573374402145454,
+          0.7535963705407484,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 3.8457987472251087,
+        "shape_aspect_SVD": 14.455052116426563,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_08",
+      "object_id": 2200,
+      "new_CS": "GOES_V3_08_ExplicitCandidate",
+      "old_CS": "GOES_V3_08_CS",
+      "frame_global": [
+        [
+          0.742212208580703,
+          -0.670164933008103,
+          0.0
+        ],
+        [
+          0.6701649330081029,
+          0.7422122085807031,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_08",
+        "object_id": 2200,
+        "CS": "GOES_V3_08_CS",
+        "CS_id": 2846,
+        "origin_m": [
+          -0.010873793557779999,
+          0.0193214372672545,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0007422122085807031,
+          0.0006701649330081029,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.000670164933008103,
+          0.0007422122085807032,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0144974602826931,
+            0.0160530952013036,
+            0.0
+          ],
+          [
+            -0.0076790416382230805,
+            0.0228715138457738,
+            0.0
+          ],
+          [
+            -0.007176536686473051,
+            0.0226633694795993,
+            0.0
+          ],
+          [
+            -0.0141421356237309,
+            0.0156977705423414,
+            0.0
+          ],
+          [
+            -0.0144974602826931,
+            0.0160530952013036,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.014497460282693,
+          0.016053095201304,
+          0.0
+        ],
+        [
+          -0.007679041638223,
+          0.022871513845774002,
+          0.0
+        ],
+        [
+          -0.007176536686473,
+          0.022663369479599002,
+          0.0
+        ],
+        [
+          -0.014142135623731001,
+          0.015697770542341002,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_08",
+        "CS": "GOES_V3_08_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7074968802861547,
+          0.7067164667569014,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.7422122085807014,
+          0.6701649330081046,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.8885864554502327,
+        "shape_aspect_SVD": 19.399693503719654,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_09",
+      "object_id": 2212,
+      "new_CS": "GOES_V3_09_ExplicitCandidate",
+      "old_CS": "GOES_V3_09_CS",
+      "frame_global": [
+        [
+          0.7535963705407499,
+          -0.6573374402145438,
+          0.0
+        ],
+        [
+          0.6573374402145437,
+          0.7535963705407499,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_09",
+        "object_id": 2212,
+        "CS": "GOES_V3_09_CS",
+        "CS_id": 2856,
+        "origin_m": [
+          -0.0159951139013397,
+          0.0226853982979334,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0007535963705407499,
+          0.0006573374402145437,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0006573374402145438,
+          0.0007535963705407499,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0187401009698124,
+            0.020295735888422803,
+            0.0
+          ],
+          [
+            -0.013679041638223,
+            0.0253567952200123,
+            0.0
+          ],
+          [
+            -0.0131765366864731,
+            0.0251486508538379,
+            0.0
+          ],
+          [
+            -0.018384776310850198,
+            0.0199404112294606,
+            0.0
+          ],
+          [
+            -0.0187401009698124,
+            0.020295735888422803,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.018740100969812,
+          0.020295735888423,
+          0.0
+        ],
+        [
+          -0.013679041638223,
+          0.025356795220012,
+          0.0
+        ],
+        [
+          -0.013176536686473,
+          0.025148650853838,
+          0.0
+        ],
+        [
+          -0.01838477631085,
+          0.019940411229461,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_09",
+        "CS": "GOES_V3_09_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7078108205159422,
+          0.7064020401729801,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.7535963705407419,
+          0.6573374402145528,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 3.84579874722454,
+        "shape_aspect_SVD": 14.455052116426527,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_10",
+      "object_id": 2224,
+      "new_CS": "GOES_V3_10_ExplicitCandidate",
+      "old_CS": "GOES_V3_10_CS",
+      "frame_global": [
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_10",
+        "object_id": 2224,
+        "CS": "GOES_V3_10_CS",
+        "CS_id": 2866,
+        "origin_m": [
+          -0.0013500531429843702,
+          0.0314054484623454,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0012308852026622701,
+            0.036879464266944606,
+            0.0
+          ],
+          [
+            -0.0011,
+            0.036883417798088,
+            0.0
+          ],
+          [
+            -0.0011,
+            0.0203628640118629,
+            0.0
+          ],
+          [
+            -0.00160250495175011,
+            0.020571008378037502,
+            0.0
+          ],
+          [
+            -0.00160250495175011,
+            0.0368650070377351,
+            0.0
+          ],
+          [
+            -0.00146442375174374,
+            0.036870929281404105,
+            0.0
+          ],
+          [
+            -0.0012308852026622701,
+            0.036879464266944606,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.0012308852026620002,
+          0.036879464266945,
+          0.0
+        ],
+        [
+          -0.0011,
+          0.036883417798088,
+          0.0
+        ],
+        [
+          -0.0011,
+          0.020362864011863,
+          0.0
+        ],
+        [
+          -0.00160250495175,
+          0.020571008378038002,
+          0.0
+        ],
+        [
+          -0.00160250495175,
+          0.036865007037735,
+          0.0
+        ],
+        [
+          -0.001464423751744,
+          0.036870929281404,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_10",
+        "CS": "GOES_V3_10_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          2.039090394521547e-05,
+          -0.9999999997921056,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+        "shape_aspect_SVD": 35.81866959026244,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_11",
+      "object_id": 2240,
+      "new_CS": "GOES_V3_11_ExplicitCandidate",
+      "old_CS": "GOES_V3_11_CS",
+      "frame_global": [
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_11",
+        "object_id": 2240,
+        "CS": "GOES_V3_11_CS",
+        "CS_id": 2876,
+        "origin_m": [
+          -0.00734473160696047,
+          0.0317585153825195,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0070999999999999995,
+            0.0362102992280675,
+            0.0
+          ],
+          [
+            -0.0070999999999999995,
+            0.0228481453861015,
+            0.0
+          ],
+          [
+            -0.00760250495175006,
+            0.023056289752276003,
+            0.0
+          ],
+          [
+            -0.00760250495175004,
+            0.0361081590101721,
+            0.0
+          ],
+          [
+            -0.00744845920561035,
+            0.0361404263532112,
+            0.0
+          ],
+          [
+            -0.00721492053265234,
+            0.0361877725652884,
+            0.0
+          ],
+          [
+            -0.0070999999999999995,
+            0.0362102992280675,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.0070999999999999995,
+          0.036210299228068,
+          0.0
+        ],
+        [
+          -0.0070999999999999995,
+          0.022848145386102,
+          0.0
+        ],
+        [
+          -0.00760250495175,
+          0.023056289752276003,
+          0.0
+        ],
+        [
+          -0.00760250495175,
+          0.036108159010172,
+          0.0
+        ],
+        [
+          -0.00744845920561,
+          0.036140426353211,
+          0.0
+        ],
+        [
+          -0.007214920532652,
+          0.036187772565288004,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_11",
+        "CS": "GOES_V3_11_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          -0.0006508771881978233,
+          -0.9999997881794205,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+        "shape_aspect_SVD": 28.817178358580907,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_12",
+      "object_id": 2256,
+      "new_CS": "GOES_V3_12_ExplicitCandidate",
+      "old_CS": "GOES_V3_12_CS",
+      "frame_global": [
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_12",
+        "object_id": 2256,
+        "CS": "GOES_V3_12_CS",
+        "CS_id": 2886,
+        "origin_m": [
+          -0.013339428661800101,
+          0.0314165288104973,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            -0.0131,
+            0.034496154192763695,
+            0.0
+          ],
+          [
+            -0.0131,
+            0.0253334267603401,
+            0.0
+          ],
+          [
+            -0.01360250495175,
+            0.0255415711265146,
+            0.0
+          ],
+          [
+            -0.01360250495175,
+            0.0343011581082715,
+            0.0
+          ],
+          [
+            -0.0134325505393101,
+            0.0343682490610828,
+            0.0
+          ],
+          [
+            -0.0131990115279905,
+            0.0344586136140112,
+            0.0
+          ],
+          [
+            -0.0131,
+            0.034496154192763695,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.0131,
+          0.034496154192764,
+          0.0
+        ],
+        [
+          -0.0131,
+          0.025333426760340002,
+          0.0
+        ],
+        [
+          -0.01360250495175,
+          0.025541571126515,
+          0.0
+        ],
+        [
+          -0.01360250495175,
+          0.034301158108272,
+          0.0
+        ],
+        [
+          -0.013432550539310001,
+          0.034368249061082996,
+          0.0
+        ],
+        [
+          -0.01319901152799,
+          0.034458613614011,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_12",
+        "CS": "GOES_V3_12_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          -0.0020545368443804918,
+          -0.9999978894369502,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.1177163728552136,
+        "shape_aspect_SVD": 19.539994643766878,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_13",
+      "object_id": 2272,
+      "new_CS": "GOES_V3_13_ExplicitCandidate",
+      "old_CS": "GOES_V3_13_CS",
+      "frame_global": [
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_13",
+        "object_id": 2272,
+        "CS": "GOES_V3_13_CS",
+        "CS_id": 2896,
+        "origin_m": [
+          0.0314054484623454,
+          0.00135005314298439,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.036879464266944606,
+            0.0012308852026623601,
+            0.0
+          ],
+          [
+            0.036883417798088,
+            0.00110000000000008,
+            0.0
+          ],
+          [
+            0.020362864011863,
+            0.0011000000000000402,
+            0.0
+          ],
+          [
+            0.020571008378037502,
+            0.00160250495175016,
+            0.0
+          ],
+          [
+            0.0368650070377351,
+            0.00160250495174999,
+            0.0
+          ],
+          [
+            0.0368709292814042,
+            0.00146442375174369,
+            0.0
+          ],
+          [
+            0.036879464266944606,
+            0.0012308852026623601,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.036879464266945,
+          0.0012308852026620002,
+          0.0
+        ],
+        [
+          0.036883417798088,
+          0.0011,
+          0.0
+        ],
+        [
+          0.020362864011863,
+          0.0011,
+          0.0
+        ],
+        [
+          0.020571008378038002,
+          0.00160250495175,
+          0.0
+        ],
+        [
+          0.036865007037735,
+          0.00160250495175,
+          0.0
+        ],
+        [
+          0.036870929281404,
+          0.001464423751744,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_13",
+        "CS": "GOES_V3_13_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999999997921056,
+          2.039090394521095e-05,
+          0.0
+        ],
+        "RD_axis_global": [
+          -1.0,
+          -9.974659986866666e-15,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+        "shape_aspect_SVD": 35.81866959026244,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_14",
+      "object_id": 2288,
+      "new_CS": "GOES_V3_14_ExplicitCandidate",
+      "old_CS": "GOES_V3_14_CS",
+      "frame_global": [
+        [
+          0.6777411428990885,
+          0.7353005801859789,
+          -0.0
+        ],
+        [
+          -0.7353005801859789,
+          0.6777411428990886,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_14",
+        "object_id": 2288,
+        "CS": "GOES_V3_14_CS",
+        "CS_id": 2906,
+        "origin_m": [
+          0.0159574762365756,
+          0.0057524732142204705,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0006777411428990885,
+          -0.0007353005801859789,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0007353005801859789,
+          0.0006777411428990887,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.0118104545141843,
+            0.010254819595573901,
+            0.0
+          ],
+          [
+            0.0203862324715353,
+            0.00167904163822318,
+            0.0
+          ],
+          [
+            0.0201780881053607,
+            0.00117653668647309,
+            0.0
+          ],
+          [
+            0.011455129855222101,
+            0.00989949493661168,
+            0.0
+          ],
+          [
+            0.0118104545141843,
+            0.010254819595573901,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.011810454514184,
+          0.010254819595574,
+          0.0
+        ],
+        [
+          0.020386232471535,
+          0.001679041638223,
+          0.0
+        ],
+        [
+          0.020178088105360998,
+          0.0011765366864730001,
+          0.0
+        ],
+        [
+          0.011455129855221999,
+          0.009899494936612,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_14",
+        "CS": "GOES_V3_14_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7068592056307417,
+          -0.7073542700903676,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.6777411428991028,
+          -0.7353005801859658,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.312563683865567,
+        "shape_aspect_SVD": 24.344801549305675,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_15",
+      "object_id": 2300,
+      "new_CS": "GOES_V3_15_ExplicitCandidate",
+      "old_CS": "GOES_V3_15_CS",
+      "frame_global": [
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_15",
+        "object_id": 2300,
+        "CS": "GOES_V3_15_CS",
+        "CS_id": 2916,
+        "origin_m": [
+          0.0317585153825195,
+          0.00734473160696046,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.0362102992280675,
+            0.007100000000000079,
+            0.0
+          ],
+          [
+            0.0228481453861016,
+            0.007100000000000051,
+            0.0
+          ],
+          [
+            0.0230562897522761,
+            0.0076025049517501105,
+            0.0
+          ],
+          [
+            0.036108159010172204,
+            0.00760250495174997,
+            0.0
+          ],
+          [
+            0.036140426353211304,
+            0.00744845920561028,
+            0.0
+          ],
+          [
+            0.0361877725652884,
+            0.00721492053265225,
+            0.0
+          ],
+          [
+            0.0362102992280675,
+            0.007100000000000079,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.036210299228068,
+          0.0070999999999999995,
+          0.0
+        ],
+        [
+          0.022848145386102,
+          0.0070999999999999995,
+          0.0
+        ],
+        [
+          0.023056289752276003,
+          0.00760250495175,
+          0.0
+        ],
+        [
+          0.036108159010172,
+          0.00760250495175,
+          0.0
+        ],
+        [
+          0.036140426353211,
+          0.00744845920561,
+          0.0
+        ],
+        [
+          0.036187772565288004,
+          0.007214920532652,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_15",
+        "CS": "GOES_V3_15_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999997881794205,
+          -0.0006508771881978194,
+          0.0
+        ],
+        "RD_axis_global": [
+          -1.0,
+          -9.540979117872431e-15,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+        "shape_aspect_SVD": 28.81717835858091,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_16",
+      "object_id": 2316,
+      "new_CS": "GOES_V3_16_ExplicitCandidate",
+      "old_CS": "GOES_V3_16_CS",
+      "frame_global": [
+        [
+          0.6701649330080518,
+          0.742212208580749,
+          -0.0
+        ],
+        [
+          -0.7422122085807491,
+          0.6701649330080518,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999998
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_16",
+        "object_id": 2316,
+        "CS": "GOES_V3_16_CS",
+        "CS_id": 2926,
+        "origin_m": [
+          0.0193214372672545,
+          0.010873793557780101,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0006701649330080518,
+          -0.0007422122085807492,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.000742212208580749,
+          0.0006701649330080518,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.0156977705423414,
+            0.0141421356237309,
+            0.0
+          ],
+          [
+            0.0160530952013036,
+            0.0144974602826932,
+            0.0
+          ],
+          [
+            0.0228715138457738,
+            0.00767904163822313,
+            0.0
+          ],
+          [
+            0.0226633694795993,
+            0.0071765366864731004,
+            0.0
+          ],
+          [
+            0.0156977705423414,
+            0.0141421356237309,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.015697770542341002,
+          0.014142135623731001,
+          0.0
+        ],
+        [
+          0.016053095201304,
+          0.014497460282693,
+          0.0
+        ],
+        [
+          0.022871513845774002,
+          0.007679041638223,
+          0.0
+        ],
+        [
+          0.022663369479599002,
+          0.007176536686473,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_16",
+        "CS": "GOES_V3_16_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7067164667569015,
+          -0.7074968802861548,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.6701649330081038,
+          -0.7422122085807021,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.8885864554501066,
+        "shape_aspect_SVD": 19.399693503719643,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_17",
+      "object_id": 2328,
+      "new_CS": "GOES_V3_17_ExplicitCandidate",
+      "old_CS": "GOES_V3_17_CS",
+      "frame_global": [
+        [
+          -1.0,
+          1.0408340855860834e-13,
+          0.0
+        ],
+        [
+          -1.0408340855860834e-13,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_17",
+        "object_id": 2328,
+        "CS": "GOES_V3_17_CS",
+        "CS_id": 2936,
+        "origin_m": [
+          0.0314165288104973,
+          0.013339428661800101,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.001,
+          -1.0408340855860834e-16,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          1.0408340855860834e-16,
+          -0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.034496154192763695,
+            0.0131000000000001,
+            0.0
+          ],
+          [
+            0.0253334267603402,
+            0.0131000000000001,
+            0.0
+          ],
+          [
+            0.0255415711265146,
+            0.01360250495175,
+            0.0
+          ],
+          [
+            0.0343011581082716,
+            0.0136025049517499,
+            0.0
+          ],
+          [
+            0.0343682490610826,
+            0.013432550539310901,
+            0.0
+          ],
+          [
+            0.0344586136140115,
+            0.0131990115279898,
+            0.0
+          ],
+          [
+            0.034496154192763695,
+            0.0131000000000001,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.034496154192764,
+          0.0131,
+          0.0
+        ],
+        [
+          0.025333426760340002,
+          0.0131,
+          0.0
+        ],
+        [
+          0.025541571126515,
+          0.01360250495175,
+          0.0
+        ],
+        [
+          0.034301158108272,
+          0.01360250495175,
+          0.0
+        ],
+        [
+          0.034368249061082996,
+          0.013432550539311,
+          0.0
+        ],
+        [
+          0.034458613614011,
+          0.01319901152799,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_17",
+        "CS": "GOES_V3_17_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999978894369503,
+          -0.0020545368443529374,
+          0.0
+        ],
+        "RD_axis_global": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.11771637285211746,
+        "shape_aspect_SVD": 19.539994643759975,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_18",
+      "object_id": 2344,
+      "new_CS": "GOES_V3_18_ExplicitCandidate",
+      "old_CS": "GOES_V3_18_CS",
+      "frame_global": [
+        [
+          0.7353005801859784,
+          0.6777411428990892,
+          -0.0
+        ],
+        [
+          -0.677741142899089,
+          0.7353005801859785,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_18",
+        "object_id": 2344,
+        "CS": "GOES_V3_18_CS",
+        "CS_id": 2946,
+        "origin_m": [
+          0.00575247321422037,
+          0.0159574762365756,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0007353005801859784,
+          -0.0006777411428990891,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0006777411428990892,
+          0.0007353005801859786,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.0011765366864730101,
+            0.0201780881053607,
+            0.0
+          ],
+          [
+            0.00167904163822291,
+            0.0203862324715352,
+            0.0
+          ],
+          [
+            0.010254819595573901,
+            0.0118104545141844,
+            0.0
+          ],
+          [
+            0.009899494936611691,
+            0.011455129855222101,
+            0.0
+          ],
+          [
+            0.0011765366864730101,
+            0.0201780881053607,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.0011765366864730001,
+          0.020178088105360998,
+          0.0
+        ],
+        [
+          0.001679041638223,
+          0.020386232471535,
+          0.0
+        ],
+        [
+          0.010254819595574,
+          0.011810454514184,
+          0.0
+        ],
+        [
+          0.009899494936612,
+          0.011455129855221999,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_18",
+        "CS": "GOES_V3_18_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7073542700903678,
+          -0.7068592056307417,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.735300580185964,
+          -0.6777411428991047,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.312563683865252,
+        "shape_aspect_SVD": 24.344801549305625,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_19",
+      "object_id": 2356,
+      "new_CS": "GOES_V3_19_ExplicitCandidate",
+      "old_CS": "GOES_V3_19_CS",
+      "frame_global": [
+        [
+          0.6573374402146009,
+          0.7535963705407001,
+          -0.0
+        ],
+        [
+          -0.7535963705407001,
+          0.6573374402146009,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_19",
+        "object_id": 2356,
+        "CS": "GOES_V3_19_CS",
+        "CS_id": 2956,
+        "origin_m": [
+          0.0226853982979334,
+          0.0159951139013397,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0006573374402146009,
+          -0.0007535963705407,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0007535963705407,
+          0.0006573374402146009,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.0199404112294606,
+            0.018384776310850198,
+            0.0
+          ],
+          [
+            0.020295735888422803,
+            0.0187401009698125,
+            0.0
+          ],
+          [
+            0.0253567952200123,
+            0.013679041638223,
+            0.0
+          ],
+          [
+            0.0251486508538379,
+            0.0131765366864731,
+            0.0
+          ],
+          [
+            0.0199404112294606,
+            0.018384776310850198,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.019940411229461,
+          0.01838477631085,
+          0.0
+        ],
+        [
+          0.020295735888423,
+          0.018740100969813,
+          0.0
+        ],
+        [
+          0.025356795220012,
+          0.013679041638223,
+          0.0
+        ],
+        [
+          0.025148650853838,
+          0.013176536686473,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_19",
+        "CS": "GOES_V3_19_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7064020401729433,
+          -0.707810820515979,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.6573374402146017,
+          -0.7535963705406993,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 3.8457987472179007,
+        "shape_aspect_SVD": 14.45505211641725,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_20",
+      "object_id": 2368,
+      "new_CS": "GOES_V3_20_ExplicitCandidate",
+      "old_CS": "GOES_V3_20_CS",
+      "frame_global": [
+        [
+          0.742212208580703,
+          0.670164933008103,
+          -0.0
+        ],
+        [
+          -0.6701649330081029,
+          0.7422122085807031,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_20",
+        "object_id": 2368,
+        "CS": "GOES_V3_20_CS",
+        "CS_id": 2966,
+        "origin_m": [
+          0.010873793557779999,
+          0.0193214372672545,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0007422122085807031,
+          -0.0006701649330081029,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.000670164933008103,
+          0.0007422122085807032,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.007176536686473009,
+            0.0226633694795993,
+            0.0
+          ],
+          [
+            0.00767904163822284,
+            0.0228715138457738,
+            0.0
+          ],
+          [
+            0.0144974602826932,
+            0.0160530952013036,
+            0.0
+          ],
+          [
+            0.014142135623731001,
+            0.0156977705423413,
+            0.0
+          ],
+          [
+            0.007176536686473009,
+            0.0226633694795993,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.007176536686473,
+          0.022663369479599002,
+          0.0
+        ],
+        [
+          0.007679041638223,
+          0.022871513845774002,
+          0.0
+        ],
+        [
+          0.014497460282693,
+          0.016053095201304,
+          0.0
+        ],
+        [
+          0.014142135623731001,
+          0.015697770542341002,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_20",
+        "CS": "GOES_V3_20_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7074968802861548,
+          -0.7067164667569014,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.7422122085807047,
+          -0.6701649330081011,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.888586455450359,
+        "shape_aspect_SVD": 19.39969350371962,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_21",
+      "object_id": 2380,
+      "new_CS": "GOES_V3_21_ExplicitCandidate",
+      "old_CS": "GOES_V3_21_CS",
+      "frame_global": [
+        [
+          0.7535963705407017,
+          0.6573374402145991,
+          -0.0
+        ],
+        [
+          -0.657337440214599,
+          0.7535963705407018,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_21",
+        "object_id": 2380,
+        "CS": "GOES_V3_21_CS",
+        "CS_id": 2976,
+        "origin_m": [
+          0.015995113901339602,
+          0.0226853982979335,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0007535963705407018,
+          -0.000657337440214599,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0006573374402145991,
+          0.0007535963705407019,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.013176536686473,
+            0.0251486508538379,
+            0.0
+          ],
+          [
+            0.013679041638222901,
+            0.025356795220012402,
+            0.0
+          ],
+          [
+            0.0187401009698124,
+            0.0202957358884229,
+            0.0
+          ],
+          [
+            0.018384776310850198,
+            0.019940411229460702,
+            0.0
+          ],
+          [
+            0.013176536686473,
+            0.0251486508538379,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.013176536686473,
+          0.025148650853838,
+          0.0
+        ],
+        [
+          0.013679041638223,
+          0.025356795220012,
+          0.0
+        ],
+        [
+          0.018740100969812,
+          0.020295735888423,
+          0.0
+        ],
+        [
+          0.01838477631085,
+          0.019940411229461,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_21",
+        "CS": "GOES_V3_21_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.707810820515942,
+          -0.7064020401729805,
+          0.0
+        ],
+        "RD_axis_global": [
+          0.7535963705406985,
+          -0.6573374402146026,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 3.8457987472207464,
+        "shape_aspect_SVD": 14.45505211642656,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_22",
+      "object_id": 2392,
+      "new_CS": "GOES_V3_22_ExplicitCandidate",
+      "old_CS": "GOES_V3_22_CS",
+      "frame_global": [
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_22",
+        "object_id": 2392,
+        "CS": "GOES_V3_22_CS",
+        "CS_id": 2986,
+        "origin_m": [
+          0.0013500531429841301,
+          0.0314054484623454,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.00160250495174977,
+            0.0368650070377351,
+            0.0
+          ],
+          [
+            0.0016025049517498899,
+            0.0205710083780374,
+            0.0
+          ],
+          [
+            0.0011,
+            0.020362864011863,
+            0.0
+          ],
+          [
+            0.00109999999999995,
+            0.036883417798088,
+            0.0
+          ],
+          [
+            0.00123088520266184,
+            0.036879464266944606,
+            0.0
+          ],
+          [
+            0.0014644237517433601,
+            0.0368709292814042,
+            0.0
+          ],
+          [
+            0.00160250495174977,
+            0.0368650070377351,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.00160250495175,
+          0.036865007037735,
+          0.0
+        ],
+        [
+          0.00160250495175,
+          0.020571008378037,
+          0.0
+        ],
+        [
+          0.0011,
+          0.020362864011863,
+          0.0
+        ],
+        [
+          0.0011,
+          0.036883417798088,
+          0.0
+        ],
+        [
+          0.0012308852026620002,
+          0.036879464266945,
+          0.0
+        ],
+        [
+          0.0014644237517430002,
+          0.036870929281404,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_22",
+        "CS": "GOES_V3_22_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          -2.0390903929271132e-05,
+          -0.9999999997921056,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+        "shape_aspect_SVD": 35.81866959027814,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_23",
+      "object_id": 2408,
+      "new_CS": "GOES_V3_23_ExplicitCandidate",
+      "old_CS": "GOES_V3_23_CS",
+      "frame_global": [
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_23",
+        "object_id": 2408,
+        "CS": "GOES_V3_23_CS",
+        "CS_id": 2996,
+        "origin_m": [
+          0.00734473160696032,
+          0.0317585153825195,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.00760250495174982,
+            0.023056289752276003,
+            0.0
+          ],
+          [
+            0.0070999999999999995,
+            0.0228481453861016,
+            0.0
+          ],
+          [
+            0.00709999999999997,
+            0.0362102992280675,
+            0.0
+          ],
+          [
+            0.0072149205326523,
+            0.0361877725652884,
+            0.0
+          ],
+          [
+            0.0074484592056101,
+            0.036140426353211304,
+            0.0
+          ],
+          [
+            0.00760250495174971,
+            0.036108159010172204,
+            0.0
+          ],
+          [
+            0.00760250495174982,
+            0.023056289752276003,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.00760250495175,
+          0.023056289752276003,
+          0.0
+        ],
+        [
+          0.0070999999999999995,
+          0.022848145386102,
+          0.0
+        ],
+        [
+          0.0070999999999999995,
+          0.036210299228068,
+          0.0
+        ],
+        [
+          0.007214920532652,
+          0.036187772565288004,
+          0.0
+        ],
+        [
+          0.00744845920561,
+          0.036140426353211,
+          0.0
+        ],
+        [
+          0.00760250495175,
+          0.036108159010172,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_23",
+        "CS": "GOES_V3_23_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.0006508771881978194,
+          -0.9999997881794205,
+          -0.0
+        ],
+        "RD_axis_global": [
+          -9.540979117872497e-15,
+          1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+        "shape_aspect_SVD": 28.817178358580907,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_24",
+      "object_id": 2424,
+      "new_CS": "GOES_V3_24_ExplicitCandidate",
+      "old_CS": "GOES_V3_24_CS",
+      "frame_global": [
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_24",
+        "object_id": 2424,
+        "CS": "GOES_V3_24_CS",
+        "CS_id": 3006,
+        "origin_m": [
+          0.0133394286618002,
+          0.0314165288104973,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "Polyline",
+          "CoverLines"
+        ],
+        "polyline_points_m": [
+          [
+            0.0136025049517499,
+            0.0255415711265146,
+            0.0
+          ],
+          [
+            0.0131,
+            0.0253334267603402,
+            0.0
+          ],
+          [
+            0.0130999999999999,
+            0.034496154192763695,
+            0.0
+          ],
+          [
+            0.0131990115279911,
+            0.034458613614011,
+            0.0
+          ],
+          [
+            0.0134325505393101,
+            0.0343682490610829,
+            0.0
+          ],
+          [
+            0.01360250495175,
+            0.0343011581082715,
+            0.0
+          ],
+          [
+            0.0136025049517499,
+            0.0255415711265146,
+            0.0
+          ]
+        ],
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.01360250495175,
+          0.025541571126515,
+          0.0
+        ],
+        [
+          0.0131,
+          0.025333426760340002,
+          0.0
+        ],
+        [
+          0.0131,
+          0.034496154192764,
+          0.0
+        ],
+        [
+          0.013199011527991002,
+          0.034458613614011,
+          0.0
+        ],
+        [
+          0.013432550539310001,
+          0.034368249061082996,
+          0.0
+        ],
+        [
+          0.01360250495175,
+          0.034301158108272,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_24",
+        "CS": "GOES_V3_24_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.0020545368443520427,
+          -0.9999978894369502,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.1177163728552136,
+        "shape_aspect_SVD": 19.539994643776215,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_01_1",
+      "object_id": 2441,
+      "new_CS": "GOES_V3_01_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_01_1_CS",
+      "frame_global": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_01_1",
+        "object_id": 2441,
+        "CS": "GOES_V3_01_1_CS",
+        "CS_id": 2781,
+        "origin_m": [
+          0.0314054484623454,
+          -0.00135005314298423,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.036865007037735,
+          -0.00160250495175,
+          0.0
+        ],
+        [
+          0.020571008378037,
+          -0.00160250495175,
+          0.0
+        ],
+        [
+          0.020362864011863,
+          -0.0011,
+          0.0
+        ],
+        [
+          0.036883417798088,
+          -0.0011,
+          0.0
+        ],
+        [
+          0.036879464266945,
+          -0.0012308852026620002,
+          0.0
+        ],
+        [
+          0.036870929281404,
+          -0.001464423751744,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_01_1",
+        "CS": "GOES_V3_01_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999999997921056,
+          -2.0390903944505924e-05,
+          0.0
+        ],
+        "RD_axis_global": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+        "shape_aspect_SVD": 35.81866959026353,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_02_1",
+      "object_id": 2457,
+      "new_CS": "GOES_V3_02_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_02_1_CS",
+      "frame_global": [
+        [
+          -0.6777411428991392,
+          0.7353005801859323,
+          0.0
+        ],
+        [
+          -0.7353005801859324,
+          -0.6777411428991392,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_02_1",
+        "object_id": 2457,
+        "CS": "GOES_V3_02_1_CS",
+        "CS_id": 2791,
+        "origin_m": [
+          0.0159574762365756,
+          -0.00575247321422036,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0006777411428991393,
+          -0.0007353005801859324,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0007353005801859322,
+          -0.0006777411428991393,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.020178088105360998,
+          -0.0011765366864730001,
+          0.0
+        ],
+        [
+          0.020386232471535,
+          -0.001679041638223,
+          0.0
+        ],
+        [
+          0.011810454514184,
+          -0.010254819595574,
+          0.0
+        ],
+        [
+          0.011455129855221999,
+          -0.009899494936612,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_02_1",
+        "CS": "GOES_V3_02_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7068592056307417,
+          0.7073542700903676,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.6777411428991051,
+          -0.7353005801859637,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.3125636838654096,
+        "shape_aspect_SVD": 24.344801549305675,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_03_1",
+      "object_id": 2469,
+      "new_CS": "GOES_V3_03_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_03_1_CS",
+      "frame_global": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_03_1",
+        "object_id": 2469,
+        "CS": "GOES_V3_03_1_CS",
+        "CS_id": 2801,
+        "origin_m": [
+          0.0317585153825195,
+          -0.007344731606960381,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.023056289752276003,
+          -0.00760250495175,
+          0.0
+        ],
+        [
+          0.022848145386102,
+          -0.0070999999999999995,
+          0.0
+        ],
+        [
+          0.036210299228068,
+          -0.0070999999999999995,
+          0.0
+        ],
+        [
+          0.036187772565288004,
+          -0.007214920532652,
+          0.0
+        ],
+        [
+          0.036140426353211,
+          -0.00744845920561,
+          0.0
+        ],
+        [
+          0.036108159010172,
+          -0.00760250495175,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_03_1",
+        "CS": "GOES_V3_03_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999997881794205,
+          0.0006508771881978194,
+          0.0
+        ],
+        "RD_axis_global": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+        "shape_aspect_SVD": 28.81717835858091,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_04_1",
+      "object_id": 2485,
+      "new_CS": "GOES_V3_04_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_04_1_CS",
+      "frame_global": [
+        [
+          -0.6701649330081029,
+          0.7422122085807031,
+          0.0
+        ],
+        [
+          -0.742212208580703,
+          -0.670164933008103,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_04_1",
+        "object_id": 2485,
+        "CS": "GOES_V3_04_1_CS",
+        "CS_id": 2811,
+        "origin_m": [
+          0.0193214372672545,
+          -0.010873793557779999,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0006701649330081029,
+          -0.0007422122085807031,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0007422122085807032,
+          -0.000670164933008103,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.015697770542341002,
+          -0.014142135623731001,
+          0.0
+        ],
+        [
+          0.022663369479599002,
+          -0.007176536686473,
+          0.0
+        ],
+        [
+          0.022871513845774002,
+          -0.007679041638223,
+          0.0
+        ],
+        [
+          0.016053095201303002,
+          -0.014497460282693,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_04_1",
+        "CS": "GOES_V3_04_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7067164667569259,
+          0.7074968802861302,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.6701649330081011,
+          -0.7422122085807047,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.8885864554523786,
+        "shape_aspect_SVD": 19.39969350373381,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_05_1",
+      "object_id": 2497,
+      "new_CS": "GOES_V3_05_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_05_1_CS",
+      "frame_global": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_05_1",
+        "object_id": 2497,
+        "CS": "GOES_V3_05_1_CS",
+        "CS_id": 2821,
+        "origin_m": [
+          0.0314165288104973,
+          -0.0133394286618,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.025541571126515,
+          -0.01360250495175,
+          0.0
+        ],
+        [
+          0.025333426760340002,
+          -0.0131,
+          0.0
+        ],
+        [
+          0.034496154192764,
+          -0.0131,
+          0.0
+        ],
+        [
+          0.034458613614011,
+          -0.013199011527991002,
+          0.0
+        ],
+        [
+          0.034368249061082996,
+          -0.013432550539310001,
+          0.0
+        ],
+        [
+          0.034301158108272,
+          -0.01360250495175,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_05_1",
+        "CS": "GOES_V3_05_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999978894369503,
+          0.0020545368443520362,
+          0.0
+        ],
+        "RD_axis_global": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.11771637285211746,
+        "shape_aspect_SVD": 19.539994643776208,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_06_1",
+      "object_id": 2513,
+      "new_CS": "GOES_V3_06_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_06_1_CS",
+      "frame_global": [
+        [
+          -0.7353005801859323,
+          0.6777411428991392,
+          0.0
+        ],
+        [
+          -0.6777411428991393,
+          -0.7353005801859323,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_06_1",
+        "object_id": 2513,
+        "CS": "GOES_V3_06_1_CS",
+        "CS_id": 2831,
+        "origin_m": [
+          0.00575247321422043,
+          -0.0159574762365756,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0007353005801859322,
+          -0.0006777411428991394,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0006777411428991393,
+          -0.0007353005801859322,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.010254819595574,
+          -0.011810454514184,
+          0.0
+        ],
+        [
+          0.001679041638223,
+          -0.020386232471535,
+          0.0
+        ],
+        [
+          0.0011765366864730001,
+          -0.020178088105360998,
+          0.0
+        ],
+        [
+          0.009899494936612,
+          -0.011455129855221999,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_06_1",
+        "CS": "GOES_V3_06_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7073542700903678,
+          0.7068592056307417,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.7353005801859654,
+          -0.6777411428991033,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.3125636838654096,
+        "shape_aspect_SVD": 24.344801549305625,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_07_1",
+      "object_id": 2525,
+      "new_CS": "GOES_V3_07_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_07_1_CS",
+      "frame_global": [
+        [
+          -0.6573374402145491,
+          0.7535963705407452,
+          0.0
+        ],
+        [
+          -0.7535963705407452,
+          -0.6573374402145491,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_07_1",
+        "object_id": 2525,
+        "CS": "GOES_V3_07_1_CS",
+        "CS_id": 2841,
+        "origin_m": [
+          0.0226853982979334,
+          -0.015995113901339602,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0006573374402145491,
+          -0.0007535963705407453,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0007535963705407453,
+          -0.0006573374402145491,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.019940411229461,
+          -0.01838477631085,
+          0.0
+        ],
+        [
+          0.025148650853838,
+          -0.013176536686473,
+          0.0
+        ],
+        [
+          0.025356795220012,
+          -0.013679041638223,
+          0.0
+        ],
+        [
+          0.020295735888423,
+          -0.018740100969812,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_07_1",
+        "CS": "GOES_V3_07_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7064020401729801,
+          0.7078108205159422,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.6573374402145454,
+          -0.7535963705407484,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 3.8457987472251087,
+        "shape_aspect_SVD": 14.455052116426563,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_08_1",
+      "object_id": 2537,
+      "new_CS": "GOES_V3_08_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_08_1_CS",
+      "frame_global": [
+        [
+          -0.742212208580703,
+          0.670164933008103,
+          0.0
+        ],
+        [
+          -0.6701649330081029,
+          -0.7422122085807031,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_08_1",
+        "object_id": 2537,
+        "CS": "GOES_V3_08_1_CS",
+        "CS_id": 2851,
+        "origin_m": [
+          0.010873793557779999,
+          -0.0193214372672545,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0007422122085807031,
+          -0.0006701649330081029,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.000670164933008103,
+          -0.0007422122085807032,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.014497460282693,
+          -0.016053095201304,
+          0.0
+        ],
+        [
+          0.007679041638223,
+          -0.022871513845774002,
+          0.0
+        ],
+        [
+          0.007176536686473,
+          -0.022663369479599002,
+          0.0
+        ],
+        [
+          0.014142135623731001,
+          -0.015697770542341002,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_08_1",
+        "CS": "GOES_V3_08_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7074968802861548,
+          0.7067164667569014,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.7422122085807014,
+          -0.6701649330081046,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.8885864554502327,
+        "shape_aspect_SVD": 19.39969350371962,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_09_1",
+      "object_id": 2549,
+      "new_CS": "GOES_V3_09_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_09_1_CS",
+      "frame_global": [
+        [
+          -0.7535963705407499,
+          0.6573374402145438,
+          0.0
+        ],
+        [
+          -0.6573374402145437,
+          -0.7535963705407499,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_09_1",
+        "object_id": 2549,
+        "CS": "GOES_V3_09_1_CS",
+        "CS_id": 2861,
+        "origin_m": [
+          0.0159951139013397,
+          -0.0226853982979334,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0007535963705407499,
+          -0.0006573374402145437,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0006573374402145438,
+          -0.0007535963705407499,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.018740100969812,
+          -0.020295735888423,
+          0.0
+        ],
+        [
+          0.013679041638223,
+          -0.025356795220012,
+          0.0
+        ],
+        [
+          0.013176536686473,
+          -0.025148650853838,
+          0.0
+        ],
+        [
+          0.01838477631085,
+          -0.019940411229461,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_09_1",
+        "CS": "GOES_V3_09_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.707810820515942,
+          0.7064020401729805,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.7535963705407419,
+          -0.6573374402145528,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 3.84579874722454,
+        "shape_aspect_SVD": 14.45505211642656,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_10_1",
+      "object_id": 2561,
+      "new_CS": "GOES_V3_10_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_10_1_CS",
+      "frame_global": [
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_10_1",
+        "object_id": 2561,
+        "CS": "GOES_V3_10_1_CS",
+        "CS_id": 2871,
+        "origin_m": [
+          0.0013500531429843702,
+          -0.0314054484623454,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.0012308852026620002,
+          -0.036879464266945,
+          0.0
+        ],
+        [
+          0.0011,
+          -0.036883417798088,
+          0.0
+        ],
+        [
+          0.0011,
+          -0.020362864011863,
+          0.0
+        ],
+        [
+          0.00160250495175,
+          -0.020571008378037,
+          0.0
+        ],
+        [
+          0.00160250495175,
+          -0.036865007037735,
+          0.0
+        ],
+        [
+          0.001464423751744,
+          -0.036870929281404,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_10_1",
+        "CS": "GOES_V3_10_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          2.0390903944506907e-05,
+          -0.9999999997921054,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.0011683130416335554,
+        "shape_aspect_SVD": 35.81866959026352,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_11_1",
+      "object_id": 2577,
+      "new_CS": "GOES_V3_11_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_11_1_CS",
+      "frame_global": [
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_11_1",
+        "object_id": 2577,
+        "CS": "GOES_V3_11_1_CS",
+        "CS_id": 2881,
+        "origin_m": [
+          0.00734473160696047,
+          -0.0317585153825195,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.0070999999999999995,
+          -0.036210299228067004,
+          0.0
+        ],
+        [
+          0.0070999999999999995,
+          -0.022848145386101,
+          0.0
+        ],
+        [
+          0.00760250495175,
+          -0.023056289752276003,
+          0.0
+        ],
+        [
+          0.00760250495175,
+          -0.036108159010172,
+          0.0
+        ],
+        [
+          0.00744845920561,
+          -0.036140426353211,
+          0.0
+        ],
+        [
+          0.007214920532652,
+          -0.036187772565288004,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_11_1",
+        "CS": "GOES_V3_11_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          -0.0006508771881956858,
+          -0.9999997881794207,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.03729251848117666,
+        "shape_aspect_SVD": 28.81717835858144,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_12_1",
+      "object_id": 2593,
+      "new_CS": "GOES_V3_12_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_12_1_CS",
+      "frame_global": [
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_12_1",
+        "object_id": 2593,
+        "CS": "GOES_V3_12_1_CS",
+        "CS_id": 2891,
+        "origin_m": [
+          0.013339428661800101,
+          -0.0314165288104973,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          0.0131,
+          -0.034496154192764,
+          0.0
+        ],
+        [
+          0.0131,
+          -0.025333426760340002,
+          0.0
+        ],
+        [
+          0.01360250495175,
+          -0.025541571126515,
+          0.0
+        ],
+        [
+          0.01360250495175,
+          -0.034301158108270995,
+          0.0
+        ],
+        [
+          0.013432550539310001,
+          -0.034368249061082996,
+          0.0
+        ],
+        [
+          0.01319901152799,
+          -0.034458613614011,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_12_1",
+        "CS": "GOES_V3_12_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          -0.0020545368443830813,
+          -0.9999978894369502,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.1177163728552136,
+        "shape_aspect_SVD": 19.53999464376639,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_13_1",
+      "object_id": 2609,
+      "new_CS": "GOES_V3_13_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_13_1_CS",
+      "frame_global": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_13_1",
+        "object_id": 2609,
+        "CS": "GOES_V3_13_1_CS",
+        "CS_id": 2901,
+        "origin_m": [
+          -0.0314054484623454,
+          -0.00135005314298439,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.036879464266945,
+          -0.0012308852026620002,
+          0.0
+        ],
+        [
+          -0.036883417798088,
+          -0.0011,
+          0.0
+        ],
+        [
+          -0.020362864011863,
+          -0.0011,
+          0.0
+        ],
+        [
+          -0.020571008378037,
+          -0.00160250495175,
+          0.0
+        ],
+        [
+          -0.036865007037735,
+          -0.00160250495175,
+          0.0
+        ],
+        [
+          -0.036870929281404,
+          -0.001464423751744,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_13_1",
+        "CS": "GOES_V3_13_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999999997921056,
+          2.0390903944505924e-05,
+          0.0
+        ],
+        "RD_axis_global": [
+          1.0,
+          9.974659986866666e-15,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+        "shape_aspect_SVD": 35.81866959026352,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_14_1",
+      "object_id": 2625,
+      "new_CS": "GOES_V3_14_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_14_1_CS",
+      "frame_global": [
+        [
+          -0.6777411428990885,
+          -0.7353005801859789,
+          0.0
+        ],
+        [
+          0.7353005801859789,
+          -0.6777411428990886,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_14_1",
+        "object_id": 2625,
+        "CS": "GOES_V3_14_1_CS",
+        "CS_id": 2911,
+        "origin_m": [
+          -0.0159574762365756,
+          -0.0057524732142204705,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0006777411428990885,
+          0.0007353005801859789,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0007353005801859789,
+          -0.0006777411428990887,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.011810454514184,
+          -0.010254819595574,
+          0.0
+        ],
+        [
+          -0.020386232471535,
+          -0.001679041638223,
+          0.0
+        ],
+        [
+          -0.020178088105360998,
+          -0.0011765366864730001,
+          0.0
+        ],
+        [
+          -0.011455129855221999,
+          -0.009899494936612,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_14_1",
+        "CS": "GOES_V3_14_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7068592056307419,
+          -0.7073542700903677,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.6777411428991028,
+          0.7353005801859658,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.312563683865252,
+        "shape_aspect_SVD": 24.344801549305675,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_15_1",
+      "object_id": 2637,
+      "new_CS": "GOES_V3_15_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_15_1_CS",
+      "frame_global": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_15_1",
+        "object_id": 2637,
+        "CS": "GOES_V3_15_1_CS",
+        "CS_id": 2921,
+        "origin_m": [
+          -0.0317585153825195,
+          -0.00734473160696046,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.0,
+          0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.036210299228067004,
+          -0.0070999999999999995,
+          0.0
+        ],
+        [
+          -0.022848145386102,
+          -0.0070999999999999995,
+          0.0
+        ],
+        [
+          -0.023056289752276003,
+          -0.00760250495175,
+          0.0
+        ],
+        [
+          -0.036108159010172,
+          -0.00760250495175,
+          0.0
+        ],
+        [
+          -0.036140426353211,
+          -0.00744845920561,
+          0.0
+        ],
+        [
+          -0.036187772565288004,
+          -0.007214920532652,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_15_1",
+        "CS": "GOES_V3_15_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999997881794205,
+          -0.0006508771881967929,
+          0.0
+        ],
+        "RD_axis_global": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+        "shape_aspect_SVD": 28.817178358580342,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_16_1",
+      "object_id": 2653,
+      "new_CS": "GOES_V3_16_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_16_1_CS",
+      "frame_global": [
+        [
+          -0.6701649330080518,
+          -0.742212208580749,
+          0.0
+        ],
+        [
+          0.7422122085807491,
+          -0.6701649330080518,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999998
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_16_1",
+        "object_id": 2653,
+        "CS": "GOES_V3_16_1_CS",
+        "CS_id": 2931,
+        "origin_m": [
+          -0.0193214372672545,
+          -0.010873793557780101,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0006701649330080518,
+          0.0007422122085807492,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.000742212208580749,
+          -0.0006701649330080518,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.015697770542341002,
+          -0.014142135623731001,
+          0.0
+        ],
+        [
+          -0.016053095201304,
+          -0.014497460282693,
+          0.0
+        ],
+        [
+          -0.022871513845774002,
+          -0.007679041638223,
+          0.0
+        ],
+        [
+          -0.022663369479599002,
+          -0.007176536686473,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_16_1",
+        "CS": "GOES_V3_16_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7067164667569014,
+          -0.7074968802861548,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.6701649330081038,
+          0.7422122085807021,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.888586455450359,
+        "shape_aspect_SVD": 19.39969350371965,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_17_1",
+      "object_id": 2665,
+      "new_CS": "GOES_V3_17_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_17_1_CS",
+      "frame_global": [
+        [
+          1.0,
+          -1.0408340855860834e-13,
+          0.0
+        ],
+        [
+          1.0408340855860834e-13,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_17_1",
+        "object_id": 2665,
+        "CS": "GOES_V3_17_1_CS",
+        "CS_id": 2941,
+        "origin_m": [
+          -0.0314165288104973,
+          -0.013339428661800101,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.001,
+          1.0408340855860834e-16,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -1.0408340855860834e-16,
+          0.001,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.034496154192764,
+          -0.0131,
+          0.0
+        ],
+        [
+          -0.025333426760340002,
+          -0.0131,
+          0.0
+        ],
+        [
+          -0.025541571126515,
+          -0.01360250495175,
+          0.0
+        ],
+        [
+          -0.034301158108272,
+          -0.01360250495175,
+          0.0
+        ],
+        [
+          -0.034368249061082996,
+          -0.013432550539311,
+          0.0
+        ],
+        [
+          -0.034458613614011,
+          -0.01319901152799,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_17_1",
+        "CS": "GOES_V3_17_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.9999978894369503,
+          -0.0020545368443529452,
+          0.0
+        ],
+        "RD_axis_global": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.11771637285211746,
+        "shape_aspect_SVD": 19.539994643759982,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_18_1",
+      "object_id": 2681,
+      "new_CS": "GOES_V3_18_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_18_1_CS",
+      "frame_global": [
+        [
+          -0.7353005801859784,
+          -0.6777411428990892,
+          0.0
+        ],
+        [
+          0.677741142899089,
+          -0.7353005801859785,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_18_1",
+        "object_id": 2681,
+        "CS": "GOES_V3_18_1_CS",
+        "CS_id": 2951,
+        "origin_m": [
+          -0.00575247321422037,
+          -0.0159574762365756,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0007353005801859784,
+          0.0006777411428990891,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0006777411428990892,
+          -0.0007353005801859786,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.0011765366864730001,
+          -0.020178088105360998,
+          0.0
+        ],
+        [
+          -0.001679041638223,
+          -0.020386232471535,
+          0.0
+        ],
+        [
+          -0.010254819595574,
+          -0.011810454514184,
+          0.0
+        ],
+        [
+          -0.009899494936612,
+          -0.011455129855221999,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_18_1",
+        "CS": "GOES_V3_18_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7073542700903674,
+          -0.7068592056307419,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.735300580185964,
+          0.6777411428991047,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.312563683865567,
+        "shape_aspect_SVD": 24.344801549305725,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_19_1",
+      "object_id": 2693,
+      "new_CS": "GOES_V3_19_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_19_1_CS",
+      "frame_global": [
+        [
+          -0.6573374402146009,
+          -0.7535963705407001,
+          0.0
+        ],
+        [
+          0.7535963705407001,
+          -0.6573374402146009,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_19_1",
+        "object_id": 2693,
+        "CS": "GOES_V3_19_1_CS",
+        "CS_id": 2961,
+        "origin_m": [
+          -0.0226853982979334,
+          -0.0159951139013397,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0006573374402146009,
+          0.0007535963705407,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0007535963705407,
+          -0.0006573374402146009,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.019940411229461,
+          -0.01838477631085,
+          0.0
+        ],
+        [
+          -0.020295735888423,
+          -0.018740100969812,
+          0.0
+        ],
+        [
+          -0.025356795220012,
+          -0.013679041638223,
+          0.0
+        ],
+        [
+          -0.025148650853838,
+          -0.013176536686473,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_19_1",
+        "CS": "GOES_V3_19_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7064020401729801,
+          -0.7078108205159422,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.6573374402146017,
+          0.7535963705406993,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 3.8457987472207464,
+        "shape_aspect_SVD": 14.455052116426563,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_20_1",
+      "object_id": 2705,
+      "new_CS": "GOES_V3_20_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_20_1_CS",
+      "frame_global": [
+        [
+          -0.742212208580703,
+          -0.670164933008103,
+          0.0
+        ],
+        [
+          0.6701649330081029,
+          -0.7422122085807031,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_20_1",
+        "object_id": 2705,
+        "CS": "GOES_V3_20_1_CS",
+        "CS_id": 2971,
+        "origin_m": [
+          -0.010873793557779999,
+          -0.0193214372672545,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0007422122085807031,
+          0.0006701649330081029,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.000670164933008103,
+          -0.0007422122085807032,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.007176536686473,
+          -0.022663369479599002,
+          0.0
+        ],
+        [
+          -0.007679041638223,
+          -0.022871513845774002,
+          0.0
+        ],
+        [
+          -0.014497460282693,
+          -0.016053095201304,
+          0.0
+        ],
+        [
+          -0.014142135623731001,
+          -0.015697770542341002,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_20_1",
+        "CS": "GOES_V3_20_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7074968802861547,
+          -0.7067164667569014,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.7422122085807047,
+          0.6701649330081011,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 2.888586455450359,
+        "shape_aspect_SVD": 19.399693503719654,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_21_1",
+      "object_id": 2717,
+      "new_CS": "GOES_V3_21_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_21_1_CS",
+      "frame_global": [
+        [
+          -0.7535963705407017,
+          -0.6573374402145991,
+          0.0
+        ],
+        [
+          0.657337440214599,
+          -0.7535963705407018,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0000000000000002
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_21_1",
+        "object_id": 2717,
+        "CS": "GOES_V3_21_1_CS",
+        "CS_id": 2981,
+        "origin_m": [
+          -0.015995113901339602,
+          -0.0226853982979335,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          -0.0007535963705407018,
+          0.000657337440214599,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          -0.0006573374402145991,
+          -0.0007535963705407019,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.013176536686473,
+          -0.025148650853838,
+          0.0
+        ],
+        [
+          -0.013679041638223,
+          -0.025356795220012,
+          0.0
+        ],
+        [
+          -0.018740100969812,
+          -0.020295735888423,
+          0.0
+        ],
+        [
+          -0.01838477631085,
+          -0.019940411229461,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_21_1",
+        "CS": "GOES_V3_21_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 4,
+        "major_axis_global": [
+          0.7078108205159422,
+          -0.7064020401729801,
+          0.0
+        ],
+        "RD_axis_global": [
+          -0.7535963705406985,
+          0.6573374402146026,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 3.8457987472207464,
+        "shape_aspect_SVD": 14.455052116426527,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_22_1",
+      "object_id": 2729,
+      "new_CS": "GOES_V3_22_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_22_1_CS",
+      "frame_global": [
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_22_1",
+        "object_id": 2729,
+        "CS": "GOES_V3_22_1_CS",
+        "CS_id": 2991,
+        "origin_m": [
+          -0.0013500531429841301,
+          -0.0314054484623454,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.00160250495175,
+          -0.036865007037735,
+          0.0
+        ],
+        [
+          -0.00160250495175,
+          -0.020571008378037,
+          0.0
+        ],
+        [
+          -0.0011,
+          -0.020362864011863,
+          0.0
+        ],
+        [
+          -0.0011,
+          -0.036883417798088,
+          0.0
+        ],
+        [
+          -0.0012308852026620002,
+          -0.036879464266945,
+          0.0
+        ],
+        [
+          -0.0014644237517430002,
+          -0.036870929281404,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_22_1",
+        "CS": "GOES_V3_22_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          -2.0390903929273683e-05,
+          -0.9999999997921056,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.0011683124177171839,
+        "shape_aspect_SVD": 35.81866959027815,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_23_1",
+      "object_id": 2745,
+      "new_CS": "GOES_V3_23_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_23_1_CS",
+      "frame_global": [
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_23_1",
+        "object_id": 2745,
+        "CS": "GOES_V3_23_1_CS",
+        "CS_id": 3001,
+        "origin_m": [
+          -0.00734473160696032,
+          -0.0317585153825195,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.00760250495175,
+          -0.023056289752276003,
+          0.0
+        ],
+        [
+          -0.0070999999999999995,
+          -0.022848145386102,
+          0.0
+        ],
+        [
+          -0.0070999999999999995,
+          -0.036210299228067004,
+          0.0
+        ],
+        [
+          -0.007214920532652,
+          -0.036187772565288004,
+          0.0
+        ],
+        [
+          -0.00744845920561,
+          -0.036140426353211,
+          0.0
+        ],
+        [
+          -0.00760250495175,
+          -0.036108159010172,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_23_1",
+        "CS": "GOES_V3_23_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.0006508771881967911,
+          -0.9999997881794205,
+          -0.0
+        ],
+        "RD_axis_global": [
+          9.540979117872497e-15,
+          -1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.037292518500722925,
+        "shape_aspect_SVD": 28.81717835858035,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    },
+    {
+      "object": "GOES_V3_24_1",
+      "object_id": 2761,
+      "new_CS": "GOES_V3_24_1_ExplicitCandidate",
+      "old_CS": "GOES_V3_24_1_CS",
+      "frame_global": [
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "object_CS": {
+        "object": "GOES_V3_24_1",
+        "object_id": 2761,
+        "CS": "GOES_V3_24_1_CS",
+        "CS_id": 3011,
+        "origin_m": [
+          -0.0133394286618002,
+          -0.0314165288104973,
+          0.0
+        ],
+        "x_axis_absolute_m": [
+          0.0,
+          -0.001,
+          0.0
+        ],
+        "y_axis_absolute_m": [
+          0.001,
+          0.0,
+          0.0
+        ],
+        "settings": {
+          "ReverseXAxis": "false",
+          "ReverseYAxis": "false",
+          "DrivenByXAxis": "true",
+          "MoveToEnd": "true"
+        },
+        "serialized_operation_types": [
+          "DuplicateBodyAroundAxis"
+        ],
+        "polyline_points_m": null,
+        "current_global_vertices_verified": false
+      },
+      "actual_vertices_m": [
+        [
+          -0.01360250495175,
+          -0.025541571126515,
+          0.0
+        ],
+        [
+          -0.0131,
+          -0.025333426760340002,
+          0.0
+        ],
+        [
+          -0.0131,
+          -0.034496154192764,
+          0.0
+        ],
+        [
+          -0.013199011527991002,
+          -0.034458613614011,
+          0.0
+        ],
+        [
+          -0.013432550539310001,
+          -0.034368249061082996,
+          0.0
+        ],
+        [
+          -0.01360250495175,
+          -0.034301158108270995,
+          0.0
+        ]
+      ],
+      "major_axis_binding": {
+        "object": "GOES_V3_24_1",
+        "CS": "GOES_V3_24_1_CS",
+        "CS_interpretation": "absolute_point",
+        "vertex_count": 6,
+        "major_axis_global": [
+          0.0020545368443546205,
+          -0.9999978894369502,
+          -0.0
+        ],
+        "RD_axis_global": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "RD_major_axis_unsigned_angle_deg": 0.1177163728552136,
+        "shape_aspect_SVD": 19.539994643775724,
+        "scope": "Principal axis of actual native vertices; does not establish measured rolling direction"
+      },
+      "measured_rolling_direction": false
+    }
+  ],
+  "before_model": {
+    "version": "motor_saved_model_audit_v1",
+    "scope": "serialized saved model; no solve or mesh/geometry validation",
+    "insert_count": 48,
+    "inserts": [
+      {
+        "name": "GOES_V3_01",
+        "object_id": 2104,
+        "coordinate_system_id": 2776,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_01_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_02",
+        "object_id": 2120,
+        "coordinate_system_id": 2786,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_02_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_03",
+        "object_id": 2132,
+        "coordinate_system_id": 2796,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_03_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_04",
+        "object_id": 2148,
+        "coordinate_system_id": 2806,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_04_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_05",
+        "object_id": 2160,
+        "coordinate_system_id": 2816,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_05_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_06",
+        "object_id": 2176,
+        "coordinate_system_id": 2826,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_06_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_07",
+        "object_id": 2188,
+        "coordinate_system_id": 2836,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_07_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_08",
+        "object_id": 2200,
+        "coordinate_system_id": 2846,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_08_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_09",
+        "object_id": 2212,
+        "coordinate_system_id": 2856,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_09_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_10",
+        "object_id": 2224,
+        "coordinate_system_id": 2866,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_10_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_11",
+        "object_id": 2240,
+        "coordinate_system_id": 2876,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_11_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_12",
+        "object_id": 2256,
+        "coordinate_system_id": 2886,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_12_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_13",
+        "object_id": 2272,
+        "coordinate_system_id": 2896,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_13_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_14",
+        "object_id": 2288,
+        "coordinate_system_id": 2906,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_14_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_15",
+        "object_id": 2300,
+        "coordinate_system_id": 2916,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_15_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_16",
+        "object_id": 2316,
+        "coordinate_system_id": 2926,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_16_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_17",
+        "object_id": 2328,
+        "coordinate_system_id": 2936,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_17_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_18",
+        "object_id": 2344,
+        "coordinate_system_id": 2946,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_18_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_19",
+        "object_id": 2356,
+        "coordinate_system_id": 2956,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_19_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_20",
+        "object_id": 2368,
+        "coordinate_system_id": 2966,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_20_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_21",
+        "object_id": 2380,
+        "coordinate_system_id": 2976,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_21_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_22",
+        "object_id": 2392,
+        "coordinate_system_id": 2986,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_22_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_23",
+        "object_id": 2408,
+        "coordinate_system_id": 2996,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_23_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_24",
+        "object_id": 2424,
+        "coordinate_system_id": 3006,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_24_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_01_1",
+        "object_id": 2441,
+        "coordinate_system_id": 2781,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_01_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_02_1",
+        "object_id": 2457,
+        "coordinate_system_id": 2791,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_02_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_03_1",
+        "object_id": 2469,
+        "coordinate_system_id": 2801,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_03_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_04_1",
+        "object_id": 2485,
+        "coordinate_system_id": 2811,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_04_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_05_1",
+        "object_id": 2497,
+        "coordinate_system_id": 2821,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_05_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_06_1",
+        "object_id": 2513,
+        "coordinate_system_id": 2831,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_06_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_07_1",
+        "object_id": 2525,
+        "coordinate_system_id": 2841,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_07_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_08_1",
+        "object_id": 2537,
+        "coordinate_system_id": 2851,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_08_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_09_1",
+        "object_id": 2549,
+        "coordinate_system_id": 2861,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_09_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_10_1",
+        "object_id": 2561,
+        "coordinate_system_id": 2871,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_10_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_11_1",
+        "object_id": 2577,
+        "coordinate_system_id": 2881,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_11_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_12_1",
+        "object_id": 2593,
+        "coordinate_system_id": 2891,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_12_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_13_1",
+        "object_id": 2609,
+        "coordinate_system_id": 2901,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_13_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_14_1",
+        "object_id": 2625,
+        "coordinate_system_id": 2911,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_14_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_15_1",
+        "object_id": 2637,
+        "coordinate_system_id": 2921,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_15_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_16_1",
+        "object_id": 2653,
+        "coordinate_system_id": 2931,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_16_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_17_1",
+        "object_id": 2665,
+        "coordinate_system_id": 2941,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_17_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_18_1",
+        "object_id": 2681,
+        "coordinate_system_id": 2951,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_18_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_19_1",
+        "object_id": 2693,
+        "coordinate_system_id": 2961,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_19_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_20_1",
+        "object_id": 2705,
+        "coordinate_system_id": 2971,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_20_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_21_1",
+        "object_id": 2717,
+        "coordinate_system_id": 2981,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_21_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_22_1",
+        "object_id": 2729,
+        "coordinate_system_id": 2991,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_22_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_23_1",
+        "object_id": 2745,
+        "coordinate_system_id": 3001,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_23_1_CS",
+        "object_CS_binding_verified": true
+      },
+      {
+        "name": "GOES_V3_24_1",
+        "object_id": 2761,
+        "coordinate_system_id": 3011,
+        "material": "Nippon Steel - 23ZH90",
+        "solve_inside": "true",
+        "coordinate_system_name": "GOES_V3_24_1_CS",
+        "object_CS_binding_verified": true
+      }
+    ],
+    "local_CS_verified": true,
+    "moving_insert_count": 48,
+    "materials": [
+      {
+        "name": "Nippon Steel - 23ZH90",
+        "embedded": true,
+        "material_block_sha256": "346ca7838471301d80284e6878bfb17e437d3b1a573f83e1045364460b4b3b8b",
+        "permeability_type": "nonlinear",
+        "scalar_BH_curve_count": 1,
+        "tensor_declared": false,
+        "directional_constitutive_verified": false,
+        "core_loss_type": "Power Ferrite",
+        "loss_definition_present": true,
+        "conductivity": "2000000",
+        "mass_density": "7650",
+        "stacking_type": null,
+        "loss_coefficients": {
+          "core_loss_cm": "6.60415",
+          "core_loss_x": "1.62388",
+          "core_loss_y": "1.50346",
+          "core_loss_kh": null,
+          "core_loss_kc": null,
+          "core_loss_ke": null
+        },
+        "loss_calibration_verified": false,
+        "calibrated_RD_TD_import_verified": false,
+        "loss_curve_frequencies_Hz": [
+          50.0,
+          60.0
+        ],
+        "BH_points": 38,
+        "H_unit": "A_per_meter",
+        "B_unit": "tesla",
+        "H_last_A_per_m": 253720.0,
+        "B_last_T": 2.3537
+      }
+    ],
+    "core_loss": {
+      "enabled_object_ids": [
+        6,
+        735,
+        2104,
+        2120,
+        2132,
+        2148,
+        2160,
+        2176,
+        2188,
+        2200,
+        2212,
+        2224,
+        2240,
+        2256,
+        2272,
+        2288,
+        2300,
+        2316,
+        2328,
+        2344,
+        2356,
+        2368,
+        2380,
+        2392,
+        2408,
+        2424,
+        2441,
+        2457,
+        2469,
+        2485,
+        2497,
+        2513,
+        2525,
+        2537,
+        2549,
+        2561,
+        2577,
+        2593,
+        2609,
+        2625,
+        2637,
+        2653,
+        2665,
+        2681,
+        2693,
+        2705,
+        2717,
+        2729,
+        2745,
+        2761
+      ],
+      "enabled_object_names": [
+        "Stator",
+        "Rotor_1",
+        "GOES_V3_01",
+        "GOES_V3_02",
+        "GOES_V3_03",
+        "GOES_V3_04",
+        "GOES_V3_05",
+        "GOES_V3_06",
+        "GOES_V3_07",
+        "GOES_V3_08",
+        "GOES_V3_09",
+        "GOES_V3_10",
+        "GOES_V3_11",
+        "GOES_V3_12",
+        "GOES_V3_13",
+        "GOES_V3_14",
+        "GOES_V3_15",
+        "GOES_V3_16",
+        "GOES_V3_17",
+        "GOES_V3_18",
+        "GOES_V3_19",
+        "GOES_V3_20",
+        "GOES_V3_21",
+        "GOES_V3_22",
+        "GOES_V3_23",
+        "GOES_V3_24",
+        "GOES_V3_01_1",
+        "GOES_V3_02_1",
+        "GOES_V3_03_1",
+        "GOES_V3_04_1",
+        "GOES_V3_05_1",
+        "GOES_V3_06_1",
+        "GOES_V3_07_1",
+        "GOES_V3_08_1",
+        "GOES_V3_09_1",
+        "GOES_V3_10_1",
+        "GOES_V3_11_1",
+        "GOES_V3_12_1",
+        "GOES_V3_13_1",
+        "GOES_V3_14_1",
+        "GOES_V3_15_1",
+        "GOES_V3_16_1",
+        "GOES_V3_17_1",
+        "GOES_V3_18_1",
+        "GOES_V3_19_1",
+        "GOES_V3_20_1",
+        "GOES_V3_21_1",
+        "GOES_V3_22_1",
+        "GOES_V3_23_1",
+        "GOES_V3_24_1"
+      ],
+      "insert_enabled_count": 48,
+      "complete_insert_coverage": true,
+      "missing_inserts": [],
+      "effect_on_field": "false"
+    },
+    "operating_point": {
+      "speed_rpm": 3000.0,
+      "poles": 4.0,
+      "electrical_frequency_Hz": 100.0,
+      "cycles": "3",
+      "points_per_cycle": "30",
+      "angular_velocity": "-MachineRPM",
+      "model_depth": "Magnetic_Axial_Length",
+      "magnetic_axial_length": "90mm"
+    },
+    "setup": {
+      "StopTime": "NumTorqueCycles*120/(MachineRPM/1rpm*NumPoles) s",
+      "TimeStep": "120/(MachineRPM/1rpm*NumPoles)/NumTorquePointsPerCycle s",
+      "NonlinearSolverResidual": "0.0001",
+      "SmoothBHCurve": "false",
+      "UseAdaptiveTimeStep": "false",
+      "AutoDetectSteadyState": "false",
+      "FastReachSteadyState": "false",
+      "OutputError": "false",
+      "OutputPerObjectCoreLoss": "true"
+    },
+    "directional_constitutive_verified": false,
+    "loss_calibration_verified": false,
+    "mesh_convergence_verified": false,
+    "project_sha256": "63216e5a4e05abb2ec28580fe4691432981154d18a17643167b205109f42c0f6"
+  },
+  "source_sha256": {
+    "calibration/diagnostics/motor_review_preflight_20261005/jobs/scan_456bd621b9f8/case_02/motor.aedt": "63216e5a4e05abb2ec28580fe4691432981154d18a17643167b205109f42c0f6",
+    "calibration/diagnostics/nonlinear_field_20261007/ready_v2/private_native/geometry/vertices.json": "41bd4b626b50e6f1f2c6bf201906c01150b4b4aaa943a275184c186fe4556a00",
+    "calibration/diagnostics/nonlinear_field_20261007/ready_v2/saved_geometry_input.json": "0d9ea749a87e456c122cac2fcc22d99e9c6e3317f398c0fda32d79872ec5c3b0",
+    "magsim/data/workbench/motor/scan_092904b5932d/state.json": "8f40fa1f883b46b7a82290cad86e7499922751dfb31270bf75bc851b4a00b10d",
+    "magsim/data/workbench/motor/scan_57192b1bc9f0/state.json": "7d8f970afc2444510227ed73a37160a9fc44f3d5f9e318543a9142643eb8be37",
+    "magsim/data/workbench/motor/scan_87b9967c56b4/state.json": "c3dbd0d4b02c57f27ff0bd1f92a0a5c6af099b788b760318692657de233cd775",
+    "magsim/data/workbench/motor/scan_c1e4979cc57a/state.json": "3b155e497afb610e4a70304bfbda423623cad1116f21c72950faa77e49fff3ac",
+    "magsim/data/workbench/motor/scan_d499b9ece91a/state.json": "4c1af29eedc7e2332c3d081e1f2a5060059f02dc8692c61edce73d6608609288"
+  },
+  "producer_sha256": {
+    "modules/motor_explicit_axes.py": "925608ea09b535fb5333b6baad9d42c26f2d47f17c40605b6fc6602fd5134711",
+    "modules/maxwell_air_interface.py": "b8fc55dfc93828d2ed3d7e07cf65286b83b734d7998597bb6213282f1a451c45",
+    "modules/maxwell_interface_controls.py": "b66561b86adf88dd9965cd53faf3a47060adbfc36c5486f84965b9cce48133b1",
+    "modules/maxwell_nonlinear_controls.py": "ca397a533ee80f2903b5a233284d22aad6ca75502a90d2d94f7f3d30f74d64a1",
+    "modules/maxwell_directional_controls.py": "572f68e85a1a2df2a1f9731a11d183f3f3c85afe6e797945794e1a2e61f44f13",
+    "modules/maxwell_material_transport.py": "f7633a06f9893970024dc15049afee28cb3789306cabd480f4224708cb6dc01d",
+    "modules/maxwell_native_convergence.py": "2c23062e09982af4869df8f10ede541a1e92327268182a1b047fa6d3cc4c5a11",
+    "modules/motor_model_audit.py": "f106bf390736815c8ac8298a6ffbe0f5cf793622eb4cd1b329732300ad1c7ee6",
+    "modules/motor_workbench.py": "61c85211b7ba0167cc737d31a88265a9656f3783ca6c71d0b2732b919fa60f4d",
+    "modules/motor_queue.py": "d8a06c676310ba77c7807af9573779cb323775214a84b04cbb07ea79e5496766",
+    "tools/prepare_motor_explicit_axes.py": "a2a1d107fe730444d2687497b554dbe16bcf6f9a13df9bf73c5e3ee30a4f9717"
+  },
+  "maximum_native_sessions": 1,
+  "wall_timeout_seconds": 240,
+  "new_motor_solves": 0,
+  "new_field_solves": 0,
+  "retry_allowed": false,
+  "measured_rolling_direction": false,
+  "scope": "New explicit candidates bound to actual geometry; no 48-insert physical response certification"
+}

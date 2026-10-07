@@ -1,0 +1,29 @@
+{
+  "status": "CPU_preparations_verified_native_initialization_failed",
+  "new_field_solves": 0,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 39,
+  "cumulative_motor_solves": 4,
+  "cumulative_MuMax_success": 680,
+  "analytic_BH_transform_verified": true,
+  "source_reference_BH_unchanged": true,
+  "BH_native_material_import_verified": false,
+  "BH_native_field_response_verified": false,
+  "BH_timeout_stage": "Maxwell2d initialization; last native log is project creation",
+  "BH_cases_not_dispatched": [
+    "constant_mu_BH_tensor"
+  ],
+  "motor_CPU_candidate_count": 48,
+  "motor_native_saved_candidate_count": 0,
+  "motor_native_error": "'NoneType' object has no attribute 'GetDesignType'",
+  "motor_native_last_error": "Script macro error: Access to the requested resource is not permitted.",
+  "motor_failure_stage": "Maxwell2d design activation; before geometry reads, CS creation or validation",
+  "no_native_material_accuracy_inference": true,
+  "all_48_physical_direction_verified": false,
+  "real_material_field_verified": false,
+  "loss_calibration_verified": false,
+  "motor_ranking_eligible": false,
+  "dedicated_sessions_released": 2,
+  "native_initialization_cause": "unknown; raw logs preserved privately"
+}
