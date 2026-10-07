@@ -1,0 +1,33 @@
+{
+  "status": "live_HTTP_verified",
+  "url": "http://127.0.0.1:5003/workbench",
+  "cpu_only": true,
+  "grades": [
+    "B23R075",
+    "B27R090",
+    "B27R095",
+    "B30P105"
+  ],
+  "calibration_id": "cal_8d8189317713",
+  "prediction_id": "pred_bd6f4387f3fb",
+  "excluded_grades": [
+    "B30P105"
+  ],
+  "effective_calibration_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+  "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "download_sha256": {
+    "effective_bank.json": "7f1ff37b7309b1b3d607a9ffddeed5cdd62bd67d33589ff89ee76248d094e835",
+    "prediction.json": "b971cc7719d63d5eca40b2c2dc76ee7ceb7f58464ad4ce71a68d3944cf1d04db",
+    "curves.csv": "f5b2d61b9ae0fe8c003c0e74c14d0736eca79168e516a16088c29eaf92add39a",
+    "WB_pred_bd6f4387f3fb.amat": "e44f90b73c0d8895feea109c43024f90e760641af6b61b82012be7ce33763894",
+    "WB_pred_bd6f4387f3fb.metadata.json": "e19e371c76d333607afaf2c170645ee9dc5aff583529def5a55f51d19c42b1f4"
+  },
+  "blocked_endpoints": {
+    "/api/train": 423,
+    "/api/batch": 423,
+    "/api/workbench/motor/queue/recover": 423
+  },
+  "new_native_solves": 0,
+  "visual_browser_review_performed": false,
+  "JavaScript_syntax_checked": true
+}

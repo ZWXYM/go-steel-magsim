@@ -77,3 +77,8 @@ tools/run_bh_representation_controls.py -text
 tools/prepare_motor_explicit_axes.py -text
 tools/audit_bh_and_axes_preparation.py -text
 calibration/bh_and_axes_preparation_20261007/** -text
+modules/calibration_prediction.py -text
+tools/audit_prediction_scope.py -text
+tools/check_native_design_access.py -text
+calibration/prediction_scope_20261007/** -text
+tools/predict_calibrated_material.py -text

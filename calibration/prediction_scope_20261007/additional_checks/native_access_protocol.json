@@ -1,0 +1,21 @@
+{
+  "protocol": "native_design_access_after_license_restore_v1",
+  "source_project": "calibration/diagnostics/motor_review_preflight_20261005/jobs/scan_456bd621b9f8/case_02/motor.aedt",
+  "source_project_sha256": "63216e5a4e05abb2ec28580fe4691432981154d18a17643167b205109f42c0f6",
+  "producer_sha256": {
+    "tools/check_native_design_access.py": "26d88433608d80f29d35d1cbeeae171c4323083ab54969a23f1841175f53d0d3",
+    "modules/maxwell_native_readiness.py": "347fced088b17cfff527ec34c0f2c4a148cc052736f0297b7bf2154ffbc601a6",
+    "modules/maxwell_material_transport.py": "f7633a06f9893970024dc15049afee28cb3789306cabd480f4224708cb6dc01d",
+    "modules/motor_queue.py": "d8a06c676310ba77c7807af9573779cb323775214a84b04cbb07ea79e5496766",
+    "modules/motor_workbench.py": "61c85211b7ba0167cc737d31a88265a9656f3783ca6c71d0b2732b919fa60f4d"
+  },
+  "readiness": {
+    "configured_license_TCP_reachable": true,
+    "native_license_checkout_verified": false,
+    "native_design_access_verified": false,
+    "scope": "TCP connectivity is necessary for this local dispatch, not proof of an available Maxwell feature"
+  },
+  "max_new_sessions": 1,
+  "new_physical_solves_budget": 0,
+  "timeout_seconds": 120
+}

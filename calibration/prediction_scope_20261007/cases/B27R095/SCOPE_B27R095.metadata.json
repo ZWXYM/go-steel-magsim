@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-10-07T17:58:34.875113",
+  "amat_path": "D:\\Project\\go-steel-thesis\\calibration\\diagnostics\\prediction_scope_20261007\\public_evidence_v2\\cases\\B27R095\\SCOPE_B27R095.amat",
+  "material_name": "SCOPE_B27R095",
+  "status": "experimental_BH_only",
+  "aedt_transport_version": "aedt_directional_transport_v1",
+  "core_loss_status": "uncalibrated_zero_placeholders",
+  "motor_validation": "not_run",
+  "simulation_physics_version": "cubic_sample_frame_v2",
+  "reference_correction_version": "fixed_h_nested_transfer_v2",
+  "calibration_sha256": "a1c180dd4527f0f5c36279dae65f38d92d3f2215f980ac7b2b8fe88bb0a2fff1",
+  "H_axis": "physical_A_per_m",
+  "texture_sampling_version": "legacy_multi_peak_importance_v1",
+  "H_scale": 1.0,
+  "thickness_mm": 0.27,
+  "RD_anchor_weights": {
+    "B23R075": 0.21428571428571416,
+    "B27R090": 0.3035714285714283,
+    "B30P105": 0.48214285714285626
+  },
+  "TD_anchor_weights": {
+    "B23R075": 0.21428571428571416,
+    "B27R090": 0.3035714285714283,
+    "B30P105": 0.48214285714285626
+  },
+  "excluded_grades": [
+    "B27R095"
+  ],
+  "exported_directions": [
+    "RD",
+    "TD"
+  ],
+  "ND_status": "scalar_prior_1000_not_measured",
+  "outside_feature_box": false,
+  "parameter_support": {
+    "version": "joint_parameter_support_v1",
+    "feature_scales": {
+      "f_Goss": 0.5,
+      "theta_0_deg": 10.0,
+      "halfwidth_deg": 10.0,
+      "Si_content": 0.2
+    },
+    "tolerance": 1e-08,
+    "training_grades": [
+      "B23R075",
+      "B27R090",
+      "B30P105"
+    ],
+    "unique_parameter_count": 3,
+    "affine_rank": 2,
+    "inside_marginal_parameter_box": true,
+    "nearest_scaled_parameter_distance": 0.15362291495737215,
+    "scaled_distance_to_affine_span": 0.017407765595569738,
+    "matched_anchor_grades": [],
+    "independent_material_accuracy_verified": false,
+    "composition_or_texture_effects_identified": false,
+    "scope": "Geometry of recorded training parameters; no predictive interval or accuracy guarantee",
+    "joint_support_evaluated": true,
+    "scaled_distance_to_convex_support": 0.1291575193006626,
+    "nearest_supported_parameter_vector": [
+      1.7176827896512936,
+      0.42789651293588304,
+      0.627896512935883,
+      15.430258717660292
+    ],
+    "inside_joint_parameter_support": false
+  },
+  "prediction_scope": {
+    "version": "whole_material_prediction_scope_v1",
+    "mode": "whole_material_exclusion",
+    "excluded_grades": [
+      "B27R095"
+    ],
+    "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+    "effective_calibration_sha256": "a1c180dd4527f0f5c36279dae65f38d92d3f2215f980ac7b2b8fe88bb0a2fff1",
+    "effective_training_grades": [
+      "B23R075",
+      "B27R090",
+      "B30P105"
+    ],
+    "selection_rerun_after_exclusion": true,
+    "excluded_references_used_for_selection": false,
+    "physical_H_unchanged": true,
+    "prospective_external_validation": false
+  },
+  "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "native_quality": {
+    "contract_version": "native_quality_contract_v1",
+    "material_id": "unspecified",
+    "status": "unassessed",
+    "verified_native_source": false,
+    "strict_training_eligible": false,
+    "reason": "No matching source-verified native RD/TD tables; uploaded quality claims are not certification",
+    "independently_validated": false,
+    "screening_is_not_material_validation": true,
+    "quality_sha256": "94a48de1d32e50827428622686f916daf5466ba06a6e71d5abf2cd0644cf1c43"
+  },
+  "native_quality_status": "unassessed",
+  "native_quality_contract_version": "native_quality_contract_v1",
+  "native_quality_sha256": "94a48de1d32e50827428622686f916daf5466ba06a6e71d5abf2cd0644cf1c43",
+  "calibration_native_quality_sha256": "legacy_unassessed",
+  "strict_training_eligible": false,
+  "transfer_candidate": "goss_ridge_0_beta_0.5",
+  "native_beta": 0.5,
+  "effective_native_beta": 0.5,
+  "prediction_mode": "cross_material_transfer",
+  "selection_training_grades": [
+    "B23R075",
+    "B27R090",
+    "B30P105"
+  ],
+  "selection_training_sha256": "de91caec8949600ac14579f83384aee537edf98fc2da746d220c5f4ab49e709d",
+  "protocol_sha256": "025efb96c89e0dd4a61ade1003160036d1201fca5d37ce362180683f574c3083",
+  "RD_extrapolation_limited": false,
+  "TD_extrapolation_limited": false,
+  "composition_effect_identified": false,
+  "prospective_external_validation": false
+}

@@ -1,0 +1,200 @@
+{
+  "status": "CPU_scope_verified_frozen_holdouts_unchanged",
+  "cases": [
+    {
+      "grade": "B23R075",
+      "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective_calibration_sha256": "892a0d95694530248703dc66ab68f77dd3d59131f525da4b94d2508af344858a",
+      "training_grades": [
+        "B27R090",
+        "B27R095",
+        "B30P105"
+      ],
+      "frozen_holdout_bank_identical": true,
+      "RD_TD_and_top_level_identity_match": true,
+      "selection_candidate": "goss_ridge_0.1_beta_0.5",
+      "parameter_support": {
+        "version": "joint_parameter_support_v1",
+        "feature_scales": {
+          "f_Goss": 0.5,
+          "theta_0_deg": 10.0,
+          "halfwidth_deg": 10.0,
+          "Si_content": 0.2
+        },
+        "tolerance": 1e-08,
+        "training_grades": [
+          "B27R090",
+          "B27R095",
+          "B30P105"
+        ],
+        "unique_parameter_count": 3,
+        "affine_rank": 2,
+        "inside_marginal_parameter_box": false,
+        "nearest_scaled_parameter_distance": 0.16248076809271925,
+        "scaled_distance_to_affine_span": 0.018361765076453204,
+        "matched_anchor_grades": [],
+        "independent_material_accuracy_verified": false,
+        "composition_or_texture_effects_identified": false,
+        "scope": "Geometry of recorded training parameters; no predictive interval or accuracy guarantee",
+        "joint_support_evaluated": true,
+        "scaled_distance_to_convex_support": 0.16248076809271925,
+        "nearest_supported_parameter_vector": [
+          1.74,
+          0.4,
+          0.6,
+          15.5
+        ],
+        "inside_joint_parameter_support": false
+      }
+    },
+    {
+      "grade": "B27R090",
+      "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective_calibration_sha256": "fce6ff3d283473d5960af4afe48d3d928488497580affb4b1c2ac578359cd7d2",
+      "training_grades": [
+        "B23R075",
+        "B27R095",
+        "B30P105"
+      ],
+      "frozen_holdout_bank_identical": true,
+      "RD_TD_and_top_level_identity_match": true,
+      "selection_candidate": "goss_ridge_0.1_beta_0.5",
+      "parameter_support": {
+        "version": "joint_parameter_support_v1",
+        "feature_scales": {
+          "f_Goss": 0.5,
+          "theta_0_deg": 10.0,
+          "halfwidth_deg": 10.0,
+          "Si_content": 0.2
+        },
+        "tolerance": 1e-08,
+        "training_grades": [
+          "B23R075",
+          "B27R095",
+          "B30P105"
+        ],
+        "unique_parameter_count": 3,
+        "affine_rank": 2,
+        "inside_marginal_parameter_box": true,
+        "nearest_scaled_parameter_distance": 0.15362291495737215,
+        "scaled_distance_to_affine_span": 0.008949284913585018,
+        "matched_anchor_grades": [],
+        "independent_material_accuracy_verified": false,
+        "composition_or_texture_effects_identified": false,
+        "scope": "Geometry of recorded training parameters; no predictive interval or accuracy guarantee",
+        "joint_support_evaluated": true,
+        "scaled_distance_to_convex_support": 0.008949284913584887,
+        "nearest_supported_parameter_vector": [
+          1.7480089700464518,
+          0.4028031395162583,
+          0.6028031395162583,
+          15.499519461797213
+        ],
+        "inside_joint_parameter_support": false
+      }
+    },
+    {
+      "grade": "B27R095",
+      "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective_calibration_sha256": "a1c180dd4527f0f5c36279dae65f38d92d3f2215f980ac7b2b8fe88bb0a2fff1",
+      "training_grades": [
+        "B23R075",
+        "B27R090",
+        "B30P105"
+      ],
+      "frozen_holdout_bank_identical": true,
+      "RD_TD_and_top_level_identity_match": true,
+      "selection_candidate": "goss_ridge_0_beta_0.5",
+      "parameter_support": {
+        "version": "joint_parameter_support_v1",
+        "feature_scales": {
+          "f_Goss": 0.5,
+          "theta_0_deg": 10.0,
+          "halfwidth_deg": 10.0,
+          "Si_content": 0.2
+        },
+        "tolerance": 1e-08,
+        "training_grades": [
+          "B23R075",
+          "B27R090",
+          "B30P105"
+        ],
+        "unique_parameter_count": 3,
+        "affine_rank": 2,
+        "inside_marginal_parameter_box": true,
+        "nearest_scaled_parameter_distance": 0.15362291495737215,
+        "scaled_distance_to_affine_span": 0.017407765595569738,
+        "matched_anchor_grades": [],
+        "independent_material_accuracy_verified": false,
+        "composition_or_texture_effects_identified": false,
+        "scope": "Geometry of recorded training parameters; no predictive interval or accuracy guarantee",
+        "joint_support_evaluated": true,
+        "scaled_distance_to_convex_support": 0.1291575193006626,
+        "nearest_supported_parameter_vector": [
+          1.7176827896512936,
+          0.42789651293588304,
+          0.627896512935883,
+          15.430258717660292
+        ],
+        "inside_joint_parameter_support": false
+      }
+    },
+    {
+      "grade": "B30P105",
+      "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective_calibration_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+      "training_grades": [
+        "B23R075",
+        "B27R090",
+        "B27R095"
+      ],
+      "frozen_holdout_bank_identical": true,
+      "RD_TD_and_top_level_identity_match": true,
+      "selection_candidate": "goss_ridge_1_beta_0.5",
+      "parameter_support": {
+        "version": "joint_parameter_support_v1",
+        "feature_scales": {
+          "f_Goss": 0.5,
+          "theta_0_deg": 10.0,
+          "halfwidth_deg": 10.0,
+          "Si_content": 0.2
+        },
+        "tolerance": 1e-08,
+        "training_grades": [
+          "B23R075",
+          "B27R090",
+          "B27R095"
+        ],
+        "unique_parameter_count": 3,
+        "affine_rank": 2,
+        "inside_marginal_parameter_box": false,
+        "nearest_scaled_parameter_distance": 0.529150262212918,
+        "scaled_distance_to_affine_span": 0.5,
+        "matched_anchor_grades": [],
+        "independent_material_accuracy_verified": false,
+        "composition_or_texture_effects_identified": false,
+        "scope": "Geometry of recorded training parameters; no predictive interval or accuracy guarantee",
+        "joint_support_evaluated": true,
+        "scaled_distance_to_convex_support": 0.529150262212918,
+        "nearest_supported_parameter_vector": [
+          1.68,
+          0.5,
+          0.7,
+          15.5
+        ],
+        "inside_joint_parameter_support": false
+      }
+    }
+  ],
+  "material_holdout_mean_RMSE_T": 0.04404264729019529,
+  "worst_B800_error_T": 0.10615668757659735,
+  "predictive_accuracy_improvement_claimed": false,
+  "prospective_external_validation": false,
+  "real_material_physics_verified": false,
+  "new_field_solves": 0,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell_completed": 39,
+  "cumulative_MuMax_success": 680,
+  "source_files_checked": 551
+}

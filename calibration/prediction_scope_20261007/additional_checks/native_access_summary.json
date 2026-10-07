@@ -1,0 +1,21 @@
+{
+  "native_design_access_verified": true,
+  "design_type": "Maxwell 2D",
+  "solution_type": "Transient",
+  "designs": [
+    "Motor-CAD 2"
+  ],
+  "initialization_only": true,
+  "physical_license_checkout_verified": false,
+  "new_field_solves": 0,
+  "new_motor_solves": 0,
+  "new_MuMax_solves": 0,
+  "all_48_directions_verified": false,
+  "real_nonlinear_material_verified": false,
+  "worker_return_code": 0,
+  "timed_out": false,
+  "dedicated_session_after": "dead",
+  "original_project_unchanged": true,
+  "cumulative_Maxwell_completed": 39,
+  "cumulative_MuMax_success": 680
+}

@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-10-07T17:58:34.763031",
+  "amat_path": "D:\\Project\\go-steel-thesis\\calibration\\diagnostics\\prediction_scope_20261007\\public_evidence_v2\\cases\\B23R075\\SCOPE_B23R075.amat",
+  "material_name": "SCOPE_B23R075",
+  "status": "experimental_BH_only",
+  "aedt_transport_version": "aedt_directional_transport_v1",
+  "core_loss_status": "uncalibrated_zero_placeholders",
+  "motor_validation": "not_run",
+  "simulation_physics_version": "cubic_sample_frame_v2",
+  "reference_correction_version": "fixed_h_nested_transfer_v2",
+  "calibration_sha256": "892a0d95694530248703dc66ab68f77dd3d59131f525da4b94d2508af344858a",
+  "H_axis": "physical_A_per_m",
+  "texture_sampling_version": "legacy_multi_peak_importance_v1",
+  "H_scale": 1.0,
+  "thickness_mm": 0.23,
+  "RD_anchor_weights": {
+    "B27R090": 0.9921874999999984,
+    "B27R095": 0.4531249999999965,
+    "B30P105": -0.4453125000000013
+  },
+  "TD_anchor_weights": {
+    "B27R090": 0.9921874999999984,
+    "B27R095": 0.4531249999999965,
+    "B30P105": -0.4453125000000013
+  },
+  "excluded_grades": [
+    "B23R075"
+  ],
+  "exported_directions": [
+    "RD",
+    "TD"
+  ],
+  "ND_status": "scalar_prior_1000_not_measured",
+  "outside_feature_box": true,
+  "parameter_support": {
+    "version": "joint_parameter_support_v1",
+    "feature_scales": {
+      "f_Goss": 0.5,
+      "theta_0_deg": 10.0,
+      "halfwidth_deg": 10.0,
+      "Si_content": 0.2
+    },
+    "tolerance": 1e-08,
+    "training_grades": [
+      "B27R090",
+      "B27R095",
+      "B30P105"
+    ],
+    "unique_parameter_count": 3,
+    "affine_rank": 2,
+    "inside_marginal_parameter_box": false,
+    "nearest_scaled_parameter_distance": 0.16248076809271925,
+    "scaled_distance_to_affine_span": 0.018361765076453204,
+    "matched_anchor_grades": [],
+    "independent_material_accuracy_verified": false,
+    "composition_or_texture_effects_identified": false,
+    "scope": "Geometry of recorded training parameters; no predictive interval or accuracy guarantee",
+    "joint_support_evaluated": true,
+    "scaled_distance_to_convex_support": 0.16248076809271925,
+    "nearest_supported_parameter_vector": [
+      1.74,
+      0.4,
+      0.6,
+      15.5
+    ],
+    "inside_joint_parameter_support": false
+  },
+  "prediction_scope": {
+    "version": "whole_material_prediction_scope_v1",
+    "mode": "whole_material_exclusion",
+    "excluded_grades": [
+      "B23R075"
+    ],
+    "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+    "effective_calibration_sha256": "892a0d95694530248703dc66ab68f77dd3d59131f525da4b94d2508af344858a",
+    "effective_training_grades": [
+      "B27R090",
+      "B27R095",
+      "B30P105"
+    ],
+    "selection_rerun_after_exclusion": true,
+    "excluded_references_used_for_selection": false,
+    "physical_H_unchanged": true,
+    "prospective_external_validation": false
+  },
+  "source_calibration_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "native_quality": {
+    "contract_version": "native_quality_contract_v1",
+    "material_id": "unspecified",
+    "status": "unassessed",
+    "verified_native_source": false,
+    "strict_training_eligible": false,
+    "reason": "No matching source-verified native RD/TD tables; uploaded quality claims are not certification",
+    "independently_validated": false,
+    "screening_is_not_material_validation": true,
+    "quality_sha256": "94a48de1d32e50827428622686f916daf5466ba06a6e71d5abf2cd0644cf1c43"
+  },
+  "native_quality_status": "unassessed",
+  "native_quality_contract_version": "native_quality_contract_v1",
+  "native_quality_sha256": "94a48de1d32e50827428622686f916daf5466ba06a6e71d5abf2cd0644cf1c43",
+  "calibration_native_quality_sha256": "legacy_unassessed",
+  "strict_training_eligible": false,
+  "transfer_candidate": "goss_ridge_0.1_beta_0.5",
+  "native_beta": 0.5,
+  "effective_native_beta": 0.5,
+  "prediction_mode": "cross_material_transfer",
+  "selection_training_grades": [
+    "B27R090",
+    "B27R095",
+    "B30P105"
+  ],
+  "selection_training_sha256": "87469573f1d7cba3e3ea2d6a0e69e02bfb76c92b0893e0245bbc12d778940233",
+  "protocol_sha256": "025efb96c89e0dd4a61ade1003160036d1201fca5d37ce362180683f574c3083",
+  "RD_extrapolation_limited": false,
+  "TD_extrapolation_limited": false,
+  "composition_effect_identified": false,
+  "prospective_external_validation": false
+}

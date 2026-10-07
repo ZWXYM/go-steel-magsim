@@ -1,0 +1,10 @@
+{
+  "source_tool": "magsim/tools/predict_calibrated_material.py",
+  "declared_top_level_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "RD_actual_bank_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+  "TD_actual_bank_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+  "excluded_grades": [
+    "B30P105"
+  ],
+  "old_top_level_matches_directions": false
+}
