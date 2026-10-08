@@ -11,6 +11,7 @@ from modules.system_runtime import runtime_identity
 from modules.motor_optimization import MotorOptimization
 from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnostics
 from modules.optimization_plans import OptimizationPlans
+from modules.motor_waveforms import MotorWaveforms
 
 
 def create_workbench(project,storage=None,root=None):
@@ -22,6 +23,7 @@ def create_workbench(project,storage=None,root=None):
     motor=MotorWorkbench(root,storage/'motor',project)
     optimization=MotorOptimization(root,storage/'optimization',motor)
     plans=OptimizationPlans(optimization)
+    waveforms=MotorWaveforms(motor)
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -44,6 +46,23 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/motor-optimization')
     def optimization_page():
         return render_template('motor_optimization.html')
+
+    @bp.get('/motor-waveforms')
+    def waveform_page():
+        return render_template('motor_waveforms.html')
+
+    @bp.get('/api/workbench/waveforms/catalog')
+    def waveform_catalog():
+        return jsonify(waveforms.catalog())
+
+    @bp.post('/api/workbench/waveforms/compare')
+    def waveform_compare():
+        return jsonify(waveforms.compare(request.get_json())[0])
+
+    @bp.post('/api/workbench/waveforms/export')
+    def waveform_export():
+        return send_file(waveforms.export(request.get_json()),as_attachment=True,
+                         download_name='official_motor_waveforms.zip',mimetype='application/zip')
 
     @bp.get('/api/workbench/optimization/workflow')
     def optimization_workflow():

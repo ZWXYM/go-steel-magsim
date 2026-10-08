@@ -91,3 +91,12 @@ modules/optimization_plans.py -text
 templates/system.html -text
 templates/motor_optimization.html -text
 start_system.cmd -text
+README.md -text
+modules/motor_waveforms.py -text
+templates/motor_waveforms.html -text
+static/js/motor_waveforms.js -text
+tests/test_motor_waveforms.py -text
+tests/test_motor_waveforms_ui.js -text
+tests/test_system_runtime.py -text
+docs/motor_waveforms_20261008.md -text
+calibration/waveform_ui_20261008/** -text

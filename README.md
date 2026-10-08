@@ -103,3 +103,5 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 | `docs/` | 当前验证记录、研究边界和历史说明 |
 
 公开仓库只保存软件与可复现试验。完整论文、原始 AEDT/Motor-CAD 工程、本机运行环境和来源快照保留在本地论文工作区，原目录未移动或删除。
+
+2026-10-08 官方波形页面已接通：从系统首页或扫描/优化页进入 [波形对比](docs/motor_waveforms_20261008.md)，查看同版本转矩与损耗原采样点，下载对比和原CSV。重开记录与两个CPU进程的未尝试案续接已验收，本轮新原生求解0。

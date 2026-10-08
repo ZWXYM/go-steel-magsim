@@ -1,0 +1,34 @@
+{
+  "created_utc": "2026-10-08T01:07:27.692057+00:00",
+  "feature": "official_motor_waveforms_v1",
+  "main_tests_passed": 256,
+  "public_tests_passed": 255,
+  "public_private_skipped": 1,
+  "source_datasets": 4,
+  "new_completed_scan_curves": 3,
+  "old_final_csv_curves": 5,
+  "old_final_summary_only": 1,
+  "new_native_failure_cases_retained": 1,
+  "api_bundle_original_csv_byte_verified": 12,
+  "browser_download_original_csv_byte_verified": 8,
+  "reopened_scan_records": 3,
+  "reopened_plan_records": 2,
+  "reopened_record_hashes_unchanged": true,
+  "cpu_two_process_fixture": {
+    "scope": "Two real CPU processes, creator exited normally; artificial interruption marker; no native solve/retry",
+    "creator_dead": true,
+    "only_unattempted_materials": [
+      "Nippon Steel - 23ZDKH75"
+    ],
+    "child_status": "prepared",
+    "original_input_bytes_unchanged": true,
+    "duplicate_continuation_rejected": true
+  },
+  "new_native_solves": 0,
+  "new_mumax": 0,
+  "new_training": 0,
+  "cumulative_maxwell_completed": 42,
+  "cumulative_mumax": 680,
+  "system_complete": false,
+  "thesis_writing_paused": true
+}

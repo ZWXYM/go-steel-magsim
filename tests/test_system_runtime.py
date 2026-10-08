@@ -27,6 +27,16 @@ class RuntimeEntry(unittest.TestCase):
     def identity(self):
         return runtime_identity(PROJECT,self.root,self.root/'records',cpu_only=True,auto_resume_queue=False)
 
+    def test_frontend_asset_changes_enter_startup_identity(self):
+        project=self.root/'program'
+        asset=project/'static/js/waveforms.js'
+        asset.parent.mkdir(parents=True)
+        asset.write_text('version one',encoding='utf-8')
+        files,first=source_manifest(project)
+        self.assertIn('static/js/waveforms.js',files)
+        asset.write_text('version two',encoding='utf-8')
+        self.assertNotEqual(first,source_manifest(project)[1])
+
     def server(self,identity):
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):

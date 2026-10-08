@@ -10,7 +10,7 @@
 <article class="card"><h2>校准与材料导出</h2><p>用四个已确认样品查看原生/参考 RD、TD 曲线，建立或加载校准，修正其他材料并下载材料文件。</p><p class="status" id="calStatus">正在读取样品和校准记录…</p><a class="link" href="/workbench#cal">进入材料校准</a></article>
 <article class="card"><h2>电机分析与扫描</h2><p>选择多个牌号，生成独立任务并提交串行队列。查看进度、异常与旧结果，下载官方 CSV 和汇总包。</p><p class="status" id="motorStatus">正在读取模型与队列…</p><a class="link" href="/workbench#motor">进入电机工作台</a></article>
 </section>
-<section class="runtime"><h2>电机优化流程</h2><p>查看原电机基线、插片对照、作者已保存的多牌号榜单与程序入口。选择同一数据集的基准、约束和目标权重，保存工程筛选结果并下载汇总。</p><a class="link" href="/motor-optimization">进入优化配置与结果</a></section>
+<section class="runtime"><h2>电机优化流程</h2><p>查看原电机基线、插片对照、作者已保存的多牌号榜单与程序入口。选择同一数据集的基准、约束和目标权重，保存工程筛选结果并下载汇总。</p><a class="link" href="/motor-optimization">进入优化配置与结果</a> <a class="link" href="/motor-waveforms">官方波形对比</a></section>
 <section class="runtime"><h2>当前运行实例</h2><p id="mode" class="notice">正在核对运行模式…</p><dl><dt>程序目录</dt><dd id="project">—</dd><dt>资源目录</dt><dd id="root">—</dd><dt>任务存储</dt><dd id="storage">—</dd><dt>启动版本</dt><dd id="version">—</dd><dt>启动时间</dt><dd id="started">—</dd></dl><p class="status">版本表示该进程启动时的代码快照。修改源码后重新运行启动器；旧版本和其他应用会保留，新版本自动选择可用端口。</p><button onclick="location.reload()">刷新状态</button></section>
 <section class="runtime"><h2>最短操作流程</h2><ol><li>进入材料校准，加载保存记录；首次使用时勾选四样品，点击“建立校准并检验”。</li><li>上传其他材料原生对，选择校准范围，下载修正曲线与材料包。</li><li>进入电机工作台，选择牌号、周期口径和核数，生成独立任务；普通模式可提交串行队列。</li><li>在队列中查看结果并下载汇总包；服务重启后点击“检查并恢复队列”，中断现场保留。</li></ol><p class="status">新启动器默认不自动恢复旧队列。任务记录位于上方“任务存储”，旧目录完整保留；需要原记录时使用启动器的 <code>--storage</code> 参数。</p></section>
 </main>
