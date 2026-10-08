@@ -1,0 +1,44 @@
+{
+  "created_utc": "2026-10-08T10:54:09.116751+00:00",
+  "feature": "calibrated_motor_package_preparation_v1",
+  "source_calibration": "cal_8fff23daed9e",
+  "source_material_key": "prediction:pred_5a6fb5dab354",
+  "prepared_id": "calmotor_b483da720ad5",
+  "status": "awaiting_native_material_import",
+  "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "effective_bank_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+  "excluded_grades": [
+    "B30P105"
+  ],
+  "H_axis": "physical_A_per_m",
+  "H_scale": 1.0,
+  "native_import_completed": false,
+  "native_submission_allowed": false,
+  "efficiency_enabled": false,
+  "template_scope": "original template, only 48 insert material references changed; loss selection unchanged",
+  "main_tests_passed": 269,
+  "added_tests": 4,
+  "verification": {
+    "browser_package_byte_identical": true,
+    "insert_references": 48,
+    "old_record_hashes_unchanged": 92,
+    "original_template_unchanged": true,
+    "old_scan_jobs_unchanged": 3,
+    "new_native_solves": 0
+  },
+  "new_maxwell_solves": 0,
+  "new_mumax_solves": 0,
+  "new_training": 0,
+  "new_predictions": 0,
+  "cumulative_maxwell": 42,
+  "cumulative_mumax": 680,
+  "system_fully_complete": false,
+  "producer_sha256": {
+    "modules/calibrated_motor_preparation.py": "fde8afcedd8f5dbd6c34f0d0620cc241d5b3989cb97d6d30736f229974847a31",
+    "modules/workbench_routes.py": "ef74e667359fedd241e3d1a60f6c779b9df2cfb2db33012447a3f19bdf13736f",
+    "modules/workbench_cpu_policy.py": "aa1c27059f793eb4a47697fb6ca441bf29e5ae42556b8d44088f1bed41009e11",
+    "templates/material_library.html": "e3dc7d5357513496f1eac7e8672a237261edb9d44e94170965425d4560912ece",
+    "static/js/material_library.js": "67137ab0a90a47b4de12c5c8371a5730869204964dfe45561b10a848642c43ad",
+    "tests/test_calibrated_motor_preparation.py": "737934de75449f47dda32d9e5df209dbfaeb62fd5f95a176e759d49ee08e1a9c"
+  }
+}

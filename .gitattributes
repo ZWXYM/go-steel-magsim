@@ -107,3 +107,6 @@ tests/test_material_library.py -text
 docs/material_library_20261008.md -text
 docs/system_delivery_v1_20261008.md -text
 calibration/material_library_20261008/** -text
+modules/calibrated_motor_preparation.py -text
+tests/test_calibrated_motor_preparation.py -text
+calibration/calibrated_motor_preparation_20261008/** -text

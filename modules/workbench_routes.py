@@ -13,6 +13,7 @@ from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnos
 from modules.optimization_plans import OptimizationPlans
 from modules.motor_waveforms import MotorWaveforms
 from modules.material_library import MaterialLibrary
+from modules.calibrated_motor_preparation import CalibratedMotorPreparation
 
 
 def create_workbench(project,storage=None,root=None):
@@ -26,6 +27,7 @@ def create_workbench(project,storage=None,root=None):
     plans=OptimizationPlans(optimization)
     waveforms=MotorWaveforms(motor)
     materials=MaterialLibrary(calibration)
+    calibrated_motor=CalibratedMotorPreparation(materials,motor,storage/'calibrated_motor')
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -65,6 +67,22 @@ def create_workbench(project,storage=None,root=None):
     def material_bundle(artifact,key):
         return send_file(materials.bundle(artifact,key),as_attachment=True,
                          download_name=artifact+'_'+key.replace(':','_')+'.zip',mimetype='application/zip')
+
+    @bp.get('/api/workbench/calibrated-motor')
+    def calibrated_motor_records():
+        return jsonify(calibrated_motor.records())
+
+    @bp.post('/api/workbench/calibrated-motor')
+    def calibrated_motor_prepare():
+        return jsonify(calibrated_motor.prepare(request.get_json()))
+
+    @bp.get('/api/workbench/calibrated-motor/<artifact>')
+    def calibrated_motor_record(artifact):
+        return jsonify(calibrated_motor.get(artifact))
+
+    @bp.get('/api/workbench/calibrated-motor/<artifact>/files/<name>')
+    def calibrated_motor_download(artifact,name):
+        return send_file(calibrated_motor.download(artifact,name),as_attachment=True)
 
     @bp.get('/motor-optimization')
     def optimization_page():
