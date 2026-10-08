@@ -12,6 +12,7 @@ from modules.motor_optimization import MotorOptimization
 from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnostics
 from modules.optimization_plans import OptimizationPlans
 from modules.motor_waveforms import MotorWaveforms
+from modules.material_library import MaterialLibrary
 
 
 def create_workbench(project,storage=None,root=None):
@@ -24,6 +25,7 @@ def create_workbench(project,storage=None,root=None):
     optimization=MotorOptimization(root,storage/'optimization',motor)
     plans=OptimizationPlans(optimization)
     waveforms=MotorWaveforms(motor)
+    materials=MaterialLibrary(calibration)
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -42,6 +44,27 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/system')
     def system_page():
         return render_template('system.html')
+
+    @bp.get('/material-library')
+    def material_page():
+        return render_template('material_library.html')
+
+    @bp.get('/api/workbench/material-library')
+    def material_catalog():
+        return jsonify(materials.catalog())
+
+    @bp.get('/api/workbench/material-library/<artifact>/<key>')
+    def material_detail(artifact,key):
+        return jsonify(materials.detail(artifact,key))
+
+    @bp.get('/api/workbench/material-library/<artifact>/<key>/files/<name>')
+    def material_file(artifact,key,name):
+        return send_file(materials.download(artifact,key,name),as_attachment=True,download_name=name)
+
+    @bp.get('/api/workbench/material-library/<artifact>/<key>/bundle')
+    def material_bundle(artifact,key):
+        return send_file(materials.bundle(artifact,key),as_attachment=True,
+                         download_name=artifact+'_'+key.replace(':','_')+'.zip',mimetype='application/zip')
 
     @bp.get('/motor-optimization')
     def optimization_page():

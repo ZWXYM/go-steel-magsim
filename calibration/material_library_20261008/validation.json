@@ -1,0 +1,222 @@
+{
+  "created_utc": "2026-10-08T06:12:08.687131+00:00",
+  "feature": "saved_material_library_v1",
+  "main_tests_passed": 265,
+  "new_test_cases": 9,
+  "known_fit_count": 8,
+  "material_holdout_count": 8,
+  "saved_prediction_count": 3,
+  "total_materials": 19,
+  "source_records_sha256_unchanged": true,
+  "source_records_bound": 92,
+  "browser_download_original_files": 7,
+  "bundle_derived_files": [
+    "curves.csv",
+    "manifest.json"
+  ],
+  "actual_bank_verified": true,
+  "full_exclusions_verified": true,
+  "physical_H_unchanged": true,
+  "legacy_prediction_without_creation_hash": "semantic_curve_and_input_hash_only",
+  "independently_validated": false,
+  "loss_coefficients_calibrated": false,
+  "system_scope": "V1 software usage flows validated; BH-only calibration materials not eligible for motor efficiency",
+  "workflow_evidence": [
+    "system_flow_20261008",
+    "waveform_ui_20261008",
+    "material_library_20261008"
+  ],
+  "raw_predictions_changed": false,
+  "calibration_bank_changed": false,
+  "holdout_error_changed": false,
+  "new_maxwell_solves": 0,
+  "new_mumax_solves": 0,
+  "new_training": 0,
+  "cumulative_maxwell": 42,
+  "cumulative_mumax": 680,
+  "producer_sha256": {
+    "modules/material_library.py": "9194bd2ecd8598bb734ee17f0a7c7ff58fff01790c1663c66cdfd79241b8071e",
+    "modules/workbench_routes.py": "39fd534b74a7e2df387197157d72fb58b62b6cd029c6e6a4bf5ee57acbfefe9e",
+    "templates/material_library.html": "506d5075a1e787b7654fec354b49dbc28bf943608806dd02983688e98b5c3c56",
+    "templates/system.html": "475d5a8bc5a8a71236b78cc0fa0913c8bca9eac13c22e20b3aae24c39d7d8908",
+    "templates/workbench.html": "29c88001a737c0dafbe5baa07801a6e93851ad277148a1580c8090ccf017ea6e",
+    "static/js/material_library.js": "aaacbd0f936e3a1e5fcc28a8d7294536b61401a76d0325ca055e7ad513727058",
+    "tests/test_material_library.py": "7dd3c2e0116ab447ae6469d3bfc296936e826003a72573af63d9f52bc1a14f62"
+  },
+  "materials": [
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "fit:B23R075",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded": [],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "fit:B27R090",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded": [],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "fit:B27R095",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded": [],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "fit:B30P105",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded": [],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "holdout:B23R075",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "892a0d95694530248703dc66ab68f77dd3d59131f525da4b94d2508af344858a",
+      "excluded": [
+        "B23R075"
+      ],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "holdout:B27R090",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "fce6ff3d283473d5960af4afe48d3d928488497580affb4b1c2ac578359cd7d2",
+      "excluded": [
+        "B27R090"
+      ],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "holdout:B27R095",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "a1c180dd4527f0f5c36279dae65f38d92d3f2215f980ac7b2b8fe88bb0a2fff1",
+      "excluded": [
+        "B27R095"
+      ],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "holdout:B30P105",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+      "excluded": [
+        "B30P105"
+      ],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8fff23daed9e",
+      "key": "prediction:pred_5a6fb5dab354",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+      "excluded": [
+        "B30P105"
+      ],
+      "bundle_files": 8
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "fit:B23R075",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded": [],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "fit:B27R090",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded": [],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "fit:B27R095",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded": [],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "fit:B30P105",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded": [],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "holdout:B23R075",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "892a0d95694530248703dc66ab68f77dd3d59131f525da4b94d2508af344858a",
+      "excluded": [
+        "B23R075"
+      ],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "holdout:B27R090",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "fce6ff3d283473d5960af4afe48d3d928488497580affb4b1c2ac578359cd7d2",
+      "excluded": [
+        "B27R090"
+      ],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "holdout:B27R095",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "a1c180dd4527f0f5c36279dae65f38d92d3f2215f980ac7b2b8fe88bb0a2fff1",
+      "excluded": [
+        "B27R095"
+      ],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "holdout:B30P105",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+      "excluded": [
+        "B30P105"
+      ],
+      "bundle_files": 6
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "prediction:pred_bd6f4387f3fb",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+      "excluded": [
+        "B30P105"
+      ],
+      "bundle_files": 8
+    },
+    {
+      "calibration": "cal_8d8189317713",
+      "key": "prediction:pred_d3ba387227ff",
+      "parent": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "effective": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+      "excluded": [
+        "B30P105"
+      ],
+      "bundle_files": 8
+    }
+  ]
+}
