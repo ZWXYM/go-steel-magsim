@@ -14,6 +14,7 @@ from modules.optimization_plans import OptimizationPlans
 from modules.motor_waveforms import MotorWaveforms
 from modules.material_library import MaterialLibrary
 from modules.calibrated_motor_preparation import CalibratedMotorPreparation
+from modules.calibrated_motor_native import CalibratedMotorNative
 
 
 def create_workbench(project,storage=None,root=None):
@@ -28,6 +29,7 @@ def create_workbench(project,storage=None,root=None):
     waveforms=MotorWaveforms(motor)
     materials=MaterialLibrary(calibration)
     calibrated_motor=CalibratedMotorPreparation(materials,motor,storage/'calibrated_motor')
+    native_material=CalibratedMotorNative(calibrated_motor,motor,storage/'calibrated_motor_native')
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -83,6 +85,26 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/api/workbench/calibrated-motor/<artifact>/files/<name>')
     def calibrated_motor_download(artifact,name):
         return send_file(calibrated_motor.download(artifact,name),as_attachment=True)
+
+    @bp.get('/api/workbench/calibrated-motor/native-imports')
+    def native_material_records():
+        return jsonify(native_material.records())
+
+    @bp.post('/api/workbench/calibrated-motor/native-imports')
+    def native_material_prepare():
+        return jsonify(native_material.prepare(request.get_json()))
+
+    @bp.get('/api/workbench/calibrated-motor/native-imports/<artifact>')
+    def native_material_record(artifact):
+        return jsonify(native_material.get(artifact))
+
+    @bp.post('/api/workbench/calibrated-motor/native-imports/<artifact>/start')
+    def native_material_start(artifact):
+        return jsonify(native_material.start(artifact))
+
+    @bp.get('/api/workbench/calibrated-motor/native-imports/<artifact>/files/<name>')
+    def native_material_download(artifact,name):
+        return send_file(native_material.download(artifact,name),as_attachment=True)
 
     @bp.get('/motor-optimization')
     def optimization_page():

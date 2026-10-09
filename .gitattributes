@@ -110,3 +110,8 @@ calibration/material_library_20261008/** -text
 modules/calibrated_motor_preparation.py -text
 tests/test_calibrated_motor_preparation.py -text
 calibration/calibrated_motor_preparation_20261008/** -text
+modules/calibrated_motor_native.py -text
+tools/calibrated_motor_import_worker.py -text
+tests/test_calibrated_motor_native.py -text
+docs/calibrated_motor_native_20261009.md -text
+calibration/calibrated_motor_native_20261009/** -text

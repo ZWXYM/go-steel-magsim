@@ -1,4 +1,4 @@
-/* Saved data only: no calibration, prediction or native submission. */
+/* Saved materials and explicit, isolated native import; no solve submission. */
 const ML={records:[],key:null,generation:0};
 const mlLabels={fit:'已知样品标定',holdout:'整牌号留出',prediction:'保存的预测'};
 const ml$=id=>document.getElementById(id);
@@ -51,17 +51,29 @@ if(typeof document!=='undefined'){ml$('refresh').onclick=mlRefresh;ml$('calibrat
 async function mlPrepareMotor(){
  const selected=ML.detail,button=ml$('prepareMotor');button.disabled=true;ml$('error').textContent='';
  try{const r=await fetch('/api/workbench/calibrated-motor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({calibration:selected.calibration_id,key:selected.key,cores:Number(ml$('motorCores').value)})});const v=await r.json();if(!r.ok)throw Error(v.error||'准备失败');
- if(ML.detail!==selected)return; const out=ml$('preparedMotor');out.replaceChildren(mlText('p',v.id+' · 已冻结材料与工程副本 · 待原生导入'));
- for(const name of ['motor.aedt','package.zip','manifest.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/'+v.id+'/files/'+name;out.append(a)}
+ if(ML.detail!==selected)return;await mlLoadPreparations(selected);
  }catch(e){ml$('error').textContent=e.message}finally{button.disabled=false}
 }
 if(typeof document!=='undefined')ml$('prepareMotor').onclick=mlPrepareMotor;
 
 async function mlLoadPreparations(selected){
- try{const rows=await mlApi('/api/workbench/calibrated-motor');if(ML.detail!==selected)return;const out=ml$('preparedMotor');out.replaceChildren();
+ try{const [rows,imports,resources]=await Promise.all([mlApi('/api/workbench/calibrated-motor'),mlApi('/api/workbench/calibrated-motor/native-imports'),mlApi('/api/workbench/resources')]);if(ML.detail!==selected)return;const out=ml$('preparedMotor');out.replaceChildren();
  for(const r of rows){if(r.status==='invalid'){out.append(mlText('p',r.id+' · '+r.error,'error'));continue}
  if(r.calibration_id!==selected.calibration_id||r.material_key!==selected.key)continue;
  const row=document.createElement('p');row.append(mlText('span',r.id+' · '+r.created_utc+' · 待原生导入 '));
- for(const name of ['motor.aedt','package.zip','manifest.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/'+r.id+'/files/'+name;row.append(a)}out.append(row)}
+ for(const name of ['motor.aedt','package.zip','manifest.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/'+r.id+'/files/'+name;row.append(a)}out.append(row);
+ const children=imports.filter(c=>c.preparation_id===r.id),ready=mlText('button','准备原生导入');ready.onclick=()=>mlNativeAction('/api/workbench/calibrated-motor/native-imports',{preparation:r.id},ready,selected);out.append(ready);
+ for(const c of children){const p=document.createElement('p');const labels={ready:'已冻结，等待手动执行',ready_source_changed:'准备后程序已更新，需新副本',starting:'正在启动专用会话',running:'正在导入与预检',imported_not_solved:'导入与预检通过，未求解',failed:'导入失败，保留现场',needs_attention:'需检查现场，不自动重试',invalid:'文件核验失败'};
+ p.append(mlText('span',c.id+' · '+(labels[c.status]||c.status)+' '));if(c.error)p.append(mlText('span',c.error,'error'));
+ if(c.status==='ready'){const start=mlText('button','执行原生导入与预检');start.disabled=resources.cpu_only;start.title=resources.cpu_only?'CPU预览窗口禁止原生执行':'最多1专用会话，0磁场/电机求解';start.onclick=()=>mlNativeAction('/api/workbench/calibrated-motor/native-imports/'+c.id+'/start',{},start,selected);p.append(start)}
+ if(c.status==='imported_not_solved'){p.append(mlText('span','RD/TD '+c.summary.material.curve_points.RD+'/'+c.summary.material.curve_points.TD+' 点 · 插片赋值48/48 · 损耗选择48/48 · 效率禁用 '));for(const name of ['motor.aedt','summary.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/native-imports/'+c.id+'/files/'+name;p.append(a)}}out.append(p)}
+ }const refresh=mlText('button','刷新导入状态');refresh.onclick=()=>mlLoadPreparations(selected);out.append(refresh);
+ for(const c of imports.filter(c=>c.status==='invalid'))out.append(mlText('p',c.id+' · '+c.error,'error'));
  }catch(e){if(ML.detail===selected)ml$('preparedMotor').textContent='准备记录暂时不可读：'+e.message}
+}
+
+async function mlNativeAction(url,data,button,selected){
+ button.disabled=true;ml$('error').textContent='';
+ try{const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}),result=await response.json();if(!response.ok)throw Error(result.error||'操作失败');if(ML.detail===selected)await mlLoadPreparations(selected)}
+ catch(error){if(ML.detail===selected)ml$('error').textContent=error.message}finally{button.disabled=false}
 }

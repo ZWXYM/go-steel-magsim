@@ -1,0 +1,60 @@
+{
+  "version": "calibrated_motor_native_entry_v1",
+  "preparation_id": "calmotor_b483da720ad5",
+  "native_import_id": "calimport_aa827324bdb1",
+  "status": "ready",
+  "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "effective_bank_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+  "training_grades": [
+    "B23R075",
+    "B27R090",
+    "B27R095"
+  ],
+  "excluded_grades": [
+    "B30P105"
+  ],
+  "H_axis": "physical_A_per_m",
+  "H_scale": 1,
+  "curve_points": {
+    "RD": 26,
+    "TD": 26
+  },
+  "budget": {
+    "field_solves": 0,
+    "motor_solves": 0,
+    "native_sessions": 1,
+    "wall_seconds": 240
+  },
+  "license_TCP_reachable": false,
+  "native_import_completed": false,
+  "new_native_sessions": 0,
+  "new_native_solves": 0,
+  "new_MuMax_solves": 0,
+  "new_predictions": 0,
+  "new_training": 0,
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false,
+  "main_tests_passed": 277,
+  "old_records_unchanged": 130,
+  "parent_preparation_unchanged": true,
+  "original_template_unchanged": true,
+  "scan_states": [
+    {
+      "id": "scan_8605c25b1635",
+      "status": "completed"
+    },
+    {
+      "id": "scan_bd3b82a53ef6",
+      "status": "completed_with_failures"
+    },
+    {
+      "id": "scan_a300ab06268f",
+      "status": "completed"
+    }
+  ],
+  "cumulative_Maxwell_solves": 42,
+  "cumulative_MuMax_solves": 680,
+  "verification_scope": "CPU snapshot/route/mock interfaces and browser license-failure/reopen; no actual AEDT import",
+  "initial_test_failure": "Canonical bank identity was incorrectly compared to byte hash; fixed without changing source banks",
+  "first_failed_test_log_preserved": true
+}

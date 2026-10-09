@@ -20,7 +20,7 @@ def default_root(project):
 
 def source_manifest(project):
     project=Path(project).resolve()
-    files=[project/'app.py',project/'tools/start_workbench.py',project/'tools/motor_scan_worker.py']
+    files=[project/'app.py',project/'tools/start_workbench.py',project/'tools/motor_scan_worker.py',project/'tools/calibrated_motor_import_worker.py']
     for folder,pattern in [('modules','*.py'),('templates','*.html'),('static/js','*.js')]:
         files.extend((project/folder).rglob(pattern))
     result={}
