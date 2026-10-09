@@ -1,0 +1,72 @@
+{
+  "plan_id": "bhanalysis_c6486f170752",
+  "native_import_id": "calimport_a5965e17df30",
+  "native_import_status": "ready",
+  "source_lineage": {
+    "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+    "effective_bank_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+    "excluded_grades": [
+      "B30P105"
+    ],
+    "training_grades": [
+      "B23R075",
+      "B27R090",
+      "B27R095"
+    ],
+    "H_scale": 1
+  },
+  "plan_reopen_verified": true,
+  "frozen_input_hashes": {
+    "inputs/material.amat": "10dd54a7ea6e424352f9196ef9d00b0865682d12687e7482e5b78440074ba9f7",
+    "inputs/material.metadata.json": "ea1243899e8c1facfe6082db27d12ddacd96a3d12263df7cf948158ad6f30248",
+    "inputs/native_import_manifest.json": "5c4c519e9d59cca4eaa0638a0501a0f71e7e6cb7796d857ae022b7e09ba89b57",
+    "inputs/source_package.zip": "0cb5b14128b53da4e8544c89c19d3f000a674d1a0a308e3a60b7c7171d806b56"
+  },
+  "old_storage_files_unchanged": 2448,
+  "material_entries_available": 19,
+  "terminal_scan_states": {
+    "scan_8605c25b1635": "completed",
+    "scan_bd3b82a53ef6": "completed_with_failures",
+    "scan_a300ab06268f": "completed"
+  },
+  "reference": {
+    "dataset": "scan_a300ab06268f",
+    "case": "case_01",
+    "material": "AK Steel - M-6 Carlite",
+    "model_version": "V8_2_object_CS_loss_scope_v2",
+    "source_scope": "existing_library_reference_not_calibrated_material_result",
+    "metrics": {
+      "T_avg_Nm": 1.8858847047904357,
+      "T_min_Nm": 1.73893568753037,
+      "T_max_Nm": 2.09298160156189,
+      "K_T_ripple_pct": 18.773465479209264,
+      "torque_csv_sha256": "a1766bede06e4c3667adc8afa54e7cd689eda697520ec4f7ed6133f94e60b7d1"
+    },
+    "original_metric_equivalence": true,
+    "original_csv_download_byte_equal": true
+  },
+  "python_ast_count": 132,
+  "new_native_sessions": 0,
+  "new_native_imports": 0,
+  "new_motor_solves": 0,
+  "new_field_solves": 0,
+  "new_MuMax_solves": 0,
+  "new_production_predictions": 0,
+  "new_training": 0,
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false,
+  "cumulative_Maxwell": 42,
+  "cumulative_MuMax": 680,
+  "system_complete": false,
+  "main_tests_passed": 286,
+  "new_tests_passed": 8,
+  "license_TCP_observed_reachable": false,
+  "software_scope": "CPU saved analysis plans and existing official torque output; no calibrated material motor result",
+  "model_copy_test_scope": "Temporary simulated saved file fixture, not actual AEDT import or solve",
+  "existing_reference_scope": "Existing M6 result; no replacement of calibrated-material results",
+  "actual_model_copy_count": 0,
+  "analysis_submission_entrypoint_implemented": false,
+  "native_protocol_settings_applied": false,
+  "thesis_writing_paused": true,
+  "publication_scope": "Code, usage documentation and thin acceptance only"
+}

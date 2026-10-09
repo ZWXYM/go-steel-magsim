@@ -115,3 +115,9 @@ tools/calibrated_motor_import_worker.py -text
 tests/test_calibrated_motor_native.py -text
 docs/calibrated_motor_native_20261009.md -text
 calibration/calibrated_motor_native_20261009/** -text
+modules/calibrated_motor_analysis.py -text
+templates/calibrated_motor_analysis.html -text
+static/js/calibrated_motor_analysis.js -text
+tests/test_calibrated_motor_analysis.py -text
+docs/bh_only_analysis_20261009.md -text
+calibration/bh_only_analysis_20261009/** -text

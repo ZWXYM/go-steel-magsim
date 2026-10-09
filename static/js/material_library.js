@@ -57,7 +57,7 @@ async function mlPrepareMotor(){
 if(typeof document!=='undefined')ml$('prepareMotor').onclick=mlPrepareMotor;
 
 async function mlLoadPreparations(selected){
- try{const [rows,imports,resources]=await Promise.all([mlApi('/api/workbench/calibrated-motor'),mlApi('/api/workbench/calibrated-motor/native-imports'),mlApi('/api/workbench/resources')]);if(ML.detail!==selected)return;const out=ml$('preparedMotor');out.replaceChildren();
+ try{const [rows,imports,resources,plans]=await Promise.all([mlApi('/api/workbench/calibrated-motor'),mlApi('/api/workbench/calibrated-motor/native-imports'),mlApi('/api/workbench/resources'),mlApi('/api/workbench/calibrated-motor/analysis-plans')]);if(ML.detail!==selected)return;const out=ml$('preparedMotor');out.replaceChildren();
  for(const r of rows){if(r.status==='invalid'){out.append(mlText('p',r.id+' · '+r.error,'error'));continue}
  if(r.calibration_id!==selected.calibration_id||r.material_key!==selected.key)continue;
  const row=document.createElement('p');row.append(mlText('span',r.id+' · '+r.created_utc+' · 待原生导入 '));
@@ -66,7 +66,11 @@ async function mlLoadPreparations(selected){
  for(const c of children){const p=document.createElement('p');const labels={ready:'已冻结，等待手动执行',ready_source_changed:'准备后程序已更新，需新副本',starting:'正在启动专用会话',running:'正在导入与预检',imported_not_solved:'导入与预检通过，未求解',failed:'导入失败，保留现场',needs_attention:'需检查现场，不自动重试',invalid:'文件核验失败'};
  p.append(mlText('span',c.id+' · '+(labels[c.status]||c.status)+' '));if(c.error)p.append(mlText('span',c.error,'error'));
  if(c.status==='ready'){const start=mlText('button','执行原生导入与预检');start.disabled=resources.cpu_only;start.title=resources.cpu_only?'CPU预览窗口禁止原生执行':'最多1专用会话，0磁场/电机求解';start.onclick=()=>mlNativeAction('/api/workbench/calibrated-motor/native-imports/'+c.id+'/start',{},start,selected);p.append(start)}
- if(c.status==='imported_not_solved'){p.append(mlText('span','RD/TD '+c.summary.material.curve_points.RD+'/'+c.summary.material.curve_points.TD+' 点 · 插片赋值48/48 · 损耗选择48/48 · 效率禁用 '));for(const name of ['motor.aedt','summary.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/native-imports/'+c.id+'/files/'+name;p.append(a)}}out.append(p)}
+ if(c.status==='imported_not_solved'){p.append(mlText('span','RD/TD '+c.summary.material.curve_points.RD+'/'+c.summary.material.curve_points.TD+' 点 · 插片赋值48/48 · 损耗选择48/48 · 效率禁用 '));for(const name of ['motor.aedt','summary.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/native-imports/'+c.id+'/files/'+name;p.append(a)}}out.append(p);
+ const existing=plans.filter(v=>v.native_import_id===c.id);
+ if(c.status==='ready'||c.status==='imported_not_solved'){const make=mlText('button','准备转矩分析计划');make.onclick=()=>mlNativeAction('/api/workbench/calibrated-motor/analysis-plans',{native_import:c.id,measurement_protocol:ml$('torqueProtocol').value},make,selected);out.append(make)}
+ for(const v of existing){const link=mlText('a','打开转矩分析计划 '+v.id);link.href='/calibrated-motor/analysis/'+v.id;out.append(document.createElement('br'),link)}
+ }
  }const refresh=mlText('button','刷新导入状态');refresh.onclick=()=>mlLoadPreparations(selected);out.append(refresh);
  for(const c of imports.filter(c=>c.status==='invalid'))out.append(mlText('p',c.id+' · '+c.error,'error'));
  }catch(e){if(ML.detail===selected)ml$('preparedMotor').textContent='准备记录暂时不可读：'+e.message}

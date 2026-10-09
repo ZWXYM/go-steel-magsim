@@ -15,6 +15,7 @@ from modules.motor_waveforms import MotorWaveforms
 from modules.material_library import MaterialLibrary
 from modules.calibrated_motor_preparation import CalibratedMotorPreparation
 from modules.calibrated_motor_native import CalibratedMotorNative
+from modules.calibrated_motor_analysis import CalibratedMotorAnalysis
 
 
 def create_workbench(project,storage=None,root=None):
@@ -30,6 +31,7 @@ def create_workbench(project,storage=None,root=None):
     materials=MaterialLibrary(calibration)
     calibrated_motor=CalibratedMotorPreparation(materials,motor,storage/'calibrated_motor')
     native_material=CalibratedMotorNative(calibrated_motor,motor,storage/'calibrated_motor_native')
+    bh_analysis=CalibratedMotorAnalysis(native_material,waveforms,storage/'calibrated_motor_analysis')
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -105,6 +107,39 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/api/workbench/calibrated-motor/native-imports/<artifact>/files/<name>')
     def native_material_download(artifact,name):
         return send_file(native_material.download(artifact,name),as_attachment=True)
+
+    @bp.get('/calibrated-motor/analysis/<artifact>')
+    def bh_analysis_page(artifact):
+        bh_analysis.path(artifact)
+        return render_template('calibrated_motor_analysis.html',artifact=artifact)
+
+    @bp.get('/api/workbench/calibrated-motor/analysis-plans')
+    def bh_analysis_records():
+        return jsonify(bh_analysis.records())
+
+    @bp.post('/api/workbench/calibrated-motor/analysis-plans')
+    def bh_analysis_prepare():
+        return jsonify(bh_analysis.prepare(request.get_json()))
+
+    @bp.get('/api/workbench/calibrated-motor/analysis-plans/<artifact>')
+    def bh_analysis_record(artifact):
+        return jsonify(bh_analysis.get(artifact))
+
+    @bp.post('/api/workbench/calibrated-motor/analysis-plans/<artifact>/prepare-model')
+    def bh_analysis_model(artifact):
+        return jsonify(bh_analysis.prepare_model(artifact))
+
+    @bp.get('/api/workbench/calibrated-motor/analysis-plans/<artifact>/bundle')
+    def bh_analysis_bundle(artifact):
+        return send_file(bh_analysis.bundle(artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
+
+    @bp.get('/api/workbench/calibrated-motor/torque-reference/<dataset>/<case>')
+    def bh_torque_reference(dataset,case):
+        return jsonify(bh_analysis.reference(dataset,case))
+
+    @bp.get('/api/workbench/calibrated-motor/torque-reference/<dataset>/<case>/csv')
+    def bh_torque_reference_csv(dataset,case):
+        return send_file(bh_analysis.reference_csv(dataset,case),as_attachment=True,download_name=dataset+'_'+case+'_torque.csv',mimetype='text/csv')
 
     @bp.get('/motor-optimization')
     def optimization_page():
