@@ -121,3 +121,9 @@ static/js/calibrated_motor_analysis.js -text
 tests/test_calibrated_motor_analysis.py -text
 docs/bh_only_analysis_20261009.md -text
 calibration/bh_only_analysis_20261009/** -text
+modules/calibrated_motor_execution.py -text
+tools/calibrated_motor_analysis_worker.py -text
+tests/test_calibrated_motor_execution.py -text
+tests/test_calibrated_motor_execution_ui.js -text
+docs/torque_execution_20261009.md -text
+calibration/torque_execution_20261009/** -text

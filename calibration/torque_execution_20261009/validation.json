@@ -1,0 +1,91 @@
+{
+  "analysis_plan_id": "bhanalysis_c6486f170752",
+  "native_import_id": "calimport_a5965e17df30",
+  "native_import_status": "ready",
+  "real_execution_tasks": 0,
+  "real_native_imports": 0,
+  "real_native_sessions": 0,
+  "new_motor_solves": 0,
+  "new_field_solves": 0,
+  "new_MuMax_solves": 0,
+  "new_training": 0,
+  "new_production_predictions": 0,
+  "cumulative_Maxwell": 42,
+  "cumulative_MuMax": 680,
+  "old_storage_files_unchanged": 2454,
+  "material_entries_available": 19,
+  "terminal_scan_states": {
+    "scan_8605c25b1635": "completed",
+    "scan_bd3b82a53ef6": "completed_with_failures",
+    "scan_a300ab06268f": "completed"
+  },
+  "original_template_sha256": "e88490aaf9f1578834f16afbdd1229093cc38503aa6d2ed7afd7f87aafca951a",
+  "original_template_unchanged": true,
+  "native_frozen_input_and_producer_check": true,
+  "source_lineage": {
+    "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+    "effective_bank_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+    "training_grades": [
+      "B23R075",
+      "B27R090",
+      "B27R095"
+    ],
+    "excluded_grades": [
+      "B30P105"
+    ],
+    "H_axis": "physical_A_per_m",
+    "H_scale": 1
+  },
+  "current_plan_submission_rejected_before_task_creation": "实际导入与分析工程复制通过后才能准备执行任务",
+  "existing_reference_metric_equivalence": true,
+  "existing_reference_csv_sha256": "a1766bede06e4c3667adc8afa54e7cd689eda697520ec4f7ed6133f94e60b7d1",
+  "main_tests_passed": 304,
+  "new_execution_tests_passed": 17,
+  "new_runtime_worker_fingerprint_test_passed": true,
+  "mock_scope": "Dedicated Desktop/app, analyze and CSV producer mocked in temporary fixtures; no real native validation",
+  "python_ast_passed": 135,
+  "UI_reopen_and_stage_visibility_verified": true,
+  "screenshot_available": true,
+  "license_TCP_initially_observed_reachable": false,
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false,
+  "system_complete": false,
+  "thesis_writing_paused": true,
+  "schema": "torque_execution_software_validation_v1",
+  "recorded_utc": "2026-10-09T12:05:16.498941+00:00",
+  "release_baseline": "82c25ab80e65cc6b9ff51f3737710b978abdc929",
+  "old_public_calibration_trees": 32,
+  "new_execution_module": "modules/calibrated_motor_execution.py",
+  "native_worker": "tools/calibrated_motor_analysis_worker.py",
+  "planned_per_task_budget": {
+    "native_sessions": 1,
+    "motor_solves": 1,
+    "field_solves": 0,
+    "max_cores": 2,
+    "gpus": 0,
+    "wall_seconds": 1200
+  },
+  "current_round_budget": {
+    "native_sessions": 0,
+    "motor_solves": 0,
+    "field_solves": 0,
+    "MuMax_solves": 0,
+    "GPU_training": 0
+  },
+  "actual_analysis_plan_status": "awaiting_native_material_import",
+  "actual_model_snapshots_created": 0,
+  "JavaScript_checks": [
+    "execution_UI",
+    "workbench_UI",
+    "waveforms_UI",
+    "analysis_syntax"
+  ],
+  "source_reference_scope": "existing_library_reference_not_calibrated_material_result",
+  "pending_real_acceptance": [
+    "native_material_import",
+    "model_snapshot",
+    "native_configuration",
+    "native_analysis",
+    "official_torque_collection"
+  ]
+}

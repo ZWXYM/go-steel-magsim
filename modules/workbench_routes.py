@@ -16,6 +16,7 @@ from modules.material_library import MaterialLibrary
 from modules.calibrated_motor_preparation import CalibratedMotorPreparation
 from modules.calibrated_motor_native import CalibratedMotorNative
 from modules.calibrated_motor_analysis import CalibratedMotorAnalysis
+from modules.calibrated_motor_execution import CalibratedMotorExecution
 
 
 def create_workbench(project,storage=None,root=None):
@@ -32,6 +33,7 @@ def create_workbench(project,storage=None,root=None):
     calibrated_motor=CalibratedMotorPreparation(materials,motor,storage/'calibrated_motor')
     native_material=CalibratedMotorNative(calibrated_motor,motor,storage/'calibrated_motor_native')
     bh_analysis=CalibratedMotorAnalysis(native_material,waveforms,storage/'calibrated_motor_analysis')
+    bh_execution=CalibratedMotorExecution(bh_analysis,motor,storage/'calibrated_motor_execution')
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -102,6 +104,7 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.post('/api/workbench/calibrated-motor/native-imports/<artifact>/start')
     def native_material_start(artifact):
+        bh_execution.ensure_idle()
         return jsonify(native_material.start(artifact))
 
     @bp.get('/api/workbench/calibrated-motor/native-imports/<artifact>/files/<name>')
@@ -132,6 +135,30 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/api/workbench/calibrated-motor/analysis-plans/<artifact>/bundle')
     def bh_analysis_bundle(artifact):
         return send_file(bh_analysis.bundle(artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
+
+    @bp.get('/api/workbench/calibrated-motor/executions')
+    def bh_execution_records():
+        return jsonify(bh_execution.records())
+
+    @bp.post('/api/workbench/calibrated-motor/executions')
+    def bh_execution_prepare():
+        return jsonify(bh_execution.prepare(request.get_json()))
+
+    @bp.get('/api/workbench/calibrated-motor/executions/<artifact>')
+    def bh_execution_record(artifact):
+        return jsonify(bh_execution.get(artifact))
+
+    @bp.post('/api/workbench/calibrated-motor/executions/<artifact>/start')
+    def bh_execution_start(artifact):
+        return jsonify(bh_execution.start(artifact))
+
+    @bp.get('/api/workbench/calibrated-motor/executions/<artifact>/files/<path:name>')
+    def bh_execution_file(artifact,name):
+        return send_file(bh_execution.download(artifact,name),as_attachment=True,download_name=Path(name).name)
+
+    @bp.get('/api/workbench/calibrated-motor/executions/<artifact>/bundle')
+    def bh_execution_bundle(artifact):
+        return send_file(bh_execution.bundle(artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
 
     @bp.get('/api/workbench/calibrated-motor/torque-reference/<dataset>/<case>')
     def bh_torque_reference(dataset,case):
@@ -204,6 +231,7 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.post('/api/workbench/optimization/plans/<plan_id>/submit')
     def submit_optimization_plan(plan_id):
+        bh_execution.ensure_idle()
         return jsonify(plans.submit(plan_id))
 
     @bp.post('/api/workbench/optimization/plans/<plan_id>/refresh')
@@ -305,6 +333,7 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.post('/api/workbench/motor/jobs/<job_id>/submit')
     def submit_motor(job_id):
+        bh_execution.ensure_idle()
         return jsonify(motor.submit(job_id))
 
     @bp.get('/api/workbench/files/<kind>/<artifact>/<path:name>')
