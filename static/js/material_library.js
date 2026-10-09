@@ -1,5 +1,5 @@
 /* Saved materials and explicit, isolated native import; no solve submission. */
-const ML={records:[],key:null,generation:0};
+const ML={records:[],key:null,generation:0,requestUsed:false};
 const mlLabels={fit:'已知样品标定',holdout:'整牌号留出',prediction:'保存的预测'};
 const ml$=id=>document.getElementById(id);
 async function mlApi(url){const r=await fetch(url);const v=await r.json();if(!r.ok)throw Error(v.error||'读取失败');return v}
@@ -35,18 +35,24 @@ async function mlOpen(key){
  document.querySelectorAll('.entry').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.key===key)));
  try{const v=await mlApi('/api/workbench/material-library/'+ml$('calibration').value+'/'+encodeURIComponent(key));if(generation===ML.generation)mlRender(v)}catch(e){if(generation===ML.generation)ml$('error').textContent=e.message}
 }
-function mlEntries(){
+function mlEntries(preferredKey){
  ++ML.generation;ML.key=null;ml$('detail').hidden=true;ml$('error').textContent='';const out=ml$('entries');out.replaceChildren();
  const r=ML.records.find(r=>r.id===ml$('calibration').value);if(!r){ml$('status').textContent='尚无保存材料，请先在校准工作台建立记录。';return}
  ml$('status').textContent=r.error||`${r.calibration_version||'旧版本'} · ${r.entries.length} 个保存条目 · 可打开 ${r.entries.filter(e=>e.available).length} 个`;
  for(const e of r.entries){const b=mlText('button',(mlLabels[e.kind]||e.kind)+' · '+e.label,'entry');b.dataset.key=e.key;b.disabled=!e.available;b.setAttribute('aria-pressed','false');b.append(mlText('small',e.available?(e.excluded_grades.length?'排除 '+e.excluded_grades.join('、'):'全库标定'):e.reason));b.onclick=()=>mlOpen(e.key);out.append(b)}
+ if(typeof preferredKey==='string'){const selected=r.entries.find(e=>e.key===preferredKey);if(!selected||!selected.available){ml$('error').textContent=selected?.reason||'链接指定的材料条目不存在，请从列表选择。';return}mlOpen(selected.key);return}
  const first=r.entries.find(e=>e.available);if(first)mlOpen(first.key);
 }
 async function mlRefresh(){
- ++ML.generation;ml$('detail').hidden=true;ml$('error').textContent='';ml$('refresh').disabled=true;
- try{const v=await mlApi('/api/workbench/material-library');ML.records=v.records;const s=ml$('calibration'),old=s.value;s.replaceChildren();for(const r of v.records){const o=mlText('option',r.id+(r.error?' · 读取异常':''));o.value=r.id;s.append(o)}if(v.records.some(r=>r.id===old))s.value=old;mlEntries()}catch(e){ml$('error').textContent=e.message}finally{ml$('refresh').disabled=false}
+ const generation=ML.catalogGeneration=(ML.catalogGeneration||0)+1;++ML.generation;ml$('detail').hidden=true;ml$('error').textContent='';ml$('refresh').disabled=true;
+ try{const v=await mlApi('/api/workbench/material-library');if(generation!==ML.catalogGeneration)return;ML.records=v.records;const s=ml$('calibration'),old=s.value,oldKey=ML.key;
+ const query=!ML.requestUsed&&typeof location!=='undefined'?new URLSearchParams(location.search):new URLSearchParams();ML.requestUsed=true;
+ const requested=query.get('calibration'),key=query.get('key');s.replaceChildren();for(const r of v.records){const o=mlText('option',r.id+(r.error?' · 读取异常':''));o.value=r.id;s.append(o)}
+ if(requested){if(!v.records.some(r=>r.id===requested)){ml$('entries').replaceChildren();ml$('error').textContent='链接指定的校准记录不存在，请选择现有记录。';return}s.value=requested;mlEntries(key||undefined)}
+ else{if(v.records.some(r=>r.id===old))s.value=old;mlEntries(s.value===old&&oldKey?oldKey:undefined)}
+ }catch(e){if(generation===ML.catalogGeneration)ml$('error').textContent=e.message}finally{if(generation===ML.catalogGeneration)ml$('refresh').disabled=false}
 }
-if(typeof document!=='undefined'){ml$('refresh').onclick=mlRefresh;ml$('calibration').onchange=mlEntries;mlRefresh()}
+if(typeof document!=='undefined'){ml$('refresh').onclick=mlRefresh;ml$('calibration').onchange=()=>mlEntries();mlRefresh()}
 
 async function mlPrepareMotor(){
  const selected=ML.detail,button=ml$('prepareMotor');button.disabled=true;ml$('error').textContent='';

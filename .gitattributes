@@ -127,3 +127,11 @@ tests/test_calibrated_motor_execution.py -text
 tests/test_calibrated_motor_execution_ui.js -text
 docs/torque_execution_20261009.md -text
 calibration/torque_execution_20261009/** -text
+modules/material_motor_workflow.py -text
+templates/material_motor_workflow.html -text
+static/js/material_motor_workflow.js -text
+tests/test_material_motor_workflow.py -text
+tests/test_material_motor_workflow_ui.js -text
+tests/test_material_library_selection_ui.js -text
+docs/material_workflow_20261010.md -text
+calibration/material_workflow_20261010/** -text

@@ -1,0 +1,88 @@
+{
+  "version": "material_workflow_acceptance_v1",
+  "material_entries": 19,
+  "available_material_entries": 19,
+  "linked_branches": 2,
+  "actual_calibrated_torque_results": 0,
+  "record_counts": {
+    "analysis_plan": 1,
+    "execution": 0,
+    "native_import": 2,
+    "preparation": 1
+  },
+  "actual_native_sessions": 0,
+  "actual_native_imports": 0,
+  "actual_model_snapshots": 0,
+  "new_execution_tasks": 0,
+  "new_motor_solves": 0,
+  "new_field_solves": 0,
+  "new_MuMax_solves": 0,
+  "new_training": 0,
+  "new_production_predictions": 0,
+  "cumulative_Maxwell": 42,
+  "cumulative_MuMax": 680,
+  "old_storage_files_unchanged": 2454,
+  "old_storage_file_set_unchanged": true,
+  "current_ready_import_id": "calimport_a5965e17df30",
+  "frozen_native_input_and_7_producers_verified": true,
+  "current_plan_id": "bhanalysis_c6486f170752",
+  "analysis_status": "awaiting_native_material_import",
+  "source_lineage": {
+    "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+    "effective_bank_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+    "training_grades": [
+      "B23R075",
+      "B27R090",
+      "B27R095"
+    ],
+    "excluded_grades": [
+      "B30P105"
+    ],
+    "H_axis": "physical_A_per_m",
+    "H_scale": 1.0
+  },
+  "source_files_bound_by_amat_and_metadata": true,
+  "main_tests_passed": 320,
+  "workflow_tests_passed": 16,
+  "python_AST_passed": 137,
+  "JS_checks_passed": [
+    "workflow_UI",
+    "material_selection_UI",
+    "execution_UI",
+    "workbench_UI",
+    "waveforms_UI"
+  ],
+  "actual_browser_filter_and_branch_view_verified": true,
+  "actual_browser_deep_link_and_refresh_selection_verified": true,
+  "actual_browser_analysis_return_link_verified": true,
+  "actual_browser_snapshot_download_and_hashes_verified": true,
+  "downloaded_csv_rows": 19,
+  "downloaded_bundle_sha256": "89d846827804ca8ffb481d9e79ee656efcde75addd816eec2d2d5a42570bbb9e",
+  "screenshot_visually_checked": true,
+  "license_initially_observed_reachable": false,
+  "license_service_or_configuration_changed": false,
+  "source_records_changed": false,
+  "native_dispatch_requested": false,
+  "user_apps_closed": false,
+  "test_scope": "Read-only saved records; lifecycle/completion scenarios in temporary or mocked fixtures are not real AEDT results",
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false,
+  "system_complete": false,
+  "thesis_writing_paused": true,
+  "previous_public_commit": "1554f752f98bb5335c733e24b110e28399ae3982",
+  "old_public_calibration_trees": 33,
+  "licensing_read_only_observation": {
+    "local_1055_listeners": 0,
+    "services": {
+      "ANSYS, Inc. License Manager CVD": "Stopped",
+      "ANSYSLicensingTomcat": "Stopped"
+    },
+    "configuration_changed": false,
+    "services_started": false
+  },
+  "native_budget": {
+    "native_sessions": 0,
+    "motor_solves": 0,
+    "field_solves": 0
+  }
+}
