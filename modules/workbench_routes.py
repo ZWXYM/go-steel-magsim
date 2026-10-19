@@ -23,6 +23,7 @@ from modules.material_motor_chain import MaterialMotorChain
 from modules.material_motor_batches import MaterialMotorBatches
 from modules.material_batch_reports import report_bundle as material_batch_report_bundle
 from modules.native_pair_exports import NativePairExports
+from modules.native_material_runs import NativeMaterialRuns
 
 
 def create_workbench(project,storage=None,root=None):
@@ -44,6 +45,7 @@ def create_workbench(project,storage=None,root=None):
     material_chain=MaterialMotorChain(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
     material_batches=MaterialMotorBatches(material_chain,storage/'calibrated_motor_batches')
     native_pairs=NativePairExports(root,storage/'native_pair_exports')
+    native_runs=NativeMaterialRuns(calibration,motor,native_pairs,storage/'native_material_runs')
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -63,6 +65,38 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/api/workbench/native-pair-sources')
     def native_pair_sources():
         return jsonify(native_pairs.catalog())
+
+    @bp.get('/native-material-runs')
+    def native_material_run_page():
+        return render_template('native_material_runs.html')
+
+    @bp.get('/api/workbench/native-material-runs')
+    def native_material_run_records():
+        return jsonify(native_runs.records())
+
+    @bp.post('/api/workbench/native-material-runs')
+    def native_material_run_prepare():
+        return jsonify(native_runs.prepare(request.get_json()))
+
+    @bp.get('/api/workbench/native-material-runs/<artifact>')
+    def native_material_run_record(artifact):
+        return jsonify(native_runs.get(artifact))
+
+    @bp.post('/api/workbench/native-material-runs/<artifact>/start')
+    def native_material_run_start(artifact):
+        return jsonify(native_runs.start(artifact))
+
+    @bp.post('/api/workbench/native-material-runs/<artifact>/pause')
+    def native_material_run_pause(artifact):
+        return jsonify(native_runs.pause(artifact))
+
+    @bp.post('/api/workbench/native-material-runs/<artifact>/reconcile')
+    def native_material_run_reconcile(artifact):
+        return jsonify(native_runs.reconcile(artifact))
+
+    @bp.get('/api/workbench/native-material-runs/<artifact>/bundle')
+    def native_material_run_bundle(artifact):
+        return send_file(native_runs.bundle(artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
 
     @bp.get('/api/workbench/native-pairs')
     def native_pair_records():

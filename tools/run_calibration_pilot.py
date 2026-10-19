@@ -192,7 +192,7 @@ def resolve_mumax(explicit=None):
     raise FileNotFoundError('Set --mumax or MUMAX3_EXE, or add mumax3 to PATH')
 
 
-def run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, only_direction=None):
+def run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, only_direction=None, job_timeout_s=None):
     # Two writers on one run_status can lose successfully completed jobs.
     # Serialize ownership per run; a crash leaves a lock for explicit review.
     lock = run_dir / 'runner.lock'
@@ -203,16 +203,20 @@ def run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, only
     try:
         with os.fdopen(handle, 'w', encoding='utf-8') as stream:
             stream.write(json.dumps({'pid': os.getpid(), 'created_utc': datetime.now(timezone.utc).isoformat()}))
-        return _run_jobs(run_dir, manifest, max_jobs, mumax, only_grade, only_direction)
+        return _run_jobs(run_dir, manifest, max_jobs, mumax, only_grade, only_direction, job_timeout_s)
     finally:
         lock.unlink()
 
 
-def _run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, only_direction=None):
+def _run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, only_direction=None, job_timeout_s=None):
+    if job_timeout_s is not None and (not np.isfinite(job_timeout_s) or job_timeout_s <= 0):
+        raise ValueError('Positive native job timeout required')
+    deadline = time.monotonic() + job_timeout_s if job_timeout_s is not None else None
     mumax = resolve_mumax(mumax)
     runtime = {'mumax_binary_sha256': file_hash(mumax),
                'mumax_version_query': subprocess.run([str(mumax), '-v'],
-                    capture_output=True, text=True, errors='replace').stdout,
+                    capture_output=True, text=True, errors='replace',
+                    **({'timeout': min(5, max(.001, deadline-time.monotonic()))} if deadline is not None else {})).stdout,
                'jobs': []}
     status_path = run_dir / 'run_status.json'
     if status_path.exists():
@@ -241,22 +245,31 @@ def _run_jobs(run_dir, manifest, max_jobs=None, mumax=None, only_grade=None, onl
             raise ValueError(f'Unverified output already exists: {output}; preserve it and use a new run')
         output.parent.mkdir(parents=True, exist_ok=True)
         log_path = output.parent / (output.stem + '.log')
+        if deadline is not None and time.monotonic() >= deadline:
+            raise TimeoutError('Native job budget exhausted before launch')
         started = time.perf_counter()
         with log_path.open('w', encoding='utf-8') as log:
-            proc = subprocess.run([str(mumax), '-http=127.0.0.1:0', '-o', str(output),
-                                   str(run_dir / job['script'])], stdout=log,
-                                   stderr=subprocess.STDOUT, cwd=PROJECT)
-        result = {**job, 'exit_code': proc.returncode, 'execution_kind': 'native',
+            try:
+                proc = subprocess.run([str(mumax), '-http=127.0.0.1:0', '-o', str(output),
+                                       str(run_dir / job['script'])], stdout=log,
+                                       stderr=subprocess.STDOUT, cwd=PROJECT,
+                                       **({'timeout': max(.001, deadline-time.monotonic())} if deadline is not None else {}))
+                exit_code = proc.returncode
+            except subprocess.TimeoutExpired:
+                exit_code = 124  # subprocess.run stops only the child it created; keep its partial output.
+        result = {**job, 'exit_code': exit_code, 'execution_kind': 'native',
                   'elapsed_seconds': round(time.perf_counter() - started, 3),
                   'table_sha256': file_hash(table) if table.exists() else None}
-        if proc.returncode == 0:
+        if exit_code == 0:
             extract_loop_midpoint(table, H_GRID, angle_deg=job['angle'])
         runtime['jobs'].append(result)
         write_json(status_path, runtime)
         print(f'[{idx}/{len(manifest["jobs"])}] {job["grade"]} {job["direction"]} '
-              f'grain {job["grain_id"]}: exit={proc.returncode}, '
+              f'grain {job["grain_id"]}: exit={exit_code}, '
               f'{result["elapsed_seconds"]}s', flush=True)
-        if proc.returncode:
+        if exit_code == 124:
+            raise RuntimeError(f'单个晶粒达到{job_timeout_s:.3g}秒预算；本次子进程已停止，部分输出保留，未重试：{log_path}')
+        if exit_code:
             raise RuntimeError(f'MuMax failed; inspect {log_path}')
         executed += 1
 

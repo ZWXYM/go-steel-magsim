@@ -7,6 +7,7 @@ from modules.system_runtime import source_manifest
 EXACT_STARTS={'/api/run-script','/api/ml/train','/api/ml/paper-train','/api/pipeline/start',
               '/api/workbench/motor/queue/recover'}
 START_PATHS=(r'/api/pipeline/[^/]+/(?:resume|rerun)',
+    r'/api/workbench/native-material-runs/[^/]+/start',
     r'/api/workbench/calibrated-motor/(?:executions|native-imports)/[^/]+/start',
     r'/api/workbench/calibrated-motor/batches/[^/]+/(?:start|resume)',
     r'/api/workbench/motor/jobs/[^/]+/(?:submit|continue)',

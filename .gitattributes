@@ -170,3 +170,11 @@ tests/test_native_pair_exports.py -text
 tests/test_native_pair_exports_ui.js -text
 docs/native_pair_web_20261019.md -text
 calibration/native_pair_web_20261019/** -text
+modules/native_material_runs.py -text
+tools/native_material_run_worker.py -text
+templates/native_material_runs.html -text
+static/js/native_material_runs.js -text
+tests/test_native_material_runs.py -text
+tests/test_native_material_runs_ui.js -text
+docs/native_material_runs_20261020.md -text
+calibration/native_material_run_20261020/** -text

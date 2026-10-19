@@ -18,27 +18,34 @@ class NativePairExports:
 
     def catalog(self):
         rows=[];issues=[]
-        for path in sorted(self.sources.rglob('manifest.json')):
-            if not path.resolve().is_relative_to(self.sources):continue
+        prepared_root=self.storage.parent/'native_material_runs'
+        candidates=[(p,self.sources,'calibration') for p in self.sources.rglob('manifest.json')]
+        candidates += [(p,prepared_root,'prepared') for p in prepared_root.glob('nativerun_*/run/manifest.json')]
+        for path,source_root,kind in sorted(candidates,key=lambda r:str(r[0])):
+            if not path.resolve().is_relative_to(source_root):continue
             try:
                 m=json.loads(path.read_text(encoding='utf-8-sig'))
                 if not isinstance(m,dict) or not {'materials','jobs','H_grid','n_grains'}<=m.keys():continue
                 if m.get('physics_version')!=PHYSICS_VERSION or m.get('H_axis')!='physical_A_per_m':continue
-                relative=path.relative_to(self.sources).as_posix()
+                relative=path.relative_to(source_root).as_posix()
                 grades=[v['grade'] for v in m['materials']]
                 if any(not isinstance(g,str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,80}',g) for g in grades):raise ValueError('来源材料ID格式不支持')
                 if not grades or len(grades)!=len(set(grades)):raise ValueError('来源材料缺失或重复')
                 status=path.parent/'run_status.json'
                 state=json.loads(status.read_text(encoding='utf8')) if status.is_file() else {}
                 if not isinstance(state,dict) or not isinstance(state.get('jobs',[]),list):raise ValueError('来源执行状态格式不正确')
-                rows.append(dict(id='nativesrc_'+hashlib.sha256(relative.encode()).hexdigest()[:16],
-                    title=path.parent.relative_to(self.sources).as_posix(),grades=grades,
+                key=relative if kind=='calibration' else 'prepared/'+relative
+                row=dict(id='nativesrc_'+hashlib.sha256(key.encode()).hexdigest()[:16],
+                    source_kind=kind,source_relative=path.parent.relative_to(source_root).as_posix(),
+                    title=path.parent.relative_to(source_root).as_posix() if kind=='calibration' else '新材料/'+path.parent.parent.name,grades=grades,
                     manifest_sha256=file_hash(path),n_grains=m['n_grains'],H_grid_points=len(m['H_grid']),
                     texture_sampling_version=m.get('texture_sampling_version','legacy_multi_peak_importance_v1'),
                     declared_jobs=len(m['jobs']),recorded_successes=sum(j.get('exit_code')==0 for j in state.get('jobs',[])),
-                    readiness='导出时核对原脚本和table；当前仅盘点来源'))
+                    readiness='导出时核对原脚本和table；当前仅盘点来源')
+                if kind=='prepared':row['native_run_id']=path.parent.parent.name
+                rows.append(row)
             except (ValueError,KeyError,TypeError,AttributeError,OSError) as exc:
-                issues.append(dict(source=path.parent.relative_to(self.sources).as_posix(),error=str(exc)))
+                issues.append(dict(source=path.parent.relative_to(source_root).as_posix(),error=str(exc)))
         return dict(sources=rows,issues=issues,new_native_solves=0)
 
     def prepare(self,data):
@@ -47,8 +54,9 @@ class NativePairExports:
         source=next((r for r in self.catalog()['sources'] if r['id']==data['source_id']),None)
         if not source or data['grade'] not in source['grades']:raise ValueError('所选来源或材料不存在，请刷新')
         if data['manifest_sha256']!=source['manifest_sha256']:raise ValueError('来源已变化，请刷新后重新选择')
-        base=(self.sources/source['title']).resolve()
-        if not base.is_relative_to(self.sources):raise ValueError('来源超出允许目录')
+        source_root=self.sources if source['source_kind']=='calibration' else self.storage.parent/'native_material_runs'
+        base=(source_root/source['source_relative']).resolve()
+        if not base.is_relative_to(source_root):raise ValueError('来源超出允许目录')
         self.storage.mkdir(parents=True,exist_ok=True)
         artifact='nativepair_'+uuid.uuid4().hex[:12];folder=self.storage/artifact
         export_pair(base,data['grade'],folder)

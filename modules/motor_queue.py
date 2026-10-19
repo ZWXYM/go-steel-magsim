@@ -150,6 +150,11 @@ class DispatchWindow:
         if not self.lease.acquire():
             raise ValueError('另一项原生任务正在交接，请稍后再试')
         try:
+            for path in (self.storage/'native_material_runs').glob('nativerun_*/state.json'):
+                state=json.loads(path.read_text(encoding='utf8'))
+                if not isinstance(state,dict) or 'status' not in state:raise ValueError('材料仿真状态暂不可读，请先检查该任务')
+                if state.get('status') in ('starting','running'):
+                    raise ValueError('材料MuMax仿真未结束；请先查看或暂停材料任务，未下发其他原生任务')
             if self.reservation.exists():
                 owner = json.loads(self.reservation.read_text(encoding='utf8'))
                 status = identity_status(owner['identity'])
