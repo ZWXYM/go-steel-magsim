@@ -8,6 +8,7 @@ from modules.calibration_workbench import CalibrationWorkbench
 from modules.motor_workbench import MotorWorkbench
 from modules.workbench_cpu_policy import install_cpu_policy
 from modules.system_runtime import runtime_identity
+from modules.runtime_source_guard import runtime_view,install_source_guard
 from modules.motor_optimization import MotorOptimization
 from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnostics
 from modules.optimization_plans import OptimizationPlans
@@ -45,6 +46,7 @@ def create_workbench(project,storage=None,root=None):
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
         bp.record_once(lambda state:install_cpu_policy(state.app))
+    bp.record_once(lambda state:install_source_guard(state.app,identity))
 
     @bp.errorhandler(ValueError)
     @bp.errorhandler(KeyError)
@@ -309,7 +311,7 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.get('/api/workbench/runtime')
     def runtime():
-        return jsonify(identity)
+        return jsonify(runtime_view(identity))
 
     @bp.get('/api/workbench/samples')
     def samples():
@@ -318,7 +320,10 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/api/workbench/resources')
     def resources():
         cpu_only=os.environ.get('MAGSIM_CPU_ONLY')=='1'
-        return jsonify(cpu_only=cpu_only,native_submission_allowed=not cpu_only,training_submission_allowed=not cpu_only)
+        status=runtime_view(identity)
+        allowed=not cpu_only and not status['restart_required']
+        return jsonify(cpu_only=cpu_only,native_submission_allowed=allowed,training_submission_allowed=allowed,
+                       source_restart_required=status['restart_required'])
 
     @bp.get('/api/workbench/samples/<grade>/raw-pair')
     def raw_pair(grade):

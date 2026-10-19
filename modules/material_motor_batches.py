@@ -176,6 +176,8 @@ class MaterialMotorBatches:
             if run and run.get('result_available'):
                 row.update(result_available=True,metrics=run['result']['metrics'],execution_id=run['id'],
                     model_version=run['result']['model_version'],measurement_protocol=run['measurement_protocol'])
+            if run and run.get('budget_stop') and run.get('status')=='failed':
+                row.update(raw_error=row.get('error'),error=run['error'],budget_stop=run['budget_stop'])
             rows.append(row)
         result['items']=rows;result['dispatch_compatible']=manifest['producer_hashes']==self.producers()
         result['pause_requested']=(folder/'pause_requested.json').exists()

@@ -17,7 +17,8 @@ from modules.motor_workbench import numeric_csv, unit, write_json
 VERSION='BH_only_torque_output_v1'
 PROTOCOLS={
     'v8_2_cycle1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10]),
-    'periodic_cycle3_v1':dict(cycles=3,source_samples=91,stop_s=.03,selected_window_ms=[20,30])}
+    'periodic_cycle3_v1':dict(cycles=3,source_samples=91,stop_s=.03,selected_window_ms=[20,30]),
+    'v8_2_cycle1_smooth_bh_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],solver_settings={'SmoothBHCurve':True})}
 
 
 def protocol(name):
@@ -25,6 +26,11 @@ def protocol(name):
     return dict(PROTOCOLS[name],id=name,speed_rpm=3000,poles=4,points_per_cycle=30,
                 requested_time_step_s=1/3000,time_column_units=['s','ms','us','ns'],
                 torque_expression='-Moving1.Torque',torque_unit='Nm',native_settings_applied=False)
+
+
+def execution_model_version(measurement):
+    protocol(measurement)
+    return 'V8_2_object_CS_BH_only_torque_smoothBH_v1' if measurement=='v8_2_cycle1_smooth_bh_v1' else 'V8_2_object_CS_BH_only_torque_v1'
 
 
 def collect_torque(path,measurement='v8_2_cycle1'):

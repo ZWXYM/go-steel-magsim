@@ -8,7 +8,7 @@ function bhaRenderPlan(plan){
  bha$('planStatus').textContent=plan.id+' · '+(labels[plan.status]||plan.status);const dl=bha$('identity');dl.replaceChildren();
  for(const [label,value] of [['材料',plan.material_name],['导入记录',plan.native_import_id],['训练样品',plan.training_grades.join('、')],['排除样品',plan.excluded_grades.join('、')||'无'],['磁场轴','物理 H / A·m⁻¹，H_scale=1'],['材料求解结果','见下方独立执行任务；既有参考单独显示']])dl.append(bhaText('dt',label),bhaText('dd',value));
  bha$('prepareModel').disabled=plan.status!=='ready_for_model_preparation';bha$('planBundle').href='/api/workbench/calibrated-motor/analysis-plans/'+plan.id+'/bundle';
- const p=plan.requested_protocol;bha$('protocol').textContent=`计划：${p.speed_rpm} rpm · ${p.cycles}周期 · ${p.source_samples}点 · 取${p.selected_window_ms.join('–')} ms。实际配置应用与求解状态见独立执行记录。`;
+ const p=plan.requested_protocol;bha$('protocol').textContent=`计划：${p.speed_rpm} rpm · ${p.cycles}周期 · ${p.source_samples}点 · 取${p.selected_window_ms.join('–')} ms。实际配置应用与求解状态见独立执行记录。${p.solver_settings?.SmoothBHCurve?' 本计划为独立B-H平滑诊断，原材料节点保留，内部插值不同。':''}`;
  bha$('provenance').textContent=JSON.stringify({parent_bank_sha256:plan.parent_bank_sha256,effective_bank_sha256:plan.effective_bank_sha256,measurement_protocol:plan.measurement_protocol,requested_protocol:plan.requested_protocol,result_available:plan.result_available,efficiency_enabled:plan.efficiency_enabled,optimization_ranking_enabled:plan.optimization_ranking_enabled,input_hashes:plan.input_hashes},null,2);
 }
 async function bhaLoadPlan(){const generation=++BHA.generation;bha$('planError').textContent='';try{const plan=await bhaAPI('/api/workbench/calibrated-motor/analysis-plans/'+document.body.dataset.artifact);if(generation===BHA.generation){bhaRenderPlan(plan);bhaLoadExecutions()}}catch(error){if(generation===BHA.generation){bha$('planError').textContent=error.message;bha$('prepareModel').disabled=true;bha$('prepareExecution').disabled=true}}}
@@ -62,8 +62,9 @@ async function bhaLoadExecutions(){
  const results=await Promise.allSettled([bhaAPI('/api/workbench/calibrated-motor/executions'),bhaAPI('/api/workbench/resources')]);if(generation!==BHA.executionGeneration)return;
  const [rowsResult,resourceResult]=results;
  if(rowsResult.status!=='fulfilled'){bha$('executionError').textContent=rowsResult.reason.message;return}
- const canStart=resourceResult.status==='fulfilled'&&!resourceResult.value.cpu_only;
+ const canStart=resourceResult.status==='fulfilled'&&!resourceResult.value.cpu_only&&resourceResult.value.native_submission_allowed!==false;
  if(resourceResult.status!=='fulfilled')bha$('executionError').textContent='执行资源状态暂不可读；任务仍可查看。';
+ if(resourceResult.status==='fulfilled'&&resourceResult.value.source_restart_required)bha$('executionError').textContent='源码已更新，请重新运行启动器打开匹配版本；现有结果仍可查看。';
  const rows=rowsResult.value.filter(r=>r.analysis_plan_id===document.body.dataset.artifact||r.status==='invalid'),out=bha$('executions');out.replaceChildren();
  bha$('prepareExecution').disabled=!(BHA.plan&&BHA.plan.status==='model_snapshot_ready_not_submitted');
  const labels={prepared:'已冻结，尚未执行',prepared_source_changed:'执行程序已更新，保留此记录',starting:'正在启动',running:'正在分析',completed:'官方转矩已整理',completed_after_budget:'超预算完成，需检查',failed:'失败，现场保留',needs_attention:'需检查现场，不自动重试',invalid:'文件核验失败'};

@@ -54,8 +54,9 @@ async function mbLoad(){
  const artifact=mb$('batchHistory').value;if(!artifact)return;const generation=++MBB.generation;if(MBB.timer)clearTimeout(MBB.timer);mb$('batchError').textContent='';
  const settled=await Promise.allSettled([mbAPI('/api/workbench/calibrated-motor/batches/'+artifact),mbAPI('/api/workbench/resources')]);if(generation!==MBB.generation)return;
  if(settled[0].status!=='fulfilled'){mb$('batchError').textContent='批量读取失败：'+settled[0].reason.message;for(const id of ['batchStart','batchResume','batchPause'])mb$(id).disabled=true;return}
- mbRender(settled[0].value,settled[1].status==='fulfilled'&&!settled[1].value.cpu_only);
+ mbRender(settled[0].value,settled[1].status==='fulfilled'&&!settled[1].value.cpu_only&&settled[1].value.native_submission_allowed!==false);
  if(settled[1].status!=='fulfilled')mb$('batchError').textContent='资源状态不可读，原生开始与接续暂不可用。';
+ if(settled[1].status==='fulfilled'&&settled[1].value.source_restart_required)mb$('batchError').textContent='源码已更新，请重新运行启动器打开匹配版本；仍可查看结果或请求阶段结束后暂停。';
  if(['starting','running'].includes(settled[0].value.status))MBB.timer=setTimeout(mbLoad,3000);
 }
 async function mbHistory(preferred){

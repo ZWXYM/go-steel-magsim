@@ -35,7 +35,8 @@ class ExecutionTests(unittest.TestCase):
             core_loss=dict(complete_insert_coverage=True,enabled_object_names=['Rotor','Stator']+['GOES_'+str(i) for i in range(48)]),
             operating_point=dict(speed_rpm=3000,poles=4,cycles=str(cycles),points_per_cycle='30'),
             setup=dict(StopTime='.03s' if cycles==3 else '.01s',TimeStep='.000333333333333s',UseAdaptiveTimeStep='false',
-                AutoDetectSteadyState='false',FastReachSteadyState='false'))
+                AutoDetectSteadyState='false',FastReachSteadyState='false',
+                SmoothBHCurve='true' if self.plan.get('requested_protocol',{}).get('solver_settings') else 'false'))
 
     def ready(self,measurement='v8_2_cycle1'):
         self.plan=self.analysis.prepare(dict(native_import=self.imported['id'],measurement_protocol=measurement))
@@ -67,9 +68,79 @@ class ExecutionTests(unittest.TestCase):
         with patch.object(worker,'require_configured_license_connection',return_value={'TCP':True}),\
              patch.object(worker,'create_session',return_value=(desktop,process_identity())),\
              patch.object(worker,'open_app',return_value=app),\
+             patch.object(worker,'launch_budget_watch',return_value=None),\
              patch.object(worker,'verify_model',return_value=self.audit(cycles)),patch.object(worker,'export_report',side_effect=self.export):
             state=worker.run(folder,self.motor.storage,self.native.storage)
         return folder,state,app,desktop
+
+    def test_smooth_diagnostic_preserves_legacy_protocol_and_uses_distinct_model_version(self):
+        from modules.calibrated_motor_analysis import protocol,execution_model_version
+        old=protocol('v8_2_cycle1')
+        self.assertNotIn('solver_settings',old);self.assertEqual(old['id'],'v8_2_cycle1')
+        new=protocol('v8_2_cycle1_smooth_bh_v1')
+        self.assertEqual(new['solver_settings'],{'SmoothBHCurve':True})
+        self.assertEqual(new['stop_s'],old['stop_s']);self.assertEqual(new['requested_time_step_s'],old['requested_time_step_s'])
+        self.assertNotEqual(execution_model_version(new['id']),execution_model_version(old['id']))
+
+    def test_smooth_configuration_requires_actual_saved_flag_before_analyze(self):
+        record=self.ready('v8_2_cycle1_smooth_bh_v1');folder=self.exe.path(record['id']);app=self.mock_app()
+        before=self.audit();before['setup']['SmoothBHCurve']='false';after=copy.deepcopy(before);after['setup']['SmoothBHCurve']='true'
+        with patch.object(worker,'verify_model',side_effect=[before,after]):
+            configuration=worker.configure(app,folder/'inputs/motor.aedt',record,folder)
+        self.assertIs(app.get_setup.return_value.props['SmoothBHCurve'],True)
+        self.assertEqual(configuration['solver_settings_requested'],{'SmoothBHCurve':True});app.analyze_setup.assert_not_called()
+        with patch.object(worker,'verify_model',return_value=before):
+            with self.assertRaisesRegex(ValueError,'平滑设置'):worker.configure(app,folder/'inputs/motor.aedt',record,folder)
+        app.analyze_setup.assert_not_called()
+
+    def test_smooth_mocked_worker_records_distinct_profile_and_reopens_with_saved_flag(self):
+        record=self.ready('v8_2_cycle1_smooth_bh_v1');folder,state,app,desktop=self.fake_run(record)
+        self.assertEqual(state['status'],'completed');saved=read(folder/'result.json')
+        self.assertEqual(saved['model_version'],'V8_2_object_CS_BH_only_torque_smoothBH_v1')
+        self.assertEqual(saved['solver_settings'],{'SmoothBHCurve':True});self.assertFalse(saved['efficiency_enabled'])
+        with patch('modules.calibrated_motor_execution.audit_project',return_value=self.audit()):
+            self.assertTrue(self.exe.get(record['id'])['result_available'])
+        bad=self.audit();bad['setup']['SmoothBHCurve']='false'
+        with patch('modules.calibrated_motor_execution.audit_project',return_value=bad):
+            with self.assertRaisesRegex(ValueError,'平滑诊断'):self.exe.get(record['id'])
+
+    def test_smooth_requested_inputs_are_frozen_and_original_plan_is_not_rewritten(self):
+        legacy=self.ready();before=(self.exe.path(legacy['id'])/'manifest.json').read_bytes()
+        record=self.ready('v8_2_cycle1_smooth_bh_v1');folder=self.exe.path(record['id']);m=read(folder/'manifest.json')
+        self.assertEqual(m['requested_protocol']['solver_settings'],{'SmoothBHCurve':True})
+        m['requested_protocol']['solver_settings']['SmoothBHCurve']=False;write_json(folder/'manifest.json',m)
+        with self.assertRaisesRegex(ValueError,'固定预算或输入范围'):verify_inputs(folder,self.motor.project)
+        self.assertEqual(before,(self.exe.path(legacy['id'])/'manifest.json').read_bytes())
+
+    def test_budget_stop_context_is_readable_without_rewriting_original_failure(self):
+        record=self.ready();folder=self.exe.path(record['id']);state=read(folder/'state.json')
+        state.update(status='failed',error='raw RPC failure');write_json(folder/'state.json',state)
+        identity=process_identity();write_json(folder/'desktop_session.json',dict(identity=identity,dedicated_session=True,closed=True))
+        write_json(folder/'budget_stop.json',dict(execution_id=record['id'],identity=identity,stop_attempted=True,
+            native_project=str(folder/'case/motor.aedt'),native_return='stopped'))
+        before=(folder/'state.json').read_bytes();result=self.exe.get(record['id'])
+        self.assertFalse(result['result_available']);self.assertIn('达到1200秒预算',result['error'])
+        self.assertEqual(result['raw_error'],'raw RPC failure');self.assertEqual(before,(folder/'state.json').read_bytes())
+
+    def test_real_cpu_watch_cli_exits_for_finished_job_without_native_session(self):
+        record=self.ready();folder=self.exe.path(record['id']);state=read(folder/'state.json')
+        state.update(status='failed',phase='finished',queue_token='fixture-cli-token');write_json(folder/'state.json',state)
+        deadline=time.monotonic()+60
+        write_json(folder/'budget_watch.json',dict(policy=worker.BUDGET_STOP_POLICY,execution_id=record['id'],
+            queue_token='fixture-cli-token',deadline_monotonic=deadline,start_monotonic=deadline-1200))
+        result=subprocess.run([sys.executable,'-X','utf8',str(self.motor.project/'tools/calibrated_motor_analysis_worker.py'),
+            '--folder',str(folder),'--watch-budget'],capture_output=True,text=True,timeout=30)
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        self.assertFalse((folder/'desktop_session.json').exists());self.assertFalse((folder/'solve_attempt.json').exists())
+        self.assertFalse((folder/'budget_stop.json').exists())
+
+    def test_budget_watcher_must_be_ready_before_native_analyze(self):
+        record=self.ready();folder=self.simulated_start(record);app=self.mock_app()
+        with patch.object(worker,'configure',return_value={}),\
+             patch.object(worker,'launch_budget_watch',side_effect=ValueError('watcher not ready')):
+            with self.assertRaisesRegex(ValueError,'not ready'):
+                worker.execute(app,folder/'inputs/motor.aedt',record,folder,time.monotonic()+1200,lambda name:None)
+        app.analyze_setup.assert_not_called();self.assertFalse((folder/'solve_attempt.json').exists())
 
     def test_unimported_plan_cannot_prepare_execution(self):
         plan=self.analysis.prepare({'native_import':self.imported['id']})

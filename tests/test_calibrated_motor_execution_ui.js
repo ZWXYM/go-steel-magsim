@@ -56,5 +56,8 @@ const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaa
  const f=harness(async()=>{throw Error('fixture missing profile')});f.context.bhaActual(current);await f.context.bhaLoadReview(current.id);
  assert.match(f.nodes.get('savedReviewError').text(),/missing profile/);assert.equal(f.nodes.get('actualPanel').hidden,false);assert.match(f.nodes.get('actualMetrics').text(),/1.500000/);
 
+ const g=harness(async url=>url.endsWith('/resources')?{cpu_only:false,native_submission_allowed:false,source_restart_required:true}:[{...current,status:'prepared',result_available:false}]);
+ await g.context.bhaLoadExecutions();assert.equal(g.nodes.get('executions').children[0].children.find(n=>n.tag==='button').disabled,true);
+ assert.match(g.nodes.get('executionError').text(),/源码已更新/);assert.ok(g.calls.every(c=>c.method==='GET'));
  console.log('Torque execution UI: separate actual/reference results, disabled resource failure, no automatic submit, stale response isolation: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

@@ -10,7 +10,7 @@ import zipfile
 from datetime import datetime,timezone
 from pathlib import Path
 
-from modules.calibrated_motor_analysis import collect_torque,protocol
+from modules.calibrated_motor_analysis import collect_torque,protocol,execution_model_version
 from modules.material_library import sha
 from modules.maxwell_material_transport import load_contract,verify_saved_material
 from modules.maxwell_native_readiness import require_configured_license_connection
@@ -19,6 +19,7 @@ from modules.motor_queue import QueueLease,process_identity,identity_status,Disp
 from modules.motor_workbench import write_json
 
 VERSION='BH_only_motor_execution_v1'
+BUDGET_STOP_POLICY='owned_desktop_clean_stop_v1'
 BUDGET=dict(native_sessions=1,motor_solves=1,field_solves=0,max_cores=2,gpus=0,wall_seconds=1200)
 SUPPORT=('modules/calibrated_motor_execution.py','modules/calibrated_motor_analysis.py',
     'modules/maxwell_material_transport.py','modules/maxwell_native_readiness.py','modules/motor_model_audit.py',
@@ -42,7 +43,7 @@ def verify_model(path,manifest):
 def verify_inputs(folder,project,*,dispatch=False):
     folder,project=Path(folder).resolve(),Path(project).resolve();m=read(folder/'manifest.json')
     if (not re.fullmatch(r'bhexec_[0-9a-f]{12}',folder.name) or m['id']!=folder.name or m['version']!=VERSION or
-        m['budget']!=BUDGET or type(m['cores']) is not int or not 1<=m['cores']<=2 or
+        m['budget']!=BUDGET or m.get('budget_stop_policy') not in (None,BUDGET_STOP_POLICY) or type(m['cores']) is not int or not 1<=m['cores']<=2 or
         m['efficiency_enabled'] is not False or m['optimization_ranking_enabled'] is not False or
         m['requested_protocol']!=protocol(m['measurement_protocol']) or m['H_axis']!='physical_A_per_m' or m['H_scale']!=1 or
         set(m['input_hashes'])!={'inputs/motor.aedt','inputs/source_bundle.zip','inputs/material.amat','inputs/material.metadata.json'} or
@@ -94,7 +95,7 @@ class CalibratedMotorExecution:
             parent_bank_sha256=plan['parent_bank_sha256'],effective_bank_sha256=plan['effective_bank_sha256'],
             training_grades=plan['training_grades'],excluded_grades=plan['excluded_grades'],H_axis='physical_A_per_m',H_scale=1,
             measurement_protocol=plan['measurement_protocol'],requested_protocol=plan['requested_protocol'],cores=min(plan['cores'],2),
-            budget=BUDGET,design='Motor-CAD 2',setup='Setup1',aedt_version='2025.1',
+            budget=BUDGET,budget_stop_policy=BUDGET_STOP_POLICY,design='Motor-CAD 2',setup='Setup1',aedt_version='2025.1',
             efficiency_enabled=False,optimization_ranking_enabled=False,
             input_hashes={p.relative_to(folder).as_posix():sha(p.read_bytes()) for p in inputs.iterdir()},
             producer_hashes={name:sha((self.project/name).read_bytes()) for name in SUPPORT})
@@ -124,7 +125,22 @@ class CalibratedMotorExecution:
                 saved['effective_bank_sha256']!=m['effective_bank_sha256'] or saved['excluded_grades']!=m['excluded_grades'] or
                 sha((folder/'case/motor.aedt').read_bytes())!=saved['solved_project_sha256']):raise ValueError('实际转矩结果或保存工程绑定不符')
             verify_saved_material((folder/'case/motor.aedt').read_text(encoding='utf-8-sig'),m['material_contract'])
+            if m['requested_protocol'].get('solver_settings'):
+                if (saved.get('solver_settings')!=m['requested_protocol']['solver_settings'] or
+                    saved.get('model_version')!=execution_model_version(m['measurement_protocol']) or
+                    audit_project(folder/'case/motor.aedt')['setup'].get('SmoothBHCurve')!='true'):
+                    raise ValueError('平滑诊断的结果版本或实际保存设置不符')
             result.update(result=saved,result_available=True,new_Maxwell_solves=1)
+        stop_path=folder/'budget_stop.json'
+        if stop_path.exists():
+            stop=read(stop_path);session=read(folder/'desktop_session.json')
+            if (stop.get('execution_id')!=artifact or stop.get('identity')!=session.get('identity') or
+                session.get('dedicated_session') is not True or stop.get('stop_attempted') is not True or
+                Path(stop.get('native_project','')).resolve()!=(folder/'case/motor.aedt').resolve()):
+                raise ValueError('预算停止记录与本次专用会话不符')
+            result['budget_stop']=stop
+            if s['status']=='failed':
+                result.update(raw_error=result.get('error'),error='达到1200秒预算，已请求停止本次求解；现场保留，未重试。')
         return result
 
     def records(self):
@@ -215,7 +231,7 @@ class CalibratedMotorExecution:
         with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:
             archive.writestr('execution.json',json.dumps(record,ensure_ascii=False,indent=2))
             for name in record['input_hashes']:archive.write(folder/name,name)
-            for name in ('failure.json','attention.json','configuration.json'):
+            for name in ('failure.json','attention.json','configuration.json','budget_stop.json','budget_watch.json'):
                 if (folder/name).is_file():archive.write(folder/name,name)
             if record['result_available']:
                 for name in ('result.json','summary.csv','case/reports/Torque Plots.csv'):archive.write(folder/name,name)

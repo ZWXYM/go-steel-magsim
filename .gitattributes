@@ -157,3 +157,8 @@ modules/motor_torque_review.py -text
 tests/test_motor_torque_review.py -text
 docs/system_quickstart_20261019.md -text
 calibration/torque_review_20261019/** -text
+modules/runtime_source_guard.py -text
+tests/test_runtime_source_guard.py -text
+tests/test_owned_solver_budget.py -text
+docs/solver_controls_20261019.md -text
+calibration/smooth_bh_20261019/** -text
