@@ -11,7 +11,7 @@ function mbEntries(){
 }
 function mbSelection(){mb$('batchSelectionStatus').textContent=`已选择 ${MBB.selected.size} 种材料；准备只补CPU步骤，实际分析需单独开始。`}
 function mbSelectFits(clear=false){MBB.selected.clear();for(const input of mb$('batchMaterials').querySelectorAll('input')){input.checked=!clear&&!input.disabled&&input.value.startsWith('fit:');if(input.checked)MBB.selected.add(input.value)}mbSelection()}
-async function mbCatalog(){mb$('batchCatalogRefresh').disabled=true;mb$('batchPrepareError').textContent='';try{const data=await mbAPI('/api/workbench/material-library');MBB.catalog=data.records;const select=mb$('batchCalibration'),old=select.value;select.replaceChildren();for(const r of data.records){const o=mbText('option',r.id);o.value=r.id;select.append(o)}if(data.records.some(r=>r.id===old))select.value=old;mbEntries()}catch(error){mb$('batchPrepareError').textContent=error.message}finally{mb$('batchCatalogRefresh').disabled=false}}
+async function mbCatalog(){mb$('batchCatalogRefresh').disabled=true;mb$('batchPrepareError').textContent='';try{const data=await mbAPI('/api/workbench/material-inputs');MBB.catalog=data.records;const select=mb$('batchCalibration'),old=select.value;select.replaceChildren();for(const r of data.records){const o=mbText('option',r.id);o.value=r.id;select.append(o)}if(data.records.some(r=>r.id===old))select.value=old;mbEntries();if(MBB.record)mbRender(MBB.record,MBB.canStart)}catch(error){mb$('batchPrepareError').textContent=error.message}finally{mb$('batchCatalogRefresh').disabled=false}}
 async function mbPrepare(){
  const button=mb$('batchPrepare');if(button.disabled)return;button.disabled=true;mb$('batchPrepareError').textContent='';
  try{if(!MBB.selected.size||MBB.selected.size>8)throw Error('请选择1–8种材料');const calibration=mb$('batchCalibration').value;
@@ -19,7 +19,9 @@ async function mbPrepare(){
  await mbHistory(data.id);mb$('batchPrepareError').textContent='';
  }catch(error){mb$('batchPrepareError').textContent=error.message}finally{button.disabled=false}
 }
+function mbName(item){const entry=MBB.catalog.find(r=>r.id===item.selection?.calibration)?.entries.find(e=>e.key===item.selection?.key);return entry?.available?entry.label:item.source.material_name}
 function mbRender(record,canStart){
+ MBB.canStart=canStart;
  if(typeof history!=='undefined'&&typeof location!=='undefined')history.replaceState(null,'',location.pathname+'?batch='+encodeURIComponent(record.id));
  MBB.record=record;mb$('batchStatus').textContent=record.id+' · '+(mbLabels[record.status]||record.status);
  const b=record.budget;mb$('batchBudget').textContent=`最多新增 ${b.max_new_imports} 次材料导入、${b.max_new_motor_solves} 次电机分析；${b.cores}核 / ${b.gpus} GPU。每次导入240秒、每次电机1200秒；已有结果直接复用。`;
@@ -30,7 +32,7 @@ function mbRender(record,canStart){
  const anomalous=record.items.filter(r=>r.result_available&&r.metrics?.torque_numerical_acceptance===false).length;
  mb$('batchTotals').textContent=`${record.totals.materials}种材料 · 可读取实际转矩 ${record.totals.actual_torque_results}项 · 本批新增完成 ${record.totals.new_completed_motor_solves}项 · 原数值判据未通过 ${anomalous}项`+(record.pause_requested?(record.status==='paused'?' · 已暂停，可显式接续':' · 已请求暂停，等待当前阶段结束'):'');
  const rows=mb$('batchRows');rows.replaceChildren();const number=v=>v===null||v===undefined?'—':Number(v).toFixed(6);
- for(const item of record.items){const row=document.createElement('tr'),name=document.createElement('td'),m=item.metrics||{};name.append(mbText('strong',item.source.material_name),mbText('small',' · '+item.selection.key));
+ for(const item of record.items){const row=document.createElement('tr'),name=document.createElement('td'),m=item.metrics||{};name.append(mbText('strong',mbName(item)),mbText('small',' · '+item.selection.key));
  name.append(mbText('p','排除：'+(item.source.excluded_grades.join('、')||'无')));const link=mbText('a','查看独立分析与原始结果');link.href=item.analysis_url;name.append(link);
  const bad=item.result_available&&m.torque_numerical_acceptance===false,phase=mbText('td',bad?'结果含数值异常 · 原值保留':mbItemLabels[item.status]||item.status);if(bad)phase.className='error';
  row.append(name,phase,mbText('td',number(m.T_avg_Nm)),mbText('td',number(m.T_min_Nm)+' / '+number(m.T_max_Nm)),mbText('td',number(m.K_T_ripple_pct)),mbText('td',item.error||item.execution_id||'尚无实际转矩结果'));rows.append(row)}
@@ -48,7 +50,7 @@ function mbPlot(record){
  for(const v of [lo,(lo+hi)/2,hi])add('text',{x:4,y:y(v)+4,'font-size':12},v.toFixed(3)+' N·m');
  for(const v of [x0,(x0+x1)/2,x1])add('text',{x:x(v),y:286,'font-size':12,'text-anchor':'middle'},v.toFixed(2)+' ms');
  items.forEach((item,i)=>{const m=item.metrics,color=colors[i%colors.length];add('polyline',{points:m.time_ms.map((v,k)=>`${x(v)},${y(m.torque_Nm[k])}`).join(' '),fill:'none',stroke:color,'stroke-width':2});
- m.time_ms.forEach((v,k)=>add('circle',{cx:x(v),cy:y(m.torque_Nm[k]),r:1.8,fill:color}));const label=mbText('span',item.source.material_name);label.style.color=color;legend.append(label)});
+ m.time_ms.forEach((v,k)=>add('circle',{cx:x(v),cy:y(m.torque_Nm[k]),r:1.8,fill:color}));const label=mbText('span',mbName(item));label.style.color=color;legend.append(label)});
 }
 async function mbLoad(){
  const artifact=mb$('batchHistory').value;if(!artifact)return;const generation=++MBB.generation;if(MBB.timer)clearTimeout(MBB.timer);mb$('batchError').textContent='';

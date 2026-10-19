@@ -6,7 +6,7 @@ class Node{
  replaceChildren(...nodes){this.children=nodes;if(this.tag==='select')this.value=''} setAttribute(){}
 }
 const records=[{id:'cal_a',entries:[{key:'fit:B23R075',kind:'fit',label:'B23R075',available:true,excluded_grades:[]},{key:'prediction:pred_b',kind:'prediction',label:'pred_b',available:true,excluded_grades:['B30P105']}]}];
-function harness(search){const nodes=new Map(),calls=[],rendered=[];const c=vm.createContext({document:undefined,location:{search},URLSearchParams,fetch:async url=>{calls.push(url);return {ok:true,json:async()=>url.endsWith('material-library')?{records}:{key:decodeURIComponent(url.split('/').at(-1))}}}});
+function harness(search){const nodes=new Map(),calls=[],rendered=[];const c=vm.createContext({document:undefined,location:{search},URLSearchParams,fetch:async url=>{calls.push(url);return {ok:true,json:async()=>url.endsWith('material-inputs')?{records}:{key:decodeURIComponent(url.split('/').at(-1))}}}});
  vm.runInContext(fs.readFileSync('static/js/material_library.js','utf8'),c);c.document={getElementById:id=>{if(!nodes.has(id))nodes.set(id,new Node(id==='calibration'?'select':'div'));return nodes.get(id)},createElement:tag=>new Node(tag),querySelectorAll:()=>[]};
  c.mlRender=v=>rendered.push(v);return {c,nodes,calls,rendered};
 }

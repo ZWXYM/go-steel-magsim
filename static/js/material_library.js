@@ -20,10 +20,10 @@ function mlPlot(id,c){
 }
 function mlRender(v){
  ML.detail=v;ml$('preparedMotor').replaceChildren();ml$('chainStatus').textContent='';ml$('chainOpen').hidden=true;mlLoadPreparations(v);
- ml$('detail').hidden=false;ml$('title').textContent=mlLabels[v.kind]+' · '+v.material_name;
+ ml$('detail').hidden=false;ml$('title').textContent=mlLabels[v.kind]+' · '+(v.display_name||v.material_name);
  ml$('scope').textContent=v.evidence_scope==='same_material_fit'?'同样品参考修正展示；其拟合误差不能作为泛化误差。':v.excluded_grades.length?'校准训练已完整排除所列牌号；此包保留原留出/预测结果，不代表新增外部实验验证。':'此预测使用全部训练样品，未执行材料留出；若输入为已知样品，结果仍属于同样品标定。';
  const dl=ml$('identity');dl.replaceChildren();
- for(const [label,value] of [['校准记录',v.calibration_id],['父校准库',v.parent_bank_sha256],['实际有效库',v.effective_bank_sha256],['训练样品',v.training_grades.join('、')],['排除样品',v.excluded_grades.join('、')||'无'],['物理 H','A/m · H_scale=1'],['文件核验',v.integrity_scope==='saved_export_hash_and_curve'?'原导出哈希 + 保存曲线':'保存曲线 + 原生输入哈希（未保存原导出哈希）']]){dl.append(mlText('dt',label),mlText('dd',value))}
+ for(const [label,value] of [['输入材料代号',v.source_material_id||'旧记录未提供'],['输入参数',v.input_params?`Goss ${v.input_params.f_Goss} · 偏角 ${v.input_params.theta_0_deg}° · 半宽 ${v.input_params.halfwidth_deg}° · Si ${v.input_params.Si_content}%`:'旧记录未提供'],['参数来源',v.input_parameter_source||'未提供'],['材料文件名',v.material_name],['校准记录',v.calibration_id],['父校准库',v.parent_bank_sha256],['实际有效库',v.effective_bank_sha256],['训练样品',v.training_grades.join('、')],['排除样品',v.excluded_grades.join('、')||'无'],['物理 H','A/m · H_scale=1'],['文件核验',v.integrity_scope==='saved_export_hash_and_curve'?'原导出哈希 + 保存曲线':'保存曲线 + 原生输入哈希（未保存原导出哈希）']]){dl.append(mlText('dt',label),mlText('dd',value))}
  for(const [id,url] of [['bundle',v.bundle_url],['amat',v.download_urls['material.amat']],['metadata',v.download_urls['metadata.json']],['csv',v.curves_url]])ml$(id).href=url;
  for(const d of ['RD','TD'])mlPlot(d,v.curves[d]);
  const table=document.createElement('table');const head=document.createElement('tr');['文件','大小 / B','SHA256'].forEach(t=>head.append(mlText('th',t)));table.append(head);
@@ -33,7 +33,7 @@ function mlRender(v){
 async function mlOpen(key){
  const generation=++ML.generation;ML.key=key;ml$('detail').hidden=true;ml$('error').textContent='';
  document.querySelectorAll('.entry').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.key===key)));
- try{const v=await mlApi('/api/workbench/material-library/'+ml$('calibration').value+'/'+encodeURIComponent(key));if(generation===ML.generation)mlRender(v)}catch(e){if(generation===ML.generation)ml$('error').textContent=e.message}
+ try{const v=await mlApi('/api/workbench/material-inputs/'+ml$('calibration').value+'/'+encodeURIComponent(key));if(generation===ML.generation)mlRender(v)}catch(e){if(generation===ML.generation)ml$('error').textContent=e.message}
 }
 function mlEntries(preferredKey){
  ++ML.generation;ML.key=null;ml$('detail').hidden=true;ml$('error').textContent='';const out=ml$('entries');out.replaceChildren();
@@ -45,7 +45,7 @@ function mlEntries(preferredKey){
 }
 async function mlRefresh(){
  const generation=ML.catalogGeneration=(ML.catalogGeneration||0)+1;++ML.generation;ml$('detail').hidden=true;ml$('error').textContent='';ml$('refresh').disabled=true;
- try{const v=await mlApi('/api/workbench/material-library');if(generation!==ML.catalogGeneration)return;ML.records=v.records;const s=ml$('calibration'),old=s.value,oldKey=ML.key;
+ try{const v=await mlApi('/api/workbench/material-inputs');if(generation!==ML.catalogGeneration)return;ML.records=v.records;const s=ml$('calibration'),old=s.value,oldKey=ML.key;
  const query=!ML.requestUsed&&typeof location!=='undefined'?new URLSearchParams(location.search):new URLSearchParams();ML.requestUsed=true;
  const requested=query.get('calibration'),key=query.get('key');s.replaceChildren();for(const r of v.records){const o=mlText('option',r.id+(r.error?' · 读取异常':''));o.value=r.id;s.append(o)}
  if(requested){if(!v.records.some(r=>r.id===requested)){ml$('entries').replaceChildren();ml$('error').textContent='链接指定的校准记录不存在，请选择现有记录。';return}s.value=requested;mlEntries(key||undefined)}

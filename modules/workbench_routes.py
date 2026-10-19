@@ -14,6 +14,7 @@ from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnos
 from modules.optimization_plans import OptimizationPlans
 from modules.motor_waveforms import MotorWaveforms
 from modules.material_library import MaterialLibrary
+from modules.material_input_view import MaterialInputView
 from modules.calibrated_motor_preparation import CalibratedMotorPreparation
 from modules.calibrated_motor_native import CalibratedMotorNative
 from modules.calibrated_motor_analysis import CalibratedMotorAnalysis
@@ -37,6 +38,7 @@ def create_workbench(project,storage=None,root=None):
     plans=OptimizationPlans(optimization)
     waveforms=MotorWaveforms(motor)
     materials=MaterialLibrary(calibration)
+    input_view=MaterialInputView(materials)
     calibrated_motor=CalibratedMotorPreparation(materials,motor,storage/'calibrated_motor')
     native_material=CalibratedMotorNative(calibrated_motor,motor,storage/'calibrated_motor_native')
     bh_analysis=CalibratedMotorAnalysis(native_material,waveforms,storage/'calibrated_motor_analysis')
@@ -174,6 +176,14 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/api/workbench/calibrated-motor/batches/<artifact>/bundle')
     def material_batch_bundle(artifact):
         return send_file(material_batch_report_bundle(material_batches,artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
+
+    @bp.get('/api/workbench/material-inputs')
+    def material_input_catalog():
+        return jsonify(input_view.catalog())
+
+    @bp.get('/api/workbench/material-inputs/<artifact>/<key>')
+    def material_input_detail(artifact,key):
+        return jsonify(input_view.detail(artifact,key))
 
     @bp.get('/api/workbench/material-library')
     def material_catalog():

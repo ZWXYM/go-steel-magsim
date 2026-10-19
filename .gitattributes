@@ -178,3 +178,7 @@ tests/test_native_material_runs.py -text
 tests/test_native_material_runs_ui.js -text
 docs/native_material_runs_20261020.md -text
 calibration/native_material_run_20261020/** -text
+modules/material_input_view.py -text
+tests/test_material_input_view.py -text
+docs/material_input_identity_20261020.md -text
+calibration/material_identity_20261020/** -text

@@ -106,6 +106,23 @@ class RuntimeEntry(unittest.TestCase):
         self.assertNotEqual(first['source_fingerprint'],runtime_identity(project,self.root,self.root/'records')['source_fingerprint'])
         self.assertEqual(len(source_manifest(project)[0]),1)
 
+    def test_more_than_twenty_old_versions_still_find_a_free_port(self):
+        expected=self.identity()
+        with patch('modules.system_runtime.port_is_free',side_effect=[False]*20+[True]), \
+                patch('modules.system_runtime.read_listener_identity',return_value=None):
+            result=choose_endpoint(5001,expected)
+        self.assertEqual(result['port'],5021)
+        self.assertFalse(result['reuse'])
+        self.assertEqual(result['skipped_ports'],list(range(5001,5021)))
+
+    def test_matching_version_after_twenty_old_listeners_is_reused(self):
+        expected=self.identity()
+        with patch('modules.system_runtime.port_is_free',return_value=False), \
+                patch('modules.system_runtime.read_listener_identity',side_effect=[None]*20+[expected]):
+            result=choose_endpoint(5001,expected)
+        self.assertEqual(result['port'],5021)
+        self.assertTrue(result['reuse'])
+
     def test_invalid_port_and_exhausted_budget_are_explicit(self):
         for port in (0,65536,'5001'):
             with self.assertRaises(ValueError):

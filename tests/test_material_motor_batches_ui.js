@@ -48,5 +48,7 @@ function harness(api){
  assert.equal(plot.nodes.get('batchWaveforms').children.filter(n=>n.tag==='circle').length,3);assert.equal(JSON.stringify(metrics),before);
  plot.c.mbRender({...record,items:[{...record.items[0],result_available:true,metrics:{...metrics,T_min_Nm:-4.5,K_T_ripple_pct:427,torque_numerical_acceptance:false}}]},true);
  assert.match(plot.nodes.get('batchRows').text(),/数值异常/);assert.match(plot.nodes.get('batchRows').text(),/-4\.500000/);assert.match(plot.nodes.get('batchTotals').textContent,/未通过 1项/);
+ const identity=harness(async url=>url.endsWith('/material-inputs')?{records:[{id:'cal_a',entries:[{key:'prediction:pred_a',label:'CUSTOM_INPUT · pred_a',available:true,kind:'prediction',excluded_grades:[]}]}]}:record);
+ identity.c.mbRender(record,true);await identity.c.mbCatalog();assert.match(identity.nodes.get('batchRows').text(),/CUSTOM_INPUT/);assert.equal(identity.nodes.get('batchStart').disabled,false);assert.ok(identity.calls.every(c=>c.method==='GET'));
  console.log('Calibrated batch UI: exact CPU preparation, no auto dispatch, pause/resume gates, zero/null, stale/resource isolation: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

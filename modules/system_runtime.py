@@ -71,7 +71,7 @@ def port_is_free(port):
             return False
 
 
-def choose_endpoint(port,expected,*,fallback=True,max_ports=20):
+def choose_endpoint(port,expected,*,fallback=True,max_ports=128):
     if not isinstance(port,int) or not 1<=port<=65535:
         raise ValueError('端口需为 1–65535')
     skipped=[]
