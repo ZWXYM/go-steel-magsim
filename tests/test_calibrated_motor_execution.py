@@ -58,7 +58,7 @@ class ExecutionTests(unittest.TestCase):
 
     def simulated_start(self,record):
         folder=self.exe.path(record['id']);state=read(folder/'state.json');state.update(status='starting',queue_token='test-token')
-        write_json(folder/'state.json',state);write_json(self.motor.storage/'queue.lock',dict(process_identity(),token='test-token'))
+        write_json(folder/'state.json',state);write_json(self.motor.storage/'queue.lock',dict(process_identity(),token='test-token',torque_execution_id=record['id']))
         return folder
 
     def fake_run(self,record,app=None):

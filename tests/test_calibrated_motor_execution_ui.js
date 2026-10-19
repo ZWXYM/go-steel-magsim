@@ -44,6 +44,6 @@ const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaa
  const c=harness(async url=>url.endsWith('/resources')?{cpu_only:true}:(++requests===1?oldResponse:[{...current,status:'running',result_available:false,phase:'solving'}]));
  const old=c.context.bhaLoadExecutions();await c.context.bhaLoadExecutions();resolveOld([current]);await old;
  assert.equal(c.nodes.get('actualPanel').hidden,true);assert.match(c.nodes.get('executions').text(),/正在分析/);
- assert.ok(c.timers.includes(3000));assert.ok(c.calls.every(x=>x.method==='GET'));
+ assert.match(c.nodes.get('planNotice').text(),/正在执行/);assert.ok(c.timers.includes(3000));assert.ok(c.calls.every(x=>x.method==='GET'));
  console.log('Torque execution UI: separate actual/reference results, disabled resource failure, no automatic submit, stale response isolation: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

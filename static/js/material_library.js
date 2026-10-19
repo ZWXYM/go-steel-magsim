@@ -19,7 +19,7 @@ function mlPlot(id,c){
  }
 }
 function mlRender(v){
- ML.detail=v;ml$('preparedMotor').replaceChildren();mlLoadPreparations(v);
+ ML.detail=v;ml$('preparedMotor').replaceChildren();ml$('chainStatus').textContent='';ml$('chainOpen').hidden=true;mlLoadPreparations(v);
  ml$('detail').hidden=false;ml$('title').textContent=mlLabels[v.kind]+' · '+v.material_name;
  ml$('scope').textContent=v.evidence_scope==='same_material_fit'?'同样品参考修正展示；其拟合误差不能作为泛化误差。':v.excluded_grades.length?'校准训练已完整排除所列牌号；此包保留原留出/预测结果，不代表新增外部实验验证。':'此预测使用全部训练样品，未执行材料留出；若输入为已知样品，结果仍属于同样品标定。';
  const dl=ml$('identity');dl.replaceChildren();
@@ -55,10 +55,11 @@ async function mlRefresh(){
 if(typeof document!=='undefined'){ml$('refresh').onclick=mlRefresh;ml$('calibration').onchange=()=>mlEntries();mlRefresh()}
 
 async function mlPrepareMotor(){
- const selected=ML.detail,button=ml$('prepareMotor');button.disabled=true;ml$('error').textContent='';
- try{const r=await fetch('/api/workbench/calibrated-motor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({calibration:selected.calibration_id,key:selected.key,cores:Number(ml$('motorCores').value)})});const v=await r.json();if(!r.ok)throw Error(v.error||'准备失败');
- if(ML.detail!==selected)return;await mlLoadPreparations(selected);
- }catch(e){ml$('error').textContent=e.message}finally{button.disabled=false}
+ const selected=ML.detail,button=ml$('prepareMotor');if(!selected||button.disabled)return;button.disabled=true;ml$('error').textContent='';ml$('chainStatus').textContent='正在核对并接续已有记录…';ml$('chainOpen').hidden=true;
+ try{const r=await fetch('/api/workbench/material-motor/prepare-or-reuse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({calibration:selected.calibration_id,key:selected.key,cores:Number(ml$('motorCores').value),measurement_protocol:ml$('torqueProtocol').value})});const v=await r.json();if(!r.ok)throw Error(v.error||'准备失败');
+ if(ML.detail!==selected)return;ml$('chainStatus').textContent=`${v.next_step} · 复用 ${v.reused.length} 项，新增 ${v.created.length} 项准备 · 未下发原生任务`;
+ ml$('chainOpen').href=v.href;ml$('chainOpen').textContent=v.records.analysis_plan?'打开现有分析计划':'查看当前材料记录';ml$('chainOpen').hidden=false;await mlLoadPreparations(selected);
+ }catch(e){if(ML.detail===selected){ml$('error').textContent=e.message;ml$('chainStatus').textContent='接续未完成，已保存步骤保留；可检查后重新打开。'}}finally{button.disabled=false}
 }
 if(typeof document!=='undefined')ml$('prepareMotor').onclick=mlPrepareMotor;
 
@@ -66,7 +67,7 @@ async function mlLoadPreparations(selected){
  try{const [rows,imports,resources,plans]=await Promise.all([mlApi('/api/workbench/calibrated-motor'),mlApi('/api/workbench/calibrated-motor/native-imports'),mlApi('/api/workbench/resources'),mlApi('/api/workbench/calibrated-motor/analysis-plans')]);if(ML.detail!==selected)return;const out=ml$('preparedMotor');out.replaceChildren();
  for(const r of rows){if(r.status==='invalid'){out.append(mlText('p',r.id+' · '+r.error,'error'));continue}
  if(r.calibration_id!==selected.calibration_id||r.material_key!==selected.key)continue;
- const row=document.createElement('p');row.append(mlText('span',r.id+' · '+r.created_utc+' · 待原生导入 '));
+ const row=document.createElement('p');row.append(mlText('span',r.id+' · '+r.created_utc+' · 准备副本已冻结 '));
  for(const name of ['motor.aedt','package.zip','manifest.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/'+r.id+'/files/'+name;row.append(a)}out.append(row);
  const children=imports.filter(c=>c.preparation_id===r.id),ready=mlText('button','准备原生导入');ready.onclick=()=>mlNativeAction('/api/workbench/calibrated-motor/native-imports',{preparation:r.id},ready,selected);out.append(ready);
  for(const c of children){const p=document.createElement('p');const labels={ready:'已冻结，等待手动执行',ready_source_changed:'准备后程序已更新，需新副本',starting:'正在启动专用会话',running:'正在导入与预检',imported_not_solved:'导入与预检通过，未求解',failed:'导入失败，保留现场',needs_attention:'需检查现场，不自动重试',invalid:'文件核验失败'};

@@ -135,3 +135,9 @@ tests/test_material_motor_workflow_ui.js -text
 tests/test_material_library_selection_ui.js -text
 docs/material_workflow_20261010.md -text
 calibration/material_workflow_20261010/** -text
+modules/material_motor_chain.py -text
+tests/test_material_motor_chain.py -text
+tests/test_material_motor_chain_ui.js -text
+tests/test_motor_launcher_handoff.py -text
+docs/material_chain_20261019.md -text
+calibration/material_chain_20261019/** -text

@@ -104,6 +104,26 @@ def open_app(project,m,identity):
     return Maxwell2d(project=str(project),design=m['design'],version=m['aedt_version'],non_graphical=True,
         new_desktop=False,aedt_process_id=identity['pid'],close_on_exit=False,remove_lock=False)
 
+def claim_queue(folder,motor_storage,state):
+    # Windows venv python.exe is a launcher that waits for its real child.
+    # Accept only this saved live owner or its direct child, then bind the
+    # queue to the actual worker. A token or an unrelated live PID is not enough.
+    owner_path=motor_storage/'queue.lock';owner=read(owner_path)
+    if (owner.get('token')!=state['queue_token'] or owner.get('torque_execution_id')!=state['id'] or
+        identity_status(owner)!='alive'):
+        raise ValueError('未确认本任务的队列归属，不启动AEDT')
+    if owner['pid']!=os.getpid():
+        import psutil
+        parent=psutil.Process().parent()
+        if parent is None or parent.pid!=owner['pid'] or abs(parent.create_time()-owner['create_time'])>=.01:
+            raise ValueError('队列启动器不是当前工作进程的已核对父进程，不启动AEDT')
+    current=process_identity()
+    write_json(folder/'worker_identity.json',dict(identity=current,
+        launcher_identity={k:owner[k] for k in ('pid','create_time')},
+        launcher_is_self_or_verified_direct_parent=True))
+    write_json(owner_path,dict(owner,**current))
+
+
 def run(folder,motor_storage,native_storage):
     folder=Path(folder).resolve();motor_storage=Path(motor_storage).resolve();native_storage=Path(native_storage).resolve()
     if (folder.parent.name!='calibrated_motor_execution' or motor_storage!=folder.parent.parent/'motor' or
@@ -126,10 +146,9 @@ def run(folder,motor_storage,native_storage):
             locks=[]
             if time.monotonic()>handoff_deadline:raise ValueError('扫描/导入仍占用执行锁，不启动AEDT')
             time.sleep(.1)
-        queue=read(motor_storage/'queue.lock')
-        if queue.get('token')!=state['queue_token'] or queue['pid']!=os.getpid() or identity_status(queue)!='alive':
-            raise ValueError('未确认本任务的队列归属，不启动AEDT')
-        owned_queue=True;m=verify_inputs(folder,PROJECT,dispatch=True);require_configured_license_connection()
+        m=verify_inputs(folder,PROJECT,dispatch=True)
+        claim_queue(folder,motor_storage,state)
+        owned_queue=True;require_configured_license_connection()
         check_budget(folder,deadline);phase('opening');case=folder/'case';case.mkdir();project=case/'motor.aedt'
         shutil.copy2(folder/'inputs/motor.aedt',project)
         if project.with_suffix('.aedtresults').exists() or Path(str(project)+'.lock').exists():raise ValueError('新副本已有结果或锁，禁止执行')

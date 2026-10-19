@@ -18,6 +18,7 @@ from modules.calibrated_motor_native import CalibratedMotorNative
 from modules.calibrated_motor_analysis import CalibratedMotorAnalysis
 from modules.calibrated_motor_execution import CalibratedMotorExecution
 from modules.material_motor_workflow import MaterialMotorWorkflow
+from modules.material_motor_chain import MaterialMotorChain
 
 
 def create_workbench(project,storage=None,root=None):
@@ -36,6 +37,7 @@ def create_workbench(project,storage=None,root=None):
     bh_analysis=CalibratedMotorAnalysis(native_material,waveforms,storage/'calibrated_motor_analysis')
     bh_execution=CalibratedMotorExecution(bh_analysis,motor,storage/'calibrated_motor_execution')
     material_workflow=MaterialMotorWorkflow(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
+    material_chain=MaterialMotorChain(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -71,6 +73,10 @@ def create_workbench(project,storage=None,root=None):
     def material_workflow_bundle():
         return send_file(material_workflow.bundle(),as_attachment=True,
             download_name='material_motor_workflows.zip',mimetype='application/zip')
+
+    @bp.post('/api/workbench/material-motor/prepare-or-reuse')
+    def prepare_or_reuse_material_chain():
+        return jsonify(material_chain.ensure(request.get_json()))
 
     @bp.get('/api/workbench/material-library')
     def material_catalog():

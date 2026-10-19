@@ -4,7 +4,7 @@ const bha$=id=>document.getElementById(id);
 const bhaText=(tag,text)=>{const node=document.createElement(tag);node.textContent=text;return node};
 async function bhaAPI(url,body){const response=await fetch(url,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw Error(data.error||'读取失败');return data}
 function bhaRenderPlan(plan){
- BHA.plan=plan;const labels={awaiting_native_material_import:'计划已保存，等待原生材料导入',ready_for_model_preparation:'原生导入通过，可准备分析工程',model_snapshot_ready_not_submitted:'分析工程已复制，尚未提交求解'};
+ BHA.plan=plan;const labels={awaiting_native_material_import:'计划已保存，等待原生材料导入',ready_for_model_preparation:'原生导入通过，可准备分析工程',model_snapshot_ready_not_submitted:'分析工程已复制，执行状态见下方'};
  bha$('planStatus').textContent=plan.id+' · '+(labels[plan.status]||plan.status);const dl=bha$('identity');dl.replaceChildren();
  for(const [label,value] of [['材料',plan.material_name],['导入记录',plan.native_import_id],['训练样品',plan.training_grades.join('、')],['排除样品',plan.excluded_grades.join('、')||'无'],['磁场轴','物理 H / A·m⁻¹，H_scale=1'],['材料求解结果','见下方独立执行任务；既有参考单独显示']])dl.append(bhaText('dt',label),bhaText('dd',value));
  bha$('prepareModel').disabled=plan.status!=='ready_for_model_preparation';bha$('planBundle').href='/api/workbench/calibrated-motor/analysis-plans/'+plan.id+'/bundle';
@@ -59,7 +59,7 @@ async function bhaLoadExecutions(){
  if(!rows.length)out.append(bhaText('p','当前计划没有执行任务；需先完成原生材料导入与分析工程准备。','muted'));
  const available=rows.find(r=>r.result_available);
  if(available){bha$('planNotice').textContent='本材料已有独立执行任务的官方转矩结果。仅整理转矩，效率和最终优化排名保持禁用。';bhaActual(available)}
- else{bha$('actualPanel').hidden=true;bha$('planNotice').textContent='当前校准材料尚无可用电机转矩结果。先完成原生导入和分析工程准备，再手动执行；本页不自动启动求解。'}
+ else{bha$('actualPanel').hidden=true;bha$('planNotice').textContent=rows.some(r=>r.status==='starting'||r.status==='running')?'本材料的独立转矩任务正在执行，请查看下方状态；效率和最终排名保持禁用。':rows.some(r=>r.status==='prepared')?'本材料的转矩任务已准备，等待手动开始；当前尚无可用转矩结果。':rows.some(r=>r.status==='failed'||r.status==='needs_attention')?'本材料暂无可用转矩结果；请检查下方失败或待处理记录，现场保留，不自动重试。':'当前校准材料尚无可用电机转矩结果。完成原生导入和分析工程准备后，可手动执行；本页不自动启动求解。'}
  if(rows.some(r=>r.status==='starting'||r.status==='running'))BHA.executionTimer=setTimeout(bhaLoadExecutions,3000);
 }
 if(typeof document!=='undefined'){bha$('refreshPlan').onclick=bhaLoadPlan;bha$('prepareModel').onclick=bhaPrepareModel;bha$('loadReference').onclick=bhaLoadReference;bha$('reference').onchange=bhaLoadReference;
