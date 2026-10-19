@@ -12,7 +12,7 @@
 </section>
 <section class="runtime"><h2>电机优化流程</h2><p>查看原电机基线、插片对照、作者已保存的多牌号榜单与程序入口。选择同一数据集的基准、约束和目标权重，保存工程筛选结果并下载汇总。</p><a class="link" href="/motor-optimization">进入优化配置与结果</a> <a class="link" href="/motor-waveforms">官方波形对比</a></section>
 <section class="runtime"><h2>当前运行实例</h2><p id="mode" class="notice">正在核对运行模式…</p><dl><dt>程序目录</dt><dd id="project">—</dd><dt>资源目录</dt><dd id="root">—</dd><dt>任务存储</dt><dd id="storage">—</dd><dt>启动版本</dt><dd id="version">—</dd><dt>启动时间</dt><dd id="started">—</dd></dl><p class="status">版本表示该进程启动时的代码快照。修改源码后重新运行启动器；旧版本和其他应用会保留，新版本自动选择可用端口。</p><button onclick="location.reload()">刷新状态</button></section>
-<section class="runtime"><h2>最短操作流程</h2><ol><li>进入材料校准，加载保存记录；首次使用时勾选四样品，点击“建立校准并检验”。</li><li>上传其他材料原生对，选择校准范围，下载修正曲线与材料包。</li><li>进入电机工作台，选择牌号、周期口径和核数，生成独立任务；普通模式可提交串行队列。</li><li>在队列中查看结果并下载汇总包；服务重启后点击“检查并恢复队列”，中断现场保留。</li></ol><p class="status">新启动器默认不自动恢复旧队列。任务记录位于上方“任务存储”，旧目录完整保留；需要原记录时使用启动器的 <code>--storage</code> 参数。</p></section>
+<section class="runtime"><h2>最短操作流程</h2><ol><li>进入<a href="/workbench#cal">材料校准</a>，加载保存记录；首次使用时勾选四样品，点击“建立校准并检验”。</li><li>需要其他材料时上传原生对并选择校准范围；在<a href="/material-library">材料库</a>查看已保存的标定、整牌号留出和预测材料。</li><li>分析校准材料：进入<a href="/calibrated-motor/batches">校准材料批量分析</a>，勾选材料，准备计划后点击“开始串行分析”。已有阶段直接复用；可在当前阶段结束后暂停，重开原批量后显式接续。</li><li>分析原材料库牌号：进入<a href="/workbench#motor">电机工作台</a>准备并提交串行扫描；在<a href="/motor-optimization">优化页</a>沿用作者原配置与筛选流程。</li><li>查看原始波形与逐案结果，下载CSV和摘要；数值异常时从独立分析页点击“查看异常与求解记录”，保留原始点及失败现场。</li></ol><p class="status">校准B-H材料当前提供转矩分析；原库牌号的损耗及优化沿用相应模型和数据口径。新启动器默认不自动恢复旧队列；任务记录位于上方“任务存储”，重开使用同一存储目录。</p></section>
 </main>
 <script>
 const $=id=>document.getElementById(id);

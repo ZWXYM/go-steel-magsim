@@ -1,7 +1,7 @@
 /* CPU-only plans and clearly identified existing official references. */
 const BHA={generation:0,referenceGeneration:0,plan:null,references:[]};
 const bha$=id=>document.getElementById(id);
-const bhaText=(tag,text)=>{const node=document.createElement(tag);node.textContent=text;return node};
+const bhaText=(tag,text,cls)=>{const node=document.createElement(tag);node.textContent=text;if(cls)node.className=cls;return node};
 async function bhaAPI(url,body){const response=await fetch(url,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw Error(data.error||'读取失败');return data}
 function bhaRenderPlan(plan){
  BHA.plan=plan;const labels={awaiting_native_material_import:'计划已保存，等待原生材料导入',ready_for_model_preparation:'原生导入通过，可准备分析工程',model_snapshot_ready_not_submitted:'分析工程已复制，执行状态见下方'};
@@ -36,10 +36,25 @@ async function bhaLoadReference(){const generation=++BHA.referenceGeneration,sel
 async function bhaCatalog(){try{const data=await bhaAPI('/api/workbench/waveforms/catalog');const select=bha$('reference');select.replaceChildren();BHA.references=[];for(const d of data.datasets)for(const c of d.cases)if(c.available){const option=bhaText('option',d.id+' / '+c.id+' / '+c.material);option.value=String(BHA.references.length);select.append(option);BHA.references.push({dataset:d.id,case:c.id})}if(BHA.references.length)bhaLoadReference();else bha$('referenceStatus').textContent='当前没有可读取的完整官方CSV。'}catch(error){bha$('referenceError').textContent=error.message}}
 async function bhaExecutionAction(url,body){bha$('executionError').textContent='';try{await bhaAPI(url,body);await bhaLoadExecutions()}catch(error){bha$('executionError').textContent=error.message}}
 function bhaActual(record){
+ BHA.actualExecution=record.id;BHA.reviewGeneration=(BHA.reviewGeneration||0)+1;bha$('savedReviewPanel').hidden=true;
  const saved=record.result,m=saved.metrics;bha$('actualPanel').hidden=false;bha$('actualStatus').textContent=`${record.id} / ${saved.material_name} · ${saved.model_version} · ${saved.measurement_protocol}`+(m.torque_numerical_acceptance===false?' · 原数值判据未通过（原值保留）':'');
  const out=bha$('actualMetrics');out.replaceChildren();for(const [label,key,suffix] of [['平均转矩','T_avg_Nm','N·m'],['最低转矩','T_min_Nm','N·m'],['最高转矩','T_max_Nm','N·m'],['转矩脉动','K_T_ripple_pct','%']]){const cell=document.createElement('div');const value=m[key];cell.append(bhaText('span',label),bhaText('strong',value===null?'—':value.toFixed(6)),bhaText('small',suffix));out.append(cell)}
  bhaPlot(m,'actualTorque');const links=bha$('actualLinks');links.replaceChildren();
  for(const [label,path] of [['原转矩CSV','case/reports/Torque Plots.csv'],['转矩汇总CSV','summary.csv'],['结果JSON','result.json']]){const link=bhaText('a',label);link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
+ const review=bhaText('button','查看异常与求解记录');review.onclick=()=>bhaLoadReview(record.id);links.append(review);
+ const markdown=bhaText('a','下载检查摘要');markdown.href='/api/workbench/calibrated-motor/executions/'+record.id+'/review.md';links.append(markdown);
+}
+async function bhaLoadReview(execution){
+ const generation=BHA.reviewGeneration=(BHA.reviewGeneration||0)+1;bha$('savedReviewPanel').hidden=false;bha$('savedReviewError').textContent='';bha$('savedReviewStatus').textContent='正在读取已保存结果…';bha$('savedReviewPoints').replaceChildren();bha$('savedReviewSettings').textContent='';
+ try{
+  const report=await bhaAPI('/api/workbench/calibrated-motor/executions/'+execution+'/review');
+  if(generation!==BHA.reviewGeneration||execution!==BHA.actualExecution)return;
+  bha$('savedReviewStatus').textContent=report.torque_numerical_acceptance===false?'原数值判据未通过：'+report.findings.join('；'):'原转矩判据通过。检查仅使用保存结果，不启动求解。';
+  for(const p of report.nonpositive_points){const n=p.native_profile_row;const row=bhaText('p',`${p.time_ms.toFixed(6)} ms：${p.torque_Nm.toFixed(6)} N·m`+(p.within_metric_window?'（在指标窗口内）':'（在指标窗口外）')+`；前一点 ${p.previous?p.previous.torque_Nm.toFixed(6):'—'} / 后一点 ${p.next?p.next.torque_Nm.toFixed(6):'—'} N·m。`+(n?` 原profile残差字段 ${n.final_residual_raw??'—'}，矩阵调用数 ${n.matrix_calls??'—'}。`:' 未绑定唯一profile。'),'error');bha$('savedReviewPoints').append(row)}
+  if(!report.nonpositive_points.length)bha$('savedReviewPoints').append(bhaText('p','未发现非正转矩点。'));
+  bha$('savedReviewPoints').append(bhaText('p','原始点全部保留，不删点或重算；本检查未确定异常根因。Final Residual按原字段记录，Matrix Calls是矩阵调用数，不能据此直接判断非线性迭代是否达到上限。','muted'));
+  bha$('savedReviewSettings').textContent=JSON.stringify({saved_setup:report.saved_setup,saved_report_expressions:report.saved_report_expressions,warnings:report.warnings,nonlinear_convergence_certified:report.nonlinear_convergence_certified,source_hashes:report.source_hashes},null,2);
+ }catch(error){if(generation===BHA.reviewGeneration&&execution===BHA.actualExecution){bha$('savedReviewStatus').textContent='检查暂不可读取；原曲线和下载仍可使用。';bha$('savedReviewError').textContent=error.message}}
 }
 async function bhaLoadExecutions(){
  const generation=BHA.executionGeneration=(BHA.executionGeneration||0)+1;if(BHA.executionTimer)clearTimeout(BHA.executionTimer);
@@ -59,7 +74,7 @@ async function bhaLoadExecutions(){
  if(!rows.length)out.append(bhaText('p','当前计划没有执行任务；需先完成原生材料导入与分析工程准备。','muted'));
  const available=rows.find(r=>r.result_available);
  if(available){bha$('planNotice').textContent=available.result.metrics.torque_numerical_acceptance===false?'本材料任务已完成，但原转矩数值判据未通过。原曲线完整保留，效率和最终排名保持禁用。':'本材料已有独立执行任务的官方转矩结果。仅整理转矩，效率和最终优化排名保持禁用。';bhaActual(available)}
- else{bha$('actualPanel').hidden=true;bha$('planNotice').textContent=rows.some(r=>r.status==='starting'||r.status==='running')?'本材料的独立转矩任务正在执行，请查看下方状态；效率和最终排名保持禁用。':rows.some(r=>r.status==='prepared')?'本材料的转矩任务已准备，等待手动开始；当前尚无可用转矩结果。':rows.some(r=>r.status==='failed'||r.status==='needs_attention')?'本材料暂无可用转矩结果；请检查下方失败或待处理记录，现场保留，不自动重试。':'当前校准材料尚无可用电机转矩结果。完成原生导入和分析工程准备后，可手动执行；本页不自动启动求解。'}
+ else{BHA.actualExecution=null;BHA.reviewGeneration=(BHA.reviewGeneration||0)+1;bha$('savedReviewPanel').hidden=true;bha$('actualPanel').hidden=true;bha$('planNotice').textContent=rows.some(r=>r.status==='starting'||r.status==='running')?'本材料的独立转矩任务正在执行，请查看下方状态；效率和最终排名保持禁用。':rows.some(r=>r.status==='prepared')?'本材料的转矩任务已准备，等待手动开始；当前尚无可用转矩结果。':rows.some(r=>r.status==='failed'||r.status==='needs_attention')?'本材料暂无可用转矩结果；请检查下方失败或待处理记录，现场保留，不自动重试。':'当前校准材料尚无可用电机转矩结果。完成原生导入和分析工程准备后，可手动执行；本页不自动启动求解。'}
  if(rows.some(r=>r.status==='starting'||r.status==='running'))BHA.executionTimer=setTimeout(bhaLoadExecutions,3000);
 }
 if(typeof document!=='undefined'){bha$('refreshPlan').onclick=bhaLoadPlan;bha$('prepareModel').onclick=bhaPrepareModel;bha$('loadReference').onclick=bhaLoadReference;bha$('reference').onchange=bhaLoadReference;

@@ -8,7 +8,7 @@ from pathlib import PurePosixPath, Path
 
 from modules.material_library import sha
 
-VERSION='calibrated_batch_summary_v1'
+VERSION='calibrated_batch_summary_v2'
 
 
 def torque_findings(metrics):
@@ -26,6 +26,22 @@ def torque_findings(metrics):
     stability=metrics.get('periodic_torque_stability')
     if stability and stability.get('passed') is False:reasons.append('原周期间转矩差判据未通过')
     return reasons or ['原转矩数值判据未通过']
+
+
+def metrics_nonpositive_points(metrics):
+    """Locate original nonpositive points; absent arrays remain unknown."""
+    if 'time_ms' not in metrics and 'torque_Nm' not in metrics:return None
+    times=metrics.get('time_ms');torques=metrics.get('torque_Nm')
+    if not isinstance(times,list) or not isinstance(torques,list) or len(times)!=len(torques):
+        raise ValueError('原转矩时间与数据数组不完整')
+    if not times or any(not isinstance(v,(int,float)) or isinstance(v,bool) or not math.isfinite(v) for v in times+torques):
+        raise ValueError('原转矩点不是有限数值')
+    if any(a>=b for a,b in zip(times,times[1:])):raise ValueError('原转矩时间无序')
+    window=metrics.get('selected_window_ms')
+    if window is not None and (not isinstance(window,(list,tuple)) or len(window)!=2 or any(not isinstance(v,(int,float)) or not math.isfinite(v) for v in window) or window[0]>window[1]):
+        raise ValueError('原转矩指标窗口无效')
+    return [dict(index=i,time_ms=t,torque_Nm=y,within_metric_window=(window[0]-1e-8<=t<=window[1]+1e-8) if window else None)
+            for i,(t,y) in enumerate(zip(times,torques)) if y<=0]
 
 
 def acceptance_text(metrics):
@@ -63,6 +79,9 @@ def summary_markdown(record):
             f"  有效库 `{cell(row['source']['effective_bank_sha256'])}`；排除样品：{cell('、'.join(row['source']['excluded_grades']) or '无')}。"]
         if row.get('result_available'):
             lines.append(f"  实际执行 `{cell(row['execution_id'])}`，版本 `{cell(row['model_version'])}`；原CSV见 `{row['id']}/Torque Plots.csv`。")
+            points=metrics_nonpositive_points(row['metrics'])
+            if points:
+                lines.append('  原始非正转矩点：'+'；'.join(f"{number(p['time_ms'])} ms / {number(p['torque_Nm'])} N·m（{'指标窗口内' if p['within_metric_window'] else '指标窗口外' if p['within_metric_window'] is False else '窗口未报告'}）" for p in points)+'。')
         elif row.get('error'):
             lines.append('  异常：'+cell(row['error']))
         else:lines.append('  尚无可读取的实际转矩结果。')
@@ -90,11 +109,15 @@ def report_bundle(batches, artifact):
         raise ValueError('批量摘要的转矩范围不符')
     files['summary.md']=summary_markdown(record).encode('utf8')
     review=io.StringIO(newline='');writer=csv.writer(review)
-    writer.writerow(['item','material','execution','torque_numerical_acceptance','findings'])
+    writer.writerow(['item','material','execution','torque_numerical_acceptance','findings','nonpositive_points_count','nonpositive_times_ms','nonpositive_torque_Nm','nonpositive_points_in_metric_window'])
     for row in record['items']:
         m=row.get('metrics',{}) if row.get('result_available') else {}
+        points=metrics_nonpositive_points(m)
         writer.writerow([row['id'],row['source']['material_name'],row.get('execution_id',''),
-            m.get('torque_numerical_acceptance'),'；'.join(torque_findings(m))])
+            m.get('torque_numerical_acceptance'),'；'.join(torque_findings(m)),len(points) if points is not None else '',
+            json.dumps([p['time_ms'] for p in points]) if points is not None else '',
+            json.dumps([p['torque_Nm'] for p in points]) if points is not None else '',
+            sum(p['within_metric_window'] is True for p in points) if points is not None and all(p['within_metric_window'] is not None for p in points) else ''])
     files['review.csv']=review.getvalue().encode('utf-8-sig')
     files['source_manifest.json']=original
     files['manifest.json']=json.dumps(dict(version=VERSION,source_manifest_sha256=sha(original),

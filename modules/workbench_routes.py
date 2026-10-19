@@ -212,6 +212,19 @@ def create_workbench(project,storage=None,root=None):
     def bh_execution_file(artifact,name):
         return send_file(bh_execution.download(artifact,name),as_attachment=True,download_name=Path(name).name)
 
+    @bp.get('/api/workbench/calibrated-motor/executions/<artifact>/review')
+    def bh_execution_review(artifact):
+        from modules.motor_torque_review import review_execution
+        return jsonify(review_execution(bh_execution,artifact))
+
+    @bp.get('/api/workbench/calibrated-motor/executions/<artifact>/review.md')
+    def bh_execution_review_markdown(artifact):
+        from modules.motor_torque_review import review_execution, review_markdown
+        import io
+        report=review_execution(bh_execution,artifact)
+        return send_file(io.BytesIO(review_markdown(report).encode('utf8')),as_attachment=True,
+                         download_name=artifact+'_review.md',mimetype='text/markdown')
+
     @bp.get('/api/workbench/calibrated-motor/executions/<artifact>/bundle')
     def bh_execution_bundle(artifact):
         return send_file(bh_execution.bundle(artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')

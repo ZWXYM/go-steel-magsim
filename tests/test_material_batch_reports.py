@@ -6,7 +6,7 @@ import zipfile
 from types import SimpleNamespace
 
 import test_material_motor_chain as fixtures
-from modules.material_batch_reports import report_bundle, summary_markdown, torque_findings
+from modules.material_batch_reports import report_bundle, summary_markdown, torque_findings, metrics_nonpositive_points
 from modules.material_library import sha
 
 
@@ -68,6 +68,19 @@ class BatchReportTests(unittest.TestCase):
         self.assertIn('存在非正转矩点',text);self.assertIn('原100%上限',text)
         self.assertIn('-4.500000',text);self.assertEqual(before,json.dumps(m))
         self.assertEqual(torque_findings(dict(m,torque_numerical_acceptance=True)),[])
+
+    def test_original_point_times_are_summarized_and_missing_arrays_remain_unknown(self):
+        record=self.record();m=record['items'][0]['metrics'];m.update(time_ms=[0,1,2],torque_Nm=[0,-2,3],
+            selected_window_ms=[1.5,2],torque_numerical_acceptance=True)
+        before=json.dumps(m);points=metrics_nonpositive_points(m)
+        self.assertEqual([p['time_ms'] for p in points],[0,1]);self.assertFalse(points[1]['within_metric_window'])
+        self.assertIn('1.000000 ms / -2.000000 N·m',summary_markdown(record));self.assertEqual(before,json.dumps(m))
+        self.assertIsNone(metrics_nonpositive_points({}));self.assertEqual(metrics_nonpositive_points(dict(time_ms=[0,1],torque_Nm=[1,2])),[])
+
+    def test_incomplete_or_nonfinite_point_arrays_do_not_get_silent_counts(self):
+        for metrics in [dict(time_ms=[0,1]),dict(time_ms=[0,1],torque_Nm=[1]),
+                        dict(time_ms=[0,0],torque_Nm=[1,2]),dict(time_ms=[0,1],torque_Nm=[1,float('nan')])]:
+            with self.assertRaises(ValueError):metrics_nonpositive_points(metrics)
 
 
 if __name__=='__main__':unittest.main()

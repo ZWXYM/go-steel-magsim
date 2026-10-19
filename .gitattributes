@@ -153,3 +153,7 @@ tests/test_material_motor_batches_ui.js -text
 tests/test_material_batch_reports.py -text
 docs/calibrated_batches_20261019.md -text
 calibration/material_batch_20261019/** -text
+modules/motor_torque_review.py -text
+tests/test_motor_torque_review.py -text
+docs/system_quickstart_20261019.md -text
+calibration/torque_review_20261019/** -text

@@ -1,0 +1,42 @@
+{
+  "scope": "Read-only saved motor torque inspection and automated original-point batch summaries",
+  "main_tests_passed": 388,
+  "python_AST": 149,
+  "JS_checks": 7,
+  "new_review_CPU_tests": 8,
+  "new_batch_report_tests": 2,
+  "http_reads_verified": 22,
+  "actual_saved_cases_reviewed": 2,
+  "existing_storage_files_unchanged": 4076,
+  "new_native_sessions": 0,
+  "new_motor_solves": 0,
+  "new_field_solves": 0,
+  "new_MuMax_solves": 0,
+  "new_training": 0,
+  "cumulative_Maxwell": 44,
+  "cumulative_MuMax": 680,
+  "batch_summary_version": "calibrated_batch_summary_v2",
+  "batch_members": 8,
+  "original_batch_JSON_CSV_and_source_manifest_unchanged": true,
+  "browser_review_and_download_verified": true,
+  "negative_point": {
+    "execution": "bhexec_e96007ab29e3",
+    "time_ms": 3.33333333333,
+    "torque_Nm": -4.55732321120572,
+    "previous_torque_Nm": 1.48429532876335,
+    "next_torque_Nm": 1.95016638686828,
+    "profile_final_residual_raw": 0.201423,
+    "matrix_calls": 40
+  },
+  "saved_setup": {
+    "NonlinearSolverResidual": "0.0001",
+    "UseNonLinearIterNum": "false",
+    "SmoothBHCurve": "false",
+    "TimeStep": "0.000333333333333s",
+    "StopTime": "0.01s"
+  },
+  "cause_identified": false,
+  "nonlinear_convergence_certified": false,
+  "acceptance_changed": false,
+  "thesis_writing_paused": true
+}

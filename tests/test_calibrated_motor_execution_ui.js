@@ -45,5 +45,16 @@ const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaa
  const old=c.context.bhaLoadExecutions();await c.context.bhaLoadExecutions();resolveOld([current]);await old;
  assert.equal(c.nodes.get('actualPanel').hidden,true);assert.match(c.nodes.get('executions').text(),/正在分析/);
  assert.match(c.nodes.get('planNotice').text(),/正在执行/);assert.ok(c.timers.includes(3000));assert.ok(c.calls.every(x=>x.method==='GET'));
+ const report={torque_numerical_acceptance:false,findings:['存在非正转矩点'],nonpositive_points:[{time_ms:3.333,torque_Nm:-4.557,within_metric_window:true,previous:{torque_Nm:1.48},next:{torque_Nm:1.95},native_profile_row:{final_residual_raw:.201423,matrix_calls:40}}],saved_setup:{UseNonLinearIterNum:'false'},saved_report_expressions:['-Moving1.Torque'],source_hashes:{},warnings:[],nonlinear_convergence_certified:false};
+ const d=harness(async()=>report);d.context.bhaActual(current);await d.context.bhaLoadReview(current.id);
+ assert.equal(d.nodes.get('savedReviewPanel').hidden,false);assert.match(d.nodes.get('savedReviewStatus').text(),/未通过/);
+ assert.match(d.nodes.get('savedReviewPoints').text(),/-4\.557000/);assert.equal(d.nodes.get('savedReviewPoints').children[0].className,'error');assert.match(d.nodes.get('savedReviewPoints').text(),/矩阵调用数 40/);
+ assert.match(d.nodes.get('savedReviewSettings').text(),/UseNonLinearIterNum/);assert.ok(d.calls.every(c=>c.method==='GET'));
+ let finishReview;const waiting=new Promise(resolve=>finishReview=resolve);const e=harness(async()=>waiting);
+ e.context.bhaActual(current);const pending=e.context.bhaLoadReview(current.id);e.context.bhaActual({...current,id:'bhexec_bbbbbbbbbbbb'});
+ finishReview(report);await pending;assert.equal(e.nodes.get('savedReviewPanel').hidden,true);assert.equal(e.nodes.get('savedReviewPoints').text(),'');
+ const f=harness(async()=>{throw Error('fixture missing profile')});f.context.bhaActual(current);await f.context.bhaLoadReview(current.id);
+ assert.match(f.nodes.get('savedReviewError').text(),/missing profile/);assert.equal(f.nodes.get('actualPanel').hidden,false);assert.match(f.nodes.get('actualMetrics').text(),/1.500000/);
+
  console.log('Torque execution UI: separate actual/reference results, disabled resource failure, no automatic submit, stale response isolation: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
