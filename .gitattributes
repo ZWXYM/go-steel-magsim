@@ -183,3 +183,5 @@ tests/test_material_input_view.py -text
 docs/material_input_identity_20261020.md -text
 calibration/material_identity_20261020/** -text
 docs/system_user_guide.md -text
+docs/custom_material_full_chain_20261020.md -text
+calibration/custom_material_full_chain_20261020/** -text

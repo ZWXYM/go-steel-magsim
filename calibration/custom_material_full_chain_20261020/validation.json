@@ -1,0 +1,194 @@
+{
+  "utc": "2026-10-19T16:52:37.371061+00:00",
+  "version": "custom_material_full_system_acceptance_v1",
+  "batch_id": "bhbatch_80a468224274",
+  "batch_status": "completed",
+  "execution_id": "bhexec_f9e0573d33c1",
+  "execution_status": "completed",
+  "new_material_result_available": true,
+  "input_material": "DEMO_GO_INTERFACE",
+  "raw_pair_id": "nativepair_848e8686e996",
+  "prediction_id": "pred_33af7510e9a2",
+  "calibration_id": "cal_8fff23daed9e",
+  "native_material_import_id": "calimport_98e332e5ae81",
+  "native_import_summary_sha256": "a53c66fbf283beccc9882c4f352f9d945e557e74d26b409f8aa2b6e49a55b8be",
+  "source_material_AMAT_exact_bytes": true,
+  "effective_bank_verified": true,
+  "physical_H_unchanged": true,
+  "actual_new_imports": 1,
+  "actual_new_solve_attempts": 1,
+  "actual_new_completed_motor_solves": 1,
+  "cumulative_completed_Maxwell": 45,
+  "cumulative_MuMax": 682,
+  "new_MuMax_solves": 0,
+  "new_training": 0,
+  "sessions": {
+    "import": {
+      "closed": true,
+      "process_identity_status": "dead"
+    },
+    "analysis": {
+      "closed": true,
+      "process_identity_status": "dead"
+    }
+  },
+  "old_storage_files_unchanged": 4189,
+  "expected_old_state_changes": [
+    "calibrated_motor_analysis/bhanalysis_7518e139e6c0/state.json",
+    "calibrated_motor_batches/bhbatch_80a468224274/state.json",
+    "calibrated_motor_native/calimport_98e332e5ae81/state.json"
+  ],
+  "reused_execution": "bhexec_9d440f1b3477",
+  "efficiency_enabled": false,
+  "final_material_ranking_enabled": false,
+  "scope": "System handoff acceptance, not independent material accuracy, losses or steady-state certification",
+  "main_tests_passed": 444,
+  "public_tests_run": 444,
+  "public_private_skipped": 1,
+  "AST": 162,
+  "JS": 9,
+  "new_private_files": 791,
+  "UI_zip_member_bytes_verified": true,
+  "controller_exited": true,
+  "reservation_released": true,
+  "metrics": {
+    "T_avg_Nm": 0.3810139256852322,
+    "T_min_Nm": -13.6557854443899,
+    "T_max_Nm": 2.3429778491179,
+    "K_T_ripple_pct": 4198.996995906362,
+    "torque_numerical_acceptance": false,
+    "source_n_samples": 31,
+    "torque_csv_sha256": "8c5753da004ba201467dc90f76369c7fee131adea85ed6c1bce3058c4612c489"
+  },
+  "nonpositive_points": [
+    {
+      "index": 9,
+      "native_profile_row": {
+        "final_residual_raw": 0.388618,
+        "matrix_calls": 52,
+        "time_s": 0.002999999999997
+      },
+      "next": {
+        "index": 10,
+        "time_ms": 3.3333333333299997,
+        "torque_Nm": 1.79371102109463
+      },
+      "previous": {
+        "index": 8,
+        "time_ms": 2.666666666664,
+        "torque_Nm": 2.06993299561537
+      },
+      "time_ms": 2.999999999997,
+      "torque_Nm": -13.6557854443899,
+      "within_metric_window": true
+    },
+    {
+      "index": 11,
+      "native_profile_row": {
+        "final_residual_raw": 0.0231775,
+        "matrix_calls": 41,
+        "time_s": 0.003666666666663
+      },
+      "next": {
+        "index": 12,
+        "time_ms": 3.9999999999959996,
+        "torque_Nm": 2.30110001356602
+      },
+      "previous": {
+        "index": 10,
+        "time_ms": 3.3333333333299997,
+        "torque_Nm": 1.79371102109463
+      },
+      "time_ms": 3.666666666663,
+      "torque_Nm": -3.54702550995177,
+      "within_metric_window": true
+    },
+    {
+      "index": 18,
+      "native_profile_row": {
+        "final_residual_raw": 0.0711797,
+        "matrix_calls": 40,
+        "time_s": 0.005999999999994
+      },
+      "next": {
+        "index": 19,
+        "time_ms": 6.333333333327,
+        "torque_Nm": 1.50700430797463
+      },
+      "previous": {
+        "index": 17,
+        "time_ms": 5.666666666661,
+        "torque_Nm": 1.5941862660257
+      },
+      "time_ms": 5.999999999994,
+      "torque_Nm": -1.22596006024189,
+      "within_metric_window": true
+    },
+    {
+      "index": 25,
+      "native_profile_row": {
+        "final_residual_raw": 0.124071,
+        "matrix_calls": 40,
+        "time_s": 0.008333333333325
+      },
+      "next": {
+        "index": 26,
+        "time_ms": 8.666666666658,
+        "torque_Nm": -0.201151120820944
+      },
+      "previous": {
+        "index": 24,
+        "time_ms": 7.999999999991999,
+        "torque_Nm": 1.85107657386244
+      },
+      "time_ms": 8.333333333325,
+      "torque_Nm": -8.86414866300573,
+      "within_metric_window": true
+    },
+    {
+      "index": 26,
+      "native_profile_row": {
+        "final_residual_raw": 0.434036,
+        "matrix_calls": 109,
+        "time_s": 0.008666666666658
+      },
+      "next": {
+        "index": 27,
+        "time_ms": 8.999999999991,
+        "torque_Nm": 2.25948139512988
+      },
+      "previous": {
+        "index": 25,
+        "time_ms": 8.333333333325,
+        "torque_Nm": -8.86414866300573
+      },
+      "time_ms": 8.666666666658,
+      "torque_Nm": -0.201151120820944,
+      "within_metric_window": true
+    },
+    {
+      "index": 28,
+      "native_profile_row": {
+        "final_residual_raw": 0.0743602,
+        "matrix_calls": 40,
+        "time_s": 0.009333333333324
+      },
+      "next": {
+        "index": 29,
+        "time_ms": 9.666666666657001,
+        "torque_Nm": 1.76301910441254
+      },
+      "previous": {
+        "index": 27,
+        "time_ms": 8.999999999991,
+        "torque_Nm": 2.25948139512988
+      },
+      "time_ms": 9.333333333324001,
+      "torque_Nm": -7.88293852260382,
+      "within_metric_window": true
+    }
+  ],
+  "cause_identified": false,
+  "input_quality": "unassessed_1_grain_interface_example",
+  "additional_retry": false
+}
