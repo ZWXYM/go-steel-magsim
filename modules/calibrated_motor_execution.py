@@ -15,7 +15,7 @@ from modules.material_library import sha
 from modules.maxwell_material_transport import load_contract,verify_saved_material
 from modules.maxwell_native_readiness import require_configured_license_connection
 from modules.motor_model_audit import audit_project
-from modules.motor_queue import QueueLease,process_identity,identity_status
+from modules.motor_queue import QueueLease,process_identity,identity_status,DispatchWindow
 from modules.motor_workbench import write_json
 
 VERSION='BH_only_motor_execution_v1'
@@ -143,6 +143,10 @@ class CalibratedMotorExecution:
                     raise ValueError('转矩进程/专用会话仍活动或身份不明，暂不下发其他原生任务')
 
     def start(self,artifact):
+        with DispatchWindow(self.storage.parent):
+            return self._start(artifact)
+
+    def _start(self,artifact):
         folder=self.path(artifact);lease=QueueLease(self.storage/'dispatch.lease');locks=[]
         if not lease.acquire():raise ValueError('其他转矩任务正在下发')
         try:

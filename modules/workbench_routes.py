@@ -19,6 +19,8 @@ from modules.calibrated_motor_analysis import CalibratedMotorAnalysis
 from modules.calibrated_motor_execution import CalibratedMotorExecution
 from modules.material_motor_workflow import MaterialMotorWorkflow
 from modules.material_motor_chain import MaterialMotorChain
+from modules.material_motor_batches import MaterialMotorBatches
+from modules.material_batch_reports import report_bundle as material_batch_report_bundle
 
 
 def create_workbench(project,storage=None,root=None):
@@ -38,6 +40,7 @@ def create_workbench(project,storage=None,root=None):
     bh_execution=CalibratedMotorExecution(bh_analysis,motor,storage/'calibrated_motor_execution')
     material_workflow=MaterialMotorWorkflow(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
     material_chain=MaterialMotorChain(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
+    material_batches=MaterialMotorBatches(material_chain,storage/'calibrated_motor_batches')
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -77,6 +80,38 @@ def create_workbench(project,storage=None,root=None):
     @bp.post('/api/workbench/material-motor/prepare-or-reuse')
     def prepare_or_reuse_material_chain():
         return jsonify(material_chain.ensure(request.get_json()))
+
+    @bp.get('/calibrated-motor/batches')
+    def material_batch_page():
+        return render_template('material_motor_batches.html')
+
+    @bp.get('/api/workbench/calibrated-motor/batches')
+    def material_batch_records():
+        return jsonify(material_batches.records())
+
+    @bp.post('/api/workbench/calibrated-motor/batches')
+    def material_batch_prepare():
+        return jsonify(material_batches.prepare(request.get_json()))
+
+    @bp.get('/api/workbench/calibrated-motor/batches/<artifact>')
+    def material_batch_record(artifact):
+        return jsonify(material_batches.get(artifact))
+
+    @bp.post('/api/workbench/calibrated-motor/batches/<artifact>/start')
+    def material_batch_start(artifact):
+        return jsonify(material_batches.start(artifact))
+
+    @bp.post('/api/workbench/calibrated-motor/batches/<artifact>/resume')
+    def material_batch_resume(artifact):
+        return jsonify(material_batches.start(artifact,resume=True))
+
+    @bp.post('/api/workbench/calibrated-motor/batches/<artifact>/pause')
+    def material_batch_pause(artifact):
+        return jsonify(material_batches.pause(artifact))
+
+    @bp.get('/api/workbench/calibrated-motor/batches/<artifact>/bundle')
+    def material_batch_bundle(artifact):
+        return send_file(material_batch_report_bundle(material_batches,artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
 
     @bp.get('/api/workbench/material-library')
     def material_catalog():

@@ -1,0 +1,110 @@
+{
+  "scope": "Actual serial calibrated-material software workflow, pause/resume and raw torque collection; no claim of independent material/loss validation",
+  "code_checkpoints": [
+    "c253469e",
+    "78f8ca4f"
+  ],
+  "main_tests_passed": 378,
+  "Python_AST_passed": 147,
+  "JS_checks_passed": 7,
+  "batch_specialized_tests_passed": 30,
+  "report_tests_passed": 5,
+  "batch_id": "bhbatch_3d20d4726b94",
+  "status": "completed",
+  "materials": 2,
+  "actual_torque_results": 2,
+  "new_completed_motor_solves": 1,
+  "existing_results_reused": 1,
+  "new_native_imports": 1,
+  "new_native_sessions": 2,
+  "new_motor_solves": 1,
+  "new_field_solves": 0,
+  "new_MuMax_solves": 0,
+  "new_training": 0,
+  "new_predictions": 0,
+  "cumulative_Maxwell": 44,
+  "cumulative_motor": 9,
+  "cumulative_magnetostatic": 35,
+  "cumulative_MuMax": 680,
+  "budget": {
+    "cores": 2,
+    "gpus": 0,
+    "max_new_imports": 1,
+    "max_new_motor_solves": 1,
+    "max_new_native_sessions": 2,
+    "per_import_seconds": 240,
+    "per_motor_seconds": 1200,
+    "wall_seconds": 1600
+  },
+  "cache_only_batch_id": "bhbatch_5823594a9f64",
+  "cache_only_new_solves": 0,
+  "pause_after_native_stage_verified": true,
+  "same_import_reused_after_resume": true,
+  "dedicated_native_sessions_released": 2,
+  "dispatch_reservation_released": true,
+  "old_files": 3285,
+  "old_files_unchanged": 3282,
+  "expected_status_changes": [
+    "calibrated_motor_analysis/bhanalysis_70fdc6e5474b/state.json",
+    "calibrated_motor_batches/bhbatch_3d20d4726b94/state.json",
+    "calibrated_motor_native/calimport_54e7e38bb40d/state.json"
+  ],
+  "browser_package_members_verified": 8,
+  "raw_CSV_members_unchanged": true,
+  "summary_markdown_and_review_CSV_verified": true,
+  "browser_anomaly_label_verified": true,
+  "browser_overlay_retains_all_31_points": true,
+  "browser_console_errors": [],
+  "external_start_requests_blocked_without_state_change": 3,
+  "results": [
+    {
+      "material": "WB_pred_5a6fb5dab354",
+      "material_key": "prediction:pred_5a6fb5dab354",
+      "execution": "bhexec_9d440f1b3477",
+      "model_version": "V8_2_object_CS_BH_only_torque_v1",
+      "measurement_protocol": "v8_2_cycle1",
+      "effective_bank_sha256": "453de94ae30e533ad804287dad84189f64711a7b7b5ba3fbb246b6ea5758f073",
+      "excluded_grades": [
+        "B30P105"
+      ],
+      "metrics": {
+        "T_avg_Nm": 1.8803492794215666,
+        "T_min_Nm": 1.31596449180542,
+        "T_max_Nm": 2.20033028110002,
+        "K_T_ripple_pct": 47.031995543224205,
+        "torque_numerical_acceptance": true,
+        "torque_csv_sha256": "c1a7a67d7ef0afdabfa296735f043d7f63620d4b2fb1988c37b8afa38674c91b"
+      }
+    },
+    {
+      "material": "WB_B23R075_8fff23daed9e",
+      "material_key": "fit:B23R075",
+      "execution": "bhexec_e96007ab29e3",
+      "model_version": "V8_2_object_CS_BH_only_torque_v1",
+      "measurement_protocol": "v8_2_cycle1",
+      "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded_grades": [],
+      "metrics": {
+        "T_avg_Nm": 1.6453586021350657,
+        "T_min_Nm": -4.55732321120572,
+        "T_max_Nm": 2.47792365463379,
+        "K_T_ripple_pct": 427.58137081547846,
+        "torque_numerical_acceptance": false,
+        "torque_csv_sha256": "0fcec68ddee5de35695e904804f84319de0fca1513987203f5a500977a13baef"
+      }
+    }
+  ],
+  "anomaly": {
+    "execution": "bhexec_e96007ab29e3",
+    "negative_time_ms": 3.33333333333,
+    "negative_torque_Nm": -4.55732321120572,
+    "original_acceptance": false,
+    "point_removed_or_smoothed": false,
+    "cause_identified": false,
+    "automatic_retry": false
+  },
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false,
+  "system_complete": false,
+  "thesis_writing_paused": true
+}

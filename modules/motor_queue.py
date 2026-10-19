@@ -129,3 +129,38 @@ def active_processes(storage,jobs):
     if unresolved and desktops:
         active.append(dict(status='unknown',record='legacy_unresolved_Desktop',pids=desktops))
     return active
+
+
+class DispatchWindow:
+    """Serialize submission and respect a persistent calibrated-batch owner.
+
+    This is a short handoff lock, never held for a whole solve. Ordinary scan
+    submissions can still queue while another ordinary scan is running.
+    """
+    def __init__(self, storage, recover_batch=None):
+        self.storage = Path(storage).resolve()
+        self.recover_batch = recover_batch
+        self.lease = QueueLease(self.storage/'native_dispatch.guard')
+
+    @property
+    def reservation(self):
+        return self.storage/'calibrated_motor_batches/active_controller.json'
+
+    def __enter__(self):
+        if not self.lease.acquire():
+            raise ValueError('另一项原生任务正在交接，请稍后再试')
+        try:
+            if self.reservation.exists():
+                owner = json.loads(self.reservation.read_text(encoding='utf8'))
+                status = identity_status(owner['identity'])
+                own = status == 'alive' and owner['identity'] == process_identity()
+                recover = self.recover_batch is not None and status == 'dead' and owner.get('batch_id') == self.recover_batch
+                if not own and not recover:
+                    raise ValueError('校准材料批量任务占用派发；请在批量页查看或恢复，未下发其他原生任务')
+            return self
+        except Exception:
+            self.lease.release()
+            raise
+
+    def __exit__(self, *args):
+        self.lease.release()

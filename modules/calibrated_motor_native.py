@@ -13,7 +13,7 @@ from pathlib import Path
 from modules.material_library import sha
 from modules.maxwell_material_transport import load_contract
 from modules.maxwell_native_readiness import require_configured_license_connection
-from modules.motor_queue import QueueLease, identity_status, process_identity
+from modules.motor_queue import QueueLease, identity_status, process_identity,DispatchWindow
 from modules.motor_workbench import write_json
 
 SUPPORT = ('modules/calibrated_motor_native.py', 'modules/maxwell_material_transport.py',
@@ -152,7 +152,11 @@ class CalibratedMotorNative:
                 rows.append(dict(id=folder.name,status='invalid',error=str(exc)))
         return sorted(rows,key=lambda r:r.get('created_utc',''),reverse=True)
 
-    def start(self, artifact):
+    def start(self,artifact):
+        with DispatchWindow(self.storage.parent):
+            return self._start(artifact)
+
+    def _start(self,artifact):
         folder = self.path(artifact)
         lease = QueueLease(self.storage/'dispatch.lease')
         if not lease.acquire(): raise ValueError('另一项导入正在下发')

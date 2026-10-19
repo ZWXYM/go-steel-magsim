@@ -45,6 +45,14 @@ class RuntimeEntry(unittest.TestCase):
         worker.write_text('VERSION=2',encoding='utf8')
         self.assertNotEqual(first,source_manifest(project)[1])
 
+    def test_batch_worker_changes_enter_startup_identity(self):
+        project=self.root/'program';worker=project/'tools/material_motor_batch_worker.py'
+        worker.parent.mkdir(parents=True);worker.write_text('VERSION=1',encoding='utf8')
+        files,first=source_manifest(project)
+        self.assertIn('tools/material_motor_batch_worker.py',files)
+        worker.write_text('VERSION=2',encoding='utf8')
+        self.assertNotEqual(first,source_manifest(project)[1])
+
     def server(self,identity):
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):

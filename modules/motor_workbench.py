@@ -18,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 from modules.material_calibration import file_hash
-from modules.motor_queue import QueueLease,process_identity,identity_status,active_processes
+from modules.motor_queue import QueueLease,process_identity,identity_status,active_processes,DispatchWindow
 from modules.motor_model_audit import audit_project,comparison_status,LOSS_POLICY
 
 GOES=re.compile(r"Name='(GOES_V3_\d{2}(?:_\d+)?)'")
@@ -380,6 +380,10 @@ class MotorWorkbench:
             files={name:(output/name).relative_to(path).as_posix() for name in ('summary.csv','summary.md','reports_bundle.zip','provenance.json')})
 
     def submit(self,job_id):
+        with DispatchWindow(self.storage.parent):
+            return self._submit(job_id)
+
+    def _submit(self,job_id):
         python=self.root/'.runtime/aedt/Scripts/python.exe'
         if not python.is_file():
             raise ValueError('本机 AEDT Python 环境不可用')

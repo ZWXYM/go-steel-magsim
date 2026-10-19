@@ -36,7 +36,7 @@ async function bhaLoadReference(){const generation=++BHA.referenceGeneration,sel
 async function bhaCatalog(){try{const data=await bhaAPI('/api/workbench/waveforms/catalog');const select=bha$('reference');select.replaceChildren();BHA.references=[];for(const d of data.datasets)for(const c of d.cases)if(c.available){const option=bhaText('option',d.id+' / '+c.id+' / '+c.material);option.value=String(BHA.references.length);select.append(option);BHA.references.push({dataset:d.id,case:c.id})}if(BHA.references.length)bhaLoadReference();else bha$('referenceStatus').textContent='当前没有可读取的完整官方CSV。'}catch(error){bha$('referenceError').textContent=error.message}}
 async function bhaExecutionAction(url,body){bha$('executionError').textContent='';try{await bhaAPI(url,body);await bhaLoadExecutions()}catch(error){bha$('executionError').textContent=error.message}}
 function bhaActual(record){
- const saved=record.result,m=saved.metrics;bha$('actualPanel').hidden=false;bha$('actualStatus').textContent=`${record.id} / ${saved.material_name} · ${saved.model_version} · ${saved.measurement_protocol}`;
+ const saved=record.result,m=saved.metrics;bha$('actualPanel').hidden=false;bha$('actualStatus').textContent=`${record.id} / ${saved.material_name} · ${saved.model_version} · ${saved.measurement_protocol}`+(m.torque_numerical_acceptance===false?' · 原数值判据未通过（原值保留）':'');
  const out=bha$('actualMetrics');out.replaceChildren();for(const [label,key,suffix] of [['平均转矩','T_avg_Nm','N·m'],['最低转矩','T_min_Nm','N·m'],['最高转矩','T_max_Nm','N·m'],['转矩脉动','K_T_ripple_pct','%']]){const cell=document.createElement('div');const value=m[key];cell.append(bhaText('span',label),bhaText('strong',value===null?'—':value.toFixed(6)),bhaText('small',suffix));out.append(cell)}
  bhaPlot(m,'actualTorque');const links=bha$('actualLinks');links.replaceChildren();
  for(const [label,path] of [['原转矩CSV','case/reports/Torque Plots.csv'],['转矩汇总CSV','summary.csv'],['结果JSON','result.json']]){const link=bhaText('a',label);link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
@@ -58,7 +58,7 @@ async function bhaLoadExecutions(){
  if(r.result_available){const view=bhaText('button','查看本材料转矩');view.onclick=()=>bhaActual(r);row.append(view)}out.append(row)}
  if(!rows.length)out.append(bhaText('p','当前计划没有执行任务；需先完成原生材料导入与分析工程准备。','muted'));
  const available=rows.find(r=>r.result_available);
- if(available){bha$('planNotice').textContent='本材料已有独立执行任务的官方转矩结果。仅整理转矩，效率和最终优化排名保持禁用。';bhaActual(available)}
+ if(available){bha$('planNotice').textContent=available.result.metrics.torque_numerical_acceptance===false?'本材料任务已完成，但原转矩数值判据未通过。原曲线完整保留，效率和最终排名保持禁用。':'本材料已有独立执行任务的官方转矩结果。仅整理转矩，效率和最终优化排名保持禁用。';bhaActual(available)}
  else{bha$('actualPanel').hidden=true;bha$('planNotice').textContent=rows.some(r=>r.status==='starting'||r.status==='running')?'本材料的独立转矩任务正在执行，请查看下方状态；效率和最终排名保持禁用。':rows.some(r=>r.status==='prepared')?'本材料的转矩任务已准备，等待手动开始；当前尚无可用转矩结果。':rows.some(r=>r.status==='failed'||r.status==='needs_attention')?'本材料暂无可用转矩结果；请检查下方失败或待处理记录，现场保留，不自动重试。':'当前校准材料尚无可用电机转矩结果。完成原生导入和分析工程准备后，可手动执行；本页不自动启动求解。'}
  if(rows.some(r=>r.status==='starting'||r.status==='running'))BHA.executionTimer=setTimeout(bhaLoadExecutions,3000);
 }
