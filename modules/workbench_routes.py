@@ -22,6 +22,7 @@ from modules.material_motor_workflow import MaterialMotorWorkflow
 from modules.material_motor_chain import MaterialMotorChain
 from modules.material_motor_batches import MaterialMotorBatches
 from modules.material_batch_reports import report_bundle as material_batch_report_bundle
+from modules.native_pair_exports import NativePairExports
 
 
 def create_workbench(project,storage=None,root=None):
@@ -42,6 +43,7 @@ def create_workbench(project,storage=None,root=None):
     material_workflow=MaterialMotorWorkflow(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
     material_chain=MaterialMotorChain(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
     material_batches=MaterialMotorBatches(material_chain,storage/'calibrated_motor_batches')
+    native_pairs=NativePairExports(root,storage/'native_pair_exports')
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
@@ -57,6 +59,30 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/workbench')
     def page():
         return render_template('workbench.html')
+
+    @bp.get('/api/workbench/native-pair-sources')
+    def native_pair_sources():
+        return jsonify(native_pairs.catalog())
+
+    @bp.get('/api/workbench/native-pairs')
+    def native_pair_records():
+        return jsonify(native_pairs.records())
+
+    @bp.post('/api/workbench/native-pairs')
+    def native_pair_prepare():
+        return jsonify(native_pairs.prepare(request.get_json()))
+
+    @bp.get('/api/workbench/native-pairs/<artifact>')
+    def native_pair_record(artifact):
+        return jsonify(native_pairs.get(artifact))
+
+    @bp.get('/api/workbench/native-pairs/<artifact>/files/<name>')
+    def native_pair_file(artifact,name):
+        return send_file(native_pairs.download(artifact,name),as_attachment=True,download_name=name)
+
+    @bp.get('/api/workbench/native-pairs/<artifact>/bundle')
+    def native_pair_bundle(artifact):
+        return send_file(native_pairs.bundle(artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
 
     @bp.get('/system')
     def system_page():

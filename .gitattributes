@@ -162,3 +162,11 @@ tests/test_runtime_source_guard.py -text
 tests/test_owned_solver_budget.py -text
 docs/solver_controls_20261019.md -text
 calibration/smooth_bh_20261019/** -text
+modules/native_pair_export.py -text
+modules/native_pair_exports.py -text
+tools/export_native_pair.py -text
+static/js/native_pair_exports.js -text
+tests/test_native_pair_exports.py -text
+tests/test_native_pair_exports_ui.js -text
+docs/native_pair_web_20261019.md -text
+calibration/native_pair_web_20261019/** -text
