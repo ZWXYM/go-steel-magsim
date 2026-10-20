@@ -69,6 +69,28 @@ async function loaded(h,dataset=a){h.node('dataset').value=dataset.id;await h.c.
  let rejectOld;const oldErrorWait=new Promise((resolve,reject)=>rejectOld=reject),oldError=harness(async url=>url.endsWith('/analyze')?oldErrorWait:url.endsWith('/v8_1')?a:b);
  await loaded(oldError);const failed=oldError.c.analyze();await loaded(oldError,b);rejectOld(Error('old selection failed'));await failed;
  assert.equal(oldError.node('result').hidden,true);assert.equal(oldError.node('error').hidden,true);assert.equal(value(oldError,'current.id'),b.id);
+ // Read saved rankings separately; reuse is an explicit source-checked GET action.
+ const hashes={'source.csv':'a'.repeat(64),'other.csv':'b'.repeat(64)},restoreData={...a,source_hashes:hashes,references:[...a.references,{case:'original_baseline',material:'Baseline'}]},saved={...report(restoreData),config:{...config,min_ripple_reduction_pct:7,ripple_weight:.25}};
+ const reopen=harness(async url=>url.includes('/files/analysis.json')?saved:restoreData);await loaded(reopen,restoreData);
+ const inputsBefore=value(reopen,'configValues()');await reopen.c.loadSavedScreen(saved.id);
+ assert.equal(reopen.node('savedScreenPanel').hidden,false);assert.match(reopen.node('savedScreenResult').innerHTML,/保存的筛选结果/);assert.match(reopen.node('savedScreenResult').innerHTML,/original_baseline/);
+ assert.deepEqual(JSON.parse(JSON.stringify(value(reopen,'configValues()'))),JSON.parse(JSON.stringify(inputsBefore)));assert.equal(reopen.node('result').hidden,true);
+ await reopen.c.reuseSavedScreen();assert.equal(reopen.node('ripple_weight').value,'0.25');assert.equal(reopen.node('min_ripple_reduction_pct').value,'7');assert.equal(reopen.node('reference').value,saved.reference);assert.match(reopen.node('analysisStatus').textContent,/尚未重新筛选/);assert.equal(posts(reopen).length,0);
+ // Changed source/version/protocol/missing reference leave the current form untouched.
+ for(const change of [{source_hashes:{...hashes,'source.csv':'c'.repeat(64)}},{version:'changed'},{measurement_protocol:'other'},{references:[]}]){
+  const incompatible=harness(async url=>url.includes('/files/analysis.json')?saved:{...restoreData,...change});await incompatible.c.loadSavedScreen(saved.id);const before=incompatible.node('ripple_weight').value;
+  await incompatible.c.reuseSavedScreen();assert.equal(incompatible.node('ripple_weight').value,before);assert.equal(incompatible.node('savedScreenPanel').hidden,false);assert.match(incompatible.node('savedScreenStatus').textContent,/未沿用配置/);assert.equal(posts(incompatible).length,0);
+ }
+ const order=harness(async url=>url.includes('/files/analysis.json')?saved:{...restoreData,source_hashes:{'other.csv':hashes['other.csv'],'source.csv':hashes['source.csv']}});await order.c.loadSavedScreen(saved.id);await order.c.reuseSavedScreen();assert.equal(order.node('ripple_weight').value,'0.25');
+ let finishReuse;const reuseWait=new Promise(resolve=>finishReuse=resolve),duringReuse=harness(async url=>url.includes('/files/analysis.json')?saved:reuseWait);
+ await duringReuse.c.loadSavedScreen(saved.id);const reusing=duringReuse.c.reuseSavedScreen();await duringReuse.c.reuseSavedScreen();assert.equal(duringReuse.calls.filter(c=>c.url.includes('/datasets/')).length,1);assert.equal(duringReuse.node('reuseSavedScreen').disabled,true);
+ duringReuse.node('ripple_weight').value='0.99';duringReuse.c.screeningChanged();finishReuse(restoreData);await reusing;assert.equal(duringReuse.node('ripple_weight').value,'0.99');assert.match(duringReuse.node('savedScreenStatus').textContent,/未覆盖/);assert.equal(posts(duringReuse).length,0);
+ // A late saved-record or reuse response never overwrites a newly chosen record.
+ let finishSaved;const savedWait=new Promise(resolve=>finishSaved=resolve),otherSaved={...saved,id:'opt_bbbbbbbbbbbb'};
+ const delayedSaved=harness(async url=>url.includes(saved.id)?savedWait:otherSaved);const oldSaved=delayedSaved.c.loadSavedScreen(saved.id);await delayedSaved.c.loadSavedScreen(otherSaved.id);finishSaved(saved);await oldSaved;assert.match(delayedSaved.node('savedScreenResult').innerHTML,/opt_bbbbbbbbbbbb/);
+ let finishOldReuse;const oldReuseWait=new Promise(resolve=>finishOldReuse=resolve),newRecordDuringReuse=harness(async url=>url.includes('/datasets/')?oldReuseWait:url.includes(saved.id)?saved:otherSaved);
+ await newRecordDuringReuse.c.loadSavedScreen(saved.id);const oldReuse=newRecordDuringReuse.c.reuseSavedScreen();await newRecordDuringReuse.c.loadSavedScreen(otherSaved.id);const newStatus=newRecordDuringReuse.node('savedScreenStatus').textContent;finishOldReuse(restoreData);await oldReuse;assert.equal(newRecordDuringReuse.node('savedScreenStatus').textContent,newStatus);assert.equal(newRecordDuringReuse.node('ripple_weight').value,defaults.ripple_weight);
+ const badSaved=harness(async()=>({...saved,id:'wrong'}));await badSaved.c.loadSavedScreen(saved.id);assert.equal(badSaved.node('savedScreenPanel').hidden,true);assert.equal(badSaved.node('reuseSavedScreen').disabled,true);assert.match(badSaved.node('savedScreenStatus').textContent,/身份或配置/);const invalidCalls=badSaved.calls.length;await badSaved.c.loadSavedScreen('../private');assert.equal(badSaved.calls.length,invalidCalls);
  assert.ok([valid,stale,changed,refresh,pending,cpu,create,oldError].every(h=>h.calls.every(c=>!c.url.includes('native-material-runs'))));
  console.log('Motor optimization UI: source/config binding, delayed response isolation, latest selection, single plan submission, original score payloads: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
