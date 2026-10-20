@@ -53,11 +53,17 @@ async function bhaExecutionAction(url,body){
  catch(error){BHA.executionReadable=false;BHA.executionAllowed=false;bha$('executionError').textContent='操作结果未确认：'+error.message+'；请刷新原记录，不自动重试。'}
  finally{BHA.executionBusy=false;bhaExecutionControls()}
 }
+function bhaPower(record){
+ const speed=record.requested_protocol?.speed_rpm,torque=record.result?.metrics?.T_avg_Nm;
+ if(record.result_available!==true||record.result?.native_configuration_verified!==true||record.result?.native_analyze_succeeded!==true||typeof speed!=='number'||!Number.isFinite(speed)||speed<=0||typeof torque!=='number'||!Number.isFinite(torque))return null;
+ const power=torque*2*Math.PI*speed/60;return Number.isFinite(power)?{speed_rpm:speed,power_W:power}:null;
+}
 function bhaActual(record){
- const signature=JSON.stringify([record.id,record.result]);BHA.selectedExecution=record.id;if(BHA.actualExecution===record.id&&BHA.actualSignature===signature)return;BHA.actualSignature=signature;
+ const signature=JSON.stringify([record.id,record.result,record.requested_protocol]);BHA.selectedExecution=record.id;if(BHA.actualExecution===record.id&&BHA.actualSignature===signature)return;BHA.actualSignature=signature;
  BHA.actualExecution=record.id;BHA.reviewGeneration=(BHA.reviewGeneration||0)+1;bha$('savedReviewPanel').hidden=true;
  const saved=record.result,m=saved.metrics;bha$('actualPanel').hidden=false;bha$('actualStatus').textContent=`${record.id} / ${saved.material_name} · ${saved.model_version} · ${saved.measurement_protocol}`+(m.torque_numerical_acceptance===false?' · 原数值判据未通过（原值保留）':'');
  const out=bha$('actualMetrics');out.replaceChildren();for(const [label,key,suffix] of [['平均转矩','T_avg_Nm','N·m'],['最低转矩','T_min_Nm','N·m'],['最高转矩','T_max_Nm','N·m'],['转矩脉动','K_T_ripple_pct','%']]){const cell=document.createElement('div');const value=m[key];cell.append(bhaText('span',label),bhaText('strong',value===null?'—':value.toFixed(6)),bhaText('small',suffix));out.append(cell)}
+ const power=bhaPower(record),cell=document.createElement('div');cell.append(bhaText('span','电磁机械功率'),bhaText('strong',power?power.power_W.toFixed(3):'—'),bhaText('small',power?'W · '+power.speed_rpm+' r/min':'W · 保存工况待核对'));out.append(cell);
  bhaPlot(m,'actualTorque');const links=bha$('actualLinks');links.replaceChildren();
  for(const [label,path] of [['原转矩CSV','case/reports/Torque Plots.csv'],['转矩汇总CSV','summary.csv'],['结果JSON','result.json']]){const link=bhaText('a',label);link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
  const review=bhaText('button','查看异常与求解记录');review.onclick=()=>bhaLoadReview(record.id);links.append(review);

@@ -25,6 +25,15 @@ const metrics={time_ms:[0,10],torque_Nm:[1,2],selected_window_ms:[0,10],T_avg_Nm
 const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaaa',status:'completed',phase:'finished',result_available:true,
  result:{material_name:'WB_current',model_version:'V8_2_BH_only',measurement_protocol:'v8_2_cycle1',metrics}};
 (async()=>{
+ // Power comes from this execution's verified operating point, never a page default.
+ const p=harness(async()=>[]),verified={...current,requested_protocol:{speed_rpm:3000},result:{...current.result,native_configuration_verified:true,native_analyze_succeeded:true}};
+ const expected=1.5*2*Math.PI*3000/60;assert.equal(p.context.bhaPower(verified).power_W,expected);p.context.bhaActual(verified);assert.match(p.nodes.get('actualMetrics').text(),/电磁机械功率.*471\.239.*3000/);
+ for(const [torque,power] of [[0,0],[-1.5,-expected]])assert.equal(p.context.bhaPower({...verified,result:{...verified.result,metrics:{...metrics,T_avg_Nm:torque}}}).power_W,power);
+ for(const rpm of [undefined,null,NaN,Infinity,-1,0,'3000'])assert.equal(p.context.bhaPower({...verified,requested_protocol:{speed_rpm:rpm}}),null);
+ assert.equal(p.context.bhaPower({...verified,result:{...verified.result,native_configuration_verified:false}}),null);assert.equal(p.context.bhaPower({...verified,result_available:false}),null);
+ assert.equal(p.context.bhaPower({...verified,result:{...verified.result,metrics:{...metrics,T_avg_Nm:null}}}),null);
+ assert.equal(p.context.bhaPower({...verified,requested_protocol:{speed_rpm:1e308},result:{...verified.result,metrics:{...metrics,T_avg_Nm:1e308}}}),null);
+ p.context.bhaActual({...verified,requested_protocol:{speed_rpm:1500}});assert.match(p.nodes.get('actualMetrics').text(),/235\.619.*1500/);assert.equal(p.calls.length,0);
  const a=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:[current,{...current,id:'other',analysis_plan_id:'another'}]);
  a.context.bhaRenderReference({dataset:'original_M6',case:'case_01',material:'M6',model_version:'original_V8_2',metrics,torque_csv_url:'/old.csv'});
  const reference=a.nodes.get('referenceStatus').text(),plot=a.nodes.get('torque').children;
