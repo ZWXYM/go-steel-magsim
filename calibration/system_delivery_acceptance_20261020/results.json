@@ -1,0 +1,79 @@
+{
+  "scope": "Read-only local software handoff acceptance; not full research completion",
+  "confirmed_samples": [
+    "B23R075",
+    "B27R090",
+    "B27R095",
+    "B30P105"
+  ],
+  "direction_pairs": 8,
+  "H_points": 26,
+  "verified_material_packages": 21,
+  "saved_native_task_reopened": true,
+  "new_native_jobs": 0,
+  "workflow_totals": {
+    "actual_torque_results": 3,
+    "available_materials": 21,
+    "linked_branches": 6,
+    "materials": 21
+  },
+  "workflow_issues": 0,
+  "saved_batch_statuses": [
+    {
+      "id": "bhbatch_80a468224274",
+      "status": "completed"
+    },
+    {
+      "id": "bhbatch_833b394d0c23",
+      "status": "completed_with_failures"
+    },
+    {
+      "id": "bhbatch_3d20d4726b94",
+      "status": "completed"
+    },
+    {
+      "id": "bhbatch_5823594a9f64",
+      "status": "completed"
+    }
+  ],
+  "author_optimization": {
+    "original_scripts": 6,
+    "original_stages": 3,
+    "scores_matched": 14,
+    "source_score_precision_decimal_places": 4,
+    "completed_plans": 2,
+    "scan_jobs": 3,
+    "archive_cases": 6,
+    "archive_official_csv_verified": 5,
+    "archive_incomplete_rows_retained": true
+  },
+  "guides": {
+    "reader_pages": 3,
+    "downloads_byte_identical": true,
+    "linked_manual": "/system/guide"
+  },
+  "UI": {
+    "guide_reader": true,
+    "guide_link": true,
+    "guide_download_byte_identical": true,
+    "workflow_material_search": "DEMO_GO_INTERFACE",
+    "workflow_stage_labels_match_saved_steps": true,
+    "workflow_saved_numerical_flag": false
+  },
+  "old_storage_files_unchanged": 4983,
+  "main_tests": 455,
+  "AST": 163,
+  "JS": 9,
+  "new_native_sessions": 0,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "new_training": 0,
+  "new_predictions": 0,
+  "new_preparations": 0,
+  "cumulative_Maxwell": 45,
+  "cumulative_MuMax": 682,
+  "software_flow_checked": true,
+  "full_research_complete": false,
+  "efficiency_for_calibrated_materials_enabled": false,
+  "final_calibrated_material_ranking_enabled": false
+}

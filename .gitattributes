@@ -187,3 +187,7 @@ docs/custom_material_full_chain_20261020.md -text
 calibration/custom_material_full_chain_20261020/** -text
 docs/batch_result_views_20261020.md -text
 calibration/batch_result_views_20261020/** -text
+templates/system_guide.html -text
+tests/test_system_guide.py -text
+docs/system_delivery_acceptance_20261020.md -text
+calibration/system_delivery_acceptance_20261020/** -text

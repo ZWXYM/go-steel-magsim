@@ -26,6 +26,8 @@ from modules.material_batch_reports import report_bundle as material_batch_repor
 from modules.native_pair_exports import NativePairExports
 from modules.native_material_runs import NativeMaterialRuns
 
+SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md'))
+
 
 def create_workbench(project,storage=None,root=None):
     project=Path(project).resolve()
@@ -43,7 +45,7 @@ def create_workbench(project,storage=None,root=None):
     native_material=CalibratedMotorNative(calibrated_motor,motor,storage/'calibrated_motor_native')
     bh_analysis=CalibratedMotorAnalysis(native_material,waveforms,storage/'calibrated_motor_analysis')
     bh_execution=CalibratedMotorExecution(bh_analysis,motor,storage/'calibrated_motor_execution')
-    material_workflow=MaterialMotorWorkflow(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
+    material_workflow=MaterialMotorWorkflow(input_view,calibrated_motor,native_material,bh_analysis,bh_execution)
     material_chain=MaterialMotorChain(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
     material_batches=MaterialMotorBatches(material_chain,storage/'calibrated_motor_batches')
     native_pairs=NativePairExports(root,storage/'native_pair_exports')
@@ -123,6 +125,28 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/system')
     def system_page():
         return render_template('system.html')
+
+    @bp.get('/system/guide')
+    @bp.get('/system/guide/<name>')
+    def system_guide(name='system_user_guide.md'):
+        from html import escape
+        import markdown
+        if name not in SYSTEM_GUIDE_DOCUMENTS:raise ValueError('该文档未列入系统操作说明')
+        source=project/'docs'/name
+        if not source.is_file():raise ValueError('当前程序副本缺少系统操作说明：'+name)
+        text=source.read_text(encoding='utf-8-sig')
+        # Local maintained instructions only; user-controlled file paths are not accepted.
+        content=markdown.markdown(escape(text),extensions=['tables'])
+        for target in SYSTEM_GUIDE_DOCUMENTS:
+            content=content.replace('href="'+target+'"','href="/system/guide/'+target+'"')
+        return render_template('system_guide.html',content=content,name=name)
+
+    @bp.get('/system/guide/<name>/download')
+    def system_guide_download(name):
+        if name not in SYSTEM_GUIDE_DOCUMENTS:raise ValueError('该文档未列入系统操作说明')
+        source=project/'docs'/name
+        if not source.is_file():raise ValueError('当前程序副本缺少系统操作说明：'+name)
+        return send_file(source,as_attachment=True,download_name=name,mimetype='text/markdown; charset=utf-8')
 
     @bp.get('/material-library')
     def material_page():

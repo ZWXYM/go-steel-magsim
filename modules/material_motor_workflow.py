@@ -75,6 +75,7 @@ class MaterialMotorWorkflow:
                     source = self.library.detail(calibration['id'], entry['key'])
                     issue_start = len(issues)
                     row.update({k: source[k] for k in LINEAGE})
+                    row.update({k:source[k] for k in ('display_name','source_material_id','input_params','input_parameter_source','input_identity_scope') if k in source})
                     row.update(H_axis=source['H_axis'], H_scale=source['H_scale'],
                         evidence_scope=source['evidence_scope'], efficiency_enabled=False, optimization_ranking_enabled=False)
                     for prep in records['preparation']:
@@ -177,6 +178,7 @@ class MaterialMotorWorkflow:
         out = dict(records=steps, next_step=next_step, progress_rank=rank, result_available=result)
         if result:
             out['torque'] = {k:run['result']['metrics'][k] for k in ('T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_csv_sha256')}
+            out['torque']['torque_numerical_acceptance']=run['result']['metrics'].get('torque_numerical_acceptance')
             out['result_scope'] = 'actual_calibrated_material_motor_torque_only'
         return out
 
@@ -189,10 +191,10 @@ class MaterialMotorWorkflow:
         snapshot = self.snapshot()
         files = {'workflow.json':json.dumps(snapshot, ensure_ascii=False, indent=2).encode('utf8')}
         stream = io.StringIO(newline=''); writer = csv.writer(stream)
-        writer.writerow(['calibration_id','material_key','material_name','available','next_action','blocked_reason','effective_bank_sha256','excluded_grades','actual_torque_results'])
+        writer.writerow(['calibration_id','material_key','material_name','available','next_action','blocked_reason','effective_bank_sha256','excluded_grades','actual_torque_results','source_material_id','input_params','input_identity_scope'])
         for row in snapshot['materials']:
             writer.writerow([row['calibration_id'],row['material_key'],row.get('material_name',''),row['available'],row['next_step']['action'],
-                row['next_step'].get('blocked_reason') or '',row.get('effective_bank_sha256',''),';'.join(row.get('excluded_grades',[])),sum(b['result_available'] for b in row['branches'])])
+                row['next_step'].get('blocked_reason') or '',row.get('effective_bank_sha256',''),';'.join(row.get('excluded_grades',[])),sum(b['result_available'] for b in row['branches']),row.get('source_material_id',''),json.dumps(row.get('input_params'),ensure_ascii=False) if row.get('input_params') else '',row.get('input_identity_scope','')])
         files['materials.csv'] = stream.getvalue().encode('utf-8-sig')
         manifest = dict(version=VERSION, checked_utc=snapshot['checked_utc'], read_only=True, new_native_solves=0,
             files={name:dict(sha256=sha(blob),bytes=len(blob)) for name,blob in files.items()})

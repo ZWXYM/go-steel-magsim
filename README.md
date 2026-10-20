@@ -1,5 +1,19 @@
 # GO-Steel MagSim — 取向硅钢微磁仿真与材料校准
 
+## 当前系统（2026-10-20）
+
+双击 `start_system.cmd` 打开统一首页，使用实际显示的端口；首页可在线阅读和下载操作说明。完整用法见[系统使用说明](docs/system_user_guide.md)，功能交付核对见[系统交付检查](docs/system_delivery_acceptance_20261020.md)。
+
+- 已接通四样品校准和整牌号留出、新参数原生RD/TD、保存预测与材料库、校准材料批量分析、官方CSV/原始波形/来源汇总。
+- 作者已有原库多牌号扫描和优化流程保留，网页可配置、串行下发、重开与下载；各数据集及其处理口径分别保存。
+- 材料库、批量页和进度页按原材料代号识别预测，进度页同时显示保存参数和AMAT内部名。结果计算完成与原数值判据分开表达。
+- 当前新参数接口例子只有1晶粒/方向，其电机转矩含数值异常，原值和失败状态保留。BH校准材料只提供转矩分析，损耗与最终材料排名另需数据；系统功能贯通不代表全部研究问题已解决。
+
+本机的既有结果可重开使用，无需为演示重新求解。完整原生工程与论文归档不随公开程序发布；缺少本机许可或资源时仍可使用CPU功能和本机已保存的结果。论文整理继续暂停。
+
+<details>
+<summary>开发与验证历史（保留原日期、当时端口和阶段状态）</summary>
+
 2026-10-20 完整联调：新材料参数→真实MuMax→校准预测→电机批量→官方31点CSV/摘要下载已实跑；原库优化保留。1晶粒接口例子的电机结果有数值异常，原始点/判据与异常标记保留，未追加重算。主444测试通过；见[完整流程和实际结果](docs/custom_material_full_chain_20261020.md)。论文暂停。
 
 **开始使用：** 双击 `start_system.cmd`；完整操作见[系统使用说明](docs/system_user_guide.md)。下列日期条目保留开发历史，当前端口与版本以系统首页为准。
@@ -90,6 +104,8 @@ Si 为报告标称值，ODF 为估计；尚未绑定同批次完整成分证书�
 
 详见 [校准记录](docs/calibration_progress_20261003.md)、[试验数据与协议](calibration/README.md)、[发布差异与后续工作](docs/publication_status.md)。原有功能文档保存在 [历史 README](docs/legacy_README_20260625.md)，历史精度/物理表述不能覆盖当前验证结论。
 
+</details>
+
 ## 安装与复现
 
 新增 [质量工作台与 CPU 模式](docs/workbench_quality_20261005.md)：逐方向原生质量表、冻结来源下载、预测/材料 metadata 继承及正式训练标签筛查。使用 `python tools/start_workbench.py --port 5001 --cpu-only` 可校准、准备和整理任务，原生求解/训练提交暂停，启动不恢复队列；本轮未改变 bank 或曲线，100 项测试通过。
@@ -102,8 +118,10 @@ Si 为报告标称值，ODF 为估计；尚未绑定同批次完整成分证书�
 python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
-.venv\Scripts\python.exe tests/smoke_v2_workflow.py
+.venv\Scripts\python.exe tools/start_workbench.py --page system --open-browser
 ```
+
+上面的单元测试用于当前系统。`tests/smoke_v2_workflow.py` 保留历史平台版本断言，属于历史验证入口。重开已有任务时使用原资源目录和任务存储；从首页核对这两个位置。
 
 无需 GPU 即可从已提交的原始 table 重新分析校准与材料留出：
 

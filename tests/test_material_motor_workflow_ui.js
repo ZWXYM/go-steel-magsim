@@ -25,6 +25,10 @@ const snapshot={version:'v1',checked_utc:'now',resources:{cpu_only:false,license
  let oldResolve,n=0;const old=new Promise(r=>oldResolve=r),r=harness(async()=>++n===1?old:{...snapshot,resources:{...snapshot.resources,pending_native_tasks:[{status:'running'}]},materials:[{...row,branches:[{...branch,result_available:false,records:{execution:{id:'bhexec_1',status:'running',phase:'solving'}}}]}]});
  const first=r.context.mwfLoad();await r.context.mwfLoad();oldResolve(snapshot);await first;assert.ok(r.timers.includes(5000));assert.equal(r.nodes.get('refresh').disabled,false);
  r.context.fetch=async()=>{throw Error('read failure')};await r.context.mwfLoad();assert.match(r.nodes.get('error').text(),/保留上次快照/);assert.equal(r.nodes.get('materials').children.length,1);
+ const anomalous={...ready,branches:[{...branch,torque:{...branch.torque,torque_numerical_acceptance:false}}]};h.context.mwfDetail(anomalous);assert.match(h.nodes.get('branches').text(),/原数值判据：未通过，原始结果保留/);assert.doesNotMatch(h.nodes.get('branches').text(),/等待实际导入/);
  assert.ok(r.calls.every(c=>c.method==='GET'));
+ const identity={...ready,display_name:'CUSTOM_GO · pred_bbb',source_material_id:'CUSTOM_GO',input_params:{f_Goss:.85,theta_0_deg:4,halfwidth_deg:6,Si_content:3.1}};
+ const named=harness(async()=>({...snapshot,materials:[identity]}));await named.context.mwfLoad();named.nodes.get('search').value='CUSTOM_GO';named.context.mwfRenderRows();assert.equal(named.nodes.get('materials').children.length,1);
+ named.context.mwfDetail(identity);assert.match(named.nodes.get('detailTitle').text(),/CUSTOM_GO/);assert.match(named.nodes.get('branches').text(),/Si建模参数 3.1%/);assert.match(named.nodes.get('branches').text(),/AMAT内部名/);assert.doesNotMatch(named.nodes.get('resource').text(),/尚未下发/);assert.ok(named.calls.every(c=>c.method==='GET'));
  console.log('Material-motor workflow UI: read-only, blocked license, source/zero metrics, filters, stale responses and retained snapshot: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

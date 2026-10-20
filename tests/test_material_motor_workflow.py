@@ -37,6 +37,31 @@ class WorkflowTests(unittest.TestCase):
         self.mode = patch.dict(os.environ, {'MAGSIM_CPU_ONLY':'0'}); self.mode.start(); self.addCleanup(self.mode.stop)
 
     def row(self): return self.workflow.snapshot()['materials'][0]
+
+    def test_saved_input_name_and_parameters_follow_readonly_progress_and_download(self):
+        self.source.update(display_name='CUSTOM_GO · pred_saved',source_material_id='CUSTOM_GO',
+            input_params=dict(f_Goss=.85,theta_0_deg=4,halfwidth_deg=6,Si_content=3.1),
+            input_parameter_source='保存参数',input_identity_scope='saved_model_parameters_not_measurement_certification')
+        before=copy.deepcopy(self.prep)
+        row=self.row()
+        self.assertEqual(row['source_material_id'],'CUSTOM_GO')
+        self.assertEqual(row['display_name'],'CUSTOM_GO · pred_saved')
+        self.assertEqual(row['input_params'],self.source['input_params'])
+        with zipfile.ZipFile(self.workflow.bundle()) as archive:
+            self.assertIn('CUSTOM_GO',archive.read('materials.csv').decode('utf-8-sig'))
+            snapshot=json.loads(archive.read('workflow.json'))
+            self.assertEqual(snapshot['materials'][0]['input_identity_scope'],self.source['input_identity_scope'])
+        self.assertEqual(before,self.prep)
+
+    def test_saved_numerical_flag_is_separate_from_completed_execution(self):
+        self.completed()
+        self.assertIsNone(self.row()['branches'][0]['torque']['torque_numerical_acceptance'])
+        self.run['result']['metrics']['torque_numerical_acceptance']=False
+        row=self.row()
+        self.assertTrue(row['branches'][0]['result_available'])
+        self.assertFalse(row['branches'][0]['torque']['torque_numerical_acceptance'])
+        self.assertEqual(row['branches'][0]['records']['execution']['status'],'completed')
+
     def modeled(self):
         self.native['status']='imported_not_solved'; self.plan['status']='model_snapshot_ready_not_submitted'
         self.components[3].records.return_value=[self.run]
@@ -151,6 +176,9 @@ class WorkflowAPITests(unittest.TestCase):
                 client=app.test_client(); response=client.get('/api/workbench/material-motor/workflows')
                 self.assertEqual(response.status_code,200,response.json)
                 row=next(r for r in response.json['materials'] if r['calibration_id']==self.cal and r['material_key']==self.key)
+                self.assertIn('source_material_id',row)
+                self.assertIn('input_params',row)
+                self.assertEqual(row['input_identity_scope'],'saved_model_parameters_not_measurement_certification')
                 self.assertEqual(row['branches'][0]['records']['analysis_plan']['id'],plan['id'])
                 self.assertEqual(row['next_step']['action'],'native_start'); self.assertTrue(response.json['resources']['cpu_only'])
                 bundle=client.get('/api/workbench/material-motor/workflows/bundle'); self.assertEqual(bundle.status_code,200)
