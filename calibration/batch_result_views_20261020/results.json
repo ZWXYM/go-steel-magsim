@@ -1,0 +1,49 @@
+{
+  "scope": "CPU and UI result organization; no new physics validation",
+  "batch": "bhbatch_80a468224274",
+  "UI": {
+    "initial_points": 62,
+    "accepted_points": 31,
+    "reload_points": 31,
+    "empty_points": 0,
+    "empty_choices_visible": true,
+    "manual_points": 31,
+    "refresh_points": 31
+  },
+  "material_names": [
+    "DEMO_GO_INTERFACE",
+    "B30P105"
+  ],
+  "identity_statuses": [
+    "verified_saved_input",
+    "verified_saved_input"
+  ],
+  "official_CSV_points": {
+    "item_01": 31,
+    "item_02": 31
+  },
+  "original_batch_members_preserved": 4,
+  "old_storage_files_unchanged": 4983,
+  "counts": {
+    "results": 2,
+    "new_completed": 1,
+    "reused": 1,
+    "original_acceptance_passed": 1,
+    "original_acceptance_failed": 1,
+    "acceptance_unreported": 0
+  },
+  "main_tests": 448,
+  "AST": 162,
+  "JS": 9,
+  "new_native_sessions": 0,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "new_training": 0,
+  "new_predictions": 0,
+  "cumulative_Maxwell": 45,
+  "cumulative_MuMax": 682,
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false,
+  "saved_negative_points_retained": true,
+  "source_material_parameters_are_measurements": false
+}

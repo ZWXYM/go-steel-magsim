@@ -10,7 +10,7 @@ class Node{
 }
 const record={id:'bhbatch_aaaaaaaaaaaa',status:'prepared',dispatch_compatible:true,pause_requested:false,
  budget:{max_new_imports:1,max_new_motor_solves:1,cores:2,gpus:0},
- totals:{materials:1,actual_torque_results:1,new_completed_motor_solves:0},items:[{id:'item_01',status:'reused_result',
+ totals:{materials:1,actual_torque_results:1,new_completed_motor_solves:0},items:[{id:'item_01',status:'reused_result',result_available:true,
  selection:{calibration:'cal_a',key:'prediction:pred_a'},source:{material_name:'WB_a',excluded_grades:['B30P105']},
  analysis_url:'/calibrated-motor/analysis/plan_a',execution_id:'bhexec_existing',metrics:{T_avg_Nm:0,T_min_Nm:0,T_max_Nm:0,K_T_ripple_pct:null}}]};
 function harness(api){
@@ -50,5 +50,27 @@ function harness(api){
  assert.match(plot.nodes.get('batchRows').text(),/数值异常/);assert.match(plot.nodes.get('batchRows').text(),/-4\.500000/);assert.match(plot.nodes.get('batchTotals').textContent,/未通过 1项/);
  const identity=harness(async url=>url.endsWith('/material-inputs')?{records:[{id:'cal_a',entries:[{key:'prediction:pred_a',label:'CUSTOM_INPUT · pred_a',available:true,kind:'prediction',excluded_grades:[]}]}]}:record);
  identity.c.mbRender(record,true);await identity.c.mbCatalog();assert.match(identity.nodes.get('batchRows').text(),/CUSTOM_INPUT/);assert.equal(identity.nodes.get('batchStart').disabled,false);assert.ok(identity.calls.every(c=>c.method==='GET'));
+ const mixed=structuredClone(record);mixed.status='completed';mixed.totals={materials:2,actual_torque_results:2,new_completed_motor_solves:1};
+ mixed.items=[{...mixed.items[0],metrics:{...metrics,torque_numerical_acceptance:true}},
+ {...mixed.items[0],id:'item_02',status:'completed',metrics:{...metrics,torque_Nm:[-10,1,2],torque_numerical_acceptance:false}}];
+ const select=harness(async()=>mixed);select.c.mbRender(mixed,true);const raw=JSON.stringify(mixed);
+ assert.equal(select.nodes.get('batchWaveforms').querySelectorAll('circle').length,6);
+ assert.match(select.nodes.get('batchRows').text(),/新增结果已完成/);assert.match(select.nodes.get('batchRows').text(),/复用已有结果/);
+ assert.match(select.nodes.get('batchTotals').textContent,/复用 1项/);assert.match(select.nodes.get('batchTotals').textContent,/通过 1项 \/ 未通过 1项 \/ 未报告 0项/);
+ const colors=select.nodes.get('batchWaveforms').querySelectorAll('polyline').map(n=>n.attrs.stroke);
+ select.c.mbPlotMode('accepted');assert.equal(select.nodes.get('batchWaveforms').querySelectorAll('circle').length,3);
+ assert.match(select.urls.at(-1),/plot=accepted/);assert.match(select.nodes.get('batchPlotCount').textContent,/显示 1 \/ 2/);
+ select.c.mbRender(mixed,true);assert.equal(select.nodes.get('batchWaveforms').querySelectorAll('circle').length,3);
+ select.c.mbPlotMode('none');assert.equal(select.nodes.get('batchWaveforms').children.length,0);assert.equal(select.nodes.get('batchPlotPanel').hidden,false);assert.equal(select.nodes.get('batchPlotEmpty').hidden,false);
+ select.c.mbRender(mixed,true);assert.equal(select.nodes.get('batchWaveforms').children.length,0);
+ select.c.mbPlotMode('all');const boxes=select.nodes.get('batchPlotChoices').querySelectorAll('input');boxes[0].checked=false;boxes[0].onchange();
+ assert.equal(select.nodes.get('batchWaveforms').querySelectorAll('polyline')[0].attrs.stroke,colors[1]);assert.match(select.urls.at(-1),/plot=item_02/);
+ select.c.mbRender(mixed,true);assert.equal(select.nodes.get('batchWaveforms').querySelectorAll('circle').length,3);
+ const restored=harness(async()=>mixed);restored.c.location.search='?batch='+mixed.id+'&plot=item_02';restored.c.mbRender(mixed,true);
+ assert.equal(restored.nodes.get('batchWaveforms').querySelectorAll('circle').length,3);assert.equal(restored.nodes.get('batchPlotChoices').querySelectorAll('input')[0].checked,false);
+ restored.c.mbRender({...mixed,id:'bhbatch_bbbbbbbbbbbb'},true);assert.equal(restored.nodes.get('batchWaveforms').querySelectorAll('circle').length,6);
+ const invalid=harness(async()=>mixed);invalid.c.location.search='?batch='+mixed.id+'&plot=unknown';invalid.c.mbRender(mixed,true);assert.equal(invalid.nodes.get('batchWaveforms').querySelectorAll('circle').length,6);
+ const noResult=harness(async()=>record);noResult.c.mbRender({...record,items:[{...record.items[0],result_available:false,metrics:{T_avg_Nm:999}}]},true);assert.doesNotMatch(noResult.nodes.get('batchRows').text(),/999/);
+ assert.equal(JSON.stringify(mixed),raw);assert.equal(select.calls.length,0);assert.equal(restored.calls.length,0);
  console.log('Calibrated batch UI: exact CPU preparation, no auto dispatch, pause/resume gates, zero/null, stale/resource isolation: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

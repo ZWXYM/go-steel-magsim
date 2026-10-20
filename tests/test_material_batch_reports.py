@@ -1,12 +1,14 @@
 """Derived summaries preserve source CSV/JSON bytes and missing-value meaning."""
+import copy
+import csv
 import io
 import json
 import unittest
 import zipfile
 from types import SimpleNamespace
+from unittest.mock import patch
 
-import test_material_motor_chain as fixtures
-from modules.material_batch_reports import report_bundle, summary_markdown, torque_findings, metrics_nonpositive_points
+from modules.material_batch_reports import report_bundle, summary_markdown, torque_findings, metrics_nonpositive_points, material_inputs, result_counts
 from modules.material_library import sha
 
 
@@ -81,6 +83,61 @@ class BatchReportTests(unittest.TestCase):
         for metrics in [dict(time_ms=[0,1]),dict(time_ms=[0,1],torque_Nm=[1]),
                         dict(time_ms=[0,0],torque_Nm=[1,2]),dict(time_ms=[0,1],torque_Nm=[1,float('nan')])]:
             with self.assertRaises(ValueError):metrics_nonpositive_points(metrics)
+
+    def test_result_counts_separate_reuse_and_saved_acceptance(self):
+        record=self.record();self.assertEqual(result_counts(record),dict(reused=1,passed=0,failed=0,unknown=1))
+        record['items'][0]['metrics']['torque_numerical_acceptance']=False
+        record['items'][1].update(result_available=True,status='completed',metrics=dict(torque_numerical_acceptance=True))
+        self.assertEqual(result_counts(record),dict(reused=1,passed=1,failed=1,unknown=0))
+
+    def identity_fixture(self):
+        record=self.record()
+        for row in record['items']:
+            row['source'].update(parent_bank_sha256='parent',training_grades=['B23R075'],AMAT_sha256='amat',metadata_sha256='meta')
+        details=[dict(row['source'],source_material_id='CUSTOM_'+str(i),display_name='CUSTOM_'+str(i),
+            input_params=dict(f_Goss=.855,theta_0_deg=4.5,halfwidth_deg=6.5,Si_content=3.1),
+            input_parameter_source='保存的建模参数',input_identity_scope='saved_model_parameters_not_measurement_certification',
+            files={'material.amat':dict(sha256='amat'),'metadata.json':dict(sha256='meta')}) for i,row in enumerate(record['items'])]
+        return record,details
+
+    def test_verified_identity_is_exported_without_mutating_original_batch(self):
+        record,details=self.identity_fixture();original=json.dumps(record)
+        manager=SimpleNamespace(chain=SimpleNamespace(library=object()))
+        with patch('modules.material_batch_reports.MaterialInputView') as view:
+            view.return_value.detail.side_effect=details
+            identities=material_inputs(manager,record)
+        self.assertEqual(identities['entries'][0]['source_material_id'],'CUSTOM_0')
+        self.assertEqual(identities['entries'][0]['input_params']['Si_content'],3.1)
+        self.assertEqual(identities['entries'][0]['identity_status'],'verified_saved_input')
+        self.assertIn('CUSTOM_0',summary_markdown(record,identities))
+        self.assertEqual(json.dumps(record),original)
+        package=self.package();manager.bundle=lambda artifact:package
+        with patch('modules.material_batch_reports.material_inputs',return_value=identities):
+            result=report_bundle(manager,'test')
+        with zipfile.ZipFile(result) as archive:
+            mapping=json.loads(archive.read('material_inputs.json'));self.assertEqual(mapping,identities)
+            rows=list(csv.DictReader(io.StringIO(archive.read('material_inputs.csv').decode('utf-8-sig'))))
+            self.assertEqual(rows[0]['source_material_id'],'CUSTOM_0');self.assertEqual(rows[0]['f_Goss'],'0.855')
+
+    def test_identity_mismatch_never_attaches_unverified_parameters(self):
+        record,details=self.identity_fixture();manager=SimpleNamespace(chain=SimpleNamespace(library=object()))
+        for mutate in (lambda d:d.update(effective_bank_sha256='changed'),lambda d:d['files']['material.amat'].update(sha256='changed')):
+            changed=copy.deepcopy(details);mutate(changed[0])
+            with patch('modules.material_batch_reports.MaterialInputView') as view:
+                view.return_value.detail.side_effect=changed
+                identities=material_inputs(manager,record)
+            self.assertEqual(identities['entries'][0]['identity_status'],'unavailable')
+            self.assertIsNone(identities['entries'][0]['input_params']);self.assertIsNone(identities['entries'][0]['source_material_id'])
+            self.assertEqual(identities['entries'][1]['identity_status'],'verified_saved_input')
+            self.assertIn('不符',identities['entries'][0]['identity_error'])
+
+    def test_old_package_missing_identity_still_downloads_original_data(self):
+        package=self.package();manager=SimpleNamespace(bundle=lambda artifact:package)
+        with zipfile.ZipFile(report_bundle(manager,'test')) as archive:
+            identities=json.loads(archive.read('material_inputs.json'))
+            self.assertTrue(all(e['identity_status']=='unavailable' and e['source_material_id'] is None for e in identities['entries']))
+            self.assertEqual(archive.read('item_01/Torque Plots.csv'),b'Time,Torque\r\n0,0\r\n')
+            self.assertIn('不补写参数',archive.read('summary.md').decode())
 
 
 if __name__=='__main__':unittest.main()
