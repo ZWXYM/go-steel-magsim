@@ -209,3 +209,7 @@ docs/launcher_consistency_20261020.md -text
 calibration/launcher_consistency_20261020/** -text
 docs/batch_ui_binding_20261020.md -text
 calibration/batch_ui_binding_20261020/** -text
+static/js/motor_optimization.js -text
+tests/test_motor_optimization_ui.js -text
+docs/optimization_ui_binding_20261020.md -text
+calibration/optimization_ui_binding_20261020/** -text

@@ -1,0 +1,41 @@
+{
+  "main_tests_passed": 475,
+  "AST": 168,
+  "JS": 11,
+  "comparison": {
+    "before": {
+      "stale_analysis_visible_under_other_dataset": true,
+      "current_dataset_after_user_selected_B": "v8_1",
+      "duplicate_plan_submit_requests": 2,
+      "actual_network_or_native_submissions": 0
+    },
+    "after": {
+      "stale_analysis_visible_under_other_dataset": false,
+      "current_dataset_after_user_selected_B": "v8_2_archive",
+      "duplicate_plan_submit_requests": 1,
+      "actual_network_or_native_submissions": 0
+    }
+  },
+  "original_score_and_plan_backends_unchanged": true,
+  "protected_programs_unchanged": 8,
+  "saved_analysis_fixtures": 4,
+  "saved_rows_preserved": 20,
+  "live_original_rule_and_dataset_switch_verified": true,
+  "live_configuration_change_hides_old_result": true,
+  "current_context_and_response_identity_checked": true,
+  "stale_error_and_response_isolated": true,
+  "old_storage_files_unchanged": 4983,
+  "queue_empty": true,
+  "automatic_queue_resume": false,
+  "new_saved_optimization_records": 0,
+  "new_scan_plans": 0,
+  "new_native_sessions": 0,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "new_candidate_evaluations": 0,
+  "new_ML_training": 0,
+  "new_saved_predictions": 0,
+  "new_preparations": 0,
+  "cumulative_Maxwell": 45,
+  "cumulative_MuMax": 682
+}
