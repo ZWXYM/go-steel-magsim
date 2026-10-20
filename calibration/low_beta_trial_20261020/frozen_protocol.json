@@ -1,0 +1,96 @@
+{
+  "version": "native_residual_beta_quarter_trial_v1",
+  "candidates": [
+    {
+      "id": "legacy_idw",
+      "kind": "idw",
+      "native_beta": 1.0,
+      "ridge": 0.0
+    },
+    {
+      "id": "mean_delta",
+      "kind": "mean",
+      "native_beta": 1.0,
+      "ridge": 0.0
+    },
+    {
+      "id": "goss_ridge_1_beta_1",
+      "kind": "goss_ridge",
+      "native_beta": 1.0,
+      "ridge": 1.0
+    },
+    {
+      "id": "goss_ridge_1_beta_0.5",
+      "kind": "goss_ridge",
+      "native_beta": 0.5,
+      "ridge": 1.0
+    },
+    {
+      "id": "goss_ridge_0.1_beta_1",
+      "kind": "goss_ridge",
+      "native_beta": 1.0,
+      "ridge": 0.1
+    },
+    {
+      "id": "goss_ridge_0.1_beta_0.5",
+      "kind": "goss_ridge",
+      "native_beta": 0.5,
+      "ridge": 0.1
+    },
+    {
+      "id": "goss_ridge_0_beta_1",
+      "kind": "goss_ridge",
+      "native_beta": 1.0,
+      "ridge": 0.0
+    },
+    {
+      "id": "goss_ridge_0_beta_0.5",
+      "kind": "goss_ridge",
+      "native_beta": 0.5,
+      "ridge": 0.0
+    },
+    {
+      "id": "trial_goss_ridge_1_beta_0.25",
+      "kind": "goss_ridge",
+      "native_beta": 0.25,
+      "ridge": 1.0
+    },
+    {
+      "id": "trial_goss_ridge_0.1_beta_0.25",
+      "kind": "goss_ridge",
+      "native_beta": 0.25,
+      "ridge": 0.1
+    },
+    {
+      "id": "trial_goss_ridge_0_beta_0.25",
+      "kind": "goss_ridge",
+      "native_beta": 0.25,
+      "ridge": 0.0
+    }
+  ],
+  "outer": "leave one whole material, RD and TD together",
+  "inner": "leave one whole material from the remaining three",
+  "selection_loss": "mean(RMSE_H_ge_100_T + abs(B800_error_T)); equal materials and directions",
+  "candidate_design_context": "Retrospective development using four previously inspected processed references; no new independent validation",
+  "unchanged_rules": {
+    "f_Goss_scale": 0.1,
+    "max_signed_weight_L1": 3.0,
+    "guard": "monotone_J_Msat_prior",
+    "physical_H": true
+  },
+  "reference_only_control": "separate saved control, never a selectable candidate",
+  "acceptance": {
+    "relative_mean_RMSE_improvement": 0.1,
+    "worst_B800_not_increased": true,
+    "worst_direction_RMSE_not_increased": true,
+    "max_single_direction_RMSE_regression_T": 0.01,
+    "all_abs_B800_below_T": 0.05
+  },
+  "max_prediction_evaluations": 420,
+  "max_CPU_wall_seconds": 60,
+  "new_native_solves": 0,
+  "new_ML_training": 0,
+  "new_saved_predictions": 0,
+  "automatic_deployment": false,
+  "prospective_external_validation": false
+}

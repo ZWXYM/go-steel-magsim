@@ -1,0 +1,47 @@
+{
+  "version": "native_residual_beta_quarter_trial_v1",
+  "frozen_protocol_sha256": "10e012a56ac8ae757620ec63dc2d895de1d749e1eeb7c7c60acb639ade6b1eb7",
+  "summaries": {
+    "baseline_saved_nested": {
+      "mean_rmse_T": 0.04404264729019529,
+      "max_abs_B800_error_T": 0.10615668757659735,
+      "max_direction_RMSE_T": 0.09433448866545291,
+      "B800_all_below_0_05T": false
+    },
+    "trial_nested": {
+      "mean_rmse_T": 0.030801268167274947,
+      "max_abs_B800_error_T": 0.0603564043850644,
+      "max_direction_RMSE_T": 0.05864270976302634,
+      "B800_all_below_0_05T": false
+    },
+    "reference_only_control": {
+      "mean_rmse_T": 0.02924797844779696,
+      "max_abs_B800_error_T": 0.07450303818284576,
+      "max_direction_RMSE_T": 0.06465429500757808,
+      "B800_all_below_0_05T": false
+    }
+  },
+  "gates": {
+    "mean_RMSE_improvement_at_least_10pct": true,
+    "worst_B800_not_increased": true,
+    "worst_direction_RMSE_not_increased": true,
+    "max_single_direction_regression_at_most_0_01T": true,
+    "all_B800_below_0_05T": false
+  },
+  "all_acceptance_gates_passed": false,
+  "outer_reference_counterfactual_unchanged": true,
+  "max_single_direction_RMSE_regression_T": 0.0,
+  "prediction_evaluations": 340,
+  "existing_bank_unchanged": true,
+  "default_prediction_changed": false,
+  "prospective_external_validation": false,
+  "new_native_solves": 0,
+  "new_ML_training": 0,
+  "new_saved_predictions": 0,
+  "automatic_deployment": false,
+  "scope": "Retrospective four-material development; no deployment or prospective validation",
+  "B800_passed_directions": 6,
+  "B800_total_directions": 8,
+  "prototype_and_packaged_trial_curves_identical": true,
+  "relative_mean_RMSE_improvement_pct": 30.064902855801122
+}

@@ -191,3 +191,7 @@ templates/system_guide.html -text
 tests/test_system_guide.py -text
 docs/system_delivery_acceptance_20261020.md -text
 calibration/system_delivery_acceptance_20261020/** -text
+tools/run_calibration_beta_trial.py -text
+tests/test_calibration_beta_trial.py -text
+docs/calibration_beta_trial_20261020.md -text
+calibration/low_beta_trial_20261020/** -text
