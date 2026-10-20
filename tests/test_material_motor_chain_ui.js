@@ -24,5 +24,31 @@ function harness(){
  assert.match(bad.nodes.get('error').textContent,/需检查/);assert.equal(bad.nodes.get('prepareMotor').disabled,false);assert.equal(bad.nodes.get('chainOpen').hidden,true);
  const stale=harness();stale.c.fetch=async()=>({ok:true,json:async()=>{vm.runInContext('ML.detail={key:"another"}',stale.c);return {records:{},reused:[],created:[],next_step:'old',href:'/old'}}});
  await stale.c.mlPrepareMotor();assert.equal(stale.nodes.get('chainOpen').hidden,true);assert.notEqual(stale.nodes.get('chainStatus').textContent,'old');
+
+ // A recreated native-action button shares the pending state of the original operation.
+ let finishImport;const importWait=new Promise(resolve=>finishImport=resolve),native=harness();
+ native.c.fetch=async(url,options)=>{native.calls.push({url,options});return importWait};
+ const firstButton={disabled:false},newButton={disabled:false},cpuButton={disabled:false},url='/api/workbench/calibrated-motor/native-imports',data={preparation:'bhprep_test'};
+ native.c.mlBindNativeAction(firstButton,url,data,native.selected);const importing=native.c.mlNativeAction(url,data,firstButton,native.selected);
+ native.c.mlBindNativeAction(newButton,url,data,native.selected);native.c.mlBindNativeAction(cpuButton,url+'/calimport_test/start',{},native.selected,true);
+ assert.equal(newButton.disabled,true);await native.c.mlNativeAction(url,data,newButton,native.selected);await native.c.mlPrepareMotor();assert.equal(native.calls.length,1);
+ const changed={calibration_id:'cal_b',key:'prediction:other'};native.c.reselected=changed;vm.runInContext('ML.detail=reselected',native.c);let refreshed=null;native.c.mlLoadPreparations=async selected=>{refreshed=selected};
+ finishImport({ok:true,json:async()=>({id:'calimport_test'})});await importing;assert.equal(refreshed,changed);assert.equal(cpuButton.disabled,true);assert.equal(newButton.disabled,false);
+ // An old material's failure cannot replace the new material's error display.
+ let rejectImport;const failWait=new Promise((_,reject)=>rejectImport=reject),nf=harness();nf.c.fetch=async()=>failWait;
+ const failedNative=nf.c.mlNativeAction(url,data,{disabled:false},nf.selected);nf.c.other={key:'another'};vm.runInContext('ML.detail=other',nf.c);rejectImport(Error('old material failure'));await failedNative;
+ assert.notEqual(nf.nodes.get('error').textContent,'old material failure');
+ // Keep the shared lock until the post-action read finishes, including freshly rendered buttons.
+ const refreshCase=harness();let announceRefresh,finishRefresh;
+ const refreshStarted=new Promise(resolve=>announceRefresh=resolve),refreshPending=new Promise(resolve=>finishRefresh=resolve);
+ refreshCase.c.mlLoadPreparations=async()=>{announceRefresh();await refreshPending};
+ const original={disabled:false},replacement={disabled:false};refreshCase.c.mlBindNativeAction(original,url,data,refreshCase.selected);
+ const pendingAction=refreshCase.c.mlNativeAction(url,data,original,refreshCase.selected);await refreshStarted;
+ refreshCase.c.mlBindNativeAction(replacement,url,data,refreshCase.selected);
+ assert.equal(replacement.disabled,true,'post-action refresh must retain native-action lock');
+ assert.equal(refreshCase.nodes.get('prepareMotor').disabled,true);
+ const duplicateAction=refreshCase.c.mlNativeAction(url,data,replacement,refreshCase.selected);
+ assert.equal(refreshCase.calls.length,1);finishRefresh();await Promise.all([pendingAction,duplicateAction]);
+ assert.equal(replacement.disabled,false);assert.equal(refreshCase.nodes.get('prepareMotor').disabled,false);
  console.log('Material chain UI: exact source/protocol, no dispatch, double-click protection, stale/error recovery: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

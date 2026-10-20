@@ -18,7 +18,10 @@ function mlPlot(id,c){
   c.H.forEach((h,i)=>add('circle',{cx:x(h),cy:y(c[field][i]),r:2,fill:color}));
  }
 }
+function mlSyncActions(){ml$('prepareMotor').disabled=Boolean(ML.nativeBusy||ML.chainBusy);for(const item of ML.nativeButtons||[])item.button.disabled=Boolean(item.baseDisabled||ML.nativeBusy||ML.chainBusy)}
+function mlBindNativeAction(button,url,data,selected,baseDisabled=false){ML.nativeButtons??=[];ML.nativeButtons.push({button,baseDisabled});button.onclick=()=>mlNativeAction(url,url.endsWith('/analysis-plans')?{...data,measurement_protocol:ml$('torqueProtocol').value}:data,button,selected);mlSyncActions()}
 function mlRender(v){
+ ML.nativeButtons=[];mlSyncActions();
  ML.detail=v;ml$('preparedMotor').replaceChildren();ml$('chainStatus').textContent='';ml$('chainOpen').hidden=true;mlLoadPreparations(v);
  ml$('detail').hidden=false;ml$('title').textContent=mlLabels[v.kind]+' · '+(v.display_name||v.material_name);
  ml$('scope').textContent=v.evidence_scope==='same_material_fit'?'同样品参考修正展示；其拟合误差不能作为泛化误差。':v.excluded_grades.length?'校准训练已完整排除所列牌号；此包保留原留出/预测结果，不代表新增外部实验验证。':'此预测使用全部训练样品，未执行材料留出；若输入为已知样品，结果仍属于同样品标定。';
@@ -55,36 +58,38 @@ async function mlRefresh(){
 if(typeof document!=='undefined'){ml$('refresh').onclick=mlRefresh;ml$('calibration').onchange=()=>mlEntries();mlRefresh()}
 
 async function mlPrepareMotor(){
- const selected=ML.detail,button=ml$('prepareMotor');if(!selected||button.disabled)return;button.disabled=true;ml$('error').textContent='';ml$('chainStatus').textContent='正在核对并接续已有记录…';ml$('chainOpen').hidden=true;
+ const selected=ML.detail,button=ml$('prepareMotor');if(!selected||button.disabled||ML.nativeBusy||ML.chainBusy)return;ML.chainBusy=true;mlSyncActions();ml$('error').textContent='';ml$('chainStatus').textContent='正在核对并接续已有记录…';ml$('chainOpen').hidden=true;
  try{const r=await fetch('/api/workbench/material-motor/prepare-or-reuse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({calibration:selected.calibration_id,key:selected.key,cores:Number(ml$('motorCores').value),measurement_protocol:ml$('torqueProtocol').value})});const v=await r.json();if(!r.ok)throw Error(v.error||'准备失败');
  if(ML.detail!==selected)return;ml$('chainStatus').textContent=`${v.next_step} · 复用 ${v.reused.length} 项，新增 ${v.created.length} 项准备 · 未下发原生任务`;
  ml$('chainOpen').href=v.href;ml$('chainOpen').textContent=v.records.analysis_plan?'打开现有分析计划':'查看当前材料记录';ml$('chainOpen').hidden=false;await mlLoadPreparations(selected);
- }catch(e){if(ML.detail===selected){ml$('error').textContent=e.message;ml$('chainStatus').textContent='接续未完成，已保存步骤保留；可检查后重新打开。'}}finally{button.disabled=false}
+ }catch(e){if(ML.detail===selected){ml$('error').textContent=e.message;ml$('chainStatus').textContent='接续未完成，已保存步骤保留；可检查后重新打开。'}}finally{ML.chainBusy=false;mlSyncActions()}
 }
 if(typeof document!=='undefined')ml$('prepareMotor').onclick=mlPrepareMotor;
 
 async function mlLoadPreparations(selected){
- try{const [rows,imports,resources,plans]=await Promise.all([mlApi('/api/workbench/calibrated-motor'),mlApi('/api/workbench/calibrated-motor/native-imports'),mlApi('/api/workbench/resources'),mlApi('/api/workbench/calibrated-motor/analysis-plans')]);if(ML.detail!==selected)return;const out=ml$('preparedMotor');out.replaceChildren();
+ const generation=ML.preparationGeneration=(ML.preparationGeneration||0)+1;
+ try{const [rows,imports,resources,plans]=await Promise.all([mlApi('/api/workbench/calibrated-motor'),mlApi('/api/workbench/calibrated-motor/native-imports'),mlApi('/api/workbench/resources'),mlApi('/api/workbench/calibrated-motor/analysis-plans')]);if(ML.detail!==selected||generation!==ML.preparationGeneration)return;const out=ml$('preparedMotor');out.replaceChildren();ML.nativeButtons=[];
  for(const r of rows){if(r.status==='invalid'){out.append(mlText('p',r.id+' · '+r.error,'error'));continue}
  if(r.calibration_id!==selected.calibration_id||r.material_key!==selected.key)continue;
  const row=document.createElement('p');row.append(mlText('span',r.id+' · '+r.created_utc+' · 准备副本已冻结 '));
  for(const name of ['motor.aedt','package.zip','manifest.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/'+r.id+'/files/'+name;row.append(a)}out.append(row);
- const children=imports.filter(c=>c.preparation_id===r.id),ready=mlText('button','准备原生导入');ready.onclick=()=>mlNativeAction('/api/workbench/calibrated-motor/native-imports',{preparation:r.id},ready,selected);out.append(ready);
+ const children=imports.filter(c=>c.preparation_id===r.id),ready=mlText('button','准备原生导入');mlBindNativeAction(ready,'/api/workbench/calibrated-motor/native-imports',{preparation:r.id},selected);out.append(ready);
  for(const c of children){const p=document.createElement('p');const labels={ready:'已冻结，等待手动执行',ready_source_changed:'准备后程序已更新，需新副本',starting:'正在启动专用会话',running:'正在导入与预检',imported_not_solved:'导入与预检通过，未求解',failed:'导入失败，保留现场',needs_attention:'需检查现场，不自动重试',invalid:'文件核验失败'};
  p.append(mlText('span',c.id+' · '+(labels[c.status]||c.status)+' '));if(c.error)p.append(mlText('span',c.error,'error'));
- if(c.status==='ready'){const start=mlText('button','执行原生导入与预检');start.disabled=resources.cpu_only||resources.native_submission_allowed===false;start.title=resources.source_restart_required?'源码已更新，请从启动器打开匹配版本':resources.cpu_only?'CPU预览窗口禁止原生执行':'最多1专用会话，0磁场/电机求解';start.onclick=()=>mlNativeAction('/api/workbench/calibrated-motor/native-imports/'+c.id+'/start',{},start,selected);p.append(start)}
+ if(c.status==='ready'){const start=mlText('button','执行原生导入与预检');start.disabled=resources.cpu_only||resources.native_submission_allowed===false;start.title=resources.source_restart_required?'源码已更新，请从启动器打开匹配版本':resources.cpu_only?'CPU预览窗口禁止原生执行':'最多1专用会话，0磁场/电机求解';mlBindNativeAction(start,'/api/workbench/calibrated-motor/native-imports/'+c.id+'/start',{},selected,start.disabled);p.append(start)}
  if(c.status==='imported_not_solved'){p.append(mlText('span','RD/TD '+c.summary.material.curve_points.RD+'/'+c.summary.material.curve_points.TD+' 点 · 插片赋值48/48 · 损耗选择48/48 · 效率禁用 '));for(const name of ['motor.aedt','summary.json']){const a=mlText('a',name+' ');a.href='/api/workbench/calibrated-motor/native-imports/'+c.id+'/files/'+name;p.append(a)}}out.append(p);
  const existing=plans.filter(v=>v.native_import_id===c.id);
- if(c.status==='ready'||c.status==='imported_not_solved'){const make=mlText('button','准备转矩分析计划');make.onclick=()=>mlNativeAction('/api/workbench/calibrated-motor/analysis-plans',{native_import:c.id,measurement_protocol:ml$('torqueProtocol').value},make,selected);out.append(make)}
+ if(c.status==='ready'||c.status==='imported_not_solved'){const make=mlText('button','准备转矩分析计划');mlBindNativeAction(make,'/api/workbench/calibrated-motor/analysis-plans',{native_import:c.id,measurement_protocol:ml$('torqueProtocol').value},selected);out.append(make)}
  for(const v of existing){const link=mlText('a','打开转矩分析计划 '+v.id);link.href='/calibrated-motor/analysis/'+v.id;out.append(document.createElement('br'),link)}
  }
  }const refresh=mlText('button','刷新导入状态');refresh.onclick=()=>mlLoadPreparations(selected);out.append(refresh);
  for(const c of imports.filter(c=>c.status==='invalid'))out.append(mlText('p',c.id+' · '+c.error,'error'));
- }catch(e){if(ML.detail===selected)ml$('preparedMotor').textContent='准备记录暂时不可读：'+e.message}
+ }catch(e){if(ML.detail===selected&&generation===ML.preparationGeneration)ml$('preparedMotor').textContent='准备记录暂时不可读：'+e.message}
 }
 
 async function mlNativeAction(url,data,button,selected){
- button.disabled=true;ml$('error').textContent='';
- try{const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}),result=await response.json();if(!response.ok)throw Error(result.error||'操作失败');if(ML.detail===selected)await mlLoadPreparations(selected)}
- catch(error){if(ML.detail===selected)ml$('error').textContent=error.message}finally{button.disabled=false}
+ if(ML.nativeBusy||ML.chainBusy||button.disabled)return;ML.nativeBusy=true;button.disabled=true;mlSyncActions();ml$('error').textContent='';
+ try{const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}),result=await response.json();if(!response.ok)throw Error(result.error||'操作失败')}
+ catch(error){if(ML.detail===selected)ml$('error').textContent='操作结果未确认：'+error.message+'；请检查原记录，不自动重试。'}
+ finally{try{if(ML.detail&&!ml$('detail').hidden)await mlLoadPreparations(ML.detail)}finally{ML.nativeBusy=false;mlSyncActions()}}
 }
