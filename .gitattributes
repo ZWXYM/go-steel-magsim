@@ -222,3 +222,5 @@ calibration/native_ui_binding_20261020/** -text
 tests/test_motor_action_ui.js -text
 docs/motor_action_binding_20261020.md -text
 calibration/motor_action_ui_20261020/** -text
+docs/result_selection_binding_20261020.md -text
+calibration/result_selection_ui_20261020/** -text

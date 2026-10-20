@@ -59,5 +59,28 @@ const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaa
  const g=harness(async url=>url.endsWith('/resources')?{cpu_only:false,native_submission_allowed:false,source_restart_required:true}:[{...current,status:'prepared',result_available:false}]);
  await g.context.bhaLoadExecutions();assert.equal(g.nodes.get('executions').children[0].children.find(n=>n.tag==='button').disabled,true);
  assert.match(g.nodes.get('executionError').text(),/源码已更新/);assert.ok(g.calls.every(c=>c.method==='GET'));
+
+ // Refresh preserves an explicitly selected result, its exact links, and an open review.
+ const second={...current,id:'bhexec_bbbbbbbbbbbb',result:{...current.result,metrics:{...metrics,T_avg_Nm:2.5}}};
+ let selectionRows=[current,second];
+ const keep=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/review')?report:selectionRows);
+ await keep.context.bhaLoadExecutions();keep.context.bhaActual(second);await keep.context.bhaLoadReview(second.id);
+ const savedReviewNodes=keep.nodes.get('savedReviewPoints').children;
+ await keep.context.bhaLoadExecutions();assert.match(keep.nodes.get('actualStatus').text(),new RegExp(second.id));assert.match(keep.nodes.get('actualMetrics').text(),/2.500000/);
+ assert.equal(keep.nodes.get('savedReviewPanel').hidden,false);assert.equal(keep.nodes.get('savedReviewPoints').children,savedReviewNodes);
+ assert.match(keep.nodes.get('actualLinks').children[0].href,new RegExp(second.id+'/files/'));
+ // New records and reordering do not change the selected result.
+ selectionRows=[{...current,id:'bhexec_cccccccccccc'},second,current];await keep.context.bhaLoadExecutions();assert.match(keep.nodes.get('actualStatus').text(),new RegExp(second.id));
+ // A temporarily unreadable selected result is explained; no other material/run is substituted.
+ selectionRows=[current];await keep.context.bhaLoadExecutions();assert.equal(keep.nodes.get('actualPanel').hidden,true);assert.match(keep.nodes.get('planNotice').text(),new RegExp(second.id));assert.match(keep.nodes.get('planNotice').text(),/暂无可读结果/);
+ selectionRows=[current,second];await keep.context.bhaLoadExecutions();assert.equal(keep.nodes.get('actualPanel').hidden,false);assert.match(keep.nodes.get('actualStatus').text(),new RegExp(second.id));assert.equal(keep.nodes.get('savedReviewPanel').hidden,true);
+ // A changed result invalidates its previous review rather than carrying stale findings across values.
+ await keep.context.bhaLoadReview(second.id);selectionRows=[current,{...second,result:{...second.result,metrics:{...second.result.metrics,T_avg_Nm:3.5}}}];await keep.context.bhaLoadExecutions();assert.equal(keep.nodes.get('savedReviewPanel').hidden,true);assert.match(keep.nodes.get('actualMetrics').text(),/3.500000/);
+ // An in-flight read-only review may finish across an unchanged background refresh.
+ let finishSameReview;const sameReview=new Promise(resolve=>finishSameReview=resolve);
+ const during=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/review')?sameReview:[current]);
+ await during.context.bhaLoadExecutions();const reviewDuringRefresh=during.context.bhaLoadReview(current.id);await during.context.bhaLoadExecutions();finishSameReview(report);await reviewDuringRefresh;
+ assert.equal(during.nodes.get('savedReviewPanel').hidden,false);assert.match(during.nodes.get('savedReviewStatus').text(),/未通过/);
+ assert.ok(keep.calls.every(c=>c.method==='GET'));assert.ok(during.calls.every(c=>c.method==='GET'));
  console.log('Torque execution UI: separate actual/reference results, disabled resource failure, no automatic submit, stale response isolation: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
