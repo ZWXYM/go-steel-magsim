@@ -10,6 +10,8 @@
 ..\.runtime\magsim\Scripts\python.exe -X utf8 tools/start_workbench.py --root "D:\Project\go-steel-thesis" --storage "D:\Project\go-steel-thesis\work\system_entry_20261008_005642\storage" --page system --open-browser
 ```
 
+主工作区根目录与magsim子目录的start_system.cmd已统一到根入口，并保留显式参数覆盖。可先运行`.\start_system.cmd --check-config`查看实际路径、请求端口、模式和默认不恢复队列的设置；该选项只返回配置，不启动应用或验证原生许可。
+
 资源目录和任务存储是两个独立选项。更换存储会显示另一组记录；这不代表原记录丢失。若需要禁止本次实例的原生/训练提交，可追加--cpu-only；正常重开不附加此参数，GPU授权不因CPU对照工作而撤销。旧端口被其他版本占用时启动器顺延，使用其打印的地址。
 
 ## 两套Python环境

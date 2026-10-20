@@ -1,5 +1,6 @@
 """Start the existing platform and the workbench at an explicit local port."""
 import argparse
+import json
 import os
 import sys
 import threading
@@ -13,6 +14,7 @@ from modules.system_runtime import default_root,runtime_identity,choose_endpoint
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port',type=int,default=5001)
+    parser.add_argument('--check-config',action='store_true',help='Print resolved paths and modes as JSON; do not open a browser, bind a port or start the application')
     parser.add_argument('--open-browser',action='store_true')
     parser.add_argument('--cpu-only',action='store_true',help='Block solver/training submissions and automatic motor queue resume')
     parser.add_argument('--root',type=Path,help='Directory containing the calibration and motor resources')
@@ -30,6 +32,14 @@ if __name__=='__main__':
     os.environ.setdefault('MAGSIM_AUTO_RESUME_QUEUE','0')
     if args.resume_queue:
         os.environ['MAGSIM_AUTO_RESUME_QUEUE']='1'
+    if args.check_config:
+        print(json.dumps(dict(project_path=str(PROJECT),root_path=str(root),storage_path=str(storage),
+            cpu_only=os.environ.get('MAGSIM_CPU_ONLY')=='1',
+            auto_resume_queue=os.environ.get('MAGSIM_AUTO_RESUME_QUEUE')=='1',
+            requested_port=args.port,page=args.page,read_only=True,application_started=False,
+            scope='Resolved launch configuration only; no license checkout or native readiness certification'),
+            ensure_ascii=False,indent=2),flush=True)
+        raise SystemExit(0)
     identity=runtime_identity(PROJECT,root,storage)
     try:
         endpoint=choose_endpoint(args.port,identity,fallback=not args.no_fallback)
