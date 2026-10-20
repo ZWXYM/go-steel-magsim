@@ -1,0 +1,40 @@
+{
+  "main_tests_passed": 475,
+  "AST": 168,
+  "JS": 12,
+  "comparison": {
+    "before": {
+      "old_start_enabled_during_switch": true,
+      "simulated_starts_to_previous_task": 1,
+      "simulated_starts_to_new_task_after_load": 1,
+      "old_poll_reselected_previous_task": true,
+      "actual_network_or_GPU_submissions": 0
+    },
+    "after": {
+      "old_start_enabled_during_switch": false,
+      "simulated_starts_to_previous_task": 0,
+      "simulated_starts_to_new_task_after_load": 1,
+      "old_poll_reselected_previous_task": false,
+      "actual_network_or_GPU_submissions": 0
+    }
+  },
+  "protected_native_producers_unchanged": 11,
+  "native_budget_unchanged": true,
+  "live_completed_task_read_only_verified": true,
+  "live_clear_and_reopen_verified": true,
+  "saved_native_tasks_preserved": 1,
+  "old_storage_files_unchanged": 4983,
+  "queue_empty": true,
+  "automatic_queue_resume": false,
+  "actual_task_action_POSTs": 0,
+  "new_calibrations": 0,
+  "new_saved_predictions": 0,
+  "new_native_sessions": 0,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "new_candidate_evaluations": 0,
+  "new_ML_training": 0,
+  "new_preparations": 0,
+  "cumulative_Maxwell": 45,
+  "cumulative_MuMax": 682
+}

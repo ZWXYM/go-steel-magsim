@@ -217,3 +217,5 @@ static/js/workbench.js -text
 tests/test_calibration_context_ui.js -text
 docs/workbench_input_binding_20261020.md -text
 calibration/calibration_ui_binding_20261020/** -text
+docs/native_task_binding_20261020.md -text
+calibration/native_ui_binding_20261020/** -text
