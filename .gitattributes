@@ -195,3 +195,9 @@ tools/run_calibration_beta_trial.py -text
 tests/test_calibration_beta_trial.py -text
 docs/calibration_beta_trial_20261020.md -text
 calibration/low_beta_trial_20261020/** -text
+modules/calibration_beta_preview.py -text
+static/js/beta_trial_preview.js -text
+tests/test_calibration_beta_preview.py -text
+tests/test_beta_trial_preview_ui.js -text
+docs/beta_trial_preview_20261020.md -text
+calibration/beta_trial_preview_20261020/** -text

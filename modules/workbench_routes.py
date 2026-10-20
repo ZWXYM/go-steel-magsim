@@ -5,6 +5,7 @@ from pathlib import Path
 
 from flask import Blueprint,jsonify,request,render_template,send_file
 from modules.calibration_workbench import CalibrationWorkbench
+from modules.calibration_beta_preview import CalibrationBetaPreview
 from modules.motor_workbench import MotorWorkbench
 from modules.workbench_cpu_policy import install_cpu_policy
 from modules.system_runtime import runtime_identity
@@ -47,6 +48,7 @@ def create_workbench(project,storage=None,root=None):
     bh_execution=CalibratedMotorExecution(bh_analysis,motor,storage/'calibrated_motor_execution')
     material_workflow=MaterialMotorWorkflow(input_view,calibrated_motor,native_material,bh_analysis,bh_execution)
     material_chain=MaterialMotorChain(materials,calibrated_motor,native_material,bh_analysis,bh_execution)
+    beta_preview=CalibrationBetaPreview(calibration)
     material_batches=MaterialMotorBatches(material_chain,storage/'calibrated_motor_batches')
     native_pairs=NativePairExports(root,storage/'native_pair_exports')
     native_runs=NativeMaterialRuns(calibration,motor,native_pairs,storage/'native_material_runs')
@@ -434,6 +436,17 @@ def create_workbench(project,storage=None,root=None):
     def calibrations():
         paths=sorted((storage/'calibration').glob('cal_*/report.json'),key=lambda p:p.stat().st_mtime,reverse=True)
         return jsonify([json.loads(p.read_text(encoding='utf-8')) for p in paths])
+
+    @bp.get('/api/workbench/calibrations/<artifact>/beta-trial-preview')
+    def beta_trial_preview(artifact):
+        return jsonify(beta_preview.snapshot(artifact))
+
+    @bp.get('/api/workbench/calibrations/<artifact>/beta-trial-preview/download')
+    def beta_trial_preview_download(artifact):
+        import io
+        data=beta_preview.snapshot(artifact)
+        return send_file(io.BytesIO(json.dumps(data,ensure_ascii=False,indent=2).encode('utf8')),
+            as_attachment=True,download_name=artifact+'_beta_trial_preview.json',mimetype='application/json')
 
     @bp.get('/api/workbench/calibrations/<artifact>')
     def calibration_report(artifact):
