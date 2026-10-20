@@ -1,0 +1,49 @@
+{
+  "main_tests_passed": 475,
+  "AST": 168,
+  "JS": 13,
+  "comparison": {
+    "before": {
+      "pending_submit_button_enabled": true,
+      "simulated_submit_POSTs": 2,
+      "pending_recover_button_reenabled_by_refresh": true,
+      "simulated_recovery_POSTs": 2,
+      "actual_network_or_native_operations": 0
+    },
+    "after": {
+      "pending_submit_button_enabled": false,
+      "simulated_submit_POSTs": 1,
+      "pending_recover_button_reenabled_by_refresh": false,
+      "simulated_recovery_POSTs": 1,
+      "actual_network_or_native_operations": 0
+    }
+  },
+  "protected_motor_producers_unchanged": 12,
+  "original_optimization_entrypoints_unchanged": 6,
+  "live_saved_scan_cards": 3,
+  "live_saved_archive_rows": 6,
+  "saved_fixture_checks": {
+    "saved_scan_records": 3,
+    "saved_scan_tables_identical": 3,
+    "saved_failure_sections_identical": 3,
+    "saved_export_links_identical": 3,
+    "saved_archive_rows": 6,
+    "saved_archive_table_identical": true,
+    "actual_HTTP_POSTs": 0
+  },
+  "old_storage_files_unchanged": 4983,
+  "queue_empty": true,
+  "automatic_queue_resume": false,
+  "actual_task_action_POSTs": 0,
+  "new_calibrations": 0,
+  "new_saved_predictions": 0,
+  "new_native_sessions": 0,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "new_candidate_evaluations": 0,
+  "new_ML_training": 0,
+  "new_preparations": 0,
+  "new_derived_exports": 0,
+  "cumulative_Maxwell": 45,
+  "cumulative_MuMax": 682
+}

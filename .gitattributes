@@ -219,3 +219,6 @@ docs/workbench_input_binding_20261020.md -text
 calibration/calibration_ui_binding_20261020/** -text
 docs/native_task_binding_20261020.md -text
 calibration/native_ui_binding_20261020/** -text
+tests/test_motor_action_ui.js -text
+docs/motor_action_binding_20261020.md -text
+calibration/motor_action_ui_20261020/** -text
