@@ -1,0 +1,41 @@
+{
+  "main_tests_passed": 475,
+  "AST": 168,
+  "JS": 10,
+  "before": {
+    "selection_before_refresh": 1,
+    "selection_after_refresh": 0,
+    "old_button_enabled_during_switch": true,
+    "old_record_still_bound": true,
+    "simulated_wrong_target_POSTs": 1,
+    "actual_network_or_native_submissions": 0
+  },
+  "after": {
+    "selection_before_refresh": 1,
+    "selection_after_refresh": 1,
+    "old_button_enabled_during_switch": false,
+    "old_record_still_bound": false,
+    "simulated_wrong_target_POSTs": 0,
+    "actual_network_or_native_submissions": 0
+  },
+  "live_refresh_preserved_four_selected": true,
+  "live_bank_change_cleared_selection": true,
+  "stale_cross_batch_responses_ignored": true,
+  "read_error_or_missing_record_clears_actions_and_download": true,
+  "action_pending_blocks_duplicate_and_refresh_reenable": true,
+  "previous_action_error_not_shown_in_other_batch": true,
+  "unavailable_material_removed_from_selection": true,
+  "catalog_response_generation_verified": true,
+  "old_storage_files_unchanged": 4983,
+  "queue_empty": true,
+  "automatic_queue_resume": false,
+  "new_native_sessions": 0,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "new_candidate_evaluations": 0,
+  "new_ML_training": 0,
+  "new_saved_predictions": 0,
+  "new_preparations": 0,
+  "cumulative_Maxwell": 45,
+  "cumulative_MuMax": 682
+}

@@ -72,5 +72,64 @@ function harness(api){
  const invalid=harness(async()=>mixed);invalid.c.location.search='?batch='+mixed.id+'&plot=unknown';invalid.c.mbRender(mixed,true);assert.equal(invalid.nodes.get('batchWaveforms').querySelectorAll('circle').length,6);
  const noResult=harness(async()=>record);noResult.c.mbRender({...record,items:[{...record.items[0],result_available:false,metrics:{T_avg_Nm:999}}]},true);assert.doesNotMatch(noResult.nodes.get('batchRows').text(),/999/);
  assert.equal(JSON.stringify(mixed),raw);assert.equal(select.calls.length,0);assert.equal(restored.calls.length,0);
+
+ // Refresh keeps only available keys under the same calibration identity.
+ const entry=(key,available=true)=>({key,available,kind:'fit',label:key,excluded_grades:[],reason:'unavailable'});
+ let catalogs={records:[{id:'cal_a',entries:[entry('fit:B23R075'),entry('fit:B27R090')]},{id:'cal_b',entries:[entry('fit:B23R075')]}]};
+ const checked=harness(async()=>catalogs);await checked.c.mbCatalog();checked.c.mbSelectFits();
+ assert.equal(vm.runInContext('MBB.selected.size',checked.c),2);await checked.c.mbCatalog();
+ assert.equal(vm.runInContext('MBB.selected.size',checked.c),2);assert.ok(checked.nodes.get('batchMaterials').querySelectorAll('input').every(n=>n.checked));
+ catalogs.records[0].entries[1].available=false;await checked.c.mbCatalog();
+ assert.deepEqual(Array.from(vm.runInContext('MBB.selected',checked.c)),['fit:B23R075']);
+ assert.equal(checked.nodes.get('batchMaterials').querySelectorAll('input')[1].checked,false);
+ checked.nodes.get('batchCalibration').value='cal_b';checked.c.mbEntries();assert.equal(vm.runInContext('MBB.selected.size',checked.c),0);
+ checked.c.mbSelectFits();await checked.c.mbCatalog();assert.equal(vm.runInContext('MBB.selected.size',checked.c),1);
+
+ // Switching is a load barrier: no action can submit to the previous batch.
+ let ready;const wait=new Promise(r=>ready=r),next='bhbatch_bbbbbbbbbbbb';
+ const switching=harness(async(url,options)=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/'+next)?wait:record);
+ await switching.c.mbLoad();switching.nodes.get('batchHistory').value=next;const loading=switching.c.mbLoad();
+ for(const id of ['batchStart','batchResume','batchPause'])assert.equal(switching.nodes.get(id).disabled,true);
+ assert.equal(switching.nodes.get('batchBundle').hidden,true);assert.equal(switching.nodes.get('batchRows').children.length,0);
+ await switching.c.mbAction('start');assert.equal(switching.calls.filter(c=>c.method==='POST').length,0);
+ ready({...record,id:next});await loading;assert.equal(switching.nodes.get('batchStart').disabled,false);
+ await switching.c.mbAction('start');assert.equal(switching.calls.filter(c=>c.method==='POST').length,1);
+ assert.ok(switching.calls.find(c=>c.method==='POST').url.endsWith('/'+next+'/start'));
+
+ // Late reads from another batch cannot replace the selected record.
+ let oldReady;const oldWait=new Promise(r=>oldReady=r);
+ const cross=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/'+record.id)?oldWait:{...record,id:next});
+ const oldRead=cross.c.mbLoad();cross.nodes.get('batchHistory').value=next;await cross.c.mbLoad();oldReady(record);await oldRead;
+ assert.equal(vm.runInContext('MBB.record.id',cross.c),next);assert.match(cross.nodes.get('batchStatus').textContent,/bbbbbbbbbbbb/);
+
+ // A missing or failed history clears old data, bundle and executable binding.
+ const missing=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')?[record]:record);
+ await missing.c.mbLoad();await missing.c.mbHistory('bhbatch_missing');await missing.c.mbAction('start');
+ assert.equal(missing.nodes.get('batchHistory').value,'');assert.equal(vm.runInContext('MBB.record',missing.c),null);
+ assert.equal(missing.nodes.get('batchBundle').hidden,true);assert.equal(missing.nodes.get('batchRows').children.length,0);
+ assert.equal(missing.calls.filter(c=>c.method==='POST').length,0);
+ const badID=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:record);badID.nodes.get('batchHistory').value=next;await badID.c.mbLoad();
+ assert.equal(vm.runInContext('MBB.record',badID.c),null);assert.match(badID.nodes.get('batchError').textContent,/身份/);
+ let readFails=false;const readError=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:readFails?Promise.reject(Error('read failed')):record);
+ await readError.c.mbLoad();readFails=true;await readError.c.mbLoad();await readError.c.mbAction('start');
+ assert.equal(readError.nodes.get('batchBundle').hidden,true);assert.equal(readError.nodes.get('batchRows').children.length,0);
+ assert.equal(readError.calls.filter(c=>c.method==='POST').length,0);
+
+ // A slow action remains single-submit through catalog refresh and a batch switch.
+ let actionReject;const actionWait=new Promise((resolve,reject)=>actionReject=reject);
+ const pending=harness(async(url,options)=>url.endsWith('/material-inputs')?catalogs:url.endsWith('/resources')?{cpu_only:false}:options.method==='POST'?actionWait:url.endsWith('/'+next)?{...record,id:next}:record);
+ await pending.c.mbLoad();const pendingAction=pending.c.mbAction('start');await pending.c.mbAction('start');await pending.c.mbCatalog();
+ assert.equal(pending.nodes.get('batchStart').disabled,true);assert.equal(pending.calls.filter(c=>c.method==='POST').length,1);
+ pending.nodes.get('batchHistory').value=next;await pending.c.mbLoad();assert.equal(pending.nodes.get('batchStart').disabled,true);
+ actionReject(Error('previous batch action failed'));await pendingAction;
+ assert.equal(vm.runInContext('MBB.record.id',pending.c),next);assert.doesNotMatch(pending.nodes.get('batchError').textContent,/previous batch/);
+ assert.equal(pending.nodes.get('batchStart').disabled,false);assert.equal(pending.calls.filter(c=>c.method==='POST').length,1);
+
+ // Stale catalog responses cannot restore a superseded calibration selection.
+ let catalogReady,catalogCalls=0;const catalogWait=new Promise(r=>catalogReady=r);
+ const catalogRace=harness(async()=>++catalogCalls===1?catalogWait:{records:[{id:'cal_b',entries:[entry('fit:B23R075')]}]});
+ const firstCatalog=catalogRace.c.mbCatalog();await catalogRace.c.mbCatalog();catalogReady(catalogs);await firstCatalog;
+ assert.equal(catalogRace.nodes.get('batchCalibration').value,'cal_b');assert.equal(vm.runInContext('MBB.catalog[0].id',catalogRace.c),'cal_b');
+
  console.log('Calibrated batch UI: exact CPU preparation, no auto dispatch, pause/resume gates, zero/null, stale/resource isolation: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

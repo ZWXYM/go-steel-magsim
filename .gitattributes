@@ -207,3 +207,5 @@ docs/system_environment_20261020.md -text
 tests/test_launch_configuration.py -text
 docs/launcher_consistency_20261020.md -text
 calibration/launcher_consistency_20261020/** -text
+docs/batch_ui_binding_20261020.md -text
+calibration/batch_ui_binding_20261020/** -text
