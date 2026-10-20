@@ -82,5 +82,32 @@ const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaa
  await during.context.bhaLoadExecutions();const reviewDuringRefresh=during.context.bhaLoadReview(current.id);await during.context.bhaLoadExecutions();finishSameReview(report);await reviewDuringRefresh;
  assert.equal(during.nodes.get('savedReviewPanel').hidden,false);assert.match(during.nodes.get('savedReviewStatus').text(),/未通过/);
  assert.ok(keep.calls.every(c=>c.method==='GET'));assert.ok(during.calls.every(c=>c.method==='GET'));
+
+ // CPU task preparation remains single even when the execution list is refreshed while waiting.
+ let finishPrepare;const waitingPrepare=new Promise(resolve=>finishPrepare=resolve);
+ const pendingPrepare=harness(async(url,options)=>options.method==='POST'?waitingPrepare:url.endsWith('/resources')?{cpu_only:true}:[]);
+ await pendingPrepare.context.bhaLoadExecutions();const prepareBody={analysis_plan:current.analysis_plan_id};
+ const prepFirst=pendingPrepare.context.bhaExecutionAction('/api/workbench/calibrated-motor/executions',prepareBody);
+ await pendingPrepare.context.bhaLoadExecutions();assert.equal(pendingPrepare.nodes.get('prepareExecution').disabled,true);
+ const prepSecond=pendingPrepare.context.bhaExecutionAction('/api/workbench/calibrated-motor/executions',prepareBody);assert.equal(pendingPrepare.calls.filter(c=>c.method==='POST').length,1);
+ finishPrepare({...current,status:'prepared',result_available:false});await Promise.all([prepFirst,prepSecond]);assert.equal(pendingPrepare.nodes.get('prepareExecution').disabled,false);
+ // Native start buttons recreated by refresh stay disabled until the single explicit action ends.
+ let finishStart;const waitingStart=new Promise(resolve=>finishStart=resolve);let startRows=[{...current,status:'prepared',result_available:false}];
+ const starting=harness(async(url,options)=>options.method==='POST'?waitingStart:url.endsWith('/resources')?{cpu_only:false}:startRows);
+ await starting.context.bhaLoadExecutions();const startURL='/api/workbench/calibrated-motor/executions/'+current.id+'/start';
+ const startFirst=starting.context.bhaExecutionAction(startURL,{});await starting.context.bhaLoadExecutions();
+ assert.equal(starting.nodes.get('executions').children[0].children.find(n=>n.tag==='button').disabled,true);
+ await starting.context.bhaExecutionAction(startURL,{});assert.equal(starting.calls.filter(c=>c.method==='POST').length,1);
+ startRows=[{...current,status:'running',result_available:false}];finishStart(startRows[0]);await startFirst;
+ assert.match(starting.nodes.get('executions').text(),/正在分析/);assert.equal(starting.nodes.get('executions').children[0].children.filter(n=>n.tag==='button').length,0);
+ // CPU/resource gates also apply to action calls after a previously visible button was replaced.
+ const cpuStart=harness(async url=>url.endsWith('/resources')?{cpu_only:true}:[{...current,status:'prepared',result_available:false}]);await cpuStart.context.bhaLoadExecutions();await cpuStart.context.bhaExecutionAction(startURL,{});assert.ok(cpuStart.calls.every(c=>c.method==='GET'));
+ const wrongAction=harness(async(url,opt)=>opt.method==='POST'?{...current,analysis_plan_id:'another'}:url.endsWith('/resources')?{cpu_only:false}:[]);await wrongAction.context.bhaLoadExecutions();await wrongAction.context.bhaExecutionAction('/api/workbench/calibrated-motor/executions',prepareBody);assert.match(wrongAction.nodes.get('executionError').text(),/身份与请求不符/);assert.equal(wrongAction.nodes.get('prepareExecution').disabled,true);
+ await wrongAction.context.bhaExecutionAction('/api/workbench/calibrated-motor/executions',prepareBody);assert.equal(wrongAction.calls.filter(c=>c.method==='POST').length,1);
+ // A plan refresh must not re-enable the pending analysis-model preparation button.
+ let finishModel;const waitingModel=new Promise(resolve=>finishModel=resolve);const readyPlan={...pendingPrepare.context.document.body.dataset,id:current.analysis_plan_id,status:'ready_for_model_preparation',material_name:'WB',native_import_id:'calimport_test',training_grades:[],excluded_grades:[],requested_protocol:{speed_rpm:3000,cycles:1,source_samples:31,selected_window_ms:[0,10]}};
+ const model=harness(async(url,opt)=>opt.method==='POST'?waitingModel:url.endsWith('/resources')?{cpu_only:true}:url.includes('/analysis-plans/')?readyPlan:[]);model.context.bhaRenderPlan(readyPlan);
+ const modelFirst=model.context.bhaPrepareModel();await model.context.bhaLoadPlan();assert.equal(model.nodes.get('prepareModel').disabled,true);await model.context.bhaPrepareModel();assert.equal(model.calls.filter(c=>c.method==='POST').length,1);
+ finishModel(readyPlan);await modelFirst;assert.equal(model.nodes.get('prepareModel').disabled,false);
  console.log('Torque execution UI: separate actual/reference results, disabled resource failure, no automatic submit, stale response isolation: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

@@ -1,0 +1,41 @@
+{
+  "main_tests_passed": 475,
+  "AST": 168,
+  "JS": 13,
+  "comparison": {
+    "before": {
+      "pending_prepare_reenabled_by_refresh": true,
+      "simulated_execution_preparation_POSTs": 2,
+      "actual_network_or_native_requests": 0
+    },
+    "after": {
+      "pending_prepare_reenabled_by_refresh": false,
+      "simulated_execution_preparation_POSTs": 1,
+      "actual_network_or_native_requests": 0
+    }
+  },
+  "protected_motor_producers_unchanged": 15,
+  "original_optimization_entrypoints_unchanged": 6,
+  "live_saved_review_refresh_preserved": true,
+  "saved_fixture_checks": {
+    "saved_execution_records": 5,
+    "saved_result_records_compared": 3,
+    "old_new_metrics_plots_links_identical": true,
+    "new_calculations": 0
+  },
+  "old_storage_files_unchanged": 4983,
+  "queue_empty": true,
+  "automatic_queue_resume": false,
+  "actual_task_action_POSTs": 0,
+  "new_calibrations": 0,
+  "new_saved_predictions": 0,
+  "new_native_sessions": 0,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "new_candidate_evaluations": 0,
+  "new_ML_training": 0,
+  "new_preparations": 0,
+  "new_derived_exports": 0,
+  "cumulative_Maxwell": 45,
+  "cumulative_MuMax": 682
+}

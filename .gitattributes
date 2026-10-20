@@ -224,3 +224,5 @@ docs/motor_action_binding_20261020.md -text
 calibration/motor_action_ui_20261020/** -text
 docs/result_selection_binding_20261020.md -text
 calibration/result_selection_ui_20261020/** -text
+docs/execution_action_binding_20261020.md -text
+calibration/execution_action_ui_20261020/** -text
