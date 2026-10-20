@@ -227,3 +227,5 @@ calibration/result_selection_ui_20261020/** -text
 docs/execution_action_binding_20261020.md -text
 calibration/execution_action_ui_20261020/** -text
 tests/test_motor_waveform_selection_ui.js -text
+static/js/system_recent.js -text
+tests/test_system_recent_ui.js -text
