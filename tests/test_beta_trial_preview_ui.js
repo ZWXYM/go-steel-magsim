@@ -25,6 +25,7 @@ function harness(api){const nodes=new Map(),calls=[];
  assert.match(h.nodes.get('betaTrialStats').text(),/原协议材料留出/);assert.match(h.nodes.get('betaTrialStats').text(),/0\.031000/);
  assert.match(h.nodes.get('betaTrialGates').text(),/未通过/);assert.equal(h.nodes.get('betaTrialCurve').children.filter(n=>n.tag==='circle').length,9);
  assert.equal(h.nodes.get('betaTrialDownload').href,'/api/workbench/calibrations/'+id+'/beta-trial-preview/download');
+ assert.equal(h.nodes.get('betaTrialCurvesCSV').href,'/api/workbench/calibrations/'+id+'/beta-trial-preview/curves.csv');assert.equal(h.nodes.get('betaTrialMetricsCSV').href,'/api/workbench/calibrations/'+id+'/beta-trial-preview/metrics.csv');assert.equal(h.nodes.get('betaTrialBundle').href,'/api/workbench/calibrations/'+id+'/beta-trial-preview/bundle');
  h.nodes.get('betaTrialGrade').value='S1';h.nodes.get('betaTrialDirection').value='TD';h.c.btpPlot();
  assert.match(h.nodes.get('betaTrialCurveInfo').text(),/S1 · TD/);assert.match(h.nodes.get('betaTrialCurveInfo').text(),/0\.060000 T/);assert.equal(JSON.stringify(data),original);
  h.c.btpReset();assert.equal(h.nodes.get('betaTrialPanel').hidden,true);assert.equal(h.calls.length,1);

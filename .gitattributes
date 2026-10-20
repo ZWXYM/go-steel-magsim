@@ -201,3 +201,5 @@ tests/test_calibration_beta_preview.py -text
 tests/test_beta_trial_preview_ui.js -text
 docs/beta_trial_preview_20261020.md -text
 calibration/beta_trial_preview_20261020/** -text
+docs/beta_trial_csv_20261020.md -text
+calibration/beta_trial_csv_20261020/** -text

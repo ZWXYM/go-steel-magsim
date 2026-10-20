@@ -3,6 +3,7 @@ import copy
 import csv
 import io
 import math
+import zipfile
 import json
 from pathlib import Path
 
@@ -71,3 +72,44 @@ class CalibrationBetaPreview:
             new_candidate_evaluations=0,new_saved_predictions=0,new_native_solves=0,new_ML_training=0,
             automatic_deployment=False,prospective_external_validation=False,
             scope='Frozen retrospective whole-material holdout comparison; not current anchor-fit curves')
+
+    def csv(self,artifact,kind):
+        if kind not in ('curves','metrics'):raise ValueError('仅支持全部曲线或逐项误差CSV')
+        return self._csv(self.snapshot(artifact),kind)
+
+    @staticmethod
+    def _csv(data,kind):
+        meta=dict(calibration_id=data['calibration_id'],trial_version=data['summary']['version'],
+            source_bank_sha256=data['bank_sha256'],deployment_status='not_deployed',
+            comparison_scope='retrospective_whole_material_holdout')
+        rows=[]
+        if kind=='curves':
+            for c in data['curves']:
+                for i,h in enumerate(c['H']):
+                    rows.append(dict(meta,material_id=c['grade'],direction=c['direction'],H_A_per_m=h,
+                        B_original_holdout_T=c['B_baseline'][i],B_candidate_holdout_T=c['B_trial'][i],
+                        B_target_reference_T=c['B_reference'][i],selected_candidate=c['candidate']))
+        else:
+            rows=[dict(meta,**row) for row in data['metrics']]
+        stream=io.StringIO(newline='');writer=csv.DictWriter(stream,fieldnames=list(rows[0]))
+        writer.writeheader();writer.writerows(rows)
+        return stream.getvalue().encode('utf-8-sig')
+
+    def bundle(self,artifact):
+        data=self.snapshot(artifact)
+        files={'preview.json':json.dumps(data,ensure_ascii=False,indent=2).encode('utf8'),
+            'curves.csv':self._csv(data,'curves'),'metrics.csv':self._csv(data,'metrics'),
+            'README.md':('冻结的材料级留出开发对照；未部署。\n'
+                'curves.csv保留全部8组曲线原H节点；metrics.csv保留24项误差。\n'
+                '目标参考与仅参考内插对照分别标记。当前bank和材料文件不变。\n'
+                '保存的整体接受条件：'+str(data['summary']['all_acceptance_gates_passed'])+'。\n'
+                '该回顾性开发对照不能作为新增批次独立验证。\n').encode('utf8')}
+        manifest=dict(version='beta_trial_preview_bundle_v1',calibration_id=artifact,
+            source_bank_sha256=data['bank_sha256'],read_only=True,default_prediction_changed=False,
+            automatic_deployment=False,new_native_solves=0,new_candidate_evaluations=0,
+            files={name:sha(blob) for name,blob in files.items()})
+        files['manifest.json']=json.dumps(manifest,ensure_ascii=False,indent=2).encode('utf8')
+        out=io.BytesIO()
+        with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:
+            for name,blob in files.items():archive.writestr(name,blob)
+        out.seek(0);return out

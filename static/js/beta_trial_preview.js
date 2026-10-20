@@ -21,7 +21,7 @@ function btpRender(data){
  const gates=btp$('betaTrialGates');gates.replaceChildren();const labels={mean_RMSE_improvement_at_least_10pct:'平均RMSE下降至少10%',worst_B800_not_increased:'最大B800误差不增加',worst_direction_RMSE_not_increased:'最坏方向RMSE不增加',max_single_direction_regression_at_most_0_01T:'单方向RMSE回退不超过0.01 T',all_B800_below_0_05T:'全部方向B800误差<0.05 T'};
  for(const [name,passed] of Object.entries(s.gates))gates.append(btpText('p',(labels[name]||name)+'：'+(passed?'通过':'未通过')));
  const grades=btp$('betaTrialGrade');grades.replaceChildren();for(const grade of [...new Set(data.curves.map(c=>c.grade))]){const option=btpText('option',grade);option.value=grade;grades.append(option)}
- btp$('betaTrialDirection').value='RD';btp$('betaTrialDownload').href='/api/workbench/calibrations/'+data.calibration_id+'/beta-trial-preview/download';btpPlot();
+ btp$('betaTrialDirection').value='RD';btp$('betaTrialDownload').href='/api/workbench/calibrations/'+data.calibration_id+'/beta-trial-preview/download';btp$('betaTrialCurvesCSV').href='/api/workbench/calibrations/'+data.calibration_id+'/beta-trial-preview/curves.csv';btp$('betaTrialMetricsCSV').href='/api/workbench/calibrations/'+data.calibration_id+'/beta-trial-preview/metrics.csv';btp$('betaTrialBundle').href='/api/workbench/calibrations/'+data.calibration_id+'/beta-trial-preview/bundle';btpPlot();
 }
 function btpPlot(){
  if(!BTP.data||BTP.data.calibration_id!==btpActive()){btpReset();return}

@@ -5,6 +5,7 @@ import json
 import os
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -55,6 +56,40 @@ class BetaPreviewTests(unittest.TestCase):
         self.assertEqual(result['new_candidate_evaluations'],0);self.assertEqual(result['bank_sha256'],self.bank.bank_sha256)
         self.assertEqual(before,self.files())
 
+    def test_CSV_preserves_every_value_and_explicit_non_deployed_scope(self):
+        before=self.files();snapshot=self.preview.snapshot(self.artifact)
+        curves=list(csv.DictReader(io.StringIO(self.preview.csv(self.artifact,'curves').decode('utf-8-sig'))))
+        self.assertEqual(len(curves),32)
+        for curve in snapshot['curves']:
+            rows=[r for r in curves if (r['material_id'],r['direction'])==(curve['grade'],curve['direction'])]
+            self.assertEqual([float(r['H_A_per_m']) for r in rows],curve['H'])
+            for column,field in [('B_original_holdout_T','B_baseline'),('B_candidate_holdout_T','B_trial'),('B_target_reference_T','B_reference')]:
+                self.assertEqual([float(r[column]) for r in rows],curve[field])
+        self.assertTrue(all(r['deployment_status']=='not_deployed' and r['source_bank_sha256']==self.bank.bank_sha256 for r in curves))
+        metrics=list(csv.DictReader(io.StringIO(self.preview.csv(self.artifact,'metrics').decode('utf-8-sig'))))
+        self.assertEqual(len(metrics),24)
+        self.assertTrue(all(r['high_field_rmse_T']=='' for r in metrics))
+        self.assertEqual(before,self.files())
+
+    def test_unknown_CSV_kind_is_rejected(self):
+        before=self.files()
+        with self.assertRaisesRegex(ValueError,'仅支持'):self.preview.csv(self.artifact,'bank')
+        self.assertEqual(before,self.files())
+
+    def test_bundle_uses_one_snapshot_and_binds_all_downloaded_values(self):
+        before=self.files()
+        with patch.object(self.preview,'snapshot',wraps=self.preview.snapshot) as snapshot:
+            bundle=self.preview.bundle(self.artifact)
+            snapshot.assert_called_once_with(self.artifact)
+        with zipfile.ZipFile(bundle) as archive:
+            self.assertEqual(set(archive.namelist()),{'preview.json','curves.csv','metrics.csv','README.md','manifest.json'})
+            manifest=json.loads(archive.read('manifest.json'))
+            self.assertFalse(manifest['automatic_deployment']);self.assertTrue(manifest['read_only'])
+            for name,digest_value in manifest['files'].items():self.assertEqual(sha(archive.read(name)),digest_value)
+            self.assertEqual(archive.read('curves.csv'),self.preview.csv(self.artifact,'curves'))
+            self.assertEqual(archive.read('metrics.csv'),self.preview.csv(self.artifact,'metrics'))
+        self.assertEqual(before,self.files())
+
     def test_different_valid_bank_is_not_mixed_with_the_frozen_curves(self):
         samples=fixtures();samples[0]['params']['f_Goss']+=.001
         changed=TransferBank.fit(samples)
@@ -101,6 +136,15 @@ class BetaPreviewTests(unittest.TestCase):
             download=client.get(url+'/download');self.addCleanup(download.close)
             self.assertEqual(download.status_code,200);self.assertIn('attachment',download.headers['Content-Disposition'])
             self.assertEqual(json.loads(download.data)['curves'],response.json['curves'])
+            for kind,count in [('curves',32),('metrics',24)]:
+                csv_response=client.get(url+'/'+kind+'.csv');self.addCleanup(csv_response.close)
+                self.assertEqual(csv_response.status_code,200)
+                self.assertIn('text/csv',csv_response.content_type)
+                self.assertTrue(csv_response.data.startswith(b'\xef\xbb\xbf'))
+                self.assertEqual(len(list(csv.DictReader(io.StringIO(csv_response.data.decode('utf-8-sig'))))),count)
+            bundle=client.get(url+'/bundle');self.addCleanup(bundle.close)
+            self.assertEqual(bundle.status_code,200)
+            with zipfile.ZipFile(io.BytesIO(bundle.data)) as archive:self.assertIn('curves.csv',archive.namelist())
             self.assertEqual(client.post(url,json={}).status_code,423)
         self.assertEqual(before,self.files())
 

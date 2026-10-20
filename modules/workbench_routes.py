@@ -441,6 +441,17 @@ def create_workbench(project,storage=None,root=None):
     def beta_trial_preview(artifact):
         return jsonify(beta_preview.snapshot(artifact))
 
+    @bp.get('/api/workbench/calibrations/<artifact>/beta-trial-preview/bundle')
+    def beta_trial_preview_bundle(artifact):
+        return send_file(beta_preview.bundle(artifact),as_attachment=True,
+            download_name=artifact+'_beta_trial_preview.zip',mimetype='application/zip')
+
+    @bp.get('/api/workbench/calibrations/<artifact>/beta-trial-preview/<kind>.csv')
+    def beta_trial_preview_csv(artifact,kind):
+        import io
+        return send_file(io.BytesIO(beta_preview.csv(artifact,kind)),as_attachment=True,
+            download_name=artifact+'_beta_trial_'+kind+'.csv',mimetype='text/csv')
+
     @bp.get('/api/workbench/calibrations/<artifact>/beta-trial-preview/download')
     def beta_trial_preview_download(artifact):
         import io
