@@ -54,9 +54,7 @@ async function bhaExecutionAction(url,body){
  finally{BHA.executionBusy=false;bhaExecutionControls()}
 }
 function bhaPower(record){
- const speed=record.requested_protocol?.speed_rpm,torque=record.result?.metrics?.T_avg_Nm;
- if(record.result_available!==true||record.result?.native_configuration_verified!==true||record.result?.native_analyze_succeeded!==true||typeof speed!=='number'||!Number.isFinite(speed)||speed<=0||typeof torque!=='number'||!Number.isFinite(torque))return null;
- const power=torque*2*Math.PI*speed/60;return Number.isFinite(power)?{speed_rpm:speed,power_W:power}:null;
+ return typeof MotorPower==='object'?MotorPower.fromExecution(record):null;
 }
 function bhaActual(record){
  const signature=JSON.stringify([record.id,record.result,record.requested_protocol]);BHA.selectedExecution=record.id;if(BHA.actualExecution===record.id&&BHA.actualSignature===signature)return;BHA.actualSignature=signature;

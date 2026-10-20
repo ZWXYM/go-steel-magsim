@@ -9,7 +9,7 @@ class Node {
 }
 function harness(api){
  const nodes=new Map(),calls=[],timers=[];
- const context=vm.createContext({document:undefined,console,Error,Promise,JSON,Number,Math,
+ const context=vm.createContext({document:undefined,MotorPower:require('../static/js/motor_power.js'),console,Error,Promise,JSON,Number,Math,
   setTimeout:(fn,ms)=>{timers.push(ms);return timers.length},clearTimeout:()=>{},
   fetch:async(url,options={})=>{calls.push({url,method:options.method||'GET'});return {ok:true,json:async()=>api(url,options)}}});
  vm.runInContext(fs.readFileSync(require.resolve('../static/js/calibrated_motor_analysis.js'),'utf8'),context);

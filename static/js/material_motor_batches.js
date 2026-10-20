@@ -1,5 +1,6 @@
 /* Saved calibrated-material batches; polling never starts or retries a task. */
 const MBB={catalog:[],selected:new Set(),record:null,loading:false,actionPending:false,selectionCalibration:null,catalogGeneration:0,generation:0,historyGeneration:0,timer:null,plotBatch:null,plotMode:'all',plotSelected:new Set()};
+let mbPowerGeneration=0;const mbPowerCache=new Map();
 const mb$=id=>document.getElementById(id),mbText=(tag,text)=>{const n=document.createElement(tag);n.textContent=text;return n};
 const mbLabels={prepared:'计划已准备，尚未开始',prepared_source_changed:'准备后程序已更新，请保留旧计划',starting:'正在启动串行控制',running:'正在串行推进',completed:'批量已完成',completed_with_failures:'批量结束，包含失败或跳过项',needs_attention:'需要检查后显式接续',failed:'失败，现场保留',paused:'已暂停，阶段与结果保留'};
 const mbItemLabels={pending:'待执行',importing:'导入与预检',preparing_model:'准备分析工程',analyzing:'转矩分析',completed:'新增结果已完成',reused_result:'复用已有结果',failed:'失败，现场保留',blocked:'原记录需检查'};
@@ -53,12 +54,14 @@ function mbButtons(){
  mb$('batchPause').disabled=!(bound&&['prepared','starting','running'].includes(r.status)&&!r.pause_requested);
 }
 function mbReset(message){
+ ++mbPowerGeneration;
  MBB.record=null;MBB.canStart=false;MBB.loading=false;MBB.plotBatch=null;mbButtons();
  mb$('batchStatus').textContent=message;mb$('batchBudget').textContent='';mb$('batchTotals').textContent='';mb$('batchRows').replaceChildren();
  mb$('batchBundle').hidden=true;mb$('batchBundle').href='';mb$('batchPlotPanel').hidden=true;
  mb$('batchWaveforms').replaceChildren();mb$('batchPlotLegend').replaceChildren();mb$('batchPlotChoices').replaceChildren();
 }
 function mbRender(record,canStart){
+ const powerGeneration=++mbPowerGeneration;
  MBB.canStart=canStart;
  const counts=mbCounts(record);MBB.record=record;mb$('batchStatus').textContent=record.id+' · '+(mbLabels[record.status]||record.status)+(counts.bad?' · 含数值异常':'');
  const b=record.budget;mb$('batchBudget').textContent=`最多新增 ${b.max_new_imports} 次材料导入、${b.max_new_motor_solves} 次电机分析；${b.cores}核 / ${b.gpus} GPU。每次导入240秒、每次电机1200秒；已有结果直接复用。`;
@@ -70,8 +73,18 @@ function mbRender(record,canStart){
  name.append(mbText('p','排除：'+(item.source.excluded_grades.join('、')||'无')));const link=mbText('a','查看独立分析与原始结果');link.href=item.analysis_url;name.append(link);
  const bad=item.result_available&&m.torque_numerical_acceptance===false,quality=mbText('td',!item.result_available?'尚无结果':bad?'数值异常 · 原值保留':m.torque_numerical_acceptance===true?'通过原判据':'未报告');if(bad)quality.className='error';
  const phase=mbText('td',mbItemLabels[item.status]||item.status);
- row.append(name,phase,quality,mbText('td',number(m.T_avg_Nm)),mbText('td',number(m.T_min_Nm)+' / '+number(m.T_max_Nm)),mbText('td',number(m.K_T_ripple_pct)),mbText('td',item.error||item.execution_id||'尚无实际转矩结果'));rows.append(row)}
+ const power=mbText('td','—');power.className='derivedPower';row.append(name,phase,quality,mbText('td',number(m.T_avg_Nm)),power,mbText('td',number(m.T_min_Nm)+' / '+number(m.T_max_Nm)),mbText('td',number(m.K_T_ripple_pct)),mbText('td',item.error||item.execution_id||'尚无实际转矩结果'));rows.append(row);mbLoadPower(item,power,record.id,powerGeneration)}
  mbPlot(record);
+}
+async function mbLoadPower(item,cell,batchId,generation){
+ if(!item.result_available)return;
+ if(typeof MotorPower!=='object'||!/^bhexec_[a-f0-9]{12}$/.test(item.execution_id)||!/^[a-f0-9]{64}$/.test(item.metrics?.torque_csv_sha256)) {cell.textContent='— · 工况未核对';return}
+ const key=JSON.stringify([item.execution_id,item.metrics.torque_csv_sha256]);let pending=mbPowerCache.get(key);cell.textContent='读取工况…';
+ try{if(!pending){pending=mbAPI('/api/workbench/calibrated-motor/executions/'+item.execution_id);mbPowerCache.set(key,pending);if(mbPowerCache.size>64)mbPowerCache.delete(mbPowerCache.keys().next().value)}
+  const execution=await pending,power=MotorPower.fromBatchItem(item,execution);if(!power)throw Error('执行工况未核验或与本条材料/CSV不符');
+  if(generation!==mbPowerGeneration||MBB.record?.id!==batchId)return;
+  cell.replaceChildren();cell.textContent='';cell.append(mbText('strong',power.power_W.toFixed(3)),mbText('small',power.speed_rpm+' r/min'));cell.title='按本条结果平均转矩和保存转速折算；未扣机械损耗，非铭牌额定功率。';
+ }catch(error){if(mbPowerCache.get(key)===pending)mbPowerCache.delete(key);if(generation===mbPowerGeneration&&MBB.record?.id===batchId){cell.textContent='— · 工况未核对';cell.title=error.message}}
 }
 function mbPlot(record){
  const svg=mb$('batchWaveforms'),legend=mb$('batchPlotLegend'),panel=mb$('batchPlotPanel');if(!svg||!legend||!panel)return;
