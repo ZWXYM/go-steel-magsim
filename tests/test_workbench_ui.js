@@ -6,7 +6,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const html = fs.readFileSync(path.join(__dirname, '../templates/workbench.html'), 'utf8');
-const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+const script = fs.readFileSync(path.join(__dirname, '../static/js/workbench.js'), 'utf8');
 const elements = new Map();
 const element = id => {
   if (!elements.has(id)) elements.set(id, {innerHTML:'', textContent:'', style:{}, disabled:false, hidden:false,classList:{add:()=>{},remove:()=>{}}});

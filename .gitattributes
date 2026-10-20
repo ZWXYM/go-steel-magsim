@@ -213,3 +213,7 @@ static/js/motor_optimization.js -text
 tests/test_motor_optimization_ui.js -text
 docs/optimization_ui_binding_20261020.md -text
 calibration/optimization_ui_binding_20261020/** -text
+static/js/workbench.js -text
+tests/test_calibration_context_ui.js -text
+docs/workbench_input_binding_20261020.md -text
+calibration/calibration_ui_binding_20261020/** -text

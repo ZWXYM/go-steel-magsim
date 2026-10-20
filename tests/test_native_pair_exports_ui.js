@@ -24,6 +24,7 @@ const flush=()=>new Promise(r=>setImmediate(r));
  await h.context.npxExport();assert.equal(h.nodes.get('nativeResult').hidden,false);assert.match(h.history.at(-1),/native_pair=nativepair_aaaaaaaaaaaa/);
  assert.equal(h.calls.filter(c=>c.data).length,1);assert.equal(h.nodes.get('rawPair')?.value||'','');
  await h.context.npxLoad();assert.equal(JSON.parse(h.nodes.get('rawPair').value).material_id,'B30P105');assert(h.nodes.get('rawPair').scrolled);
+ let hooked;h.context.setPredictionInput=text=>hooked=text;await h.context.npxLoad();assert.equal(JSON.parse(hooked).material_id,'B30P105');delete h.context.setPredictionInput;
  assert(h.calls.every(c=>!/(predict|start|submit|train)/.test(c.path)));
  const original=h.nodes.get('rawPair').value;h.context.api=async()=>{throw Error('保存文件发生变化')};await h.context.npxLoad();assert.equal(h.nodes.get('rawPair').value,original);assert.match(h.nodes.get('nativeActionInfo').textContent,/未载入/);
  const saved=harness('http://local/workbench?native_pair='+record.id+'#cal');await flush();await flush();assert(saved.calls.some(c=>c.path==='native-pairs/'+record.id));assert(saved.calls.every(c=>!c.data));

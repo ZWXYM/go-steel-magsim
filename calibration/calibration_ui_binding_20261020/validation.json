@@ -1,0 +1,44 @@
+{
+  "main_tests_passed": 475,
+  "AST": 168,
+  "JS": 12,
+  "comparison": {
+    "before": {
+      "wrong_calibration_in_download_URL": true,
+      "recovery_link_original_calibration": false,
+      "simulated_prediction_POSTs": 2,
+      "displayed_calibration_after_B_selected_and_A_arrived_late": "cal_8fff23daed9e",
+      "actual_network_or_records_created": 0
+    },
+    "after": {
+      "wrong_calibration_in_download_URL": false,
+      "recovery_link_original_calibration": true,
+      "simulated_prediction_POSTs": 1,
+      "displayed_calibration_after_B_selected_and_A_arrived_late": "cal_8d8189317713",
+      "actual_network_or_records_created": 0
+    }
+  },
+  "calibration_and_prediction_producers_unchanged": 4,
+  "saved_calibrations_preserved": 2,
+  "saved_plot_comparisons_identical": 16,
+  "saved_normal_prediction_links_identical": 5,
+  "correct_source_link_status": 200,
+  "wrong_source_link_status": 400,
+  "live_calibration_switch_verified": true,
+  "live_native_pair_input_and_beta_preview_verified": true,
+  "script_dependency_order_verified": true,
+  "raw_input_late_file_and_example_isolated": true,
+  "old_storage_files_unchanged": 4983,
+  "queue_empty": true,
+  "automatic_queue_resume": false,
+  "new_calibrations": 0,
+  "new_saved_predictions": 0,
+  "new_native_sessions": 0,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "new_candidate_evaluations": 0,
+  "new_ML_training": 0,
+  "new_preparations": 0,
+  "cumulative_Maxwell": 45,
+  "cumulative_MuMax": 682
+}
