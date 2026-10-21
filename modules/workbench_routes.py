@@ -16,6 +16,7 @@ from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnos
 from modules.optimization_plans import OptimizationPlans
 from modules.motor_waveforms import MotorWaveforms
 from modules.material_library import MaterialLibrary
+from modules.platform_material_exports import PlatformMaterialExports
 from modules.material_loss_reference import MaterialLossReference,reference_csv,reference_bundle,json_bytes as loss_json_bytes
 from modules.material_input_view import MaterialInputView
 from modules.calibrated_motor_preparation import CalibratedMotorPreparation
@@ -44,6 +45,7 @@ def create_workbench(project,storage=None,root=None):
     plans=OptimizationPlans(optimization)
     waveforms=MotorWaveforms(motor)
     materials=MaterialLibrary(calibration)
+    platform_exports=PlatformMaterialExports(lambda:Path.cwd()/'data/exports')
     loss_reference=MaterialLossReference(project)
     input_view=MaterialInputView(materials)
     calibrated_motor=CalibratedMotorPreparation(materials,motor,storage/'calibrated_motor')
@@ -157,6 +159,28 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/material-library')
     def material_page():
         return render_template('material_library.html')
+
+    @bp.get('/platform-material-exports')
+    def platform_export_page():return render_template('platform_material_exports.html')
+
+    @bp.get('/api/workbench/platform-material-exports')
+    def platform_export_catalog():return jsonify(platform_exports.catalog())
+
+    @bp.get('/api/workbench/platform-material-exports/catalog.csv')
+    def platform_export_catalog_csv():
+        if set(request.args)-{'snapshot'} or len(request.args.getlist('snapshot'))>1:raise ValueError('清单只接受单个snapshot')
+        return send_file(io.BytesIO(platform_exports.csv(request.args.get('snapshot'))),as_attachment=True,download_name='platform_material_exports.csv',mimetype='text/csv')
+
+    @bp.get('/api/workbench/platform-material-exports/<artifact>')
+    def platform_export_detail(artifact):return jsonify(platform_exports.find(artifact)[0])
+
+    @bp.get('/api/workbench/platform-material-exports/<artifact>/files/<name>')
+    def platform_export_file(artifact,name):
+        content,filename=platform_exports.download(artifact,name)
+        return send_file(io.BytesIO(content),as_attachment=True,download_name=filename,mimetype='application/octet-stream')
+
+    @bp.get('/api/workbench/platform-material-exports/<artifact>/bundle')
+    def platform_export_bundle(artifact):return send_file(platform_exports.bundle(artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
 
     @bp.get('/material-loss-reference')
     def material_loss_reference_page():
