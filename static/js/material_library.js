@@ -34,12 +34,16 @@ function mlRender(v){
  ml$('provenance').textContent=JSON.stringify({prediction_scope:v.prediction_scope,loss_status:v.loss_status,independently_validated:v.independently_validated,new_predictions:v.new_predictions,new_native_solves:v.new_native_solves},null,2);
 }
 async function mlOpen(key){
- const generation=++ML.generation;ML.key=key;ml$('detail').hidden=true;ml$('error').textContent='';
+ const generation=++ML.generation,calibration=ml$('calibration').value;ML.key=key;ML.detail=null;ml$('detail').hidden=true;ml$('error').textContent='';
  document.querySelectorAll('.entry').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.key===key)));
- try{const v=await mlApi('/api/workbench/material-inputs/'+ml$('calibration').value+'/'+encodeURIComponent(key));if(generation===ML.generation)mlRender(v)}catch(e){if(generation===ML.generation)ml$('error').textContent=e.message}
+ try{const v=await mlApi('/api/workbench/material-inputs/'+encodeURIComponent(calibration)+'/'+encodeURIComponent(key));if(generation!==ML.generation)return;
+ if(v.calibration_id!==calibration||v.key!==key)throw Error('返回材料与所选校准记录或条目不一致，请刷新目录。');
+ mlRender(v);
+ if(typeof history!=='undefined'&&typeof location!=='undefined'){const query=new URLSearchParams(location.search);query.set('calibration',calibration);query.set('key',key);history.replaceState(null,'',(location.pathname||'/material-library')+'?'+query+(location.hash||''))}
+ }catch(e){if(generation===ML.generation)ml$('error').textContent=e.message}
 }
 function mlEntries(preferredKey){
- ++ML.generation;ML.key=null;ml$('detail').hidden=true;ml$('error').textContent='';const out=ml$('entries');out.replaceChildren();
+ ++ML.generation;ML.key=null;ML.detail=null;ml$('detail').hidden=true;ml$('error').textContent='';const out=ml$('entries');out.replaceChildren();
  const r=ML.records.find(r=>r.id===ml$('calibration').value);if(!r){ml$('status').textContent='尚无保存材料，请先在校准工作台建立记录。';return}
  ml$('status').textContent=r.error||`${r.calibration_version||'旧版本'} · ${r.entries.length} 个保存条目 · 可打开 ${r.entries.filter(e=>e.available).length} 个`;
  for(const e of r.entries){const b=mlText('button',(mlLabels[e.kind]||e.kind)+' · '+e.label,'entry');b.dataset.key=e.key;b.disabled=!e.available;b.setAttribute('aria-pressed','false');b.append(mlText('small',e.available?(e.excluded_grades.length?'排除 '+e.excluded_grades.join('、'):'全库标定'):e.reason));b.onclick=()=>mlOpen(e.key);out.append(b)}
