@@ -96,7 +96,7 @@ function mbComparisonReset(){
 function mbComparisonClear(){
  ++mbComparison.generation;mbComparison.pending=false;mbComparison.data=null;
  mb$('batchCompareRows').replaceChildren();mb$('batchCompareError').textContent='';mb$('batchCompareStatus').textContent='选择基准后点击比较，只读取已有结果。';
- for(const id of ['batchCompareCSV','batchCompareJSON']){mb$(id).hidden=true;mb$(id).href=''}
+ for(const id of ['batchCompareCSV','batchCompareJSON','batchCompareZIP']){mb$(id).hidden=true;mb$(id).href=''}
  mb$('batchCompareRead').disabled=MBB.loading||!mb$('batchBaseline').value;
 }
 function mbComparisonSetup(record){
@@ -126,7 +126,7 @@ async function mbCompare(){
     mbText('td',entry.torque_numerical_acceptance===true?'通过原判据':entry.torque_numerical_acceptance===false?'数值异常 · 原值保留':'判据未报告'),mbText('td',notes.join('；')||'标定来源相同'));
    rows.push(row)}
   mb$('batchCompareRows').replaceChildren(...rows);mbComparison.data=data;mb$('batchCompareStatus').textContent='基准 '+mbName(record.items.find(i=>i.id===baseline))+'；差值 = 当前条目 − 基准，百分比 = 差值 ÷ 正基准 × 100%。保持材料选择顺序。';
-  for(const [id,format] of [['batchCompareCSV','csv'],['batchCompareJSON','json']]){mb$(id).href=url+'&format='+format;mb$(id).download=record.id+'_'+baseline+'_comparison.'+format;mb$(id).hidden=false}
+  for(const [id,format] of [['batchCompareCSV','csv'],['batchCompareJSON','json'],['batchCompareZIP','zip']]){mb$(id).href=url+'&format='+format;mb$(id).download=record.id+'_'+baseline+'_comparison.'+format;mb$(id).hidden=false}
  }catch(error){if(current()){mb$('batchCompareError').textContent=error.message;mb$('batchCompareStatus').textContent='比较未完成；原始结果与当前批量保持。'}}
  finally{if(generation===mbComparison.generation){mbComparison.pending=false;button.disabled=MBB.loading||!mb$('batchBaseline').value}}
 }

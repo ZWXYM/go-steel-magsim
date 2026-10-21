@@ -339,3 +339,24 @@ def report_bundle(batches, artifact):
     with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:
         for name,blob in files.items():archive.writestr(name,blob)
     out.seek(0);return out
+
+
+def baseline_report_bundle(batches, artifact, baseline):
+    """Keep one frozen report snapshot and its source files beside the comparison."""
+    source=report_bundle(batches,artifact).getvalue()
+    with zipfile.ZipFile(io.BytesIO(source)) as archive:
+        report={name:archive.read(name) for name in archive.namelist()}
+    record=json.loads(report['batch.json'])
+    if record['id']!=artifact:raise ValueError('比较包的原批量身份不符')
+    comparison=baseline_comparison(batches,record,baseline)
+    files={'saved_batch_report/'+name:blob for name,blob in report.items()}
+    files['comparison.json']=json.dumps(comparison,ensure_ascii=False,indent=2,allow_nan=False).encode('utf8')
+    files['comparison.csv']=baseline_comparison_csv(comparison)
+    files['manifest.json']=json.dumps(dict(version='batch_baseline_report_bundle_v1',batch=artifact,baseline_item=baseline,
+        producer_sha256=sha(Path(__file__).read_bytes()),files={name:sha(blob) for name,blob in files.items()},
+        saved_report_members_preserved=True,new_native_solves=0,new_predictions=0,
+        efficiency_enabled=False,optimization_ranking_enabled=False),ensure_ascii=False,indent=2).encode('utf8')
+    out=io.BytesIO()
+    with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:
+        for name,blob in files.items():archive.writestr(name,blob)
+    out.seek(0);return out

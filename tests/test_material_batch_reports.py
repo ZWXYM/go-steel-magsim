@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 from modules.material_batch_reports import (report_bundle, summary_markdown, torque_findings,
     metrics_nonpositive_points, material_inputs, result_counts, verified_operating_point,
-    operating_points, operating_points_csv, baseline_comparison, baseline_comparison_csv)
+    operating_points, operating_points_csv, baseline_comparison, baseline_comparison_csv, baseline_report_bundle)
 from modules.material_library import sha
 
 
@@ -291,6 +291,33 @@ class BaselineComparisonTests(unittest.TestCase):
         self.assertTrue(all(e['comparison_status']=='not_comparable' and e['delta_T_avg_Nm'] is None for e in result['entries']))
         for value in (None,'',True,'other'):
             with self.assertRaises(ValueError):baseline_comparison(manager,record,value)
+
+
+class BaselineBundleTests(unittest.TestCase):
+    def fixture(self,corrupt=False):
+        data=BatchReportTests().package(corrupt=corrupt).getvalue()
+        return data,SimpleNamespace(bundle=lambda artifact:io.BytesIO(data))
+
+    def test_one_snapshot_report_members_and_both_comparison_formats_are_hash_bound(self):
+        original,manager=self.fixture();artifact='bhbatch_0123456789ab';baseline='item_01'
+        with zipfile.ZipFile(report_bundle(manager,artifact)) as report,zipfile.ZipFile(baseline_report_bundle(manager,artifact,baseline)) as bundle:
+            names=bundle.namelist();self.assertEqual(len(names),len(set(names)))
+            for name in report.namelist():self.assertEqual(bundle.read('saved_batch_report/'+name),report.read(name))
+            result=json.loads(bundle.read('comparison.json'));self.assertEqual(result['batch'],artifact)
+            self.assertEqual(result['baseline_item'],baseline);self.assertEqual(bundle.read('comparison.csv'),baseline_comparison_csv(result))
+            manifest=json.loads(bundle.read('manifest.json'));self.assertEqual(manifest['baseline_item'],baseline)
+            self.assertTrue(manifest['saved_report_members_preserved']);self.assertEqual(manifest['new_native_solves'],0)
+            self.assertFalse(manifest['efficiency_enabled']);self.assertFalse(manifest['optimization_ranking_enabled'])
+            self.assertEqual(set(manifest['files']),set(names)-{'manifest.json'})
+            for name,digest in manifest['files'].items():self.assertEqual(sha(bundle.read(name)),digest)
+            self.assertEqual(bundle.read('saved_batch_report/item_01/Torque Plots.csv'),b'Time,Torque\r\n0,0\r\n')
+        self.assertEqual(manager.bundle(artifact).getvalue(),original)
+
+    def test_wrong_baseline_batch_or_corrupted_original_never_makes_a_comparison_bundle(self):
+        for corrupt,artifact,baseline in ((False,'bhbatch_0123456789ab','unknown'),(False,'another','item_01'),(True,'bhbatch_0123456789ab','item_01')):
+            data,manager=self.fixture(corrupt)
+            with self.subTest(corrupt=corrupt,artifact=artifact,baseline=baseline),self.assertRaises(ValueError):baseline_report_bundle(manager,artifact,baseline)
+            self.assertEqual(manager.bundle(artifact).getvalue(),data)
 
 
 if __name__=='__main__':unittest.main()

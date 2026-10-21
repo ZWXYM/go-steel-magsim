@@ -25,7 +25,7 @@ from modules.material_motor_workflow import MaterialMotorWorkflow
 from modules.material_motor_chain import MaterialMotorChain
 from modules.material_motor_batches import MaterialMotorBatches
 from modules.material_batch_reports import report_bundle as material_batch_report_bundle
-from modules.material_batch_reports import baseline_comparison, baseline_comparison_csv
+from modules.material_batch_reports import baseline_comparison, baseline_comparison_csv, baseline_report_bundle
 from modules.native_pair_exports import NativePairExports
 from modules.native_material_runs import NativeMaterialRuns
 
@@ -208,8 +208,11 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/api/workbench/calibrated-motor/batches/<artifact>/comparison')
     def material_batch_comparison(artifact):
         baseline=request.args.get('baseline');output=request.args.get('format','json')
-        if set(request.args)-{'baseline','format'} or any(len(request.args.getlist(k))!=1 for k in request.args) or output not in ('json','csv'):
-            raise ValueError('比较只接受单个baseline及json/csv格式')
+        if set(request.args)-{'baseline','format'} or any(len(request.args.getlist(k))!=1 for k in request.args) or output not in ('json','csv','zip'):
+            raise ValueError('比较只接受单个baseline及json/csv/zip格式')
+        if output=='zip':
+            result=baseline_report_bundle(material_batches,artifact,baseline)
+            return send_file(result,as_attachment=True,download_name=artifact+'_'+baseline+'_comparison.zip',mimetype='application/zip')
         result=baseline_comparison(material_batches,material_batches.get(artifact),baseline)
         if output=='csv':
             return send_file(io.BytesIO(baseline_comparison_csv(result)),as_attachment=True,download_name=artifact+'_'+baseline+'_comparison.csv',mimetype='text/csv')

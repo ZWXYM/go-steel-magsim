@@ -206,6 +206,7 @@ function harness(api){
  assert.equal(compared.calls.length,1);assert.equal(compared.calls[0].method,'GET');assert.match(compared.calls[0].url,/comparison\?baseline=item_01$/);
  assert.match(compared.nodes.get('batchCompareRows').text(),/-50\.000000/);assert.match(compared.nodes.get('batchCompareRows').text(),/数值异常/);assert.match(compared.nodes.get('batchCompareRows').text(),/标定来源不同/);
  assert.match(compared.nodes.get('batchCompareCSV').href,/baseline=item_01&format=csv$/);assert.equal(compared.nodes.get('batchCompareCSV').hidden,false);
+ assert.match(compared.nodes.get('batchCompareZIP').href,/baseline=item_01&format=zip$/);assert.equal(compared.nodes.get('batchCompareZIP').download,compareRecord.id+'_item_01_comparison.zip');
  const displayed=compared.nodes.get('batchCompareRows').text();compared.c.mbRender(compareRecord,false);assert.equal(compared.nodes.get('batchCompareRows').text(),displayed);assert.equal(compared.calls.length,1);
  compared.nodes.get('batchBaseline').value='item_02';compared.c.mbComparisonClear();assert.equal(compared.nodes.get('batchCompareRows').children.length,0);assert.equal(compared.nodes.get('batchCompareCSV').hidden,true);
  // Switching the baseline during an earlier read makes the earlier response inert.
@@ -237,5 +238,6 @@ function harness(api){
  assert.doesNotMatch(refreshingComparison.nodes.get('batchCompareStatus').textContent,/正在读取/);assert.equal(refreshingComparison.nodes.get('batchCompareRead').disabled,false);
  assert.ok(refreshingComparison.calls.every(c=>c.method==='GET'));assert.equal(refreshingComparison.calls.filter(c=>c.url.includes('/comparison?')).length,1);
  compared.c.mbReset('reset');assert.equal(compared.nodes.get('batchComparePanel').hidden,true);assert.equal(compared.nodes.get('batchCompareCSV').hidden,true);
+ assert.equal(compared.nodes.get('batchCompareZIP').hidden,true);assert.equal(compared.nodes.get('batchCompareZIP').href,'');
  console.log('Calibrated batch UI: explicit GET-only baseline deltas, exact CPU preparation, stale/resource isolation, pause/resume, bound power and cached reads: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

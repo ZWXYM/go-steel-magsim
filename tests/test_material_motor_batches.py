@@ -1,5 +1,6 @@
 """CPU persistence, source binding and batch admission. No real native calls."""
 import copy
+import io
 import json
 import os
 import unittest
@@ -183,7 +184,13 @@ class MaterialBatchTests(unittest.TestCase):
             self.assertTrue(all(e['comparison_status']=='not_comparable' for e in comparison.json['entries']))
             response=c.get(base+'/comparison?baseline=item_01&format=csv')
             self.assertEqual(response.status_code,200);self.assertIn(b'delta_T_avg_Nm',response.data);response.close()
-            for query in ('','?baseline=unknown','?baseline=item_01&format=zip','?baseline=item_01&format=csv&format=json','?baseline=item_01&other=1'):
+            response=c.get(base+'/comparison?baseline=item_01&format=zip')
+            self.assertEqual(response.status_code,200)
+            with zipfile.ZipFile(io.BytesIO(response.data)) as archive:
+                self.assertEqual(json.loads(archive.read('manifest.json'))['baseline_item'],'item_01')
+                self.assertIn('saved_batch_report/batch.json',archive.namelist())
+            response.close()
+            for query in ('','?baseline=unknown','?baseline=item_01&format=exe','?baseline=item_01&format=csv&format=json','?baseline=item_01&other=1'):
                 self.assertEqual(c.get(base+'/comparison'+query).status_code,400,query)
             self.assertEqual(before,fixtures.MaterialChainTests.files(self))
 
