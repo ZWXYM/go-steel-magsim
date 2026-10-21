@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 from modules.material_batch_reports import (report_bundle, summary_markdown, torque_findings,
     metrics_nonpositive_points, material_inputs, result_counts, verified_operating_point,
-    operating_points, operating_points_csv)
+    operating_points, operating_points_csv, baseline_comparison, baseline_comparison_csv)
 from modules.material_library import sha
 
 
@@ -222,6 +222,75 @@ class BatchReportTests(unittest.TestCase):
             manifest=json.loads(report.read('manifest.json'));self.assertEqual(manifest['version'],'calibrated_batch_summary_v4')
             for name,digest in manifest['files'].items():self.assertEqual(sha(report.read(name)),digest)
         self.assertEqual(source.getvalue(),source_bytes)
+
+
+class BaselineComparisonTests(unittest.TestCase):
+    record=BatchReportTests.record
+    power_fixture=BatchReportTests.power_fixture
+    def comparison_fixture(self):
+        record,execution=self.power_fixture();first=record['items'][0]
+        first['source'].update(template_sha256='f'*64,parent_bank_sha256='parent',training_grades=['A','B'])
+        first['metrics'].update(T_avg_Nm=2,torque_numerical_acceptance=True)
+        execution['result']['metrics']=copy.deepcopy(first['metrics'])
+        second=copy.deepcopy(first);second.update(id='item_02',execution_id='bhexec_bbbbbbbbbbbb')
+        second['source']['material_name']='WB_second';second['metrics'].update(T_avg_Nm=1,torque_numerical_acceptance=False)
+        second['records']['execution']['id']=second['execution_id']
+        other=copy.deepcopy(execution);other.update(id=second['execution_id'],material_name='WB_second')
+        other['result'].update(material_name='WB_second',metrics=copy.deepcopy(second['metrics']))
+        pending=record['items'][1];pending['id']='item_03';pending['source'].update(first['source'],material_name='WB_pending')
+        pending['metrics']={'T_avg_Nm':999};record['items']=[first,second,pending]
+        runs={execution['id']:execution,other['id']:other}
+        manager=SimpleNamespace(chain=SimpleNamespace(execution=SimpleNamespace(get=lambda key:runs[key])))
+        return record,runs,manager
+
+    def test_explicit_baseline_saved_deltas_signed_results_missing_values_and_original_flags(self):
+        record,runs,manager=self.comparison_fixture();before=copy.deepcopy((record,runs))
+        result=baseline_comparison(manager,record,'item_01');a,b,c=result['entries']
+        self.assertEqual(a['delta_T_avg_pct'],0);self.assertEqual(b['delta_T_avg_Nm'],-1)
+        self.assertEqual(b['delta_T_avg_pct'],-50);self.assertAlmostEqual(b['delta_power_W'],-100*math.pi)
+        self.assertEqual(b['delta_power_pct'],-50);self.assertFalse(b['torque_numerical_acceptance'])
+        self.assertIn('本条未通过',b['notes'][0]);self.assertEqual(c['comparison_status'],'not_comparable')
+        self.assertIsNone(c['T_avg_Nm']);self.assertIsNone(c['delta_T_avg_Nm']);self.assertEqual((record,runs),before)
+        self.assertFalse(result['optimization_ranking_enabled']);self.assertEqual(result['new_native_solves'],0)
+        csv_rows=list(csv.DictReader(io.StringIO(baseline_comparison_csv(result).decode('utf-8-sig'))))
+        self.assertEqual([r['item'] for r in csv_rows],['item_01','item_02','item_03'])
+        self.assertEqual(csv_rows[2]['delta_T_avg_Nm'],'');self.assertEqual(csv_rows[1]['torque_numerical_acceptance'],'False')
+        self.assertEqual(csv_rows[1]['baseline_torque_numerical_acceptance'],'True')
+
+    def test_different_calibration_scopes_are_reported_without_hiding_same_setup_deltas(self):
+        record,runs,manager=self.comparison_fixture();item=record['items'][1];item['source'].update(effective_bank_sha256='different',excluded_grades=[])
+        runs[item['execution_id']].update(effective_bank_sha256='different',excluded_grades=[])
+        row=baseline_comparison(manager,record,'item_01')['entries'][1]
+        self.assertEqual(row['comparison_status'],'same_saved_setup');self.assertEqual(row['delta_T_avg_Nm'],-1)
+        self.assertFalse(row['calibration_scope_matches_baseline']);self.assertIn('excluded_grades',row['calibration_scope_differences'])
+        self.assertTrue(any('标定来源不同' in n for n in row['notes']))
+
+    def test_template_model_protocol_and_speed_mismatch_leave_deltas_blank(self):
+        for key in ('template_sha256','model_version','measurement_protocol','speed_rpm'):
+            record,runs,manager=self.comparison_fixture();item=record['items'][1];execution=runs[item['execution_id']]
+            if key=='template_sha256':item['source'][key]='e'*64
+            elif key=='model_version':item[key]=execution['result'][key]='other_model'
+            elif key=='measurement_protocol':item[key]=execution[key]='other_protocol'
+            else:execution['requested_protocol'][key]=1500
+            with self.subTest(key=key):
+                row=baseline_comparison(manager,record,'item_01')['entries'][1]
+                self.assertEqual(row['comparison_status'],'not_comparable');self.assertIsNone(row['delta_power_W'])
+                self.assertTrue(row['comparison_reasons'])
+
+    def test_nonpositive_baseline_preserves_absolute_deltas_but_no_percentages(self):
+        for torque in (0,-2):
+            record,runs,manager=self.comparison_fixture();item=record['items'][0]
+            item['metrics']['T_avg_Nm']=runs[item['execution_id']]['result']['metrics']['T_avg_Nm']=torque
+            row=baseline_comparison(manager,record,'item_01')['entries'][1]
+            self.assertEqual(row['delta_T_avg_Nm'],1-torque);self.assertIsNone(row['delta_T_avg_pct'])
+            self.assertIn('基准转矩非正',row['percentage_unavailable_reason'])
+
+    def test_unreadable_baseline_and_unknown_item_cannot_silently_choose_another(self):
+        record,runs,manager=self.comparison_fixture();del runs[record['items'][0]['execution_id']]
+        result=baseline_comparison(manager,record,'item_01')
+        self.assertTrue(all(e['comparison_status']=='not_comparable' and e['delta_T_avg_Nm'] is None for e in result['entries']))
+        for value in (None,'',True,'other'):
+            with self.assertRaises(ValueError):baseline_comparison(manager,record,value)
 
 
 if __name__=='__main__':unittest.main()

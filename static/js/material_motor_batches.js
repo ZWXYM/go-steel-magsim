@@ -1,6 +1,7 @@
 /* Saved calibrated-material batches; polling never starts or retries a task. */
 const MBB={catalog:[],selected:new Set(),record:null,loading:false,actionPending:false,preparePending:false,viewRevision:0,observedView:null,selectionCalibration:null,catalogGeneration:0,generation:0,historyGeneration:0,timer:null,plotBatch:null,plotMode:'all',plotSelected:new Set()};
 let mbPowerGeneration=0;const mbPowerCache=new Map();
+const mbComparison={batch:null,signature:null,generation:0,pending:false,data:null};
 const mb$=id=>document.getElementById(id),mbText=(tag,text)=>{const n=document.createElement(tag);n.textContent=text;return n};
 const mbLabels={prepared:'计划已准备，尚未开始',prepared_source_changed:'准备后程序已更新，请保留旧计划',starting:'正在启动串行控制',running:'正在串行推进',completed:'批量已完成',completed_with_failures:'批量结束，包含失败或跳过项',needs_attention:'需要检查后显式接续',failed:'失败，现场保留',paused:'已暂停，阶段与结果保留'};
 const mbItemLabels={pending:'待执行',importing:'导入与预检',preparing_model:'准备分析工程',analyzing:'转矩分析',completed:'新增结果已完成',reused_result:'复用已有结果',failed:'失败，现场保留',blocked:'原记录需检查'};
@@ -64,6 +65,7 @@ function mbButtons(){
 }
 function mbReset(message){
  ++mbPowerGeneration;
+ mbComparisonReset();
  MBB.record=null;MBB.canStart=false;MBB.loading=false;MBB.plotBatch=null;mbButtons();
  mb$('batchStatus').textContent=message;mb$('batchBudget').textContent='';mb$('batchTotals').textContent='';mb$('batchRows').replaceChildren();
  mb$('batchBundle').hidden=true;mb$('batchBundle').href='';mb$('batchPlotPanel').hidden=true;
@@ -84,7 +86,47 @@ function mbRender(record,canStart){
  const bad=item.result_available&&m.torque_numerical_acceptance===false,quality=mbText('td',!item.result_available?'尚无结果':bad?'数值异常 · 原值保留':m.torque_numerical_acceptance===true?'通过原判据':'未报告');if(bad)quality.className='error';
  const phase=mbText('td',mbItemLabels[item.status]||item.status);
  const power=mbText('td','—');power.className='derivedPower';row.append(name,phase,quality,mbText('td',number(m.T_avg_Nm)),power,mbText('td',number(m.T_min_Nm)+' / '+number(m.T_max_Nm)),mbText('td',number(m.K_T_ripple_pct)),mbText('td',item.error||item.execution_id||'尚无实际转矩结果'));rows.append(row);mbLoadPower(item,power,record.id,powerGeneration)}
- mbPlot(record);
+ mbPlot(record);mbComparisonSetup(record);
+}
+function mbComparisonReset(){
+ ++mbComparison.generation;mbComparison.pending=false;mbComparison.data=null;mbComparison.batch=null;mbComparison.signature=null;
+ const panel=mb$('batchComparePanel');if(!panel)return;panel.hidden=true;mb$('batchBaseline').replaceChildren();mbComparisonClear();
+}
+function mbComparisonClear(){
+ ++mbComparison.generation;mbComparison.pending=false;mbComparison.data=null;
+ mb$('batchCompareRows').replaceChildren();mb$('batchCompareError').textContent='';mb$('batchCompareStatus').textContent='选择基准后点击比较，只读取已有结果。';
+ for(const id of ['batchCompareCSV','batchCompareJSON']){mb$(id).hidden=true;mb$(id).href=''}
+ mb$('batchCompareRead').disabled=!mb$('batchBaseline').value;
+}
+function mbComparisonSetup(record){
+ const signature=JSON.stringify(record.items.map(i=>[i.id,i.selection,i.source,i.execution_id,i.model_version,i.measurement_protocol,i.result_available,i.metrics]));
+ if(mbComparison.batch===record.id&&mbComparison.signature===signature)return;
+ const previous=mbComparison.batch===record.id?mb$('batchBaseline').value:'';mbComparisonClear();
+ mbComparison.batch=record.id;mbComparison.signature=signature;mb$('batchComparePanel').hidden=false;
+ const select=mb$('batchBaseline');select.replaceChildren();const empty=mbText('option','请选择基准材料');empty.value='';select.append(empty);
+ for(const item of record.items){const option=mbText('option',mbName(item)+' · '+item.id+(item.result_available?'':' · 尚无结果'));option.value=item.id;option.disabled=!item.result_available;select.append(option)}
+ select.value=record.items.some(i=>i.id===previous&&i.result_available)?previous:'';mb$('batchCompareRead').disabled=!select.value;
+}
+async function mbCompare(){
+ const record=MBB.record,baseline=mb$('batchBaseline').value,button=mb$('batchCompareRead');
+ if(!record||MBB.loading||record.id!==mb$('batchHistory').value||mbComparison.pending||!record.items.some(i=>i.id===baseline&&i.result_available))return;
+ mbComparisonClear();const generation=++mbComparison.generation;mbComparison.pending=true;button.disabled=true;
+ mb$('batchCompareStatus').textContent='正在读取保存工况与原转矩结果…';const url='/api/workbench/calibrated-motor/batches/'+record.id+'/comparison?baseline='+encodeURIComponent(baseline);
+ const current=()=>generation===mbComparison.generation&&MBB.record?.id===record.id&&mb$('batchHistory').value===record.id&&mb$('batchBaseline').value===baseline;
+ try{const data=await mbAPI(url);if(!current())return;
+  if(data.version!=='batch_baseline_comparison_v1'||data.batch!==record.id||data.baseline_item!==baseline||!Array.isArray(data.entries)||JSON.stringify(data.entries.map(e=>e.item))!==JSON.stringify(record.items.map(i=>i.id)))throw Error('比较响应与当前批量或基准不一致，请刷新重开。');
+  const value=v=>v===null||v===undefined?'—':typeof v==='number'&&Number.isFinite(v)?v.toFixed(6):(()=>{throw Error('比较指标不是有限数值')})();
+  const rows=[];for(const entry of data.entries){const row=document.createElement('tr'),item=record.items.find(i=>i.id===entry.item),notes=[...(entry.comparison_reasons||[]),...(entry.notes||[])];
+   if(entry.percentage_unavailable_reason)notes.push(entry.percentage_unavailable_reason);
+   row.append(mbText('td',mbName(item)+(entry.item===baseline?' · 基准':'')),
+    mbText('td',entry.comparison_status==='same_saved_setup'?'同模板 / 同协议 / 同转速':'不可比较'),
+    mbText('td',value(entry.delta_T_avg_Nm)),mbText('td',value(entry.delta_T_avg_pct)),mbText('td',value(entry.delta_power_W)),mbText('td',value(entry.delta_power_pct)),
+    mbText('td',entry.torque_numerical_acceptance===true?'通过原判据':entry.torque_numerical_acceptance===false?'数值异常 · 原值保留':'判据未报告'),mbText('td',notes.join('；')||'标定来源相同'));
+   rows.push(row)}
+  mb$('batchCompareRows').replaceChildren(...rows);mbComparison.data=data;mb$('batchCompareStatus').textContent='基准 '+mbName(record.items.find(i=>i.id===baseline))+'；差值 = 当前条目 − 基准，百分比 = 差值 ÷ 正基准 × 100%。保持材料选择顺序。';
+  for(const [id,format] of [['batchCompareCSV','csv'],['batchCompareJSON','json']]){mb$(id).href=url+'&format='+format;mb$(id).download=record.id+'_'+baseline+'_comparison.'+format;mb$(id).hidden=false}
+ }catch(error){if(current()){mb$('batchCompareError').textContent=error.message;mb$('batchCompareStatus').textContent='比较未完成；原始结果与当前批量保持。'}}
+ finally{if(generation===mbComparison.generation){mbComparison.pending=false;button.disabled=!mb$('batchBaseline').value}}
 }
 async function mbLoadPower(item,cell,batchId,generation){
  if(!item.result_available)return;
@@ -144,6 +186,7 @@ async function mbAction(action){
  finally{MBB.actionPending=false;if(mb$('batchHistory').value===artifact){await mbLoad();if(failure&&mb$('batchHistory').value===artifact)mb$('batchError').textContent=failure+(mb$('batchError').textContent?'；'+mb$('batchError').textContent:'')}else mbButtons()}
 }
 if(typeof document!=='undefined'){
+ mb$('batchBaseline').onchange=mbComparisonClear;mb$('batchCompareRead').onclick=mbCompare;
  mb$('batchPlotAll').onclick=()=>mbPlotMode('all');mb$('batchPlotAccepted').onclick=()=>mbPlotMode('accepted');mb$('batchPlotNone').onclick=()=>mbPlotMode('none');
  mb$('batchCatalogRefresh').onclick=mbCatalog;mb$('batchCalibration').onchange=mbEntries;mb$('batchSelectFit').onclick=()=>mbSelectFits();mb$('batchClearSelection').onclick=()=>mbSelectFits(true);
  mb$('batchPrepare').onclick=mbPrepare;mb$('batchRefresh').onclick=()=>mbHistory();mb$('batchHistory').onchange=mbLoad;

@@ -184,6 +184,72 @@ def operating_points_csv(points):
     return stream.getvalue().encode('utf-8-sig')
 
 
+def baseline_comparison(batches, record, baseline):
+    """Compare saved results in selection order; do not create or rank runs."""
+    items={item['id']:item for item in record['items']}
+    if not isinstance(baseline,str) or baseline not in items:
+        raise ValueError('请选择当前批量中的基准条目')
+    points=operating_points(batches,record);entries=points['entries']
+    base=next(e for e in entries if e['item']==baseline);rows=[]
+    scope_keys=('parent_bank_sha256','effective_bank_sha256','training_grades','excluded_grades')
+    for point in entries:
+        item=items[point['item']];source=item['source'];reasons=[]
+        if base['status']!='verified_saved_operating_point':reasons.append('基准工况未核对：'+str(base['error']))
+        if point['status']!='verified_saved_operating_point':reasons.append('本条工况未核对：'+str(point['error']))
+        for key,label in (('template_sha256','模板'),):
+            value=source.get(key);base_value=items[baseline]['source'].get(key)
+            if (not isinstance(value,str) or not re.fullmatch(r'[a-f0-9]{64}',value)
+                    or not isinstance(base_value,str) or not re.fullmatch(r'[a-f0-9]{64}',base_value)):
+                reasons.append(label+'身份缺失')
+            elif value!=base_value:reasons.append(label+'不同')
+        for key,label in (('model_version','模型版本'),('measurement_protocol','分析协议'),('speed_rpm','保存转速')):
+            if point[key] is None or base[key] is None or point[key]!=base[key]:reasons.append(label+'不同或缺失')
+        differences=[key for key in scope_keys if source.get(key)!=items[baseline]['source'].get(key)]
+        scope_known=all(key in source and key in items[baseline]['source'] for key in scope_keys)
+        entry=dict(point,template_sha256=source.get('template_sha256'),baseline_item=baseline,
+            calibration=item['selection']['calibration'],material_key=item['selection']['key'],
+            baseline_torque_numerical_acceptance=base['torque_numerical_acceptance'],
+            calibration_scope={key:source.get(key) for key in scope_keys},
+            calibration_scope_matches_baseline=not differences if scope_known else None,
+            calibration_scope_differences=differences,comparison_status='not_comparable' if reasons else 'same_saved_setup',
+            comparison_reasons=reasons,delta_T_avg_Nm=None,delta_power_W=None,delta_T_avg_pct=None,delta_power_pct=None,
+            percentage_unavailable_reason=None,notes=[])
+        if not reasons:
+            dt=point['T_avg_Nm']-base['T_avg_Nm'];dp=point['electromagnetic_mechanical_power_W']-base['electromagnetic_mechanical_power_W']
+            if not all(math.isfinite(v) for v in (dt,dp)):
+                entry.update(comparison_status='not_comparable',comparison_reasons=['差值超出有限数值范围'])
+            else:
+                entry.update(delta_T_avg_Nm=dt,delta_power_W=dp)
+                if base['T_avg_Nm']>0 and base['electromagnetic_mechanical_power_W']>0:
+                    tp=dt/base['T_avg_Nm']*100;pp=dp/base['electromagnetic_mechanical_power_W']*100
+                    if all(math.isfinite(v) for v in (tp,pp)):entry.update(delta_T_avg_pct=tp,delta_power_pct=pp)
+                    else:entry['percentage_unavailable_reason']='百分比超出有限数值范围'
+                else:entry['percentage_unavailable_reason']='基准转矩非正，仅列绝对差值'
+        if not scope_known:entry['notes'].append('标定来源信息不完整')
+        elif differences:entry['notes'].append('标定来源不同，差值同时包含校准库/留出范围差异')
+        if base['torque_numerical_acceptance'] is not True:entry['notes'].append('基准未通过或未报告原转矩判据')
+        if point['torque_numerical_acceptance'] is not True:entry['notes'].append('本条未通过或未报告原转矩判据')
+        rows.append(entry)
+    return dict(version='batch_baseline_comparison_v1',batch=record['id'],baseline_item=baseline,entries=rows,
+        baseline_torque_numerical_acceptance=base['torque_numerical_acceptance'],
+        power_definition=points['power_definition'],scope='Saved model result differences under the same template, model version, protocol and speed; not causal material effects or ranking',
+        percentage_definition='100 * (item - baseline) / baseline; only a positive baseline has a percentage',
+        new_native_solves=0,new_predictions=0,efficiency_enabled=False,optimization_ranking_enabled=False)
+
+
+def baseline_comparison_csv(comparison):
+    stream=io.StringIO(newline='');writer=csv.writer(stream)
+    fields=('batch','baseline_item','item','material_name','calibration','material_key','execution','analysis_plan','template_sha256','model_version',
+        'measurement_protocol','speed_rpm','T_avg_Nm','electromagnetic_mechanical_power_W','delta_T_avg_Nm','delta_T_avg_pct',
+        'delta_power_W','delta_power_pct','torque_numerical_acceptance','baseline_torque_numerical_acceptance','calibration_scope_matches_baseline',
+        'comparison_status','comparison_reasons','percentage_unavailable_reason','notes','calibration_scope','torque_csv_sha256')
+    writer.writerow(fields)
+    for entry in comparison['entries']:
+        values=dict(entry,batch=comparison['batch'])
+        writer.writerow([json.dumps(values[key],ensure_ascii=False) if isinstance(values.get(key),(list,dict)) else values.get(key) for key in fields])
+    return stream.getvalue().encode('utf-8-sig')
+
+
 def summary_markdown(record, identities=None, operating=None):
     counts=result_counts(record)
     inputs={entry['item']:entry for entry in (identities or {}).get('entries',[])}

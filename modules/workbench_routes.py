@@ -1,5 +1,6 @@
 """Browser entrypoints for source-bound calibration and isolated motor scans."""
 import json
+import io
 import os
 from pathlib import Path
 
@@ -24,6 +25,7 @@ from modules.material_motor_workflow import MaterialMotorWorkflow
 from modules.material_motor_chain import MaterialMotorChain
 from modules.material_motor_batches import MaterialMotorBatches
 from modules.material_batch_reports import report_bundle as material_batch_report_bundle
+from modules.material_batch_reports import baseline_comparison, baseline_comparison_csv
 from modules.native_pair_exports import NativePairExports
 from modules.native_material_runs import NativeMaterialRuns
 
@@ -202,6 +204,16 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/api/workbench/calibrated-motor/batches/<artifact>/bundle')
     def material_batch_bundle(artifact):
         return send_file(material_batch_report_bundle(material_batches,artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
+
+    @bp.get('/api/workbench/calibrated-motor/batches/<artifact>/comparison')
+    def material_batch_comparison(artifact):
+        baseline=request.args.get('baseline');output=request.args.get('format','json')
+        if set(request.args)-{'baseline','format'} or any(len(request.args.getlist(k))!=1 for k in request.args) or output not in ('json','csv'):
+            raise ValueError('比较只接受单个baseline及json/csv格式')
+        result=baseline_comparison(material_batches,material_batches.get(artifact),baseline)
+        if output=='csv':
+            return send_file(io.BytesIO(baseline_comparison_csv(result)),as_attachment=True,download_name=artifact+'_'+baseline+'_comparison.csv',mimetype='text/csv')
+        return jsonify(result)
 
     @bp.get('/api/workbench/material-inputs')
     def material_input_catalog():

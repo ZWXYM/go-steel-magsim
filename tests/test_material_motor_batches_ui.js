@@ -18,7 +18,7 @@ function harness(api){
  const c=vm.createContext({document:undefined,MotorPower:require('../static/js/motor_power.js'),URLSearchParams,location:{search:'',pathname:'/calibrated-motor/batches'},history:{replaceState:(state,title,url)=>urls.push(url)},setTimeout:(fn,ms)=>{timers.push(ms);return timers.length},clearTimeout:()=>{},
  fetch:async(url,options={})=>{calls.push({url,method:options.method||'GET',body:options.body});return {ok:true,json:async()=>api(url,options)}}});
  vm.runInContext(fs.readFileSync('static/js/material_motor_batches.js','utf8'),c);
- c.document={getElementById:id=>{if(!nodes.has(id))nodes.set(id,new Node(['batchHistory','batchCalibration'].includes(id)?'select':'div'));return nodes.get(id)},createElement:tag=>new Node(tag),createElementNS:(ns,tag)=>new Node(tag)};
+ c.document={getElementById:id=>{if(!nodes.has(id))nodes.set(id,new Node(['batchHistory','batchCalibration','batchBaseline'].includes(id)?'select':'div'));return nodes.get(id)},createElement:tag=>new Node(tag),createElementNS:(ns,tag)=>new Node(tag)};
  c.document.getElementById('batchHistory').value=record.id;c.document.getElementById('batchCalibration').value='cal_a';
  c.document.getElementById('batchCores').value='2';c.document.getElementById('batchProtocol').value='v8_2_cycle1';
  return {c,nodes,calls,timers,urls};
@@ -197,5 +197,33 @@ function harness(api){
  assert.equal(actDuringPrepare.calls.filter(c=>c.url.endsWith('/start')).length,1);assert.match(actDuringPrepare.nodes.get('batchPrepareStatus').text(),/已保存/);
  // Normal unchanged preparation still opens exactly its returned plan.
  assert.equal(vm.runInContext('MBB.record.id',prepare.c),record.id);assert.match(prepare.nodes.get('batchPrepareStatus').text(),/尚未开始/);
- console.log('Calibrated batch UI: exact CPU preparation, no auto dispatch, pause/resume gates, zero/null, stale/resource isolation, bound power and cached GET-only reads: PASS');
+ // Baseline comparison is explicit, GET-only and bound to both the viewed batch and selected item.
+ const compareRecord=structuredClone(mixed);compareRecord.items[0].metrics.torque_numerical_acceptance=true;
+ const comparison=(batch=compareRecord.id,baseline='item_01')=>({version:'batch_baseline_comparison_v1',batch,baseline_item:baseline,entries:compareRecord.items.map((item,i)=>({item:item.id,comparison_status:'same_saved_setup',delta_T_avg_Nm:i?-1:0,delta_T_avg_pct:i?-50:0,delta_power_W:i?-314.159:0,delta_power_pct:i?-50:0,torque_numerical_acceptance:i?false:true,notes:i?['标定来源不同，差值同时包含校准库/留出范围差异']:[],comparison_reasons:[]}))});
+ const compared=harness(async()=>comparison());compared.c.mbRender(compareRecord,false);
+ assert.equal(compared.calls.length,0);assert.equal(compared.nodes.get('batchBaseline').value,'');assert.equal(compared.nodes.get('batchCompareRead').disabled,true);
+ compared.nodes.get('batchBaseline').value='item_01';compared.c.mbComparisonClear();await compared.c.mbCompare();
+ assert.equal(compared.calls.length,1);assert.equal(compared.calls[0].method,'GET');assert.match(compared.calls[0].url,/comparison\?baseline=item_01$/);
+ assert.match(compared.nodes.get('batchCompareRows').text(),/-50\.000000/);assert.match(compared.nodes.get('batchCompareRows').text(),/数值异常/);assert.match(compared.nodes.get('batchCompareRows').text(),/标定来源不同/);
+ assert.match(compared.nodes.get('batchCompareCSV').href,/baseline=item_01&format=csv$/);assert.equal(compared.nodes.get('batchCompareCSV').hidden,false);
+ const displayed=compared.nodes.get('batchCompareRows').text();compared.c.mbRender(compareRecord,false);assert.equal(compared.nodes.get('batchCompareRows').text(),displayed);assert.equal(compared.calls.length,1);
+ compared.nodes.get('batchBaseline').value='item_02';compared.c.mbComparisonClear();assert.equal(compared.nodes.get('batchCompareRows').children.length,0);assert.equal(compared.nodes.get('batchCompareCSV').hidden,true);
+ // Switching the baseline during an earlier read makes the earlier response inert.
+ let resolveCompare;const waitCompare=new Promise(resolve=>resolveCompare=resolve),late=harness(async()=>waitCompare);late.c.mbRender(compareRecord,false);
+ late.nodes.get('batchBaseline').value='item_01';late.c.mbComparisonClear();const oldCompare=late.c.mbCompare();
+ await late.c.mbCompare();assert.equal(late.calls.length,1);late.nodes.get('batchBaseline').value='item_02';late.c.mbComparisonClear();
+ resolveCompare(comparison());await oldCompare;assert.equal(late.nodes.get('batchCompareRows').children.length,0);assert.equal(late.nodes.get('batchCompareCSV').hidden,true);assert.equal(late.nodes.get('batchCompareRead').disabled,false);
+ // A new batch, malformed response or unavailable result never gains a downloadable comparison.
+ let finishCompare;const swapWait=new Promise(resolve=>finishCompare=resolve),another=harness(async()=>swapWait);another.c.mbRender(compareRecord,false);
+ another.nodes.get('batchBaseline').value='item_01';another.c.mbComparisonClear();const pendingComparison=another.c.mbCompare();
+ another.c.mbRender({...compareRecord,id:'bhbatch_bbbbbbbbbbbb'},false);finishCompare(comparison());await pendingComparison;
+ assert.equal(another.nodes.get('batchCompareCSV').hidden,true);assert.equal(another.nodes.get('batchBaseline').value,'');
+ for(const response of [comparison('wrong'),comparison(compareRecord.id,'item_02'),{...comparison(),entries:[]},(()=>{const r=comparison();r.entries[1].delta_T_avg_Nm=NaN;return r})()]){
+  const invalidCompare=harness(async()=>response);invalidCompare.c.mbRender(compareRecord,false);invalidCompare.nodes.get('batchBaseline').value='item_01';invalidCompare.c.mbComparisonClear();await invalidCompare.c.mbCompare();
+  assert.ok(invalidCompare.nodes.get('batchCompareError').textContent);assert.equal(invalidCompare.nodes.get('batchCompareCSV').hidden,true);assert.equal(invalidCompare.nodes.get('batchCompareRows').children.length,0);
+ }
+ const pendingOnly=harness(async()=>{throw Error('must not fetch')});pendingOnly.c.mbRender({...compareRecord,items:compareRecord.items.map(i=>({...i,result_available:false}))},false);
+ pendingOnly.nodes.get('batchBaseline').value='item_01';await pendingOnly.c.mbCompare();assert.equal(pendingOnly.calls.length,0);
+ compared.c.mbReset('reset');assert.equal(compared.nodes.get('batchComparePanel').hidden,true);assert.equal(compared.nodes.get('batchCompareCSV').hidden,true);
+ console.log('Calibrated batch UI: explicit GET-only baseline deltas, exact CPU preparation, stale/resource isolation, pause/resume, bound power and cached reads: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

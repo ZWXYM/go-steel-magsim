@@ -176,6 +176,16 @@ class MaterialBatchTests(unittest.TestCase):
             self.assertEqual(c.post(base+'/resume',json={}).status_code,423)
             response=c.get(base+'/bundle');self.assertEqual(response.status_code,200);response.close()
             response=c.get('/calibrated-motor/batches');self.assertEqual(response.status_code,200);response.close()
+            before=fixtures.MaterialChainTests.files(self)
+            comparison=c.get(base+'/comparison?baseline=item_01')
+            self.assertEqual(comparison.status_code,200,comparison.json)
+            self.assertEqual(comparison.json['baseline_item'],'item_01')
+            self.assertTrue(all(e['comparison_status']=='not_comparable' for e in comparison.json['entries']))
+            response=c.get(base+'/comparison?baseline=item_01&format=csv')
+            self.assertEqual(response.status_code,200);self.assertIn(b'delta_T_avg_Nm',response.data);response.close()
+            for query in ('','?baseline=unknown','?baseline=item_01&format=zip','?baseline=item_01&format=csv&format=json','?baseline=item_01&other=1'):
+                self.assertEqual(c.get(base+'/comparison'+query).status_code,400,query)
+            self.assertEqual(before,fixtures.MaterialChainTests.files(self))
 
 
 if __name__=='__main__':unittest.main()
