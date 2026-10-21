@@ -63,6 +63,8 @@ function showCurve(){
 function predictionContext(){return JSON.stringify([calibrationGeneration,current?.id,$('history').value,rawInputGeneration,$('rawPair').value,$('predictionMode').value,$('excludeGrade').value])}
 function predictionInputChanged(rawChanged=false){clearActionError('prediction');if(rawChanged)++rawInputGeneration;$('predResult').innerHTML='';$('predStatus').textContent=predictionPending?'输入或范围已变更；之前请求返回后可按当前选择预测。':'输入或预测范围已变更，请应用所选范围。';updatePredictionButton()}
 function setPredictionInput(text){$('rawPair').value=text;predictionInputChanged(true)}
+function beginPredictionInputRead(){return ++rawInputGeneration}
+function applyPredictionInputRead(token,text){if(token!==rawInputGeneration)return false;setPredictionInput(text);return true}
 async function example(){clearActionError('prediction');const token=++rawInputGeneration;try{const pair=await api('samples/B30P105/raw-pair');if(token===rawInputGeneration)setPredictionInput(JSON.stringify(pair,null,2))}catch(e){if(token===rawInputGeneration)error(e,'prediction')}}
 async function readRaw(input){const file=input.files[0],token=++rawInputGeneration;if(!file)return;clearActionError('prediction');try{const text=await file.text();if(token===rawInputGeneration)setPredictionInput(text)}catch(e){if(token===rawInputGeneration)error(e,'prediction')}}
 function parameterSupportSummary(s){if(!s||!s.joint_support_evaluated)return '参数组合覆盖范围未核验';if(s.matched_anchor_grades.length)return '与已知样品参数相同（标定条件）';return s.inside_joint_parameter_support?'参数组合位于样品覆盖范围内，独立准确性待验证':'参数组合超出样品覆盖范围，属于未标定组合'}
