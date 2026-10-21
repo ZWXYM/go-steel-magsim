@@ -171,3 +171,5 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 四样品损耗资料已接入系统首页的“[四样品损耗参考](/material-loss-reference)”：14个原典型点与4个另版手册点分列，保存估计与单位、来源及CSV/JSON/ZIP可下载；不重新拟合或自动写入电机材料。详情见[说明](docs/material_loss_reference_20261021.md)。
 
 旧代理的并发预测/材料出口已修复共享模型串用，常规训练独立完成后再发布默认实例；保留旧权重与数值算法，见[模型绑定说明](docs/model_selection_20261021.md)。
+
+两种HTTP材料出口现在独立保存每次导出，保留指定材料名、输入参数和原导出；同名并发下载不会串文件，见[导出保存说明](docs/export_artifacts_20261021.md)。

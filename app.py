@@ -1271,6 +1271,12 @@ def _get_mx():
         _maxwell_exp = maxwell_exporter
     return _maxwell_exp
 
+def _http_material_names(prefix, requested):
+    token = uuid.uuid4().hex[:12]
+    material = requested or '%s_%s_%s' % (prefix,datetime.now().strftime('%Y%m%d_%H%M%S'),token)
+    stem = re.sub(r'[^A-Za-z0-9_-]','_',str(material))[:80] or prefix
+    return material, stem+'_'+token if requested else stem
+
 def _get_pr():
     global _pipeline_runner
     if _pipeline_runner is None:
@@ -1686,7 +1692,7 @@ def export_maxwell():
     B_RD      = data.get('B_RD', [])
     H_TD      = data.get('H_TD')
     B_TD      = data.get('B_TD')
-    mat_name   = data.get('mat_name') or 'GO_Sim_%s' % datetime.now().strftime('%Y%m%d_%H%M%S')
+    mat_name, artifact_name = _http_material_names('GO_Sim',data.get('mat_name'))
     thickness  = float(data.get('thickness_mm', 0.35))
     si_content = float(data.get('Si_content', 3.0))
     try:
@@ -1694,14 +1700,16 @@ def export_maxwell():
         path = mx.export_from_bh_curves(
             H_RD, B_RD, H_TD, B_TD, mat_name=mat_name,
             thickness_mm=thickness, source='analysis_api',
-            si_content=si_content
+            si_content=si_content, artifact_name=artifact_name
         )
-        return send_file(
+        response = send_file(
             path,
             mimetype='application/octet-stream',
             as_attachment=True,
             download_name='%s.amat' % mat_name
         )
+        response.headers['X-Material-Artifact'] = Path(path).name
+        return response
     except Exception as e:
         return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
 
@@ -1710,20 +1718,22 @@ def export_maxwell_from_prediction():
     data      = request.json or {}
     model_id  = data.get('model_id')
     params    = data.get('params', {})
-    mat_name  = data.get('mat_name') or 'GO_Pred_%s' % datetime.now().strftime('%Y%m%d_%H%M%S')
+    mat_name, artifact_name = _http_material_names('GO_Pred',data.get('mat_name'))
     thickness = float(data.get('thickness_mm', 0.35))
     try:
         result = _predict_selected_bh(params, model_id)
         mx = _get_mx()
         path = mx.export_from_prediction(
-            result, mat_name=mat_name, thickness_mm=thickness
+            result, mat_name=mat_name, thickness_mm=thickness, artifact_name=artifact_name
         )
-        return send_file(
+        response = send_file(
             path,
             mimetype='application/octet-stream',
             as_attachment=True,
             download_name='%s.amat' % mat_name
         )
+        response.headers['X-Material-Artifact'] = Path(path).name
+        return response
     except Exception as e:
         return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
 

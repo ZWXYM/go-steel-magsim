@@ -13,6 +13,7 @@ NOTICE: core_loss_kh/kc/ke 为 Steinmetz/Bertotti 先验估算值，
 """
 import json
 import os
+import re
 from pathlib import Path
 from datetime import datetime
 
@@ -200,11 +201,19 @@ def generate_amat_content(mat_name: str,
 
 def save_amat_file(content: str, mat_name: str,
                    export_dir: str = 'data/exports',
-                   metadata: dict = None) -> str:
+                   metadata: dict = None, *, artifact_name: str = None) -> str:
     """保存到 data/exports/<mat_name>.amat，返回文件路径。"""
+    if artifact_name is not None and (not isinstance(artifact_name,str) or not re.fullmatch(r'[A-Za-z0-9_-]+',artifact_name)):
+        raise ValueError('独立导出文件名只能含字母、数字、下划线和连字符')
     Path(export_dir).mkdir(parents=True, exist_ok=True)
-    path = Path(export_dir) / f'{mat_name}.amat'
-    path.write_text(content, encoding='utf-8')
+    path = Path(export_dir) / f'{artifact_name if artifact_name is not None else mat_name}.amat'
+    if artifact_name is not None:
+        if _metadata_path_for_amat(path).exists():
+            raise FileExistsError('独立导出元数据已存在，原文件保留')
+        with path.open('x',encoding='utf-8') as stream:
+            stream.write(content)
+    else:
+        path.write_text(content, encoding='utf-8')
     if metadata is not None:
         _write_metadata(path, metadata)
     return str(path)
@@ -216,7 +225,7 @@ def export_from_bh_curves(rd_H: list, rd_B: list,
                            thickness_mm: float = 0.35,
                            export_dir: str = 'data/exports',
                            source: str = None,
-                           si_content: float = 3.0) -> str:
+                           si_content: float = 3.0, *, artifact_name: str = None) -> str:
     """
     从手动 B-H 数据生成并保存 .amat 文件，返回文件路径。
     mat_name 为 None 时自动生成时间戳命名。
@@ -243,13 +252,13 @@ def export_from_bh_curves(rd_H: list, rd_B: list,
         'interpolation_model': MODEL_NAME,
         'exported_directions': ['RD', 'TD'],
     }
-    return save_amat_file(content, mat_name, export_dir, metadata=metadata)
+    return save_amat_file(content, mat_name, export_dir, metadata=metadata, artifact_name=artifact_name)
 
 
 def export_from_prediction(prediction_result: dict,
                             mat_name: str,
                             thickness_mm: float = 0.35,
-                            export_dir: str = 'data/exports') -> str:
+                            export_dir: str = 'data/exports', *, artifact_name: str = None) -> str:
     """
     从 BHPredictor.predict_bh() 的返回值直接生成 .amat。
     prediction_result 格式：{'RD': {'H':[...], 'B':[...]}, 'TD': {...}, ...}
@@ -284,7 +293,9 @@ def export_from_prediction(prediction_result: dict,
            ('simulation_physics_version', 'reference_correction_version',
             'H_axis', 'calibration_sha256', 'dataset_sha256', 'texture_sampling_version')},
     }
-    return save_amat_file(content, mat_name, export_dir, metadata=metadata)
+    if isinstance(prediction_result.get('params_used'),dict):
+        metadata['prediction_params'] = dict(prediction_result['params_used'])
+    return save_amat_file(content, mat_name, export_dir, metadata=metadata, artifact_name=artifact_name)
 
 
 def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
