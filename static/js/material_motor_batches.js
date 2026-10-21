@@ -13,7 +13,7 @@ function mbEntries(options={}){
  input.checked=entry.available&&previous.has(entry.key);if(input.checked)MBB.selected.add(entry.key);
  const text=mbText('span',({fit:'标定',holdout:'整牌号留出',prediction:'保存的预测'}[entry.kind]||entry.kind)+' · '+entry.label);text.append(mbText('small',entry.available?(entry.excluded_grades.length?'排除 '+entry.excluded_grades.join('、'):'使用全库校准'):entry.reason));input.onchange=()=>{if(input.checked)MBB.selected.add(entry.key);else MBB.selected.delete(entry.key);mbSelection()};label.append(input,text);out.append(label)}mbSelection();
 }
-function mbSelection(){mb$('batchSelectionStatus').textContent=`已选择 ${MBB.selected.size} 种材料；准备只补CPU步骤，实际分析需单独开始。`}
+function mbSelection(){mb$('batchSelectionStatus').textContent=`已选择 ${MBB.selected.size} 种材料；准备仅生成或复用任务，实际分析需单独开始。`}
 function mbSelectFits(clear=false){MBB.selected.clear();for(const input of mb$('batchMaterials').querySelectorAll('input')){input.checked=!clear&&!input.disabled&&input.value.startsWith('fit:');if(input.checked)MBB.selected.add(input.value)}mbSelection()}
 async function mbCatalog(){
  const generation=++MBB.catalogGeneration;mb$('batchCatalogRefresh').disabled=true;mb$('batchPrepareError').textContent='';

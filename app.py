@@ -1217,6 +1217,7 @@ def list_tasks():
 # ════════════════════════════════════════════════════════════════════
 _dataset_builder = None
 _ml_predictor    = None
+_ml_state_lock   = threading.RLock()
 _maxwell_exp     = None
 _pipeline_runner = None
 
@@ -1229,10 +1230,39 @@ def _get_db():
 
 def _get_ml():
     global _ml_predictor
-    if _ml_predictor is None:
-        from ml_trainer import BHPredictor
-        _ml_predictor = BHPredictor()
-    return _ml_predictor
+    with _ml_state_lock:
+        if _ml_predictor is None:
+            from ml_trainer import BHPredictor
+            _ml_predictor = BHPredictor()
+        return _ml_predictor
+
+def _new_ml_predictor(model_dir):
+    from ml_trainer import BHPredictor
+    return BHPredictor(model_dir=str(model_dir))
+
+def _predict_selected_bh(params, model_id=None):
+    """Select, infer and publish one complete model state for threaded requests."""
+    global _ml_predictor
+    with _ml_state_lock:
+        active = _get_ml()
+        selected = _new_ml_predictor(active.model_dir) if model_id else active
+        if model_id:
+            selected.load(model_id)
+        result = selected.predict_bh(params)
+        result['model_id'] = model_id or selected.metadata.get('model_id')
+        # A failed load/inference leaves the previous default model intact.
+        _ml_predictor = selected
+        return result
+
+def _train_ml_model(dataset_path, **kwargs):
+    """Fit privately; an in-flight fit cannot overwrite inference fields one by one."""
+    global _ml_predictor
+    with _ml_state_lock:
+        trained = _new_ml_predictor(_get_ml().model_dir)
+    result = trained.train(dataset_path, **kwargs)
+    with _ml_state_lock:
+        _ml_predictor = trained
+    return result
 
 def _get_mx():
     global _maxwell_exp
@@ -1575,7 +1605,7 @@ def ml_train():
         return jsonify({'error': 'dataset file not found'}), 400
     model_type = data.get('model_type', 'direct_xgb')
     tid = create_task('model_train')
-    run_task(tid, _get_ml().train,
+    run_task(tid, _train_ml_model,
              ds,
              model_type=model_type,
              xgb_params=data.get('xgb_params'),
@@ -1636,10 +1666,7 @@ def ml_predict():
     model_id = data.get('model_id')
     params   = data.get('params', {})
     try:
-        pred = _get_ml()
-        if model_id:
-            pred.load(model_id)
-        result = pred.predict_bh(params)
+        result = _predict_selected_bh(params, model_id)
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
@@ -1686,11 +1713,7 @@ def export_maxwell_from_prediction():
     mat_name  = data.get('mat_name') or 'GO_Pred_%s' % datetime.now().strftime('%Y%m%d_%H%M%S')
     thickness = float(data.get('thickness_mm', 0.35))
     try:
-        pred = _get_ml()
-        if model_id:
-            pred.load(model_id)
-        result  = pred.predict_bh(params)
-        result['model_id'] = model_id
+        result = _predict_selected_bh(params, model_id)
         mx = _get_mx()
         path = mx.export_from_prediction(
             result, mat_name=mat_name, thickness_mm=thickness

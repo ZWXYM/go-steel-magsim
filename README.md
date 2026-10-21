@@ -169,3 +169,5 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 2026-10-08 官方波形页面已接通：从系统首页或扫描/优化页进入 [波形对比](docs/motor_waveforms_20261008.md)，查看同版本转矩与损耗原采样点，下载对比和原CSV。重开记录与两个CPU进程的未尝试案续接已验收，本轮新原生求解0。
 
 四样品损耗资料已接入系统首页的“[四样品损耗参考](/material-loss-reference)”：14个原典型点与4个另版手册点分列，保存估计与单位、来源及CSV/JSON/ZIP可下载；不重新拟合或自动写入电机材料。详情见[说明](docs/material_loss_reference_20261021.md)。
+
+旧代理的并发预测/材料出口已修复共享模型串用，常规训练独立完成后再发布默认实例；保留旧权重与数值算法，见[模型绑定说明](docs/model_selection_20261021.md)。
