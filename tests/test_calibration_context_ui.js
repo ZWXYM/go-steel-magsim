@@ -14,10 +14,10 @@ class Node{
  setAttribute(name,value){this.attrs[name]=value}
 }
 function harness(api,script=source){
- const nodes=new Map(),calls=[];const node=id=>{if(!nodes.has(id))nodes.set(id,new Node(id));return nodes.get(id)};
- const c=vm.createContext({document:undefined,URLSearchParams,location:{search:'',hash:'#cal'},setTimeout:()=>0,addEventListener(){},
+ const nodes=new Map(),calls=[],urls=[],location={search:'',hash:'#cal',pathname:'/workbench'};const node=id=>{if(!nodes.has(id))nodes.set(id,new Node(id));return nodes.get(id)};
+ const c=vm.createContext({document:undefined,URLSearchParams,location,history:{replaceState:(state,title,url)=>{urls.push(url);location.search=url.includes('?')?'?'+url.split('?')[1].split('#')[0]:''}},setTimeout:()=>0,addEventListener(){},
   fetch:async(url,options={})=>{calls.push({url,method:options.method||'GET',body:options.body});return {ok:true,json:async()=>api(url,options)}}});
- vm.runInContext(script,c);c.document={getElementById:node,querySelectorAll:selector=>selector==='.known:checked'?[{value:'S0'}]:[]};return {c,node,calls};
+ vm.runInContext(script,c);c.document={getElementById:node,querySelectorAll:selector=>selector==='.known:checked'?[{value:'S0'}]:[]};return {c,node,calls,urls};
 }
 const posts=h=>h.calls.filter(c=>c.method==='POST'),value=(h,s)=>vm.runInContext(s,h.c);
 async function loaded(h,id=A){await h.c.loadCalibration(id)}
@@ -27,6 +27,7 @@ async function loaded(h,id=A){await h.c.loadCalibration(id)}
  const valid=harness(async url=>url.endsWith('/predict')?prediction:calibration(A));await loaded(valid);assert.equal(valid.node('predictButton').disabled,false);await valid.c.predict();
  assert.equal(posts(valid).length,1);assert.ok(posts(valid)[0].url.endsWith('/'+A+'/predict'));assert.deepEqual(JSON.parse(posts(valid)[0].body),raw);
  assert.match(valid.node('predResult').innerHTML,new RegExp('/'+A+'/'+prediction.id+'/curves.csv'));assert.match(valid.node('predResult').innerHTML,/校准 cal_aaaaaaaaaaaa/);
+ assert.ok(valid.node('predResult').innerHTML.includes('/material-library?calibration='+A+'&amp;key=prediction%3A'+prediction.id));
  valid.c.setPredictionInput(JSON.stringify({material_id:'NEXT'}));assert.equal(valid.node('predResult').innerHTML,'');
 
  let finish;const delay=new Promise(r=>finish=r),switching=harness(async url=>url.endsWith('/predict')?delay:calibration(url.endsWith('/'+B)?B:A));
@@ -56,6 +57,15 @@ async function loaded(h,id=A){await h.c.loadCalibration(id)}
  let changedReady;const changedWait=new Promise(r=>changedReady=r),changed=harness(async url=>url.endsWith('/calibrate')?changedWait:[]);const changing=changed.c.fit();changed.node('calibrationMethod').value='other_method';changedReady(calibration(C));await changing;
  assert.equal(value(changed,'current'),null);assert.match(changed.node('calActionStatus').textContent,/当前选择已变更/);
  let listReady;const listWait=new Promise(r=>listReady=r),list=harness(async url=>url.endsWith('/calibrations')?listWait:calibration(B));const listing=list.c.calibrationHistory(true);await loaded(list,B);listReady([{id:A,selected_grades:['S0']},{id:B,selected_grades:['S0']}]);await listing;assert.equal(value(list,'current.id'),B);assert.equal(list.node('history').value,B);
+ // Successful load updates a shareable address; a full page reopen uses that library.
+ const choose=harness(async()=>calibration(B));choose.c.location.search='?pair=nativepair_aaaaaaaaaaaa';choose.c.location.hash='#motor';await loaded(choose,B);
+ assert.match(choose.urls.at(-1),new RegExp('calibration='+B));assert.match(choose.urls.at(-1),/pair=nativepair_aaaaaaaaaaaa/);assert.match(choose.urls.at(-1),/#motor$/);
+ const reopening=harness(async url=>url.endsWith('/calibrations')?[{id:A,selected_grades:['S0']},{id:B,selected_grades:['S0']}]:calibration(url.endsWith('/'+B)?B:A));
+ reopening.c.location.search=choose.c.location.search;await reopening.c.calibrationHistory(true);assert.equal(value(reopening,'current.id'),B);assert.ok(reopening.calls.every(c=>c.method==='GET'));
+ const absent=harness(async()=>[]);absent.c.location.search='?calibration='+B;await assert.rejects(absent.c.calibrationHistory(true),/指定的校准库不存在/);assert.equal(value(absent,'current'),null);
+ const recovered=harness(async url=>url.endsWith('/'+A)?Promise.reject(Error('library missing')):calibration(B));await loaded(recovered,A);assert.equal(recovered.node('error').style.display,'block');
+ await loaded(recovered,B);assert.equal(value(recovered,'current.id'),B);assert.equal(recovered.node('error').style.display,'none');assert.equal(recovered.node('error').textContent,'');
+ recovered.c.error(Error('motor unavailable'));await loaded(recovered,B);assert.match(recovered.node('error').textContent,/motor unavailable/);assert.equal(recovered.node('error').style.display,'block');
  assert.ok([valid,switching,excluded,race,files,example,fit].every(h=>h.calls.every(c=>!/(\/start|\/submit|\/train)/.test(c.url))));
  console.log('Workbench UI: calibration generations, frozen prediction URLs, no duplicate fit/prediction, raw-input ordering and script integration: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
