@@ -1,0 +1,288 @@
+{
+  "version": "four_sample_loss_reference_v1",
+  "scope": "Read-only existing catalog values and saved program estimates; no sample-specific loss measurements or Maxwell assignment",
+  "records": [
+    {
+      "grade": "B23R075",
+      "reference_kind": "manufacturer_typical",
+      "specimen_measurement": false,
+      "reference_direction": "not_stated_in_selected_table",
+      "document": "baosteel_evi",
+      "points": [
+        {
+          "B_T": 1.5,
+          "f_Hz": 50.0,
+          "P_W_kg": 0.56,
+          "source_label": "Baosteel EVI table P15/50 typical"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 50.0,
+          "P_W_kg": 0.74,
+          "source_label": "Baosteel EVI table P17/50 typical"
+        }
+      ],
+      "alternate_catalog_points": [],
+      "nominal_thickness_mm": 0.23,
+      "assumed_density_kg_m3": 7650.0,
+      "assumed_conductivity_S_m": 2000000.0,
+      "original_amat_coefficients": {
+        "Kh": 0.0,
+        "Kc": 0.0,
+        "Ke": 0.0
+      },
+      "saved_estimate": {
+        "Kc_classical_mass": 2.274954565654148e-05,
+        "Kc_classical_volumetric": 0.17403402427254233,
+        "Kh_fit_mass": 0.003833360483851079,
+        "Ke_fit_mass": 1.691456460319803e-05,
+        "Kh_fit_volumetric": 29.325207701460755,
+        "Ke_fit_volumetric": 0.12939641921446493,
+        "fit_rmse_w_kg": 0.009372904970750499,
+        "fit_max_abs_error_w_kg": 0.010205580731534103,
+        "method": "non-negative Bertotti fit with Kc from classical lamination; Y fixed to 2",
+        "warning": "Only one frequency is available; Kh/Ke split is weak.",
+        "status": "existing_program_estimate",
+        "not_independent_validation": true
+      },
+      "source_note": "Primary points and saved fit remain from the original CSV."
+    },
+    {
+      "grade": "B27R090",
+      "reference_kind": "manufacturer_typical",
+      "specimen_measurement": false,
+      "reference_direction": "not_stated_in_selected_table",
+      "document": "baosteel_go_manual",
+      "points": [
+        {
+          "B_T": 1.5,
+          "f_Hz": 50.0,
+          "P_W_kg": 0.63,
+          "source_label": "Baosteel GO manual table P15/50 typical"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 50.0,
+          "P_W_kg": 0.86,
+          "source_label": "Baosteel GO manual table P17/50 typical"
+        },
+        {
+          "B_T": 1.5,
+          "f_Hz": 60.0,
+          "P_W_kg": 0.83,
+          "source_label": "Baosteel GO manual table P15/60 typical"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 60.0,
+          "P_W_kg": 1.15,
+          "source_label": "Baosteel GO manual table P17/60 typical"
+        }
+      ],
+      "alternate_catalog_points": [
+        {
+          "B_T": 1.5,
+          "f_Hz": 50,
+          "P_W_kg": 0.64,
+          "document": "baosteel_evi"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 50,
+          "P_W_kg": 0.86,
+          "document": "baosteel_evi"
+        }
+      ],
+      "nominal_thickness_mm": 0.27,
+      "assumed_density_kg_m3": 7650.0,
+      "assumed_conductivity_S_m": 2000000.0,
+      "original_amat_coefficients": {
+        "Kh": 0.0,
+        "Kc": 0.0,
+        "Ke": 0.0
+      },
+      "saved_estimate": {
+        "Kc_classical_mass": 3.135050809757796e-05,
+        "Kc_classical_volumetric": 0.23983138694647138,
+        "Kh_fit_mass": 0.004259380592394098,
+        "Ke_fit_mass": 3.051792652272536e-05,
+        "Kh_fit_volumetric": 32.58426153181485,
+        "Ke_fit_volumetric": 0.23346213789884904,
+        "fit_rmse_w_kg": 0.0374599943775602,
+        "fit_max_abs_error_w_kg": 0.05381469216992896,
+        "method": "non-negative Bertotti fit with Kc from classical lamination; Y fixed to 2",
+        "warning": "",
+        "status": "existing_program_estimate",
+        "not_independent_validation": true
+      },
+      "source_note": "Primary points and saved fit remain from the original CSV. Different catalog values are listed separately, not pooled or refitted."
+    },
+    {
+      "grade": "B27R095",
+      "reference_kind": "manufacturer_typical",
+      "specimen_measurement": false,
+      "reference_direction": "not_stated_in_selected_table",
+      "document": "baosteel_go_manual",
+      "points": [
+        {
+          "B_T": 1.5,
+          "f_Hz": 50.0,
+          "P_W_kg": 0.66,
+          "source_label": "Baosteel GO manual table P15/50 typical"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 50.0,
+          "P_W_kg": 0.9,
+          "source_label": "Baosteel GO manual table P17/50 typical"
+        },
+        {
+          "B_T": 1.5,
+          "f_Hz": 60.0,
+          "P_W_kg": 0.87,
+          "source_label": "Baosteel GO manual table P15/60 typical"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 60.0,
+          "P_W_kg": 1.18,
+          "source_label": "Baosteel GO manual table P17/60 typical"
+        }
+      ],
+      "alternate_catalog_points": [],
+      "nominal_thickness_mm": 0.27,
+      "assumed_density_kg_m3": 7650.0,
+      "assumed_conductivity_S_m": 2000000.0,
+      "original_amat_coefficients": {
+        "Kh": 0.0,
+        "Kc": 0.0,
+        "Ke": 0.0
+      },
+      "saved_estimate": {
+        "Kc_classical_mass": 3.135050809757796e-05,
+        "Kc_classical_volumetric": 0.23983138694647138,
+        "Kh_fit_mass": 0.004538176699272043,
+        "Ke_fit_mass": 2.4152651755146846e-05,
+        "Kh_fit_volumetric": 34.71705174943113,
+        "Ke_fit_volumetric": 0.18476778592687337,
+        "fit_rmse_w_kg": 0.031133503839620633,
+        "fit_max_abs_error_w_kg": 0.0425790942085178,
+        "method": "non-negative Bertotti fit with Kc from classical lamination; Y fixed to 2",
+        "warning": "",
+        "status": "existing_program_estimate",
+        "not_independent_validation": true
+      },
+      "source_note": "Primary points and saved fit remain from the original CSV."
+    },
+    {
+      "grade": "B30P105",
+      "reference_kind": "manufacturer_typical",
+      "specimen_measurement": false,
+      "reference_direction": "not_stated_in_selected_table",
+      "document": "baosteel_go_manual",
+      "points": [
+        {
+          "B_T": 1.5,
+          "f_Hz": 50.0,
+          "P_W_kg": 0.73,
+          "source_label": "Baosteel GO manual table P15/50 typical"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 50.0,
+          "P_W_kg": 1.0,
+          "source_label": "Baosteel GO manual table P17/50 typical"
+        },
+        {
+          "B_T": 1.5,
+          "f_Hz": 60.0,
+          "P_W_kg": 0.96,
+          "source_label": "Baosteel GO manual table P15/60 typical"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 60.0,
+          "P_W_kg": 1.31,
+          "source_label": "Baosteel GO manual table P17/60 typical"
+        }
+      ],
+      "alternate_catalog_points": [
+        {
+          "B_T": 1.5,
+          "f_Hz": 50,
+          "P_W_kg": 0.74,
+          "document": "baosteel_evi"
+        },
+        {
+          "B_T": 1.7,
+          "f_Hz": 50,
+          "P_W_kg": 0.99,
+          "document": "baosteel_evi"
+        }
+      ],
+      "nominal_thickness_mm": 0.3,
+      "assumed_density_kg_m3": 7650.0,
+      "assumed_conductivity_S_m": 2000000.0,
+      "original_amat_coefficients": {
+        "Kh": 0.0,
+        "Kc": 0.0,
+        "Ke": 0.0
+      },
+      "saved_estimate": {
+        "Kc_classical_mass": 3.8704330984664136e-05,
+        "Kc_classical_volumetric": 0.29608813203268064,
+        "Kh_fit_mass": 0.004965604353959773,
+        "Ke_fit_mass": 0.0,
+        "Kh_fit_volumetric": 37.986873307792266,
+        "Ke_fit_volumetric": 0.0,
+        "fit_rmse_w_kg": 0.03488284009749777,
+        "fit_max_abs_error_w_kg": 0.0463423516092103,
+        "method": "non-negative Bertotti fit with Kc from classical lamination; Y fixed to 2",
+        "warning": "Ke fitted to zero by non-negative least squares.",
+        "status": "existing_program_estimate",
+        "not_independent_validation": true
+      },
+      "source_note": "Primary points and saved fit remain from the original CSV. Different catalog values are listed separately, not pooled or refitted."
+    }
+  ],
+  "documents": {
+    "baosteel_evi": {
+      "filename": "Baosteel_GO_EVI.pdf",
+      "sha256": "417137f35fa30a105924c731cfa4886db65797de091e891f709df26b1498b05f",
+      "pdf_page": 5,
+      "printed_page": "04",
+      "table": "Typical magnetic properties of major grain-oriented electrical steel grades",
+      "review": "PDF table visually checked; text extraction does not recover its rows"
+    },
+    "baosteel_go_manual": {
+      "filename": "baosteel_go.pdf",
+      "sha256": "c92d52a3803a23dd81afc7b19aeb0edcb0499eba730253a5155e807cb2ddeb60",
+      "pdf_page": 17,
+      "printed_page": "14",
+      "table": "Typical magnetic properties",
+      "review": "PDF table visually checked against saved values"
+    }
+  },
+  "source_csv": {
+    "filename": "all_go_core_loss_estimates.csv",
+    "sha256": "6c7cd8b899e2e2b8c5604656a543f6135191347378d49d7a971cde39c51c35c6"
+  },
+  "source_program": {
+    "filename": "analyze_all_go_steel.py",
+    "sha256": "f44eb40e0ec674211c7790cf694c16f15d5cf646c6ff16c3ba4983d99a2f6475"
+  },
+  "formula": "P_W_kg = Kh_mass*f_Hz*B_T^2 + Kc_mass*f_Hz^2*B_T^2 + Ke_mass*(f_Hz*B_T)^1.5",
+  "mass_units": {
+    "Kh": "W kg^-1 Hz^-1 T^-2",
+    "Kc": "W kg^-1 Hz^-2 T^-2",
+    "Ke": "W kg^-1 Hz^-1.5 T^-1.5"
+  },
+  "volumetric_units": {
+    "Kh": "W m^-3 Hz^-1 T^-2",
+    "Kc": "W m^-3 Hz^-2 T^-2",
+    "Ke": "W m^-3 Hz^-1.5 T^-1.5"
+  },
+  "efficiency_enabled": false,
+  "motor_assignment_performed": false,
+  "new_fits": 0
+}

@@ -16,6 +16,7 @@ from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnos
 from modules.optimization_plans import OptimizationPlans
 from modules.motor_waveforms import MotorWaveforms
 from modules.material_library import MaterialLibrary
+from modules.material_loss_reference import MaterialLossReference,reference_csv,reference_bundle,json_bytes as loss_json_bytes
 from modules.material_input_view import MaterialInputView
 from modules.calibrated_motor_preparation import CalibratedMotorPreparation
 from modules.calibrated_motor_native import CalibratedMotorNative
@@ -43,6 +44,7 @@ def create_workbench(project,storage=None,root=None):
     plans=OptimizationPlans(optimization)
     waveforms=MotorWaveforms(motor)
     materials=MaterialLibrary(calibration)
+    loss_reference=MaterialLossReference(project)
     input_view=MaterialInputView(materials)
     calibrated_motor=CalibratedMotorPreparation(materials,motor,storage/'calibrated_motor')
     native_material=CalibratedMotorNative(calibrated_motor,motor,storage/'calibrated_motor_native')
@@ -155,6 +157,21 @@ def create_workbench(project,storage=None,root=None):
     @bp.get('/material-library')
     def material_page():
         return render_template('material_library.html')
+
+    @bp.get('/material-loss-reference')
+    def material_loss_reference_page():
+        return render_template('material_loss_reference.html')
+
+    @bp.get('/api/workbench/material-loss-reference')
+    def material_loss_reference_data():
+        output=request.args.get('format')
+        if set(request.args)-{'format'} or any(len(request.args.getlist(k))!=1 for k in request.args) or output not in (None,'json','points_csv','estimates_csv','zip'):
+            raise ValueError('损耗参考只接受单个format=json/points_csv/estimates_csv/zip')
+        data=loss_reference.read()
+        if output is None:return jsonify(data)
+        if output=='zip':return send_file(reference_bundle(data),as_attachment=True,download_name='four_sample_loss_reference.zip',mimetype='application/zip')
+        content=loss_json_bytes(data) if output=='json' else reference_csv(data,'points' if output=='points_csv' else 'estimates')
+        return send_file(io.BytesIO(content),as_attachment=True,download_name='four_sample_loss_reference_'+output.replace('_csv','.csv')+('.json' if output=='json' else ''),mimetype='application/json' if output=='json' else 'text/csv')
 
     @bp.get('/material-motor')
     def material_workflow_page():
