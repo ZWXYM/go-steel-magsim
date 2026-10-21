@@ -113,3 +113,24 @@ class WorkspaceBindingTests(unittest.TestCase):
         with patch.dict(web.app.view_functions,{endpoint:lambda:web.jsonify(workspace=os.getcwd())}):
             self.assertEqual(self.client.get('/api/dataset/list',headers={'X-Magsim-Workspace':token}).status_code,200)
         self.assertNotEqual(self.client.get('/api/workbench/not-a-route',headers={'X-Magsim-Workspace':'old'}).status_code,409)
+
+    def test_task_creation_freezes_origin_in_details_and_listing(self):
+        token=self.client.get('/api/workspace').json['workspace_token'];tid=web.create_task('synthetic')
+        self.assertEqual(web.tasks[tid]['workspace_origin'],dict(schema='workspace_origin_v1',path=str(self.a),token=token))
+        web.tasks[tid]['status']='completed';self.assertEqual(self.switch().status_code,200)
+        details=self.client.get('/api/tasks/'+tid).json;listing=self.client.get('/api/tasks').json['tasks']
+        self.assertEqual(details['workspace_origin'],listing[0]['workspace_origin'])
+        self.assertEqual(details['workspace_origin']['path'],str(self.a))
+        self.assertNotEqual(details['workspace_origin']['token'],self.client.get('/api/workspace').json['workspace_token'])
+
+    def test_legacy_task_does_not_acquire_current_origin(self):
+        web.tasks['legacy']={'id':'legacy','name':'synthetic','status':'completed','result':{}}
+        self.assertEqual(self.switch().status_code,200)
+        self.assertNotIn('workspace_origin',self.client.get('/api/tasks/legacy').json)
+        self.assertNotIn('workspace_origin',self.client.get('/api/tasks').json['tasks'][0])
+
+    def test_new_workspace_tasks_keep_separate_origins(self):
+        first=web.create_task('A');web.tasks[first]['status']='completed';self.assertEqual(self.switch().status_code,200)
+        second=web.create_task('B');self.assertEqual(web.tasks[first]['workspace_origin']['path'],str(self.a))
+        self.assertEqual(web.tasks[second]['workspace_origin']['path'],str(self.b))
+        self.assertNotEqual(web.tasks[first]['workspace_origin']['token'],web.tasks[second]['workspace_origin']['token'])

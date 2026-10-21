@@ -56,6 +56,7 @@ def create_task(name):
         tid = str(uuid.uuid4())[:10]
         tasks[tid] = {'id': tid, 'name': name, 'status': 'running', 'output': '',
                       'error': None, 'result': None,
+                      'workspace_origin': {'schema': 'workspace_origin_v1', 'path': str(Path.cwd().resolve()), 'token': _workspace_token()},
                       'started': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'finished': None}
     return tid
 

@@ -17,5 +17,7 @@ const A='a'.repeat(64),B='b'.repeat(64),reply=(resolve,data,ok=true)=>resolve({o
  const other=harness();const first=other.root.loadWorkspace(),second=other.root.loadWorkspace();const r1=other.pending.shift(),r2=other.pending.shift();reply(r2,{workspace:'A',workspace_token:A});await second;reply(r1,{workspace:'B',workspace_token:B});await first;assert.equal(other.node.textContent,'A');assert.equal(other.reloads(),0);
  read=other.root.loadWorkspace();reply(other.pending.shift(),{workspace:'B',workspace_token:B});await read;assert.equal(other.reloads(),1);
  const old=harness();read=old.root.loadWorkspace();reply(old.pending.shift(),{workspace:'A'});assert.equal(await read,null);assert.match(old.messages.at(-1),/最新启动器/);
+ const shared=harness();read=shared.root.loadWorkspace();const context=shared.root.getPlatformWorkspace();assert.equal(shared.calls.length,1);reply(shared.pending.shift(),{workspace:'中文A',workspace_token:A});await read;assert.equal((await context).workspace_token,A);assert.equal((await shared.root.getPlatformWorkspace()).workspace,'中文A');assert.equal(shared.calls.length,1);
+ assert.equal(await other.root.getPlatformWorkspace(),null);
  console.log('Workspace token headers, request preservation, duplicate/late/error guards, idle reload and external/workbench exclusions passed');
 })().catch(error=>{console.error(error);process.exitCode=1});
