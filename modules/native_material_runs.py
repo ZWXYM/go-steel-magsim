@@ -35,13 +35,32 @@ def validate_recipe(data):
     if not isinstance(p,dict) or set(p)!=set(bounds):raise ValueError('材料参数字段不正确')
     for key,(low,high) in bounds.items():
         value=p[key]
-        if isinstance(value,bool) or not isinstance(value,(float,int)) or not math.isfinite(value) or not low<=value<=high:raise ValueError(key+'超出支持范围')
+        if isinstance(value,bool) or not isinstance(value,(float,int)) or not low<=value<=high or not math.isfinite(value):raise ValueError(key+'超出支持范围')
     n=data['n_grains'];seed=data['seed'];thickness=data['thickness_mm']
     if type(n) is not int or not 1<=n<=8:raise ValueError('每方向晶粒数需为1–8整数')
     if type(seed) is not int or not 0<=seed<=2**31-1:raise ValueError('随机种子需为非负整数')
-    if isinstance(thickness,bool) or not isinstance(thickness,(int,float)) or not math.isfinite(thickness) or not .05<=thickness<=1:raise ValueError('厚度需为0.05–1mm')
+    if isinstance(thickness,bool) or not isinstance(thickness,(int,float)) or not .05<=thickness<=1 or not math.isfinite(thickness):raise ValueError('厚度需为0.05–1mm')
     if not isinstance(data['calibration_id'],str) or not re.fullmatch(r'cal_[0-9a-f]{12}',data['calibration_id']):raise ValueError('请选择保存的校准库')
     return data
+
+def validate_run_state(state):
+    if not isinstance(state,dict) or not isinstance(state.get('status'),str) or not state['status']:
+        raise ValueError('材料仿真状态格式不完整')
+    if state['status']=='paused' and 'elapsed_seconds' not in state:
+        raise ValueError('累计执行耗时缺失，不能把接续预算重置为0')
+    if 'elapsed_seconds' in state:
+        elapsed=state['elapsed_seconds']
+        valid=not isinstance(elapsed,bool) and isinstance(elapsed,(int,float))
+        try:valid=valid and math.isfinite(elapsed) and elapsed>=0
+        except OverflowError:valid=False
+        if not valid:raise ValueError('累计执行耗时需为非负有限数值')
+    for key in ('completed_jobs','total_jobs','new_MuMax_solves'):
+        if key in state and (type(state[key]) is not int or not 0<=state[key]<=BUDGET['max_jobs']):
+            raise ValueError('材料仿真计数格式或预算不符：'+key)
+    if state.get('export_id') is not None and (not isinstance(state['export_id'],str) or not re.fullmatch(r'nativepair_[0-9a-f]{12}',state['export_id'])):
+        raise ValueError('原生对导出身份格式不符')
+    return state
+
 
 def verify_run(folder,project,*,dispatch=False):
     folder=Path(folder).resolve();project=Path(project).resolve();m=read(folder/'manifest.json')
@@ -50,10 +69,13 @@ def verify_run(folder,project,*,dispatch=False):
     if file_hash(folder/'selected_bank.json')!=m['selected_bank_file_sha256']:raise ValueError('冻结校准库发生变化')
     bank=load_bank(folder/'selected_bank.json')
     if bank.bank_sha256!=m['selected_bank_sha256'] or bank.texture_sampling_version!=m['texture_sampling_version']:raise ValueError('生成协议与冻结校准库不符')
-    if set(m['producer_hashes'])!=set(SUPPORT):raise ValueError('生产程序清单不符')
+    if not isinstance(m.get('producer_hashes'),dict) or set(m['producer_hashes'])!=set(SUPPORT):raise ValueError('生产程序清单不符')
     if dispatch and any(file_hash(project/name)!=digest for name,digest in m['producer_hashes'].items()):raise ValueError('仿真程序已更新；保留旧任务，请新建任务')
     if (folder/'prepared.json').is_file():
-        for name,digest in read(folder/'prepared.json')['input_hashes'].items():
+        prepared=read(folder/'prepared.json')
+        if not isinstance(prepared,dict) or not isinstance(prepared.get('input_hashes'),dict) or not prepared['input_hashes']:
+            raise ValueError('冻结仿真输入清单不完整')
+        for name,digest in prepared['input_hashes'].items():
             path=(folder/name).resolve()
             if not path.is_relative_to(folder/'run') or file_hash(path)!=digest:raise ValueError('冻结仿真输入发生变化')
     return m
@@ -93,8 +115,8 @@ class NativeMaterialRuns:
         return self.get(artifact)
 
     def get(self,artifact):
-        folder=self.path(artifact);m=verify_run(folder,self.project);state=read(folder/'state.json')
-        if not isinstance(state,dict) or 'status' not in state:raise ValueError('材料仿真状态格式不完整')
+        folder=self.path(artifact);m=verify_run(folder,self.project);state=validate_run_state(read(folder/'state.json'))
+        if set(state)&(set(m)|{'producer_compatible','prediction_url'}):raise ValueError('状态记录不能覆盖冻结任务身份或派生字段')
         compatible=all(file_hash(self.project/name)==digest for name,digest in m['producer_hashes'].items())
         result=dict(m,**state,producer_compatible=compatible)
         if state.get('export_id'):

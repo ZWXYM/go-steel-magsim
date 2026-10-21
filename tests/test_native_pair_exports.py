@@ -94,6 +94,37 @@ class NativeExports(unittest.TestCase):
         (self.source/'run_status.json').write_text('[]')
         result=self.manager.catalog();self.assertFalse(result['sources']);self.assertEqual(len(result['issues']),1)
 
+    def test_bad_saved_file_mapping_is_isolated_and_valid_exports_remain_usable(self):
+        good=self.manager.prepare(self.request());good_file=self.manager.download(good['id'],'raw_pair.json').read_bytes()
+        for index,files in enumerate((None,[],['raw_pair.json','source_manifest.json'],1)):
+            artifact='nativepair_'+format(index,'012x');folder=self.manager.path(artifact);folder.mkdir()
+            (folder/'manifest.json').write_text(json.dumps(dict(id=artifact,files=files)))
+            with self.subTest(files=files),self.assertRaises(ValueError):self.manager.get(artifact)
+        before={p:p.read_bytes() for p in self.storage.rglob('*') if p.is_file()}
+        rows=self.manager.records();self.assertEqual(len(rows),5);self.assertEqual(sum('error' in row for row in rows),4)
+        self.assertEqual(self.manager.get(good['id'])['raw_pair']['material_id'],'fixture_A')
+        self.assertEqual(self.manager.download(good['id'],'raw_pair.json').read_bytes(),good_file)
+        self.assertEqual(before,{p:p.read_bytes() for p in self.storage.rglob('*') if p.is_file()})
+
+    def test_hash_valid_wrong_pair_payload_is_not_advertised_as_usable(self):
+        good=self.manager.prepare(self.request())
+        for payload in (None,[],{'material_id':'WRONG_MATERIAL'}):
+            other=self.manager.prepare(self.request());folder=self.manager.path(other['id']);record=json.loads((folder/'manifest.json').read_text())
+            (folder/'raw_pair.json').write_text(json.dumps(payload));record['files']['raw_pair.json']=file_hash(folder/'raw_pair.json');(folder/'manifest.json').write_text(json.dumps(record))
+            with self.subTest(payload=payload),self.assertRaises(ValueError):self.manager.get(other['id'])
+        rows=self.manager.records();self.assertEqual(sum('error' in row for row in rows),3)
+        self.assertTrue(any(row['id']==good['id'] and 'error' not in row for row in rows))
+
+    def test_mixed_saved_record_web_list_and_download_remain_available(self):
+        storage=self.root/'web_storage';pairs=NativePairExports(self.root,storage/'native_pair_exports');good=pairs.prepare(self.request())
+        artifact='nativepair_000000000000';folder=pairs.path(artifact);folder.mkdir();bad=folder/'manifest.json';bad.write_text(json.dumps(dict(id=artifact,files=None)));before=bad.read_bytes()
+        app=Flask(__name__)
+        with patch.dict(os.environ,{'MAGSIM_CPU_ONLY':'1','MAGSIM_AUTO_RESUME_QUEUE':'0'}):app.register_blueprint(create_workbench(PROJECT,storage,self.root))
+        client=app.test_client();response=client.get('/api/workbench/native-pairs');self.assertEqual(response.status_code,200);rows=response.json
+        self.assertEqual(len(rows),2);self.assertTrue(next(row for row in rows if row['id']==artifact)['error']);self.assertNotIn('error',next(row for row in rows if row['id']==good['id']))
+        self.assertEqual(client.get('/api/workbench/native-pairs/'+artifact).status_code,400)
+        self.assertEqual(client.get('/api/workbench/native-pairs/'+good['id']+'/files/raw_pair.json').data,pairs.download(good['id'],'raw_pair.json').read_bytes());self.assertEqual(bad.read_bytes(),before)
+
     def test_cpu_web_export_and_reopen_bundle_routes(self):
         app=Flask(__name__,template_folder=str(PROJECT/'templates'))
         with patch.dict(os.environ,{'MAGSIM_CPU_ONLY':'1','MAGSIM_AUTO_RESUME_QUEUE':'0'}):

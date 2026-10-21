@@ -75,10 +75,15 @@ class NativePairExports:
 
     def get(self,artifact):
         folder=self.path(artifact);record=json.loads((folder/'manifest.json').read_text(encoding='utf8'))
-        if not isinstance(record,dict) or record.get('id')!=artifact or set(record.get('files',{}))!={'raw_pair.json','source_manifest.json'}:raise ValueError('导出记录不完整')
+        if (not isinstance(record,dict) or record.get('id')!=artifact
+                or not isinstance(record.get('files'),dict)
+                or set(record['files'])!={'raw_pair.json','source_manifest.json'}):raise ValueError('导出记录不完整')
         for name,digest in record['files'].items():
             if not (folder/name).resolve().is_relative_to(folder) or file_hash(folder/name)!=digest:raise ValueError('保存导出文件发生变化，未载入预测')
         record['raw_pair']=json.loads((folder/'raw_pair.json').read_text(encoding='utf8'))
+        if (not isinstance(record['raw_pair'],dict) or not isinstance(record.get('material_id'),str)
+                or not record['material_id'] or record['raw_pair'].get('material_id')!=record['material_id']):
+            raise ValueError('原生对内容或材料代号与保存记录不符')
         record['bundle_url']='/api/workbench/native-pairs/'+artifact+'/bundle'
         return record
 

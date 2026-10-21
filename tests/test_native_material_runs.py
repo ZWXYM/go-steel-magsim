@@ -81,6 +81,45 @@ class NativeRuns(unittest.TestCase):
         for change in [dict(n_grains=9),dict(n_grains=True),dict(seed=-1),dict(thickness_mm=float('nan')),dict(material_id='../outside')]:
             with self.subTest(change=change),self.assertRaises(ValueError):validate_recipe(dict(self.recipe,**change))
 
+    def test_bad_producer_or_prepared_mapping_is_an_isolated_record_error(self):
+        for name,field in [('manifest.json','producer_hashes'),('prepared.json','input_hashes')]:
+            original=(self.folder/name).read_bytes()
+            for bad in (None,[],0):
+                changed=json.loads(original);changed[field]=bad;write_json(self.folder/name,changed)
+                with self.subTest(name=name,bad=bad),self.assertRaises(ValueError):self.manager.get(self.artifact)
+                rows=self.manager.records();self.assertEqual(len(rows),1);self.assertEqual(rows[0]['status'],'needs_attention');self.assertIn('error',rows[0])
+                (self.folder/name).write_bytes(original)
+        self.assertEqual(self.manager.get(self.artifact)['status'],'ready')
+
+    def test_nonfinite_or_negative_elapsed_time_is_not_a_resumable_budget(self):
+        original=(self.folder/'state.json').read_bytes()
+        for value in (None,True,'0',-1,float('nan'),float('inf'),10**400):
+            state=json.loads(original);state.update(status='paused',elapsed_seconds=value);(self.folder/'state.json').write_text(json.dumps(state),encoding='utf8')
+            with self.subTest(value=value),self.assertRaises(ValueError):self.manager.get(self.artifact)
+            rows=self.manager.records();self.assertEqual(rows[0]['status'],'needs_attention')
+            with patch('modules.native_material_runs.subprocess.Popen') as launch:
+                with self.assertRaises(ValueError):self.manager.start(self.artifact)
+                launch.assert_not_called()
+        (self.folder/'state.json').write_bytes(original)
+
+    def test_paused_budget_must_be_present_and_job_counts_must_be_valid(self):
+        original=(self.folder/'state.json').read_bytes();state=json.loads(original);state['status']='paused';state.pop('elapsed_seconds',None);write_json(self.folder/'state.json',state)
+        with self.assertRaises(ValueError):self.manager.get(self.artifact)
+        for name,value in [('completed_jobs',True),('total_jobs',float('nan')),('new_MuMax_solves',-1),('completed_jobs',1.5),('export_id',123),('id','nativerun_bbbbbbbbbbbb'),('producer_compatible',True)]:
+            state=json.loads(original);state[name]=value;(self.folder/'state.json').write_text(json.dumps(state),encoding='utf8')
+            with self.subTest(name=name,value=value),self.assertRaises(ValueError):self.manager.get(self.artifact)
+        (self.folder/'state.json').write_bytes(original)
+
+    def test_extreme_input_returns_web_validation_error_without_new_task(self):
+        app=Flask(__name__)
+        with patch.dict(os.environ,{'MAGSIM_CPU_ONLY':'1','MAGSIM_AUTO_RESUME_QUEUE':'0'}):
+            app.register_blueprint(create_workbench(PROJECT,self.storage,self.root))
+        before={p:p.read_bytes() for p in self.manager.storage.rglob('*') if p.is_file()}
+        for change in [dict(thickness_mm=10**400),dict(params=dict(self.recipe['params'],f_Goss=10**400))]:
+            response=app.test_client().post('/api/workbench/native-material-runs',json=dict(self.recipe,**change))
+            self.assertEqual(response.status_code,400);self.assertIn('error',response.json)
+        self.assertEqual(before,{p:p.read_bytes() for p in self.manager.storage.rglob('*') if p.is_file()})
+
     def test_changed_producer_or_frozen_input_blocks_start_and_preserves_record(self):
         manifest=read(self.folder/'manifest.json');manifest['producer_hashes']['modules/mx3_generator.py']='changed';write_json(self.folder/'manifest.json',manifest)
         self.assertFalse(self.manager.get(self.artifact)['producer_compatible'])
