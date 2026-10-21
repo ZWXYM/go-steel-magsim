@@ -35,6 +35,29 @@ def csv_fixture(folder):
 
 
 class Workbench(unittest.TestCase):
+    def test_bad_scan_state_does_not_hide_valid_records_or_rewrite_sources(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            storage=Path(tmp);motor=MotorWorkbench(ROOT,storage/'motor',PROJECT)
+            good='scan_aaaaaaaaaaaa';bad='scan_bbbbbbbbbbbb';good_state=dict(id=good,status='completed',created_utc='fixture',cases=[dict(id='case_01',material='SYNTHETIC_CPU',status='completed')],completed=1,total=1)
+            write_json(motor.path(good)/'state.json',good_state);bad_file=motor.path(bad)/'state.json';bad_file.parent.mkdir();bad_file.write_text('{incomplete fixture')
+            before={p:p.read_bytes() for p in motor.storage.rglob('*') if p.is_file()}
+            app=Flask(__name__)
+            with patch.dict('os.environ',{'MAGSIM_CPU_ONLY':'1','MAGSIM_AUTO_RESUME_QUEUE':'0'}):app.register_blueprint(create_workbench(PROJECT,storage,ROOT))
+            response=app.test_client().get('/api/workbench/motor/jobs');self.assertEqual(response.status_code,200);rows=response.json
+            self.assertEqual(len(rows),2);self.assertEqual(next(r for r in rows if r['id']==good)['status'],'completed');invalid=next(r for r in rows if r['id']==bad);self.assertEqual(invalid['status'],'invalid');self.assertIsNone(invalid['total']);self.assertIn('error',invalid)
+            self.assertEqual(app.test_client().get('/api/workbench/motor/queue').status_code,400)
+            with self.assertRaises(ValueError):motor.jobs()  # Original strict dispatch reader is unchanged.
+            self.assertEqual(before,{p:p.read_bytes() for p in motor.storage.rglob('*') if p.is_file()})
+
+    def test_bad_scan_field_types_are_individual_readonly_errors(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            storage=Path(tmp);motor=MotorWorkbench(ROOT,storage/'motor',PROJECT);artifact='scan_cccccccccccc';path=motor.path(artifact)/'state.json';path.parent.mkdir(parents=True)
+            app=Flask(__name__)
+            with patch.dict('os.environ',{'MAGSIM_CPU_ONLY':'1','MAGSIM_AUTO_RESUME_QUEUE':'0'}):app.register_blueprint(create_workbench(PROJECT,storage,ROOT))
+            for payload in [None,[],dict(id='wrong',status='prepared'),dict(id=artifact,status=None),dict(id=artifact,status='completed',cases=None),dict(id=artifact,status='completed',completed=-1),dict(id=artifact,status='completed',summary=[]),dict(id=artifact,status='completed',completed=float('nan'))]:
+                path.write_text(json.dumps(payload),encoding='utf8');before=path.read_bytes();response=app.test_client().get('/api/workbench/motor/jobs')
+                with self.subTest(payload=payload):self.assertEqual(response.status_code,200);self.assertEqual(response.json[0]['status'],'invalid');self.assertEqual(path.read_bytes(),before)
+
     def test_material_fit_holdout_and_source_files_unchanged(self):
         with tempfile.TemporaryDirectory() as tmp:
             manager=CalibrationWorkbench(ROOT,Path(tmp))

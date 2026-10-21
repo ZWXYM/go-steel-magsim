@@ -11,7 +11,7 @@ from modules.workbench_cpu_policy import install_cpu_policy
 from modules.system_runtime import runtime_identity
 from modules.runtime_source_guard import runtime_view,install_source_guard
 from modules.motor_optimization import MotorOptimization
-from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnostics
+from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnostics,readable_motor_jobs
 from modules.optimization_plans import OptimizationPlans
 from modules.motor_waveforms import MotorWaveforms
 from modules.material_library import MaterialLibrary
@@ -496,11 +496,14 @@ def create_workbench(project,storage=None,root=None):
 
     @bp.get('/api/workbench/motor/jobs')
     def motor_jobs():
-        return jsonify([diagnose_job(motor,j) for j in motor.jobs()])
+        return jsonify([j if j['status']=='invalid' else diagnose_job(motor,j) for j in readable_motor_jobs(motor)])
 
     @bp.get('/api/workbench/motor/queue')
     def queue_state():
-        return jsonify(motor.queue_status())
+        invalid=[row['id'] for row in readable_motor_jobs(motor) if row['status']=='invalid']
+        if invalid:raise ValueError('扫描状态不可读，队列归属尚不能确认：'+', '.join(invalid))
+        try:return jsonify(motor.queue_status())
+        except (ValueError,KeyError,TypeError,AttributeError,OSError) as error:raise ValueError('队列状态暂不可读：'+str(error)) from error
 
     @bp.post('/api/workbench/motor/queue/recover')
     def recover_queue():

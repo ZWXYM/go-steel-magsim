@@ -83,5 +83,12 @@ function harness(){
  cfg.state.rows[0].measurement_protocol='periodic_cycle3_v1';await cfg.c.jobs();assert.match(cfg.el('jobs').innerHTML,/协议不一致/);assert.doesNotMatch(cfg.el('jobs').innerHTML,/核数<\/th><td>4/);
 
  const cpuConfig=harness();vm.runInContext('cpuOnly=true',cpuConfig.c);await cpuConfig.c.jobs();cpuConfig.routes.set('GET '+configRoute,()=>reply(manifest(cpuConfig.state.rows[0])));await cpuConfig.c.toggleMotorConfiguration(A);assert.match(cpuConfig.el('jobs').innerHTML,/FROZEN_MODEL/);assert.equal(cpuConfig.posts().length,0);
+
+ // A queue failure must not hide a successfully refreshed list of saved jobs.
+ const partial=harness();await partial.c.jobs();partial.state.rows=[job(B)];partial.routes.set('GET motor/queue',()=>{throw Error('queue state unreadable')});await assert.rejects(partial.c.jobs());assert.match(partial.el('jobs').innerHTML,new RegExp(B),'readable new rows must remain visible when queue fails');assert.equal(partial.disabledSubmit(),true);
+ partial.routes.set('GET files/motor/'+B+'/manifest.json',()=>reply(manifest(partial.state.rows[0])));await partial.c.toggleMotorConfiguration(B);assert.match(partial.el('jobs').innerHTML,/FROZEN_MODEL/);assert.equal(partial.posts().length,0);partial.routes.delete('GET motor/queue');await partial.c.jobs();assert.equal(partial.disabledSubmit(),false);
+
+ const broken=harness();broken.state.rows=[job(A),{id:B,status:'completed',cases:[],completed:0,total:0,summary:{results:null}},job(C)];await broken.c.jobs();assert.match(broken.el('jobs').innerHTML,new RegExp(A));assert.match(broken.el('jobs').innerHTML,new RegExp(C));assert.match(broken.el('jobs').innerHTML,/此任务暂时无法显示/);assert.equal(broken.posts().length,0);
+ const unknown=harness();unknown.state.rows=[job(A),null,job(C)];await assert.rejects(unknown.c.jobs());assert.match(unknown.el('jobs').innerHTML,new RegExp(C));assert.equal(unknown.disabledSubmit(),true);unknown.routes.set('GET files/motor/'+C+'/manifest.json',()=>reply(manifest(unknown.state.rows[2])));await unknown.c.toggleMotorConfiguration(C);assert.match(unknown.el('jobs').innerHTML,/FROZEN_MODEL/);assert.equal(unknown.posts().length,0);
  console.log('Motor actions UI: single submit/recovery/continue/export, pending redraw, read ordering, exact source, CPU preparation and no automatic native retry: PASS');
 })().catch(e=>{console.error(e);process.exitCode=1});

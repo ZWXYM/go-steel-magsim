@@ -6,7 +6,33 @@ import zipfile
 from pathlib import Path
 
 from modules.material_calibration import file_hash
-from modules.motor_workbench import write_json
+from modules.motor_workbench import MotorWorkbench,write_json
+
+
+def readable_motor_jobs(motor):
+    """Isolate damaged saved states for views; keep the native queue reader strict."""
+    if not isinstance(motor,MotorWorkbench):return motor.jobs()
+    rows=[]
+    for folder in motor.storage.glob('scan_*'):
+        if not (folder/'state.json').is_file():continue
+        try:
+            value=motor.state(folder.name)
+            if (not isinstance(value,dict) or value.get('id')!=folder.name
+                    or not isinstance(value.get('status'),str) or not value['status']):
+                raise ValueError('扫描身份或状态字段不完整')
+            if 'cases' in value and (not isinstance(value['cases'],list) or any(not isinstance(c,dict) for c in value['cases'])):
+                raise ValueError('扫描案例字段格式不正确')
+            for key in ('completed','total'):
+                if key in value and (type(value[key]) is not int or value[key]<0):raise ValueError('扫描计数字段格式不正确：'+key)
+            if value.get('created_utc') is not None and not isinstance(value['created_utc'],str):raise ValueError('扫描创建时间格式不正确')
+            summary=value.get('summary')
+            if summary is not None and (not isinstance(summary,dict) or not isinstance(summary.get('results'),list) or any(not isinstance(row,dict) for row in summary['results'])):
+                raise ValueError('扫描汇总字段格式不正确')
+            json.dumps(value,allow_nan=False)
+            rows.append(value)
+        except (ValueError,KeyError,TypeError,AttributeError,OSError) as error:
+            rows.append(dict(id=folder.name,status='invalid',cases=[],completed=None,total=None,error='保存扫描状态不可读：'+str(error)))
+    return sorted(rows,key=lambda row:row.get('created_utc') or '',reverse=True)
 
 
 def diagnose_job(motor, job):

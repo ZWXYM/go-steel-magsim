@@ -13,7 +13,7 @@ from pathlib import Path
 from modules.material_calibration import file_hash
 from modules.motor_workbench import collect_metrics, write_json
 from modules.motor_model_audit import audit_project
-from modules.motor_failure_diagnostics import diagnose_job
+from modules.motor_failure_diagnostics import diagnose_job,readable_motor_jobs
 
 
 WORKFLOW_FILES = {
@@ -144,7 +144,7 @@ class MotorOptimization:
             values.append(dict(id='v8_1', title='V8_1 原保存指标（原处理口径）'))
         if self.motor.archived_results():
             values.append(dict(id='v8_2_archive', title='V8_2 final 结果（官方CSV/原摘要）'))
-        for job in self.motor.jobs():
+        for job in readable_motor_jobs(self.motor):
             if job['status'] in ('completed', 'completed_with_failures'):
                 values.append(dict(id=job['id'], title=job['id']+' · '+job.get('measurement_protocol', 'v8_2_cycle1')))
         return values

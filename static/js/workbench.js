@@ -84,7 +84,7 @@ function selectMaterials(value){document.querySelectorAll('.material').forEach(x
 let motorRows=[],motorQueueState=null,motorReadHealthy=false,motorJobsGeneration=0,motorPreparePending=false,motorRecoverPending=false,motorArchivePending=false;
 const motorPendingActions=new Map();
 const motorConfigurations=new Map();
-const states={prepared:'已准备',queued:'排队中',starting:'启动中',running:'正在求解',completed:'完成',completed_with_failures:'完成，含异常项',failed:'失败',rejected:'未通过',needs_attention:'中断待处理',interrupted:'中断，现场保留'};
+const states={prepared:'已准备',queued:'排队中',starting:'启动中',running:'正在求解',completed:'完成',completed_with_failures:'完成，含异常项',failed:'失败',rejected:'未通过',needs_attention:'中断待处理',interrupted:'中断，现场保留',invalid:'记录不可读'};
 function motorControls(){$('prepareMotor').disabled=!motorReady||motorPreparePending;$('recoverQueue').disabled=cpuOnly||!motorReady||!motorReadHealthy||motorRecoverPending||motorPendingActions.size>0}
 function motorActionDisabled(j,action){return !motorReadHealthy||motorPendingActions.has(j.id)||motorRecoverPending||(action!=='export'&&(cpuOnly||!motorReady))}
 function motorButton(j,action,label,secondary=false){const pending=motorPendingActions.has(j.id);return `<button ${secondary?'class="secondary" ':''}${motorActionDisabled(j,action)?'disabled ':''}onclick="${action==='submit'?'submit':action==='continue'?'continueMotor':'exportMotor'}('${j.id}')">${pending?'正在处理本任务…':label}</button>`}
@@ -96,6 +96,7 @@ function checkedMotorConfiguration(job,value){
 }
 function motorConfigurationBlock(job){
  if(!/^scan_[a-f0-9]{12}$/.test(job.id))return '';const view=motorConfigurations.get(job.id),base='/api/workbench/files/motor/'+job.id+'/manifest.json';
+ if(job.status==='invalid')return `<p class="muted">状态字段未读取，可下载原文件核查。</p><a class="download" href="${base}">下载任务配置 JSON</a> <a class="download" href="/api/workbench/files/motor/${job.id}/state.json">下载原状态 JSON</a>`;
  let html=`<div class="row"><button class="secondary" ${view?.pending?'disabled ':''}onclick="toggleMotorConfiguration('${job.id}')">${view?.pending?'读取配置…':view?.open?'收起保存配置':'查看保存配置'}</button><a class="download" href="${base}">下载任务配置 JSON</a></div>`;
  if(!view?.open)return html;let content='';
  if(view.pending)content='<p class="muted">正在读取本任务保存配置…</p>';
@@ -104,24 +105,28 @@ function motorConfigurationBlock(job){
  return html+`<div data-config-for="${job.id}">${content}<button class="secondary" ${view.pending?'disabled ':''}onclick="readMotorConfiguration('${job.id}')">重新读取保存配置</button></div>`;
 }
 async function readMotorConfiguration(id){
- const job=motorRows.find(r=>r.id===id);if(!job||!/^scan_[a-f0-9]{12}$/.test(id))return;const view=motorConfigurations.get(id)||{};if(view.pending)return;Object.assign(view,{open:true,pending:true,data:null,error:''});motorConfigurations.set(id,view);renderMotorJobs();
- try{const value=await api('files/motor/'+id+'/manifest.json'),latest=motorRows.find(r=>r.id===id);if(!latest)throw Error('任务已不在当前列表，请刷新记录');view.data=checkedMotorConfiguration(latest,value)}catch(e){view.error=e.message}finally{view.pending=false;renderMotorJobs()}
+ const job=motorRows.find(r=>r?.id===id);if(!job||!/^scan_[a-f0-9]{12}$/.test(id))return;const view=motorConfigurations.get(id)||{};if(view.pending)return;Object.assign(view,{open:true,pending:true,data:null,error:''});motorConfigurations.set(id,view);renderMotorJobs();
+ try{const value=await api('files/motor/'+id+'/manifest.json'),latest=motorRows.find(r=>r?.id===id);if(!latest)throw Error('任务已不在当前列表，请刷新记录');view.data=checkedMotorConfiguration(latest,value)}catch(e){view.error=e.message}finally{view.pending=false;renderMotorJobs()}
 }
 async function toggleMotorConfiguration(id){
  const view=motorConfigurations.get(id);if(view?.pending)return;if(view?.open){view.open=false;renderMotorJobs();return}if(view?.data){view.open=true;renderMotorJobs();return}return readMotorConfiguration(id);
 }
+function motorJobCard(j){try{return `<div class="job"><div class="row"><strong>${esc(j.id)}</strong><span class="chip ${j.status.includes('fail')||j.status==='needs_attention'||j.status==='invalid'?'bad':''}">${esc(states[j.status]||j.status)}</span><span class="muted">${j.status==='invalid'?'测量协议未读取':j.measurement_protocol==='periodic_cycle3_v1'?'三周期稳态检查':'单周期对照'}</span><span>${j.completed??'—'}/${j.total??'—'} · ${esc(j.current||'')}</span>${j.status==='prepared'?motorButton(j,'submit','提交求解队列'):''}${j.status==='needs_attention'&&!j.continuation_job?motorButton(j,'continue','仅继续未执行牌号'):''}${j.summary?`${['completed','completed_with_failures'].includes(j.status)?motorButton(j,'export','生成完整汇总包',true):''}<a class="download" href="/api/workbench/files/motor/${j.id}/summary.csv">下载原汇总 CSV</a><a class="download" href="/api/workbench/files/motor/${j.id}/summary.md">下载原总结</a>`:''}${exportLinks(j)}</div><p class="muted">${j.parent_job?'来源任务 '+esc(j.parent_job)+' · ':''}${j.continuation_job?'后续任务 '+esc(j.continuation_job)+' · ':''}${j.cases.map(c=>esc(c.material)+'：'+esc(states[c.status]||c.status)).join('　')}</p>${j.summary?resultTable(j.summary.results,j.id):resultTable(j.cases.filter(c=>c.metrics).map(c=>c.metrics),j.id)}${j.error?'<p>'+esc(j.error)+'</p>':''}${nativeFailures(j)}${motorConfigurationBlock(j)}<details><summary>任务日志</summary><pre>${esc(j.log_tail||'')}</pre></details></div>`}catch(e){const id=typeof j?.id==='string'?j.id:'未知任务',link=/^scan_[a-f0-9]{12}$/.test(id)?`<a class="download" href="/api/workbench/files/motor/${id}/manifest.json">下载任务配置 JSON</a> <a class="download" href="/api/workbench/files/motor/${id}/state.json">下载原状态 JSON</a>`:'';return `<div class="job"><strong>${esc(id)}</strong><p class="notice">此任务暂时无法显示：${esc(e.message||'记录格式不符')}。其他可读记录保留。</p>${link}</div>`}}
 function renderMotorJobs(){
  motorControls();const q=motorQueueState;
  if(!motorReadHealthy)$('queueInfo').textContent='状态读取未确认；等待刷新后操作';
  else if(q)$('queueInfo').textContent=(q.active_ownership.length?'存在活动或未确认归属的进程；保持等待':'队列可检查')+` · 排队 ${q.queued} · 待处理 ${q.needs_attention}`;
- $('jobs').innerHTML=motorRows.length?motorRows.map(j=>`<div class="job"><div class="row"><strong>${esc(j.id)}</strong><span class="chip ${j.status.includes('fail')||j.status==='needs_attention'?'bad':''}">${esc(states[j.status]||j.status)}</span><span class="muted">${j.measurement_protocol==='periodic_cycle3_v1'?'三周期稳态检查':'单周期对照'}</span><span>${j.completed}/${j.total} · ${esc(j.current||'')}</span>${j.status==='prepared'?motorButton(j,'submit','提交求解队列'):''}${j.status==='needs_attention'&&!j.continuation_job?motorButton(j,'continue','仅继续未执行牌号'):''}${j.summary?`${['completed','completed_with_failures'].includes(j.status)?motorButton(j,'export','生成完整汇总包',true):''}<a class="download" href="/api/workbench/files/motor/${j.id}/summary.csv">下载原汇总 CSV</a><a class="download" href="/api/workbench/files/motor/${j.id}/summary.md">下载原总结</a>`:''}${exportLinks(j)}</div><p class="muted">${j.parent_job?'来源任务 '+esc(j.parent_job)+' · ':''}${j.continuation_job?'后续任务 '+esc(j.continuation_job)+' · ':''}${j.cases.map(c=>esc(c.material)+'：'+esc(states[c.status]||c.status)).join('　')}</p>${j.summary?resultTable(j.summary.results,j.id):resultTable(j.cases.filter(c=>c.metrics).map(c=>c.metrics),j.id)}${j.error?'<p>'+esc(j.error)+'</p>':''}${nativeFailures(j)}${motorConfigurationBlock(j)}<details><summary>任务日志</summary><pre>${esc(j.log_tail||'')}</pre></details></div>`).join(''):'暂无扫描任务';
+ $('jobs').innerHTML=motorRows.length?motorRows.map(motorJobCard).join(''):'暂无扫描任务';
 }
 async function jobs(){
  const generation=++motorJobsGeneration;
- try{const [list,q]=await Promise.all([api('motor/jobs'),api('motor/queue')]);if(generation!==motorJobsGeneration)return false;
-  if(!Array.isArray(list)||!Array.isArray(q?.active_ownership))throw Error('任务或队列响应格式不符');
-  motorRows=list;motorQueueState=q;motorReadHealthy=true;renderMotorJobs();return true;
- }catch(e){if(generation===motorJobsGeneration){motorReadHealthy=false;renderMotorJobs();$('queueInfo').textContent='队列暂时不可访问：'+e.message}throw e}
+ try{const [list,q]=await Promise.allSettled([api('motor/jobs'),api('motor/queue')]);if(generation!==motorJobsGeneration)return false;
+  const listOK=list.status==='fulfilled'&&Array.isArray(list.value),queueOK=q.status==='fulfilled'&&Array.isArray(q.value?.active_ownership);
+  if(listOK)motorRows=list.value;if(queueOK)motorQueueState=q.value;
+  const issues=[];if(!listOK)issues.push('任务列表：'+(list.reason?.message||'响应格式不符'));if(!queueOK)issues.push('队列：'+(q.reason?.message||'响应格式不符'));
+  if(listOK&&list.value.some(r=>!r||typeof r.id!=='string'||typeof r.status!=='string'))issues.push('任务列表含无效身份条目');
+  if(issues.length)throw Error(issues.join('；'));motorReadHealthy=true;renderMotorJobs();return true;
+ }catch(e){if(generation===motorJobsGeneration){motorReadHealthy=false;renderMotorJobs();$('queueInfo').textContent='状态读取未确认：'+e.message+'；可读记录保留，原生操作等待刷新确认。'}throw e}
 }
 async function prepareMotor(){
  if(motorPreparePending||!motorReady)return;const text=String($('cores').value??'').trim(),cores=Number(text);if(!text||!Number.isInteger(cores)||cores<1||cores>32){error(Error('并行核数需为1–32整数'),'motor_prepare');$('queueNotice').textContent='未准备任务：核数需为1–32整数，已有任务保持。';return}
@@ -133,7 +138,7 @@ async function prepareMotor(){
  }catch(e){error(e,'motor_prepare');$('queueNotice').textContent='任务准备结果未确认：'+e.message+'；请先刷新记录，不自动重复生成。'}finally{motorPreparePending=false;motorControls()}
 }
 async function motorJobAction(id,action){
- const j=motorRows.find(r=>r.id===id);if(!j||motorActionDisabled(j,action))return;
+ const j=motorRows.find(r=>r?.id===id);if(!j||motorActionDisabled(j,action))return;
  if(action==='submit'&&j.status!=='prepared'||action==='continue'&&(j.status!=='needs_attention'||j.continuation_job)||action==='export'&&(!j.summary||!['completed','completed_with_failures'].includes(j.status)))return;
  motorPendingActions.set(id,action);++motorJobsGeneration;renderMotorJobs();
  try{const r=await api('motor/jobs/'+encodeURIComponent(id)+'/'+action,{});

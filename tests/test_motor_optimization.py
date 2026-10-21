@@ -130,6 +130,12 @@ class MotorOptimizationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'扫描完成'):
             self.manager.dataset('scan_123456789abc')
 
+    def test_bad_sibling_scan_does_not_hide_original_or_valid_datasets(self):
+        job,_=self.finished_job();bad='scan_aaaaaaaaaaaa';folder=self.manager.motor.path(bad);folder.mkdir();(folder/'state.json').write_text('{broken fixture')
+        datasets=self.manager.datasets();self.assertIn('v8_1',[d['id'] for d in datasets]);self.assertIn(job,[d['id'] for d in datasets]);self.assertNotIn(bad,[d['id'] for d in datasets])
+        result=self.manager.analyze(dict(dataset='v8_1'));self.assertEqual(result['ranked'][0]['score'],37)
+        self.assertEqual((folder/'state.json').read_text(),'{broken fixture')
+
     def finished_job(self):
         motor=MotorWorkbench(self.root,self.root/'motor_jobs',Path(__file__).resolve().parents[1])
         self.manager.motor=motor
