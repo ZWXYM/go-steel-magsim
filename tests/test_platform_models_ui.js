@@ -1,0 +1,28 @@
+/* Use production DOM construction and delayed responses, without actual deletions. */
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+class Node{constructor(tag='div'){this.tag=tag;this.children=[];this.style={};this.dataset={};this.textContent='';this.value='';this.disabled=false}append(...nodes){this.children.push(...nodes)}replaceChildren(...nodes){this.children=nodes}text(){return this.textContent+' '+this.children.map(node=>node.text()).join(' ')}all(tag){return [...(this.tag===tag?[this]:[]),...this.children.flatMap(child=>child.all(tag))]}}
+function harness(){const nodes=new Map(),get=id=>{if(!nodes.has(id))nodes.set(id,new Node());return nodes.get(id)},calls=[],pending=[],invalidations=[],refreshes=[];get('pred-model').value='A';
+  const c=vm.createContext({document:{getElementById:get,createElement:tag=>new Node(tag)},fetch:(url,options={})=>{calls.push({url,method:options.method||'GET'});return new Promise((resolve,reject)=>pending.push({resolve,reject}))},confirm:()=>true,_predictionSelectionChanged:()=>invalidations.push(get('pred-model').value),loadModelListForPred:async()=>refreshes.push(1)});
+  vm.runInContext(fs.readFileSync('static/js/platform_models.js','utf8'),c);return{c,get,calls,pending,invalidations,refreshes};
+}
+const model=(model_id,extra={})=>({model_id,model_type:'ridge_poly',dataset_name:'dataset_'+model_id+'.csv',n_samples:12,r2_avg:.91234,cv_bh_rmse_T_mean:.012345,holdout_bh_rmse_T:.023456,...extra});
+function respond(wait,data,status=200){wait.resolve({ok:status>=200&&status<300,status,json:async()=>data})}
+const tick=()=>new Promise(resolve=>setImmediate(resolve));
+async function loaded(h,rows=[model('A'),model('B')]){const waiting=h.c.loadModelList();respond(h.pending.shift(),{models:rows});await waiting}
+(async()=>{
+  const html=fs.readFileSync('templates/index.html','utf8');assert.ok(html.includes('/static/js/platform_models.js'));assert.ok(!/function (?:loadModelList|deleteModel)\(/.test(html));
+  for(const [,script] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(script);
+  const h=harness();await loaded(h);assert.match(h.get('model-list').text(),/0\.01235 T/);assert.match(h.get('model-list').text(),/0\.9123/);assert.equal(h.get('model-list').all('button').length,2);
+  const first=h.c.loadModelList(),old=h.pending.shift(),second=h.c.loadModelList();respond(h.pending.shift(),{models:[model('newer')]});await second;respond(old,{models:[model('old')]});await first;assert.match(h.get('model-list').text(),/newer/);assert.doesNotMatch(h.get('model-list').text(),/dataset_old/);
+  const failedRead=h.c.loadModelList();respond(h.pending.shift(),{models:[],warning:'temporarily locked'});await failedRead;assert.match(h.get('model-list').text(),/newer/);assert.match(h.get('model-list-status').textContent,/temporarily locked/);
+  const dangerous="x');call_unwanted()//";await loaded(h,[model(dangerous),null,model('safe')]);const cards=h.get('model-list').children;assert.equal(cards[1].all('button')[0].disabled,true);assert.match(h.get('model-list').text(),/暂不可读/);assert.match(h.get('model-list').text(),/dataset_safe/);const callsBefore=h.calls.length;await h.c.deleteModel(dangerous);assert.equal(h.calls.length,callsBefore);
+
+  const removing=harness();await loaded(removing);const waiting=removing.c.deleteModel('A'),deletion=removing.pending.shift();await removing.c.deleteModel('A');assert.equal(removing.calls.filter(call=>call.method==='DELETE').length,1);assert.equal(removing.get('model-list').all('button')[0].disabled,true);
+  const during=removing.c.loadModelList();respond(removing.pending.shift(),{models:[model('A'),model('B')]});await during;assert.equal(removing.get('model-list').all('button')[0].disabled,true);respond(deletion,{success:true});await tick();assert.deepEqual(removing.invalidations,['A']);respond(removing.pending.shift(),{models:[model('B')]});await waiting;assert.doesNotMatch(removing.get('model-list').text(),/dataset_A/);assert.match(removing.get('model-list-status').textContent,/已删除/);assert.equal(removing.refreshes.length,1);
+
+  const failure=harness();await loaded(failure);let failed=failure.c.deleteModel('A');respond(failure.pending.shift(),{error:'locked file'},500);await failed;assert.match(failure.get('model-list-status').textContent,/删除失败.*locked file/);assert.match(failure.get('model-list').text(),/dataset_A/);assert.equal(failure.get('model-list').all('button')[0].disabled,false);assert.equal(failure.invalidations.length,0);assert.equal(failure.calls.filter(call=>call.method==='GET').length,1);
+  failed=failure.c.deleteModel('A');failure.get('pred-model').value='B';respond(failure.pending.shift(),{success:true});await tick();respond(failure.pending.shift(),{models:[model('B')]});await failed;assert.equal(failure.invalidations.length,0);assert.equal(failure.get('pred-model').value,'B');
+  const pendingOld=harness();await loaded(pendingOld);const staleLoad=pendingOld.c.loadModelList(),staleResponse=pendingOld.pending.shift(),deleteA=pendingOld.c.deleteModel('A');respond(pendingOld.pending.shift(),{success:true});await tick();respond(pendingOld.pending.shift(),{models:[model('B')]});await deleteA;respond(staleResponse,{models:[model('A')]});await staleLoad;assert.doesNotMatch(pendingOld.get('model-list').text(),/dataset_A/);
+  const cancelled=harness();cancelled.c.confirm=()=>false;await cancelled.c.deleteModel('A');assert.equal(cancelled.calls.length,0);
+  console.log('Saved models: exact records and metrics, inert identifiers, stale-read isolation, one deletion per model, error recovery and selected-prediction invalidation: PASS');
+})().catch(error=>{console.error(error);process.exitCode=1});

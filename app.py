@@ -1744,8 +1744,19 @@ def ml_predict():
 
 @app.route('/api/ml/models/<model_id>', methods=['DELETE'])
 def ml_delete_model(model_id):
-    ok = _get_ml().delete_model(model_id)
-    return jsonify({'success': ok})
+    global _ml_predictor
+    try:
+        with _ml_state_lock:
+            active = _get_ml()
+            was_current = active.metadata.get('model_id') == model_id
+            ok = active.delete_model(model_id)
+            if ok and was_current:
+                _ml_predictor = _new_ml_predictor(active.model_dir)
+        return jsonify({'success': ok})
+    except ValueError as error:
+        return jsonify({'error': str(error)}), 400
+    except OSError as error:
+        return jsonify({'error': str(error)}), 500
 
 
 # -- Maxwell export --------------------------------------------------------

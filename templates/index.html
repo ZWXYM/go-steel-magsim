@@ -3574,29 +3574,6 @@ function renderFeatureImportance(fi) {
   });
 }
 
-function loadModelList() {
-  fetch('/api/ml/models').then(r => r.json()).then(d => {
-    const models = d.models || [];
-    document.getElementById('model-list').innerHTML = models.length === 0
-      ? '<p style="color:var(--t3)">暂无已训练模型</p>'
-      : models.map(m => `<div style="display:flex;gap:8px;align-items:center;padding:7px 10px;
-             border-bottom:1px solid var(--border);font-size:13px">
-             <span style="flex:1;font-family:var(--font-mono);font-size:12px">${m.model_id}</span>
-             <span style="color:${m.metric_reliability==='holdout_validation'?'var(--green)':'var(--amber)'}">${
-               m.r2_avg != null ? '验证R²=' + m.r2_avg.toFixed(3)
-               : (m.train_r2_avg != null ? '探索 训练R²=' + m.train_r2_avg.toFixed(3) : 'R²=—')
-             }</span>
-             <span style="color:var(--t2)">${m.n_samples} 样本</span>
-             <button class="btn btn-danger" style="padding:3px 10px;font-size:12px" onclick="deleteModel('${m.model_id}')">删除</button>
-           </div>`).join('');
-  });
-}
-
-function deleteModel(mid) {
-  if (!confirm('确定删除模型 ' + mid + ' ?')) return;
-  fetch('/api/ml/models/' + mid, {method: 'DELETE'}).then(() => loadModelList());
-}
-
 // ═══════════════════════════════════════════════════
 // 快速预测
 // ═══════════════════════════════════════════════════
@@ -3714,36 +3691,6 @@ function loadPaperTrainingPresets() {
       const el = document.getElementById('paper-preset-summary');
       if (el) el.textContent = '预设加载失败: ' + err.message;
     });
-}
-
-function loadModelList() {
-  fetch('/api/ml/models').then(r => r.json()).then(d => {
-    if(d.error) throw new Error(d.error);
-    const models = d.models || [];
-    const fmt = (v, digits=4) => v == null || !Number.isFinite(Number(v)) ? '—' : Number(v).toFixed(digits);
-    document.getElementById('model-list').innerHTML = models.length === 0
-      ? '<p style="color:var(--t3)">暂无已训练模型</p>'
-      : `<div class="info-note" style="margin-bottom:10px">CV B-H RMSE 选模型仅应在同一数据集、同一 fold 策略下比较；跨数据集模型不能直接排名。</div>` +
-        models.map(m => `<div style="padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px">
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <code style="color:var(--cyan);font-size:11px">${esc(m.model_id)}</code>
-            <span class="badge ${m.prediction_capable===false?'b-amber':'b-green'}">${m.prediction_capable===false?'CV REPORT':'PREDICT'}</span>
-            <span style="color:var(--t1)">类型: ${esc(m.model_type || '—')}</span>
-            <span style="color:var(--t2)">数据集: <code>${esc(m.dataset_name || '—')}</code></span>
-            <span style="color:var(--t3)">${m.n_samples || 0} samples</span>
-            <button class="btn btn-danger" style="margin-left:auto;padding:3px 10px;font-size:12px" onclick="deleteModel('${esc(m.model_id)}')">删除</button>
-          </div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;color:var(--t2)">
-            <span>CV B-H RMSE: <strong style="color:var(--amber)">${fmt(m.cv_bh_rmse_T_mean,5)} T</strong></span>
-            <span>Holdout B-H RMSE: ${fmt(m.holdout_bh_rmse_T,5)} T</span>
-            <span>R²: ${fmt(m.r2_avg,4)}</span>
-            <span>选择方式: ${esc(m.selection_metric || m.metric_reliability || '—')}</span>
-          </div>
-        </div>`).join('');
-  }).catch(err => {
-    const el=document.getElementById('model-list');
-    if(el) el.innerHTML=`<div style="color:var(--red);font-size:12px">模型列表加载失败: ${esc(err.message)}</div>`;
-  });
 }
 
 // Prediction input/result lifecycle is in static/js/platform_prediction.js.
@@ -5194,6 +5141,7 @@ function showODFLightbox(url){
       <span class="card-title">已保存的模型</span>
       <button class="btn btn-g btn-sm" onclick="loadModelList()">🔄 刷新</button>
     </div>
+    <p id="model-list-status" role="status" aria-live="polite" style="font-size:12px;color:var(--t3)">正在读取模型记录…</p>
     <div id="model-list"></div>
   </div>
 </div>
@@ -5555,6 +5503,7 @@ async function runCompareExport() {
   }
 }
 </script>
+<script src="/static/js/platform_models.js"></script>
 <script src="/static/js/platform_training.js"></script>
 <script src="/static/js/platform_prediction.js"></script>
 </body>

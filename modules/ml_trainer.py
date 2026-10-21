@@ -7,6 +7,7 @@ import pickle
 import json
 import hashlib
 import uuid
+import re
 from pathlib import Path
 from datetime import datetime
 
@@ -333,6 +334,9 @@ class BHPredictor:
     def __init__(self, model_dir: str = 'data/models'):
         self.model_dir = Path(model_dir)
         self.model_dir.mkdir(parents=True, exist_ok=True)
+        self._clear_loaded_model()
+
+    def _clear_loaded_model(self):
         self.model         = None   # legacy: combined single-model (backward compat load)
         self.model_rd      = None   # RD-only estimator
         self.model_td      = None   # TD-only estimator
@@ -342,6 +346,18 @@ class BHPredictor:
         self.rd_target_cols = None
         self.td_target_cols = None
         self.metadata      = {}
+        self._artifact_directory = None
+
+    def _model_paths(self, model_id):
+        if not isinstance(model_id, str) or not re.fullmatch(r'[A-Za-z0-9_-][A-Za-z0-9_.-]{0,127}', model_id):
+            raise ValueError('模型ID格式无效')
+        candidates = []
+        for root in (self.model_dir, Path('data/paper_models')):
+            candidate = root.resolve() / model_id
+            if candidate.resolve() != candidate:
+                raise ValueError('模型目录不能通过链接指向其他路径')
+            candidates.append(candidate)
+        return candidates
 
     def train(self, dataset_path: str,
               model_type: str = 'direct_xgb',
@@ -465,7 +481,7 @@ class BHPredictor:
 
         # 保存
         model_id = f'model_{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[:12]}'
-        save_dir = self.model_dir / model_id
+        save_dir = (self.model_dir / model_id).resolve()
         save_dir.mkdir(parents=True)
 
         if model_rd:
@@ -542,6 +558,7 @@ class BHPredictor:
         self.rd_target_cols = rd_cols
         self.td_target_cols = td_cols
         self.metadata     = {**config, **metrics}
+        self._artifact_directory = save_dir
 
         return {'model_id': model_id, **metrics,
                 'n_samples': len(sub), 'n_features': len(feat_cols),
@@ -551,9 +568,9 @@ class BHPredictor:
 
     def load(self, model_id: str) -> None:
         """从 data/models/<model_id>/ 或 data/paper_models/<model_id>/ 加载模型。"""
-        candidates = [self.model_dir / model_id, Path('data/paper_models') / model_id]
-        d = next((p for p in candidates if p.exists()), candidates[0])
-        if not d.exists():
+        candidates = self._model_paths(model_id)
+        d = next((p for p in candidates if p.is_dir()), candidates[0])
+        if not d.is_dir():
             raise FileNotFoundError(f'模型不存在: {model_id}')
 
         if (d / 'model_rd.pkl').exists() and (d / 'model_td.pkl').exists():
@@ -592,6 +609,7 @@ class BHPredictor:
         if 'bh_reference_corrected' not in cfg:
             cfg['bh_reference_corrected'] = _dataset_bh_reference_corrected(cfg.get('dataset_path'))
         self.metadata = {**cfg, **metrics}
+        self._artifact_directory = d
 
     def predict_bh(self, params: dict) -> dict:
         """
@@ -599,6 +617,8 @@ class BHPredictor:
         params: {f_Goss, theta_0_deg, halfwidth_deg, N_grains, Si_content}
         返回: {RD: {H, B}, TD: {H, B}, full_direction: {...}, scalars: {...}}
         """
+        if self._artifact_directory is not None and not self._artifact_directory.is_dir():
+            raise FileNotFoundError('保存模型目录已被移除，请重新选择模型')
         if self.model is None and self.model_rd is None:
             raise RuntimeError('模型未加载，请先调用 load() 或 train()')
 
@@ -784,12 +804,11 @@ class BHPredictor:
     def delete_model(self, model_id: str) -> bool:
         """删除指定模型目录。"""
         import shutil
-        d = self.model_dir / model_id
-        if d.exists():
-            shutil.rmtree(d)
-            return True
-        paper_d = Path('data/paper_models') / model_id
-        if paper_d.exists():
-            shutil.rmtree(paper_d)
-            return True
+        for directory in self._model_paths(model_id):
+            if directory.is_dir():
+                was_loaded = self._artifact_directory == directory
+                shutil.rmtree(directory)
+                if was_loaded:
+                    self._clear_loaded_model()
+                return True
         return False

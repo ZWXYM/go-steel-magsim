@@ -157,7 +157,7 @@ class NativeQualityWorkbench(unittest.TestCase):
     def test_cpu_only_startup_suppresses_queue_monitor(self):
         with tempfile.TemporaryDirectory() as tmp:
             with patch('modules.workbench_routes.MotorWorkbench.jobs',return_value=[{'status':'queued'}]),patch('modules.workbench_routes.MotorWorkbench.start_queue_monitor') as monitor:
-                with patch.dict('os.environ',{'MAGSIM_CPU_ONLY':'1'}):
+                with patch.dict('os.environ',{'MAGSIM_CPU_ONLY':'1','MAGSIM_AUTO_RESUME_QUEUE':'1'}):
                     blueprint=create_workbench(PROJECT,Path(tmp),ROOT)
                     app=Flask('cpu_registered')
                     app.register_blueprint(blueprint)
@@ -165,7 +165,7 @@ class NativeQualityWorkbench(unittest.TestCase):
                     self.assertTrue(client.get('/api/workbench/resources').json['cpu_only'])
                     self.assertEqual(client.post('/api/train').status_code,423)
                     monitor.assert_not_called()
-                with patch.dict('os.environ',{'MAGSIM_CPU_ONLY':'0'}):
+                with patch.dict('os.environ',{'MAGSIM_CPU_ONLY':'0','MAGSIM_AUTO_RESUME_QUEUE':'1'}):
                     create_workbench(PROJECT,Path(tmp),ROOT)
                     monitor.assert_called_once()
 
