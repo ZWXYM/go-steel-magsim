@@ -2,10 +2,10 @@
 Fe-Si 多晶微磁学仿真集成平台 - Flask Backend v2
 """
 import sys, os, threading, uuid, json, io, traceback, re, shutil, subprocess, time, zipfile as zf_mod2, contextlib
-import locale
+import locale, hashlib
 from pathlib import Path
 from datetime import datetime
-from flask import Flask, request, jsonify, render_template, send_file, Response, stream_with_context
+from flask import Flask, request, jsonify, render_template, send_file, Response, stream_with_context, g
 
 import matplotlib
 matplotlib.use('Agg')
@@ -47,13 +47,16 @@ def get_texture_module():
 
 # ── Task Management ──────────────────────────────────────────
 tasks = {}
+_workspace_change_lock = threading.RLock()
+_workspace_requests = {}
 running_jobs = {}  # job_id -> {script,lines,done,process,status,started,finished,total}
 
 def create_task(name):
-    tid = str(uuid.uuid4())[:10]
-    tasks[tid] = {'id': tid, 'name': name, 'status': 'running', 'output': '',
-                  'error': None, 'result': None,
-                  'started': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'finished': None}
+    with _workspace_change_lock:
+        tid = str(uuid.uuid4())[:10]
+        tasks[tid] = {'id': tid, 'name': name, 'status': 'running', 'output': '',
+                      'error': None, 'result': None,
+                      'started': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'finished': None}
     return tid
 
 def run_task(tid, func, *args, **kwargs):
@@ -76,16 +79,70 @@ def index():
     return render_template('index.html')
 
 # ── Workspace ──────────────────────────────────────────────
+def _workspace_token():
+    return hashlib.sha256(os.path.normcase(os.getcwd()).encode('utf8')).hexdigest()
+
+
+def _workspace_changed():
+    expected = request.headers.get('X-Magsim-Workspace')
+    return expected is not None and expected != _workspace_token()
+
+
+@app.before_request
+def bind_legacy_workspace_request():
+    path = request.path
+    if path == '/api/workspace' or not (path.startswith('/api/') and not path.startswith('/api/workbench/') or path.startswith('/data/exports/')):
+        return None
+    with _workspace_change_lock:
+        if _workspace_changed():
+            return jsonify(error='工作目录已在其他页面改变，请重新读取目录和输入列表后再操作',code='workspace_changed'),409
+        lease = uuid.uuid4().hex
+        _workspace_requests[lease] = path
+        g.magsim_workspace_lease = lease
+
+
+@app.teardown_request
+def release_legacy_workspace_request(error=None):
+    lease = g.pop('magsim_workspace_lease',None)
+    if lease:
+        with _workspace_change_lock:
+            _workspace_requests.pop(lease,None)
+
+
+def _workspace_blockers():
+    active_tasks = [task['id'] for task in list(tasks.values()) if task.get('status') not in ('completed','failed')]
+    active_jobs = [name for name,job in list(running_jobs.items()) if job.get('status') in ('queued','pending','starting','running','stopping')]
+    pipelines = getattr(_pipeline_runner,'pipelines',{}) if _pipeline_runner is not None else {}
+    active_pipelines = [name for name,state in list(pipelines.items()) if state.get('status') in ('running','running_sim','waiting_sim','stopping') or state.get('_thread') is not None and state['_thread'].is_alive()]
+    return dict(requests=len(_workspace_requests),tasks=active_tasks,jobs=active_jobs,queued_jobs=len(globals().get('job_queue',[])),pipelines=active_pipelines)
 @app.route('/api/workspace', methods=['GET'])
 def get_workspace():
-    return jsonify({'workspace': os.getcwd()})
+    with _workspace_change_lock:
+        return jsonify(workspace=os.getcwd(),workspace_token=_workspace_token())
 
 @app.route('/api/workspace', methods=['POST'])
 def set_workspace():
-    d = request.json; p = d.get('path', '').strip()
-    if p and os.path.isdir(p):
-        os.chdir(p); return jsonify({'success': True, 'workspace': os.getcwd()})
-    return jsonify({'error': '路径无效或不存在'}), 400
+    global _ml_predictor,_dataset_builder,_pipeline_runner
+    data = request.get_json(silent=True)
+    if not isinstance(data,dict) or not isinstance(data.get('path'),str) or not data['path'].strip():
+        return jsonify(error='路径无效或不存在'),400
+    try:
+        with _workspace_change_lock:
+            if _workspace_changed():
+                return jsonify(error='工作目录已在其他页面改变，请重新读取后再切换',code='workspace_changed'),409
+            target=Path(data['path']).expanduser().resolve()
+            if not target.is_dir():return jsonify(error='路径无效或不存在'),400
+            if target==Path.cwd().resolve():
+                return jsonify(success=True,changed=False,workspace=os.getcwd(),workspace_token=_workspace_token())
+            blockers=_workspace_blockers()
+            if any(blockers.values()):
+                return jsonify(error='当前目录仍有活动任务或读写请求，请待结束后切换；目录未改变',code='workspace_in_use',active=blockers),409
+            with _ml_state_lock:
+                os.chdir(target)
+                _ml_predictor=None;_dataset_builder=None;_pipeline_runner=None
+            return jsonify(success=True,changed=True,workspace=os.getcwd(),workspace_token=_workspace_token())
+    except (OSError,ValueError) as error:
+        return jsonify(error='目录未切换：'+str(error)),400
 
 # ── Texture: Generate Single ────────────────────────────────
 @app.route('/api/texture/generate-single', methods=['POST'])
