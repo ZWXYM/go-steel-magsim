@@ -73,6 +73,23 @@ async function loaded(h,id=A){await h.c.loadCalibration(id)}
  const noBank=harness(async()=>calibration(A));await noBank.c.predict();assert.match(noBank.node('error').textContent,/先建立或加载校准/);await loaded(noBank);assert.equal(noBank.node('error').style.display,'none');
  const fileError=harness(async()=>raw);await fileError.c.readRaw({files:[{text:async()=>{throw Error('file read failure')}}]});assert.equal(fileError.node('error').style.display,'block');
  await fileError.c.readRaw({files:[{text:async()=>JSON.stringify(raw)}]});assert.equal(fileError.node('error').style.display,'none');assert.equal(JSON.parse(fileError.node('rawPair').value).material_id,raw.material_id);
+ // A saved material/direction view restores the same four curves on a full reopen.
+ const view=harness(async()=>calibration(A));await loaded(view);view.node('direction').value='TD';view.c.showCurve();const savedSVG=view.node('curve').innerHTML;
+ assert.match(view.urls.at(-1),/curve_grade=S0/);assert.match(view.urls.at(-1),/curve_direction=TD/);
+ const viewReload=harness(async()=>calibration(A));viewReload.c.location.search=view.c.location.search;await loaded(viewReload);
+ assert.equal(viewReload.node('grade').value,'S0');assert.equal(viewReload.node('direction').value,'TD');assert.equal(viewReload.node('curve').innerHTML,savedSVG);
+ assert.match(viewReload.node('curveStatus').textContent,/S0.*TD/);assert.ok(viewReload.calls.every(c=>c.method==='GET'));
+ // Unknown view choices cannot quietly display a different material or direction.
+ for(const [grade,direction] of [['MISSING','TD'],['S0','ND'],['','RD']]){
+  const unavailable=harness(async()=>calibration(A));unavailable.c.location.search='?calibration='+A+'&curve_grade='+grade+'&curve_direction='+direction;await loaded(unavailable);
+  assert.equal(unavailable.node('curve').innerHTML,'');assert.match(unavailable.node('curveStatus').textContent,/请选择有效材料/);
+  unavailable.node('grade').value='S0';unavailable.node('direction').value='TD';unavailable.c.showCurve();assert.ok(unavailable.node('curve').innerHTML.includes('polyline'));assert.match(unavailable.urls.at(-1),/curve_direction=TD/);
+  assert.ok(unavailable.calls.every(c=>c.method==='GET'));
+ }
+ const onlyOther=calibration(B);onlyOther.selected_grades=['S1'];onlyOther.comparisons.forEach(c=>c.grade='S1');onlyOther.metrics.forEach(r=>r.grade='S1');
+ const changedBank=harness(async url=>url.endsWith('/'+B)?onlyOther:calibration(A));await loaded(changedBank);changedBank.node('direction').value='TD';changedBank.c.showCurve();
+ await loaded(changedBank,B);assert.equal(value(changedBank,'current.id'),B);assert.equal(changedBank.node('curve').innerHTML,'');assert.match(changedBank.node('curveStatus').textContent,/请选择有效材料/);
+ changedBank.node('grade').value='S1';changedBank.c.showCurve();assert.match(changedBank.urls.at(-1),/curve_grade=S1/);assert.match(changedBank.urls.at(-1),new RegExp('calibration='+B));assert.ok(changedBank.calls.every(c=>c.method==='GET'));
  assert.ok([valid,switching,excluded,race,files,example,fit].every(h=>h.calls.every(c=>!/(\/start|\/submit|\/train)/.test(c.url))));
  console.log('Workbench UI: calibration generations, frozen prediction URLs, no duplicate fit/prediction, raw-input ordering and script integration: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
