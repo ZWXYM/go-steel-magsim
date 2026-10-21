@@ -1,0 +1,7 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>系统状态报告</title>
+<style>body{margin:0;background:#f4f7fb;color:#1e293b;font:15px system-ui,"Microsoft YaHei",sans-serif}main{max-width:1150px;margin:25px auto;padding:20px}section{background:white;border:1px solid #dce5ef;border-radius:10px;padding:20px;margin:18px 0}h1{font-size:25px}button,a{color:#2364ad}button{padding:9px 16px;margin:0 10px 8px 0;cursor:pointer}button:disabled{opacity:.5;cursor:default}dl{display:grid;grid-template-columns:130px 1fr;gap:10px}dd{margin:0;overflow-wrap:anywhere}dt,small{color:#64748b}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px;border-bottom:1px solid #e2e8f0;overflow-wrap:anywhere}code{overflow-wrap:anywhere}.scroll{overflow:auto}p{line-height:1.7}@media(max-width:650px){main{padding:12px}dl{grid-template-columns:95px 1fr}}</style></head>
+<body><main><a href="/system">返回系统首页</a><h1>系统状态与问题报告</h1><p>查看当前地址、目录、版本和已保存任务状态。下载文件包含页面当前报告；读取报告不启动求解、训练或恢复队列。</p>
+<button id="reportRefresh">读取最新报告</button><button id="reportDownload" disabled>下载当前JSON报告</button><p id="reportStatus" role="status">正在读取…</p>
+<section><h2>运行实例</h2><dl id="reportRuntime"></dl></section>
+<section><h2>保存任务</h2><p>显示状态文件原值。文件可读与任务计算通过分别判断；单个损坏文件不会阻断其他记录。</p><div id="reportGroups"></div></section>
+<small id="reportIdentity"></small></main><script src="/static/js/system_report.js"></script></body></html>
