@@ -66,6 +66,13 @@ async function loaded(h,id=A){await h.c.loadCalibration(id)}
  const recovered=harness(async url=>url.endsWith('/'+A)?Promise.reject(Error('library missing')):calibration(B));await loaded(recovered,A);assert.equal(recovered.node('error').style.display,'block');
  await loaded(recovered,B);assert.equal(value(recovered,'current.id'),B);assert.equal(recovered.node('error').style.display,'none');assert.equal(recovered.node('error').textContent,'');
  recovered.c.error(Error('motor unavailable'));await loaded(recovered,B);assert.match(recovered.node('error').textContent,/motor unavailable/);assert.equal(recovered.node('error').style.display,'block');
+ const corrected=harness(async url=>url.endsWith('/predict')?prediction:calibration(A));await loaded(corrected);corrected.node('rawPair').value='{';await corrected.c.predict();
+ assert.equal(posts(corrected).length,0);assert.equal(corrected.node('error').style.display,'block');
+ corrected.c.setPredictionInput(JSON.stringify(raw));assert.equal(corrected.node('error').style.display,'none');await corrected.c.predict();assert.equal(posts(corrected).length,1);assert.equal(corrected.node('error').textContent,'');
+ corrected.c.error(Error('separate motor error'));corrected.c.predictionInputChanged();await corrected.c.predict();assert.match(corrected.node('error').textContent,/separate motor error/);
+ const noBank=harness(async()=>calibration(A));await noBank.c.predict();assert.match(noBank.node('error').textContent,/先建立或加载校准/);await loaded(noBank);assert.equal(noBank.node('error').style.display,'none');
+ const fileError=harness(async()=>raw);await fileError.c.readRaw({files:[{text:async()=>{throw Error('file read failure')}}]});assert.equal(fileError.node('error').style.display,'block');
+ await fileError.c.readRaw({files:[{text:async()=>JSON.stringify(raw)}]});assert.equal(fileError.node('error').style.display,'none');assert.equal(JSON.parse(fileError.node('rawPair').value).material_id,raw.material_id);
  assert.ok([valid,switching,excluded,race,files,example,fit].every(h=>h.calls.every(c=>!/(\/start|\/submit|\/train)/.test(c.url))));
  console.log('Workbench UI: calibration generations, frozen prediction URLs, no duplicate fit/prediction, raw-input ordering and script integration: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
