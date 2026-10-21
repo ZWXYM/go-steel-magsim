@@ -27,6 +27,10 @@ PyAEDT的Python导入路径是ansys.aedt.core，已安装分发包名称是pyaed
 
 本机虚拟环境仍依赖创建时的基础Python安装，其中AEDT环境启用system-site-packages。把.runtime文件夹直接复制到另一台电脑，不能保证独立运行。没有在本次交付中安装或升级任何依赖，也没有创建AEDT会话。
 
+2026-10-21补充核对：Web环境同样启用system-site-packages，NumPy1.26.4和Flask3.1.3来自基础Python目录。`pip check`报告两组基础环境冲突：TensorFlow-intel2.15.0要求TensorBoard<2.16，当前为2.20.0；OpenCV-headless4.13.0.90要求NumPy>=2，当前为1.26.4。Web依赖清单及app/modules/tools/scripts中未发现这两组包的引用，实际CPU校准、预测与相关测试记录仍保留；本机整体依赖未达到pip check无冲突的状态。
+
+本次保留所有已安装包。新机器按公开README创建独立.venv并安装requirements.txt，避免继承其他任务的依赖；公开CPU首次使用验证复用了本机解释器，未执行全新环境安装。不要仅为消除上述两行提示而升级本项目NumPy或卸载基础Python包。
+
 ## 公开程序与本机完整资源
 
 公开仓库的requirements.txt用于Web/CPU分析环境。按README创建.venv和安装这些依赖后，可以复现已公开校准证据、运行软件测试和使用页面；它不同时安装AEDT、驱动、MuMax3或本机私有电机工程。
