@@ -29,6 +29,10 @@ function harness(api){
  assert.match(h.nodes.get('batchRows').text(),/0\.000000/);assert.match(h.nodes.get('batchRows').text(),/—/);assert.match(h.nodes.get('batchRows').text(),/B30P105/);
  assert.ok(h.calls.every(c=>c.method==='GET'));assert.equal(h.timers.length,0);
  assert.equal(h.urls.at(-1),'/calibrated-motor/batches?batch=bhbatch_aaaaaaaaaaaa');
+ const linked=structuredClone(record);linked.items[0].analysis_url='/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa';linked.items[0].execution_id='bhexec_bbbbbbbbbbbb';
+ const exact=harness(async()=>linked);exact.c.mbRender(linked,true);
+ assert.ok(exact.nodes.get('batchRows').querySelectorAll('a').some(a=>a.href==='/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa?execution=bhexec_bbbbbbbbbbbb'));
+ assert.equal(exact.calls.length,0);
  const cpu=harness(async url=>url.endsWith('/resources')?{cpu_only:true}:record);await cpu.c.mbLoad();assert.equal(cpu.nodes.get('batchStart').disabled,true);assert.equal(cpu.nodes.get('batchPause').disabled,false);
  const unavailable=harness(async url=>{if(url.endsWith('/resources'))throw Error('offline');return record});await unavailable.c.mbLoad();assert.equal(unavailable.nodes.get('batchStart').disabled,true);assert.match(unavailable.nodes.get('batchError').textContent,/资源状态不可读/);
  const running=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:{...record,status:'running'});await running.c.mbLoad();assert.ok(running.timers.includes(3000));assert.ok(running.calls.every(c=>c.method==='GET'));

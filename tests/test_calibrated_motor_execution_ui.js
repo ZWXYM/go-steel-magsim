@@ -7,9 +7,10 @@ class Node {
  setAttribute(name,value){this.attrs[name]=String(value)}
  text(){return this.textContent+this.children.map(n=>n.text?n.text():String(n)).join(' ')}
 }
-function harness(api){
- const nodes=new Map(),calls=[],timers=[];
+function harness(api,search=''){
+ const nodes=new Map(),calls=[],timers=[],urls=[],location={search,pathname:'/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa',hash:''};
  const context=vm.createContext({document:undefined,MotorPower:require('../static/js/motor_power.js'),console,Error,Promise,JSON,Number,Math,
+  URLSearchParams,location,history:{replaceState:(state,title,url)=>{urls.push(url);location.search=url.includes('?')?'?'+url.split('?')[1].split('#')[0]:''}},
   setTimeout:(fn,ms)=>{timers.push(ms);return timers.length},clearTimeout:()=>{},
   fetch:async(url,options={})=>{calls.push({url,method:options.method||'GET'});return {ok:true,json:async()=>api(url,options)}}});
  vm.runInContext(fs.readFileSync(require.resolve('../static/js/calibrated_motor_analysis.js'),'utf8'),context);
@@ -19,7 +20,7 @@ function harness(api){
  const plan={id:'bhanalysis_aaaaaaaaaaaa',status:'model_snapshot_ready_not_submitted',material_name:'WB_current',
   native_import_id:'calimport_test',training_grades:['B23R075'],excluded_grades:['B30P105'],
   requested_protocol:{speed_rpm:3000,cycles:1,source_samples:31,selected_window_ms:[0,10]}};
- context.bhaRenderPlan(plan);return {context,nodes,calls,timers};
+ context.bhaRenderPlan(plan);return {context,nodes,calls,timers,urls};
 }
 const metrics={time_ms:[0,10],torque_Nm:[1,2],selected_window_ms:[0,10],T_avg_Nm:1.5,T_min_Nm:1,T_max_Nm:2,K_T_ripple_pct:null};
 const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaaa',status:'completed',phase:'finished',result_available:true,
@@ -71,6 +72,19 @@ const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaa
 
  // Refresh preserves an explicitly selected result, its exact links, and an open review.
  const second={...current,id:'bhexec_bbbbbbbbbbbb',result:{...current.result,metrics:{...metrics,T_avg_Nm:2.5}}};
+ // A saved address selects the exact execution, not the first result under the plan.
+ const linked=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:[current,second],'?execution='+second.id+'&note=saved');
+ await linked.context.bhaLoadExecutions();assert.match(linked.nodes.get('actualStatus').text(),new RegExp(second.id));
+ assert.match(linked.nodes.get('actualMetrics').text(),/2.500000/);assert.ok(linked.calls.every(c=>c.method==='GET'));
+ linked.context.bhaActual(current);assert.match(linked.urls.at(-1),new RegExp('execution='+current.id));assert.match(linked.urls.at(-1),/note=saved/);
+ const reopened=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:[second,current],linked.context.location.search);
+ await reopened.context.bhaLoadExecutions();assert.match(reopened.nodes.get('actualStatus').text(),new RegExp(current.id));
+ const fixed=linked.nodes.get('actualLinks').children.find(n=>n.textContent==='本条结果链接');assert.match(fixed.href,new RegExp('execution='+current.id));
+ for(const target of [second.id,'bhexec_cccccccccccc','invalid']){
+  const missing=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:[current,{...second,result_available:false,status:'failed'}],'?execution='+target);
+  await missing.context.bhaLoadExecutions();assert.equal(missing.nodes.get('actualPanel').hidden,true);assert.match(missing.nodes.get('planNotice').text(),new RegExp(target));
+  assert.equal(missing.urls.length,0);assert.ok(missing.calls.every(c=>c.method==='GET'));
+ }
  let selectionRows=[current,second];
  const keep=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/review')?report:selectionRows);
  await keep.context.bhaLoadExecutions();keep.context.bhaActual(second);await keep.context.bhaLoadReview(second.id);

@@ -70,7 +70,8 @@ function mbRender(record,canStart){
  mb$('batchTotals').textContent=`${record.totals.materials}种材料 · 可读取实际转矩 ${record.totals.actual_torque_results}项 · 本批新增完成 ${record.totals.new_completed_motor_solves}项 · 复用 ${counts.reused}项 · 原数值判据：通过 ${counts.passed}项 / 未通过 ${counts.bad}项 / 未报告 ${counts.unknown}项`+(record.pause_requested?(record.status==='paused'?' · 已暂停，可显式接续':' · 已请求暂停，等待当前阶段结束'):'');
  const rows=mb$('batchRows');rows.replaceChildren();const number=v=>v===null||v===undefined?'—':Number(v).toFixed(6);
  for(const item of record.items){const row=document.createElement('tr'),name=document.createElement('td'),m=item.result_available?item.metrics||{}:{};name.append(mbText('strong',mbName(item)),mbText('small',' · '+item.selection.key));
- name.append(mbText('p','排除：'+(item.source.excluded_grades.join('、')||'无')));const link=mbText('a','查看独立分析与原始结果');link.href=item.analysis_url;name.append(link);
+ name.append(mbText('p','排除：'+(item.source.excluded_grades.join('、')||'无')));const link=mbText('a','查看独立分析与原始结果');link.href=item.analysis_url;
+ if(/^\/calibrated-motor\/analysis\/bhanalysis_[a-f0-9]{12}$/.test(item.analysis_url)&&/^bhexec_[a-f0-9]{12}$/.test(item.execution_id))link.href+='?execution='+encodeURIComponent(item.execution_id);name.append(link);
  const bad=item.result_available&&m.torque_numerical_acceptance===false,quality=mbText('td',!item.result_available?'尚无结果':bad?'数值异常 · 原值保留':m.torque_numerical_acceptance===true?'通过原判据':'未报告');if(bad)quality.className='error';
  const phase=mbText('td',mbItemLabels[item.status]||item.status);
  const power=mbText('td','—');power.className='derivedPower';row.append(name,phase,quality,mbText('td',number(m.T_avg_Nm)),power,mbText('td',number(m.T_min_Nm)+' / '+number(m.T_max_Nm)),mbText('td',number(m.K_T_ripple_pct)),mbText('td',item.error||item.execution_id||'尚无实际转矩结果'));rows.append(row);mbLoadPower(item,power,record.id,powerGeneration)}

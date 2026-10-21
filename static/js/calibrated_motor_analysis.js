@@ -1,5 +1,5 @@
 /* CPU-only plans and clearly identified existing official references. */
-const BHA={generation:0,referenceGeneration:0,plan:null,references:[]};
+const BHA={generation:0,referenceGeneration:0,plan:null,references:[],selectedExecution:typeof location!=='undefined'?new URLSearchParams(location.search).get('execution'):null};
 const bha$=id=>document.getElementById(id);
 const bhaText=(tag,text,cls)=>{const node=document.createElement(tag);node.textContent=text;if(cls)node.className=cls;return node};
 async function bhaAPI(url,body){const response=await fetch(url,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw Error(data.error||'读取失败');return data}
@@ -56,8 +56,15 @@ async function bhaExecutionAction(url,body){
 function bhaPower(record){
  return typeof MotorPower==='object'?MotorPower.fromExecution(record):null;
 }
+function bhaRecordURL(id){
+ const plan=document.body.dataset.artifact;if(!/^bhanalysis_[a-f0-9]{12}$/.test(plan)||!/^bhexec_[a-f0-9]{12}$/.test(id))return null;
+ const query=new URLSearchParams(typeof location!=='undefined'?location.search:'');query.set('execution',id);
+ return '/calibrated-motor/analysis/'+plan+'?'+query+(typeof location!=='undefined'?location.hash||'':'');
+}
 function bhaActual(record){
- const signature=JSON.stringify([record.id,record.result,record.requested_protocol]);BHA.selectedExecution=record.id;if(BHA.actualExecution===record.id&&BHA.actualSignature===signature)return;BHA.actualSignature=signature;
+ const signature=JSON.stringify([record.id,record.result,record.requested_protocol]);BHA.selectedExecution=record.id;
+ const fixedURL=bhaRecordURL(record.id);if(fixedURL&&typeof history!=='undefined')history.replaceState(null,'',fixedURL);
+ if(BHA.actualExecution===record.id&&BHA.actualSignature===signature)return;BHA.actualSignature=signature;
  BHA.actualExecution=record.id;BHA.reviewGeneration=(BHA.reviewGeneration||0)+1;bha$('savedReviewPanel').hidden=true;
  const saved=record.result,m=saved.metrics;bha$('actualPanel').hidden=false;bha$('actualStatus').textContent=`${record.id} / ${saved.material_name} · ${saved.model_version} · ${saved.measurement_protocol}`+(m.torque_numerical_acceptance===false?' · 原数值判据未通过（原值保留）':'');
  const out=bha$('actualMetrics');out.replaceChildren();for(const [label,key,suffix] of [['平均转矩','T_avg_Nm','N·m'],['最低转矩','T_min_Nm','N·m'],['最高转矩','T_max_Nm','N·m'],['转矩脉动','K_T_ripple_pct','%']]){const cell=document.createElement('div');const value=m[key];cell.append(bhaText('span',label),bhaText('strong',value===null?'—':value.toFixed(6)),bhaText('small',suffix));out.append(cell)}
@@ -66,6 +73,7 @@ function bhaActual(record){
  for(const [label,path] of [['原转矩CSV','case/reports/Torque Plots.csv'],['转矩汇总CSV','summary.csv'],['结果JSON','result.json']]){const link=bhaText('a',label);link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
  const review=bhaText('button','查看异常与求解记录');review.onclick=()=>bhaLoadReview(record.id);links.append(review);
  const markdown=bhaText('a','下载检查摘要');markdown.href='/api/workbench/calibrated-motor/executions/'+record.id+'/review.md';links.append(markdown);
+ if(fixedURL){const permalink=bhaText('a','本条结果链接');permalink.href=fixedURL;links.append(permalink)}
 }
 async function bhaLoadReview(execution){
  const generation=BHA.reviewGeneration=(BHA.reviewGeneration||0)+1;bha$('savedReviewPanel').hidden=false;bha$('savedReviewError').textContent='';bha$('savedReviewStatus').textContent='正在读取已保存结果…';bha$('savedReviewPoints').replaceChildren();bha$('savedReviewSettings').textContent='';
@@ -94,6 +102,7 @@ async function bhaLoadExecutions(){
  for(const r of rows){const row=document.createElement('p');row.append(bhaText('span',r.id+' · '+(labels[r.status]||r.status)+(r.phase?' · '+r.phase:'')+' '));if(r.error)row.append(bhaText('span',r.error,'error'));
  if(r.status==='prepared'){const start=bhaText('button','执行一次转矩分析');start.disabled=!canStart||Boolean(BHA.executionBusy);BHA.executionStartButtons.push(start);start.onclick=()=>bhaExecutionAction('/api/workbench/calibrated-motor/executions/'+r.id+'/start',{});row.append(start)}
  if(r.status!=='invalid'){const pack=bhaText('a','下载执行包');pack.href='/api/workbench/calibrated-motor/executions/'+r.id+'/bundle';row.append(pack)}
+ const recordURL=bhaRecordURL(r.id);if(recordURL){const fixed=bhaText('a','本条记录链接');fixed.href=recordURL;row.append(fixed)}
  if(r.result_available){const view=bhaText('button','查看本材料转矩');view.onclick=()=>bhaActual(r);row.append(view)}out.append(row)}
  if(!rows.length)out.append(bhaText('p','当前计划没有执行任务；需先完成原生材料导入与分析工程准备。','muted'));
  const completedRows=rows.filter(r=>r.result_available),available=BHA.selectedExecution?completedRows.find(r=>r.id===BHA.selectedExecution):completedRows[0];

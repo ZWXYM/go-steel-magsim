@@ -61,7 +61,9 @@ async function mlPrepareMotor(){
  const selected=ML.detail,button=ml$('prepareMotor');if(!selected||button.disabled||ML.nativeBusy||ML.chainBusy)return;ML.chainBusy=true;mlSyncActions();ml$('error').textContent='';ml$('chainStatus').textContent='正在核对并接续已有记录…';ml$('chainOpen').hidden=true;
  try{const r=await fetch('/api/workbench/material-motor/prepare-or-reuse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({calibration:selected.calibration_id,key:selected.key,cores:Number(ml$('motorCores').value),measurement_protocol:ml$('torqueProtocol').value})});const v=await r.json();if(!r.ok)throw Error(v.error||'准备失败');
  if(ML.detail!==selected)return;ml$('chainStatus').textContent=`${v.next_step} · 复用 ${v.reused.length} 项，新增 ${v.created.length} 项准备 · 未下发原生任务`;
- ml$('chainOpen').href=v.href;ml$('chainOpen').textContent=v.records.analysis_plan?'打开现有分析计划':'查看当前材料记录';ml$('chainOpen').hidden=false;await mlLoadPreparations(selected);
+ ml$('chainOpen').href=v.href;
+ if(/^\/calibrated-motor\/analysis\/bhanalysis_[a-f0-9]{12}$/.test(v.href)&&/^bhexec_[a-f0-9]{12}$/.test(v.records.execution?.id))ml$('chainOpen').href+='?execution='+encodeURIComponent(v.records.execution.id);
+ ml$('chainOpen').textContent=v.records.analysis_plan?'打开现有分析计划':'查看当前材料记录';ml$('chainOpen').hidden=false;await mlLoadPreparations(selected);
  }catch(e){if(ML.detail===selected){ml$('error').textContent=e.message;ml$('chainStatus').textContent='接续未完成，已保存步骤保留；可检查后重新打开。'}}finally{ML.chainBusy=false;mlSyncActions()}
 }
 if(typeof document!=='undefined')ml$('prepareMotor').onclick=mlPrepareMotor;

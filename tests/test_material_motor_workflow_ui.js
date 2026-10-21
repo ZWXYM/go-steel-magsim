@@ -21,6 +21,8 @@ const snapshot={version:'v1',checked_utc:'now',resources:{cpu_only:false,license
 
  const branch={records:{preparation:{id:'calmotor_1',status:'awaiting_native_material_import'},native_import:{id:'calimport_1',status:'imported_not_solved'},analysis_plan:{id:'bhanalysis_1',status:'model_snapshot_ready_not_submitted'},execution:{id:'bhexec_1',status:'completed'}},next_step:{action:'result',label:'查看官方转矩',href:'/calibrated-motor/analysis/bhanalysis_1'},result_available:true,torque:{T_avg_Nm:0,K_T_ripple_pct:null}};
  const ready={...row,branches:[branch]};h.context.mwfDetail(ready);assert.match(h.nodes.get('branches').text(),/0\.000000/);assert.match(h.nodes.get('branches').text(),/—/);assert.match(h.nodes.get('branches').text(),/官方转矩/);
+ const linked={...ready,branches:[{...branch,next_step:{...branch.next_step,href:'/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa'},records:{...branch.records,execution:{...branch.records.execution,id:'bhexec_bbbbbbbbbbbb'}}}]};
+ h.context.mwfDetail(linked);assert.equal(h.nodes.get('branches').children[0].children.find(n=>n.href).href,'/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa?execution=bhexec_bbbbbbbbbbbb');
 
  let oldResolve,n=0;const old=new Promise(r=>oldResolve=r),r=harness(async()=>++n===1?old:{...snapshot,resources:{...snapshot.resources,pending_native_tasks:[{status:'running'}]},materials:[{...row,branches:[{...branch,result_available:false,records:{execution:{id:'bhexec_1',status:'running',phase:'solving'}}}]}]});
  const first=r.context.mwfLoad();await r.context.mwfLoad();oldResolve(snapshot);await first;assert.ok(r.timers.includes(5000));assert.equal(r.nodes.get('refresh').disabled,false);

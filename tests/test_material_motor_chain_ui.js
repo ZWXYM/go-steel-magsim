@@ -16,6 +16,9 @@ function harness(){
  assert.deepEqual(JSON.parse(h.calls[0].options.body),{calibration:'cal_test',key:'prediction:pred_test',cores:2,measurement_protocol:'v8_2_cycle1'});
  assert.equal(h.nodes.get('chainOpen').href,'/calibrated-motor/analysis/plan_test');assert.equal(h.nodes.get('chainOpen').hidden,false);
  assert.match(h.nodes.get('chainStatus').textContent,/复用 3 项/);assert.match(h.nodes.get('chainStatus').textContent,/未下发/);
+ const linked=harness();linked.c.fetch=async(url,options)=>{linked.calls.push({url,options});return {ok:true,json:async()=>({records:{analysis_plan:{id:'bhanalysis_aaaaaaaaaaaa'},execution:{id:'bhexec_bbbbbbbbbbbb'}},reused:[1],created:[],next_step:'复用现有结果',href:'/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa'})}};
+ await linked.c.mlPrepareMotor();assert.equal(linked.nodes.get('chainOpen').href,'/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa?execution=bhexec_bbbbbbbbbbbb');
+ assert.equal(linked.calls.length,1);assert.ok(!linked.calls.some(c=>c.url.endsWith('/start')));
  let resolve;const pending=new Promise(r=>resolve=r),double=harness();double.c.fetch=async(url,options)=>{double.calls.push({url,options});return pending};
  const first=double.c.mlPrepareMotor();await double.c.mlPrepareMotor();assert.equal(double.calls.length,1);
  resolve({ok:true,json:async()=>({records:{},reused:[],created:[1],next_step:'准备完成',href:'/material-library'})});await first;
