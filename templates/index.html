@@ -3696,19 +3696,6 @@ function deleteModel(mid) {
 // ═══════════════════════════════════════════════════
 // 快速预测
 // ═══════════════════════════════════════════════════
-function loadModelListForPred() {
-  fetch('/api/ml/models').then(r => r.json()).then(d => {
-    const sel = document.getElementById('pred-model');
-    const models = d.models || [];
-    sel.innerHTML = models.map(m =>
-      `<option value="${m.model_id}">${m.model_id} (${
-        m.r2_avg != null ? '验证R²=' + m.r2_avg.toFixed(3)
-        : (m.train_r2_avg != null ? '探索/训练R²=' + m.train_r2_avg.toFixed(3) : '指标不可用')
-      })</option>`
-    ).join('') || '<option value="">暂无模型</option>';
-  });
-}
-
 function toggleTrainingMode() {
   const xgbBox = document.getElementById('xgb-param-grid');
   const paperBox = document.getElementById('paper-param-grid');
@@ -3879,79 +3866,7 @@ function loadModelList() {
   });
 }
 
-function loadModelListForPred() {
-  fetch('/api/ml/models').then(r => r.json()).then(d => {
-    if(d.error) throw new Error(d.error);
-    const sel = document.getElementById('pred-model');
-    const models = (d.models || []).filter(m => m.prediction_capable !== false);
-    sel.innerHTML = models.map(m =>
-      `<option value="${esc(m.model_id)}">${esc(m.model_id)} (${esc(m.model_type || 'direct_xgb')} · ${
-        m.r2_avg != null ? '验证R²=' + Number(m.r2_avg).toFixed(3)
-        : (m.train_r2_avg != null ? '训练R²=' + Number(m.train_r2_avg).toFixed(3) : '指标待补充')
-      })</option>`
-    ).join('') || '<option value="">暂无可预测模型</option>';
-  }).catch(err => {
-    const sel=document.getElementById('pred-model');
-    if(sel) sel.innerHTML=`<option value="">模型加载失败: ${esc(err.message)}</option>`;
-  });
-}
-
-// Returns cached prediction result, or fetches fresh using current form inputs.
-async function _fetchPredBH() {
-  if (window._currentPredResult?.RD?.H?.length > 0) return window._currentPredResult;
-  const mid = document.getElementById('pred-model')?.value;
-  if (!mid) throw new Error('请先选择模型并运行预测');
-  const params = {
-    f_Goss:        parseFloat(document.getElementById('pred-fgoss').value),
-    theta_0_deg:   parseFloat(document.getElementById('pred-theta').value),
-    halfwidth_deg: parseFloat(document.getElementById('pred-hw').value),
-    Si_content:    parseFloat(document.getElementById('pred-si').value),
-  };
-  const r = await fetch('/api/ml/predict', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({model_id:mid, params})});
-  const data = await r.json();
-  if (data.error) throw new Error(data.error);
-  window._currentPredResult = data;
-  return data;
-}
-
-function runPrediction() {
-  const mid = document.getElementById('pred-model').value;
-  if (!mid) { alert('请先训练或加载一个模型'); return; }
-  const btn = document.querySelector('button[onclick="runPrediction()"]');
-  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ 预测中...'; }
-  const predFull = document.getElementById('pred-full-wrap');
-  if (predFull) predFull.style.display = 'none';
-  const params = {
-    f_Goss:        parseFloat(document.getElementById('pred-fgoss').value),
-    theta_0_deg:   parseFloat(document.getElementById('pred-theta').value),
-    halfwidth_deg: parseFloat(document.getElementById('pred-hw').value),
-    Si_content:    parseFloat(document.getElementById('pred-si').value),
-  };
-  fetch('/api/ml/predict', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({model_id: mid, params})
-  }).then(r => r.json()).then(data => {
-    if (data.error) { alert(data.error); return; }
-    _currentPredResult = data;
-    document.getElementById('pred-result').style.display = 'block';
-    renderBHChart(data);
-    if (data.full_direction) renderFullDirectionCharts(data.full_direction, 'pred-full-');
-    renderScalars(data.scalars || {}, data.RD);
-    const rd=data.RD||{};
-    if(rd.H&&rd.H.length>2){
-      const clWrap=document.getElementById('pred-core-loss');
-      if(clWrap) clWrap.style.display='block';
-      const cl=estimateCoreLossParams(rd.H,rd.B,0.35);
-      renderCoreLossCards(cl,'pred-cl-grid');
-    }
-  }).catch(err => {
-    alert('预测失败: ' + err.message);
-  }).finally(() => {
-    if (btn) { btn.disabled = false; btn.innerHTML = '⚡ 立即预测'; }
-  });
-}
-
+// Prediction input/result lifecycle is in static/js/platform_prediction.js.
 function renderBHChart(data) {
   if (typeof Chart === 'undefined') return;
   const H = data.RD?.H || [];
@@ -3993,42 +3908,6 @@ function renderScalars(s, rdCurve) {
     `<table style="font-size:12px;border-collapse:collapse;width:100%;margin-bottom:4px">
        <tr style="background:var(--bg-3)"><th style="padding:4px 10px;text-align:left">方向</th>
          <th style="padding:4px 10px">μ_max</th><th style="padding:4px 10px">B@800 A/m</th></tr>${rows}</table>`;
-}
-
-function exportMaxwellFromPred() {
-  const dlg=document.getElementById('maxwell-pred-dialog');
-  dlg.style.display = 'block';
-  // 自动更新铁损预览
-  updatePredCoreLoss();
-}
-
-function doExportMaxwellFromPred() {
-  if (!_currentPredResult) return;
-  const matName  = document.getElementById('pred-mat-name').value || 'GO_Pred';
-  const thickness = parseFloat(document.getElementById('pred-thickness').value) || 0.35;
-  // N_grains 由后端 DEFAULT_N_GRAINS=5 自动填入，前端不传
-  fetch('/api/analyze/export-maxwell-from-prediction', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      model_id:     document.getElementById('pred-model').value,
-      params: {
-        f_Goss:        parseFloat(document.getElementById('pred-fgoss').value),
-        theta_0_deg:   parseFloat(document.getElementById('pred-theta').value),
-        halfwidth_deg: parseFloat(document.getElementById('pred-hw').value),
-        Si_content:    parseFloat(document.getElementById('pred-si').value),
-      },
-      mat_name: matName,
-      thickness_mm: thickness
-    })
-  }).then(r => r.blob()).then(blob => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = matName + '.amat';
-    a.click();
-    document.getElementById('maxwell-pred-dialog').style.display = 'none';
-    toast('已下载 ' + matName + '.amat', 'ok');
-  });
 }
 
 // ── BH 材料选择器 ────────────────────────────────────────────────────────
@@ -4347,18 +4226,6 @@ function _renderBHAnalysisResult(r) {
   </div>
   ${plotImgs}
 </div>`;
-}
-
-async function copyBHData() {
-  let pr;
-  try { pr = await _fetchPredBH(); } catch(e) { toast(e.message || '请先运行预测', 'err'); return; }
-  const rd = pr.RD || {};
-  const td = pr.TD || {};
-  const H  = rd.H || [];
-  const lines = ['H (A/m)\tB_RD (T)\tB_TD (T)'];
-  H.forEach((h,i) => lines.push(`${h}\t${(rd.B||[])[i]||''}\t${(td.B||[])[i]||''}`));
-  navigator.clipboard.writeText(lines.join('\n'))
-    .then(() => toast('B-H 数据已复制到剪贴板 (TSV 格式)', 'ok'));
 }
 
 // ═══════════════════════════════════════════════════
@@ -5210,8 +5077,8 @@ function updateInlineCoreLoss(){
 
 function updatePredCoreLoss(){
   const t=parseFloat(document.getElementById('pred-thickness')?.value)||0.35;
-  if(window._currentPredResult?.RD?.H)
-    renderCoreLossPreview(window._currentPredResult.RD.H,window._currentPredResult.RD.B,t,'maxwell-pred-cl-preview');
+  if(_predictionCurrentResult()?.RD?.H)
+    renderCoreLossPreview(_predictionCurrentResult().RD.H,_predictionCurrentResult().RD.B,t,'maxwell-pred-cl-preview');
 }
 
 // ═══════════════════════════════════════════════════
@@ -5466,16 +5333,17 @@ function showODFLightbox(url){
     <div class="card-hdr"><span class="card-title">参数输入</span></div>
     <p style="color:var(--t3);font-size:12px;margin-bottom:14px">选择已训练的模型，输入织构参数，毫秒级返回 B-H 曲线。</p>
     <div class="fr fr2" style="margin-bottom:10px">
-      <div class="fg"><label>模型</label><select id="pred-model"></select></div>
-      <div class="fg"><label>f_Goss (0.4-0.9)</label><input type="number" id="pred-fgoss" value="0.70" min="0.4" max="0.9" step="0.01"></div>
-      <div class="fg"><label>θ₀ [°] (1-30)</label><input type="number" id="pred-theta" value="15" min="1" max="30" step="1"></div>
-      <div class="fg"><label>半宽 σ [°] (5-15)</label><input type="number" id="pred-hw" value="10" min="5" max="15" step="1"></div>
-      <div class="fg"><label>Si 含量 [%]</label><input type="number" id="pred-si" value="6.0" min="2.5" max="6.0" step="0.1"></div>
+      <div class="fg"><label>模型</label><select id="pred-model" onchange="_predictionSelectionChanged()"></select></div>
+      <div class="fg"><label>f_Goss (0.4-0.9)</label><input type="number" id="pred-fgoss" oninput="_predictionSelectionChanged()" value="0.70" min="0.4" max="0.9" step="0.01"></div>
+      <div class="fg"><label>θ₀ [°] (1-30)</label><input type="number" id="pred-theta" oninput="_predictionSelectionChanged()" value="15" min="1" max="30" step="1"></div>
+      <div class="fg"><label>半宽 σ [°] (5-15)</label><input type="number" id="pred-hw" oninput="_predictionSelectionChanged()" value="10" min="5" max="15" step="1"></div>
+      <div class="fg"><label>Si 含量 [%]</label><input type="number" id="pred-si" oninput="_predictionSelectionChanged()" value="6.0" min="2.5" max="6.0" step="0.1"></div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px">
-      <button class="btn btn-p" onclick="runPrediction()">⚡ 立即预测</button>
+      <button class="btn btn-p" id="pred-run" onclick="runPrediction()">⚡ 立即预测</button>
       <button class="btn btn-g" onclick="loadModelListForPred()">🔄 刷新模型</button>
     </div>
+    <p id="pred-input-status" role="status" aria-live="polite" style="font-size:12px;color:var(--t2)">请选择模型并运行预测；结果与复制、导出绑定同一份输入。</p>
     <div id="pred-result" style="display:none">
       <div class="pred-result-grid">
         <div>
@@ -5520,7 +5388,7 @@ function showODFLightbox(url){
               AEDT $begin 格式：component1 (RD) · component2 (TD) · component3 ND·μr · core_loss_kh/kc/ke · 密度 · 厚度
             </div>
             <div style="display:flex;gap:8px">
-              <button class="btn btn-p" onclick="doExportMaxwellFromPred()">⬇️ 下载 .amat</button>
+              <button class="btn btn-p" id="pred-download" onclick="doExportMaxwellFromPred()">⬇️ 下载 .amat</button>
               <button class="btn btn-g" onclick="document.getElementById('maxwell-pred-dialog').style.display='none'">取消</button>
             </div>
           </div>
@@ -5805,5 +5673,6 @@ async function runCompareExport() {
   }
 }
 </script>
+<script src="/static/js/platform_prediction.js"></script>
 </body>
 </html>

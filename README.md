@@ -179,3 +179,5 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 新增[主平台材料导出记录](docs/platform_material_exports_20261021.md)，统一浏览既有AMAT、模型与输入参数、原metadata和目录增强来源，可下载原文件/来源ZIP/快照CSV；不重预测、不改既有校准材料库。
 
 常规/选优训练同秒结果保存目录冲突已修复，原模型和算法保持，见[模型存储说明](docs/model_artifact_names_20261022.md)。
+
+主平台快速预测已绑定所选模型、显示曲线、复制与下载；RD/TD复制保留各自H轴，详见[预测操作说明](docs/platform_prediction_20261022.md)。
