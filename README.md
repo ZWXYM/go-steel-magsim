@@ -111,6 +111,8 @@ Si 为报告标称值，ODF 为估计；尚未绑定同批次完整成分证书�
 
 本机已有Web与独立AEDT两套Python环境；完整电机工程和历史任务不随公开副本发布。重开时请分别核对资源根目录与任务存储，详见[运行环境与资源路径](docs/system_environment_20261020.md)。本节requirements.txt安装的是Web/CPU依赖，不代替已有AEDT/MuMax/GPU与许可配置。
 
+首次使用公开副本，可按[全新CPU工作台流程](docs/system_environment_20261020.md#从公开副本第一次运行)建立四样品校准、完成排除预测并下载材料。历史示例编号不随公开副本复制；使用本次生成的记录即可，无需先运行GPU或配置电机许可。
+
 
 新增 [质量工作台与 CPU 模式](docs/workbench_quality_20261005.md)：逐方向原生质量表、冻结来源下载、预测/材料 metadata 继承及正式训练标签筛查。使用 `python tools/start_workbench.py --port 5001 --cpu-only` 可校准、准备和整理任务，原生求解/训练提交暂停，启动不恢复队列；本轮未改变 bank 或曲线，100 项测试通过。
 

@@ -29,6 +29,20 @@ PyAEDT的Python导入路径是ansys.aedt.core，已安装分发包名称是pyaed
 
 公开仓库的requirements.txt用于Web/CPU分析环境。按README创建.venv和安装这些依赖后，可以复现已公开校准证据、运行软件测试和使用页面；它不同时安装AEDT、驱动、MuMax3或本机私有电机工程。
 
+### 从公开副本第一次运行
+
+在公开仓库根目录、已按README安装Web依赖后运行：
+
+```powershell
+.venv\Scripts\python.exe tools/start_workbench.py --root . --storage data/first_cpu_workbench --cpu-only --page system --open-browser
+```
+
+新任务存储最初没有校准、预测和电机结果。进入“材料校准”，保留四个样品和“跨材料泛化，内层选参（四样品）”，点击“建立校准并检验”；这一步只读取公开的既有RD/TD table，不启动MuMax。随后可“载入B30P105原生对示例”，选择“完整排除牌号后预测”和B30P105，再点击“应用所选范围”。下载曲线、结果JSON、实际有效库、AMAT及metadata；材料库可重开本次生成的记录。若只需已知样品标定，直接下载四材料校准包。
+
+2026-10-21实际用公开副本自身资源根和全新隔离存储完成了上述CPU流程：四样品8组曲线、每组26个H节点，一份校准加一份排除预测，材料库9条目，5个预测下载和26成员校准ZIP逐字节一致，数值与完整工作区保存结果一致。验证复用了本机已安装的Web解释器，没有重新安装依赖；不据此声明已验证其他机器或原生电机环境。
+
+使用说明中`cal_...`、`pred_...`等固定编号是完整开发工作区的历史例子，公开副本不会自动附带这些私有任务。使用当前页面实际生成的编号和原任务存储，避免把空历史列表误认为程序损坏。未附电机工程时，电机目录会说明缺少本机资源，CPU校准与下载仍可使用。
+
 完整本机电机工作台另外读取资源根目录下的motor/v8_1/manifest.json，以及motor/v8_2/cases/nippon_steel_23zh90/motorcad_full_v8_1_nippon_steel_23zh90.aedt；原生worker还需要.runtime/aedt/Scripts/python.exe、已有AEDT安装及可用许可。网页显示许可TCP可达只表示连接，不等于已成功checkout或设计可访问；实际任务仍保存原生错误。
 
 MuMax任务使用现有.runtime/mumax3/mumax3.exe、MUMAX3_EXE或PATH配置，并需要兼容GPU。只查看旧结果不会运行该程序。完整原生工程、缓存和论文归档不随公开副本发布；公开副本没有本机历史任务，不应为了填满页面而重新提交旧任务。
