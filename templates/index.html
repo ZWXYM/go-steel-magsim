@@ -3526,47 +3526,6 @@ function applyMlTrainPreset() {
   }
 }
 
-function startSingleModelTraining() {
-  const ds = document.getElementById('train-dataset').value;
-  if (!ds) { alert('请先选择数据集'); return; }
-  const key = document.getElementById('ml-train-preset')?.value || 'gaussian_process';
-  const p = _ML_TRAIN_PRESETS_META[key] || {model_type:'gaussian_process'};
-  const body = {dataset_path: ds, model_type: p.model_type,
-                 test_size: parseFloat(document.getElementById('train-test-size').value)};
-  if (p.xgb_fields) {
-    body.xgb_params = {
-      n_estimators:  parseInt(document.getElementById('xgb-n-est').value),
-      max_depth:     parseInt(document.getElementById('xgb-depth').value),
-      learning_rate: parseFloat(document.getElementById('xgb-lr').value),
-      subsample:     parseFloat(document.getElementById('xgb-sub').value),
-    };
-  }
-  document.getElementById('train-status').textContent = '训练中，请稍候...';
-  document.getElementById('train-results').style.display = 'none';
-  const fiCanvas = document.getElementById('fi-chart');
-  if (fiCanvas) fiCanvas.style.display = p.xgb_fields ? 'block' : 'none';
-  fetch('/api/ml/train', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
-    .then(r=>r.json()).then(d => {
-      if (d.error) { alert(d.error); return; }
-      pollTask(d.task_id, res => {
-        const exploratory = res.metric_reliability === 'exploratory_only';
-        document.getElementById('train-status').textContent = exploratory
-          ? '训练完成：探索模型，样本不足，未发布正式验证指标。'
-          : '训练完成！';
-        document.getElementById('res-r2').textContent = res.r2_avg != null
-          ? res.r2_avg.toFixed(4)
-          : (res.train_r2_avg != null ? '训练 ' + res.train_r2_avg.toFixed(4) : '—');
-        document.getElementById('res-mape').textContent = res.mape_avg != null
-          ? (res.mape_avg * 100).toFixed(2) + '%'
-          : (res.train_mape_avg != null ? '训练 ' + (res.train_mape_avg * 100).toFixed(2) + '%' : '—');
-        document.getElementById('res-model-id').textContent = res.model_id || '—';
-        document.getElementById('train-results').style.display = 'block';
-        renderFeatureImportance(res.feature_importance || {});
-        loadModelList();
-      });
-    }).catch(e => { alert('训练请求失败: ' + e.message); });
-}
-
 function renderPaperTrainingResult(res) {
   document.getElementById('train-results').style.display = 'block';
   const fiCanvas = document.getElementById('fi-chart');
@@ -3598,61 +3557,6 @@ function renderPaperTrainingResult(res) {
          <td>${row.r2_avg_mean != null ? Number(row.r2_avg_mean).toFixed(4) : '—'}</td>
        </tr>`).join('')}
      </table>`;
-}
-
-function startTraining() {
-  const ds = document.getElementById('train-dataset').value;
-  if (!ds) { alert('请先选择或生成数据集'); return; }
-  const mode = document.getElementById('train-mode')?.value || 'xgb';
-  document.getElementById('paper-ranking').innerHTML = '';
-  if (mode === 'paper') {
-    const preset = document.getElementById('paper-preset')?.value || 'lite';
-    document.getElementById('train-status').textContent = '候选模型比较中，请稍候...';
-    document.getElementById('train-results').style.display = 'none';
-    fetch('/api/ml/paper-train', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({dataset_path: ds, preset})
-    }).then(r => r.json()).then(d => {
-      if (d.error) { alert(d.error); return; }
-      pollTask(d.task_id, renderPaperTrainingResult);
-    });
-    return;
-  }
-  const xgbParams = {
-    n_estimators:  parseInt(document.getElementById('xgb-n-est').value),
-    max_depth:     parseInt(document.getElementById('xgb-depth').value),
-    learning_rate: parseFloat(document.getElementById('xgb-lr').value),
-    subsample:     parseFloat(document.getElementById('xgb-sub').value),
-  };
-  document.getElementById('train-status').textContent = '训练中，请稍候...';
-  document.getElementById('train-results').style.display = 'none';
-  const fiCanvas = document.getElementById('fi-chart');
-  if (fiCanvas) fiCanvas.style.display = 'block';
-  fetch('/api/ml/train', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({dataset_path: ds, xgb_params: xgbParams,
-                          test_size: parseFloat(document.getElementById('train-test-size').value)})
-  }).then(r => r.json()).then(d => {
-    if (d.error) { alert(d.error); return; }
-    pollTask(d.task_id, res => {
-      const exploratory = res.metric_reliability === 'exploratory_only';
-      document.getElementById('train-status').textContent = exploratory
-        ? '训练完成：探索模型，样本不足，未发布正式验证指标。'
-        : '训练完成！';
-      document.getElementById('res-r2').textContent = res.r2_avg != null
-        ? res.r2_avg.toFixed(4)
-        : (res.train_r2_avg != null ? '训练 ' + res.train_r2_avg.toFixed(4) : '—');
-      document.getElementById('res-mape').textContent = res.mape_avg != null
-        ? (res.mape_avg * 100).toFixed(2) + '%'
-        : (res.train_mape_avg != null ? '训练 ' + (res.train_mape_avg * 100).toFixed(2) + '%' : '—');
-      document.getElementById('res-model-id').textContent = res.model_id || '—';
-      document.getElementById('train-results').style.display = 'block';
-      renderFeatureImportance(res.feature_importance || {});
-      loadModelList();
-    });
-  });
 }
 
 function renderFeatureImportance(fi) {
@@ -3810,30 +3714,6 @@ function loadPaperTrainingPresets() {
       const el = document.getElementById('paper-preset-summary');
       if (el) el.textContent = '预设加载失败: ' + err.message;
     });
-}
-
-function startTraining() {
-  const ds = document.getElementById('train-dataset').value;
-  if (!ds) { alert('请先选择或生成数据集'); return; }
-  const preset = document.getElementById('paper-preset')?.value || 'lite';
-  const candidateModels = selectedTrainingModels();
-  if (!candidateModels.length) { alert('请至少勾选一个候选模型'); return; }
-  document.getElementById('paper-ranking').innerHTML = '';
-  document.getElementById('train-status').textContent = `候选模型交叉验证中：${candidateModels.join(' / ')}`;
-  document.getElementById('train-results').style.display = 'none';
-  const fiCanvas = document.getElementById('fi-chart');
-  if (fiCanvas) fiCanvas.style.display = 'none';
-  fetch('/api/ml/paper-train', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({dataset_path: ds, preset, candidate_models: candidateModels})
-  }).then(r => r.json()).then(d => {
-    if (d.error) { alert(d.error); return; }
-    pollTask(d.task_id, res => {
-      renderPaperTrainingResult(res);
-      loadModelList();
-    });
-  });
 }
 
 function loadModelList() {
@@ -5283,10 +5163,12 @@ function showODFLightbox(url){
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-      <button class="btn btn-p" onclick="startSingleModelTraining()">🔬 单模型训练</button>
-      <button class="btn btn-p" onclick="startTraining()">🚀 候选模型选择</button>
+      <button class="btn btn-p" id="train-single-start" onclick="startSingleModelTraining()">🔬 单模型训练</button>
+      <button class="btn btn-p" id="train-selection-start" onclick="startTraining()">🚀 候选模型选择</button>
       <button class="btn btn-g" onclick="loadDatasetListForTraining()">🔄 刷新数据集</button>
+      <button class="btn btn-g" id="train-check" disabled onclick="refreshTrainingTask()">刷新当前任务状态</button>
     </div>
+    <p id="train-task-identity" style="font-size:12px;color:var(--t3);overflow-wrap:anywhere" role="status"></p>
     <div id="train-status" style="margin-bottom:16px;color:var(--t2)"></div>
     <div id="train-results" style="display:none">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
@@ -5673,6 +5555,7 @@ async function runCompareExport() {
   }
 }
 </script>
+<script src="/static/js/platform_training.js"></script>
 <script src="/static/js/platform_prediction.js"></script>
 </body>
 </html>

@@ -1603,20 +1603,72 @@ def odf_preview():
 
 # -- ML train / infer -----------------------------------------------------
 
+_training_request_lock = threading.Lock()
+
+def _training_input():
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        raise ValueError('training request must be a JSON object')
+    dataset = data.get('dataset_path')
+    if not isinstance(dataset, str) or not dataset.strip():
+        raise ValueError('dataset file not found')
+    path = Path(dataset).resolve()
+    if not path.is_file():
+        raise ValueError('dataset file not found')
+    for name in ('xgb_params', 'extra_trees_params'):
+        if data.get(name) is not None and not isinstance(data[name], dict):
+            raise ValueError(name + ' must be an object')
+    request_id = data.get('request_id')
+    if request_id is not None and (not isinstance(request_id, str) or
+            not re.fullmatch(r'[A-Za-z0-9_-]{12,80}', request_id)):
+        raise ValueError('request_id must contain 12–80 letters, digits, underscores or hyphens')
+    return data, str(path)
+
+
+def _training_fraction(value):
+    if isinstance(value, bool):
+        raise ValueError('test_size must be a finite number between 0 and 1')
+    fraction = float(value)
+    if not 0 < fraction < 1:
+        raise ValueError('test_size must be a finite number between 0 and 1')
+    return fraction
+
+
+def _submit_training(data, name, identity, function, *args, **kwargs):
+    """An explicitly repeated request may recover its task, without training twice."""
+    import hashlib
+    request_id = data.get('request_id')
+    fingerprint = hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    with _training_request_lock:
+        if request_id:
+            for task in list(tasks.values()):
+                if task.get('training_request_id') == request_id:
+                    if task.get('training_request_fingerprint') != fingerprint:
+                        return jsonify({'error': 'request_id already belongs to different training inputs'}), 409
+                    return jsonify({'task_id': task['id'], 'reused': True})
+        tid = create_task(name)
+        tasks[tid].update(training_request_id=request_id, training_request_fingerprint=fingerprint)
+        run_task(tid, function, *args, **kwargs)
+    return jsonify({'task_id': tid, 'reused': False})
+
 @app.route('/api/ml/train', methods=['POST'])
 def ml_train():
-    data = request.json or {}
-    ds   = data.get('dataset_path')
-    if not ds or not Path(ds).exists():
-        return jsonify({'error': 'dataset file not found'}), 400
-    model_type = data.get('model_type', 'direct_xgb')
-    tid = create_task('model_train')
-    run_task(tid, _train_ml_model,
+    try:
+        from ml_trainer import SUPPORTED_MODEL_TYPES
+        data, ds = _training_input()
+        model_type = data.get('model_type', 'direct_xgb')
+        if model_type not in SUPPORTED_MODEL_TYPES:
+            raise ValueError('unsupported model_type')
+        test_size = _training_fraction(data.get('test_size', 0.2))
+    except (ValueError, TypeError, OSError) as error:
+        return jsonify({'error': str(error)}), 400
+    identity = dict(kind='single', dataset_path=ds, model_type=model_type,
+                    xgb_params=data.get('xgb_params'), test_size=test_size)
+    return _submit_training(data, 'model_train', identity, _train_ml_model,
              ds,
              model_type=model_type,
              xgb_params=data.get('xgb_params'),
-             test_size=float(data.get('test_size', 0.2)))
-    return jsonify({'task_id': tid})
+             test_size=test_size)
 
 @app.route('/api/ml/paper-presets', methods=['GET'])
 def ml_paper_presets():
@@ -1628,17 +1680,23 @@ def ml_paper_presets():
 
 @app.route('/api/ml/paper-train', methods=['POST'])
 def ml_paper_train():
-    data = request.json or {}
-    ds = data.get('dataset_path')
-    if not ds or not Path(ds).exists():
-        return jsonify({'error': 'dataset file not found'}), 400
     from paper_surrogate_trainer import PaperSurrogateTrainer, resolve_paper_training_config
-    cfg = resolve_paper_training_config(data)
-    tid = create_task('paper_surrogate_model_selection')
-
+    try:
+        data, ds = _training_input()
+        if 'candidate_models' in data and (not isinstance(data['candidate_models'], list) or
+                not all(isinstance(name, str) for name in data['candidate_models'])):
+            raise ValueError('candidate_models must be a list of model names')
+        cfg = resolve_paper_training_config(data)
+        cfg['test_size'] = _training_fraction(cfg.get('test_size', 0.2))
+        directory = data.get('output_dir', 'data/paper_models')
+        if not isinstance(directory, str) or not directory.strip():
+            raise ValueError('output_dir must be a directory path')
+        output_dir = str(Path(directory).resolve())
+    except (ValueError, TypeError, OSError) as error:
+        return jsonify({'error': str(error)}), 400
     def do_train():
         trainer = PaperSurrogateTrainer(
-            output_dir=data.get('output_dir', 'data/paper_models'),
+            output_dir=output_dir,
             random_state=int(cfg.get('random_state', 42)),
             xgb_params=cfg.get('xgb_params'),
             extra_trees_params=cfg.get('extra_trees_params'),
@@ -1656,8 +1714,15 @@ def ml_paper_train():
             preset_label=cfg.get('preset_label'),
         )
 
-    run_task(tid, do_train)
-    return jsonify({'task_id': tid, 'preset': cfg.get('preset_id')})
+    identity = dict(kind='selection', dataset_path=ds, output_dir=output_dir,
+                    config={key:value for key,value in cfg.items()
+                            if key not in ('dataset_path', 'output_dir', 'request_id')})
+    response = _submit_training(data, 'paper_surrogate_model_selection', identity, do_train)
+    if isinstance(response, tuple):
+        return response
+    result = response.get_json()
+    result['preset'] = cfg.get('preset_id')
+    return jsonify(result)
 
 @app.route('/api/ml/models', methods=['GET'])
 def ml_models():

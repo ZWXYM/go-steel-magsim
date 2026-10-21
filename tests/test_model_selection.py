@@ -112,9 +112,10 @@ class ModelSelectionTests(unittest.TestCase):
 
     def test_train_route_schedules_isolated_entrypoint_without_running_training(self):
         dataset=self.root/'fixture.csv';dataset.write_text('unused fixture',encoding='utf8')
-        with patch.object(web,'create_task',return_value='fixture_task'),patch.object(web,'run_task') as schedule:
+        with patch.object(web,'tasks',{}),patch.object(web,'run_task') as schedule:
             with web.app.test_client() as client:response=client.post('/api/ml/train',json=dict(dataset_path=str(dataset),model_type='extra_trees'))
-            self.assertEqual(response.status_code,200);self.assertEqual(response.json['task_id'],'fixture_task')
+            self.assertEqual(response.status_code,200);self.assertIn(response.json['task_id'],web.tasks)
+            self.assertEqual(schedule.call_args.args[0],response.json['task_id'])
             self.assertIs(schedule.call_args.args[1],web._train_ml_model)
             self.assertEqual(schedule.call_args.args[2],str(dataset));self.assertEqual(schedule.call_args.kwargs['model_type'],'extra_trees')
         self.assertIs(web._get_ml(),self.active)

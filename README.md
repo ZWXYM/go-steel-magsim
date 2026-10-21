@@ -181,3 +181,5 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 常规/选优训练同秒结果保存目录冲突已修复，原模型和算法保持，见[模型存储说明](docs/model_artifact_names_20261022.md)。
 
 主平台快速预测已绑定所选模型、显示曲线、复制与下载；RD/TD复制保留各自H轴，详见[预测操作说明](docs/platform_prediction_20261022.md)。
+
+主平台两类训练共用明确任务，支持状态失败恢复、刷新重开和相同请求去重，详见[训练任务说明](docs/platform_training_20261022.md)。
