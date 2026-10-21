@@ -833,9 +833,10 @@ def full_direction_analysis():
 @app.route('/api/jobs/clear-done', methods=['POST'])
 def clear_done_jobs():
     """从 running_jobs 中移除已完成/失败/停止的任务。"""
-    done_ids = [jid for jid, job in list(running_jobs.items()) if job.get('done')]
-    for jid in done_ids:
-        running_jobs.pop(jid, None)
+    with _script_dispatch_lock:
+        done_ids = [jid for jid, job in list(running_jobs.items()) if job.get('done') and (job.get('process') is None or job['process'].poll() is not None)]
+        for jid in done_ids:
+            running_jobs.pop(jid, None)
     return jsonify({'cleared': len(done_ids)})
 
 
@@ -1034,6 +1035,8 @@ def _ansi_strip(s):
 # ── Job queue ────────────────────────────────────────────────
 job_queue = []          # list of (job_id) waiting to run
 job_queue_lock = threading.Lock()
+_script_dispatch_lock = threading.RLock()
+_script_requests = {}  # Small idempotency receipts survive clearing terminal job cards.
 
 def _parse_script_total(filename):
     try:
@@ -1055,6 +1058,7 @@ def _make_job(filename, cmd):
     return {
         'id': str(uuid.uuid4())[:12],
         'script': filename,
+        'workspace_origin': {'schema': 'workspace_origin_v1', 'path': str(Path.cwd().resolve()), 'token': _workspace_token()},
         'cmd': cmd,
         'lines': [],
         'done': False,
@@ -1071,7 +1075,10 @@ def _make_job(filename, cmd):
 
 def _active_job():
     """Return the currently running (non-done, non-queued) job, if any."""
-    for jid, job in running_jobs.items():
+    for jid, job in list(running_jobs.items()):
+        proc = job.get('process')
+        if proc is not None and proc.poll() is None:
+            return job
         if not job['done'] and job['status'] not in ('queued',):
             return job
     return None
@@ -1089,7 +1096,7 @@ def _start_job(job):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 stdin=subprocess.DEVNULL,   # 防止 BAT pause 命令阻塞
-                cwd=os.getcwd(),
+                cwd=job.get('workspace_origin', {}).get('path') or os.getcwd(),
                 bufsize=1,
             )
             job['process'] = proc
@@ -1110,7 +1117,7 @@ def _start_job(job):
                     job['lines'].append(line)
             proc.wait()
             rc = proc.returncode
-            job['status'] = 'completed' if rc == 0 else f'failed(rc={rc})'
+            job['status'] = 'stopped' if job.get('stop_requested') else 'completed' if rc == 0 else f'failed(rc={rc})'
         except Exception as e:
             with job['lock']:
                 job['lines'].append(f'[RUNNER ERROR] {e}')
@@ -1125,38 +1132,57 @@ def _start_job(job):
 
 def _advance_queue():
     """Start the next job in queue, if any."""
-    with job_queue_lock:
-        if not job_queue:
+    with _script_dispatch_lock:
+        if _active_job():
             return
-        next_id = job_queue.pop(0)
-    job = running_jobs.get(next_id)
-    if job:
+        with job_queue_lock:
+            while job_queue:
+                job = running_jobs.get(job_queue.pop(0))
+                if job and not job.get('done') and job.get('status') == 'queued':
+                    break
+            else:
+                return
         _start_job(job)
 
 @app.route('/api/run-script', methods=['POST'])
 def run_script():
-    data = request.json
-    filename = data.get('filename', '')
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not isinstance(data.get('filename'), str) or not data['filename'].strip():
+        return jsonify(error='请选择有效脚本'), 400
+    filename = data['filename']
     p = Path(filename)
-    if not p.exists():
+    if not p.is_file():
         return jsonify({'error': f'脚本不存在: {filename}'}), 404
+    p = p.resolve()
     cmd = _build_cmd(str(p))
     if not cmd:
         return jsonify({'error': '不支持的脚本类型'}), 400
 
-    job = _make_job(filename, cmd)
-    running_jobs[job['id']] = job
-
-    active = _active_job()
-    if active:
-        # Queue it
-        with job_queue_lock:
-            job_queue.append(job['id'])
-        return jsonify({'job_id': job['id'], 'total': job['total'],
-                        'queued': True, 'queue_pos': len(job_queue)})
-    else:
+    request_id = data.get('request_id')
+    if request_id is not None and (not isinstance(request_id,str) or not re.fullmatch(r'[A-Za-z0-9_-]{12,80}',request_id)):
+        return jsonify(error='request_id格式无效'),400
+    identity=(os.path.normcase(str(p)),_workspace_token())
+    with _script_dispatch_lock:
+        if request_id:
+            receipt=_script_requests.get(request_id)
+            if receipt:
+                if receipt['identity']!=identity:
+                    return jsonify(error='原请求已经绑定其他脚本或目录'),409
+                existing=running_jobs.get(receipt['job_id'])
+                return jsonify(job_id=receipt['job_id'],total=receipt['total'],queued=bool(existing and existing['status']=='queued'),reused=True)
+            existing=next((j for j in list(running_jobs.values()) if j.get('request_id')==request_id),None)
+            if existing:
+                if existing.get('request_identity')!=identity:
+                    return jsonify(error='原请求已经绑定其他脚本或目录'),409
+                return jsonify(job_id=existing['id'],total=existing['total'],queued=existing['status']=='queued',reused=True)
+        job=_make_job(filename,cmd);job.update(request_id=request_id,request_identity=identity)
+        running_jobs[job['id']]=job
+        if request_id:_script_requests[request_id]=dict(identity=identity,job_id=job['id'],total=job['total'])
+        if _active_job():
+            with job_queue_lock:job_queue.append(job['id']);position=len(job_queue)
+            return jsonify(job_id=job['id'],total=job['total'],queued=True,queue_pos=position,reused=False)
         _start_job(job)
-        return jsonify({'job_id': job['id'], 'total': job['total'], 'queued': False})
+        return jsonify(job_id=job['id'],total=job['total'],queued=False,reused=False)
 
 @app.route('/api/jobs/<job_id>/stream')
 def stream_job(job_id):
@@ -1194,7 +1220,7 @@ def stream_job(job_id):
 @app.route('/api/jobs/<job_id>/status')
 def job_status(job_id):
     if job_id not in running_jobs:
-        return jsonify({'error': 'Not found'}), 404
+        return jsonify(error='任务记录不在当前服务中；未重新下发任务',code='job_not_found'),404
     job = running_jobs[job_id]
     with job['lock']:
         recent = job['lines'][-50:]
@@ -1205,33 +1231,50 @@ def job_status(job_id):
         'failed': job['failed'],
         'started': job['started'], 'finished': job['finished'],
         'recent_lines': recent,
+        'workspace_origin': job.get('workspace_origin'), 'request_id': job.get('request_id'),
     })
 
 @app.route('/api/jobs/<job_id>/stop', methods=['POST'])
 def stop_job(job_id):
+    with _script_dispatch_lock:
+        return _stop_job_locked(job_id)
+
+
+def _stop_job_locked(job_id):
     if job_id not in running_jobs:
         return jsonify({'error': 'Not found'}), 404
     job = running_jobs[job_id]
+    with _script_dispatch_lock:
+        if not job.get('done') and job['status']=='queued':
+            with job_queue_lock:
+                job_queue[:]=[jid for jid in job_queue if jid!=job_id]
+            job.update(status='stopped',done=True,finished=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            return jsonify(success=True,message='已取消排队，未启动进程')
+        if job.get('stop_requested'):
+            return jsonify(success=True,message='停止信号已发送，等待进程退出')
     proc = job.get('process')
     if proc and proc.poll() is None:
         try:
             import signal
+            job['stop_requested'] = True
             if os.name == 'nt':
                 proc.terminate()
             else:
                 proc.send_signal(signal.SIGTERM)
-            job['status'] = 'stopped'
-            job['done'] = True
-            job['finished'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            return jsonify({'success': True, 'message': '任务已停止'})
+            if not job.get('done'):
+                job['status'] = 'stopping'
+            return jsonify({'success': True, 'message': '停止信号已发送，等待进程退出'})
         except Exception as e:
+            job['stop_requested'] = False
             return jsonify({'error': str(e)}), 500
-    return jsonify({'message': '任务已经结束或未启动'})
+    if not job.get('done'):
+        return jsonify(error='任务正在启动，请等待状态更新后再停止'),409
+    return jsonify(success=True,message='任务已经结束')
 
 @app.route('/api/jobs', methods=['GET'])
 def list_jobs():
     result = []
-    for jid, job in running_jobs.items():
+    for jid, job in list(running_jobs.items()):
         result.append({
             'id': jid, 'script': job['script'],
             'status': job['status'], 'done': job['done'],
@@ -1240,6 +1283,7 @@ def list_jobs():
             'started': job['started'] or job.get('queued_at'),
             'finished': job['finished'],
             'queued_at': job.get('queued_at'),
+            'workspace_origin': job.get('workspace_origin'), 'request_id': job.get('request_id'),
         })
     # Sort: running first, then queued, then by time desc
     def sort_key(j):
