@@ -177,3 +177,5 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 后台任务的并行Python日志已按线程隔离，成功/失败后恢复输出流；切换工作目录后的HTTP材料下载路径已修复，见[运行说明](docs/task_runtime_20261021.md)。
 
 新增[主平台材料导出记录](docs/platform_material_exports_20261021.md)，统一浏览既有AMAT、模型与输入参数、原metadata和目录增强来源，可下载原文件/来源ZIP/快照CSV；不重预测、不改既有校准材料库。
+
+常规/选优训练同秒结果保存目录冲突已修复，原模型和算法保持，见[模型存储说明](docs/model_artifact_names_20261022.md)。

@@ -6,6 +6,7 @@ import os
 import pickle
 import json
 import hashlib
+import uuid
 from pathlib import Path
 from datetime import datetime
 
@@ -463,7 +464,7 @@ class BHPredictor:
         fi_dict = {feat_cols[i]: float(fi_avg[i]) for i in range(len(feat_cols))}
 
         # 保存
-        model_id = f'model_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+        model_id = f'model_{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[:12]}'
         save_dir = self.model_dir / model_id
         save_dir.mkdir(parents=True)
 

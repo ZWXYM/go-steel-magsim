@@ -14,6 +14,7 @@ import copy
 import csv
 import json
 import pickle
+import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -490,7 +491,7 @@ class PaperSurrogateTrainer:
         final_model = clone(candidates[best_name])
         final_model.fit(data.X, data.Y)
 
-        model_id = f"paper_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        model_id = f"paper_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:12]}"
         save_dir = self.output_dir / model_id
         save_dir.mkdir(parents=True)
 
