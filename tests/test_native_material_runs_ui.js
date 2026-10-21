@@ -81,5 +81,29 @@ const flush=()=>new Promise(r=>setImmediate(r));
  wrongRecipe.ctx.fetch=async()=>({ok:true,json:async()=>base});await wrongRecipe.ctx.nmrPrepare();
  assert.equal(vm.runInContext('nmrCurrent',wrongRecipe.ctx),null);assert.equal(wrongRecipe.nodes.get('nmrStart').disabled,true);assert.match(wrongRecipe.nodes.get('nmrMessage').textContent,/参数与请求不符/);
 
+ // An empty parameter is missing input, even when zero is a valid physical value.
+ const form={nmrMaterial:'CPU_FIXTURE',nmrGoss:.855,nmrTheta:4.5,nmrWidth:6.5,nmrSi:3.1,nmrThickness:.27,nmrGrains:1,nmrSeed:42};
+ for(const field of ['nmrMaterial','nmrGoss','nmrTheta','nmrWidth','nmrSi','nmrThickness','nmrGrains','nmrSeed']){
+  const missing=harness();await flush();missing.ctx.nmrRender(base);for(const [name,value] of Object.entries(form))missing.nodes.set(name,Object.assign(new Node(),{value:String(value)}));missing.nodes.get(field).value='';
+  const before=missing.calls.length;await missing.ctx.nmrPrepare();assert.equal(missing.calls.slice(before).filter(c=>c.method==='POST').length,0,field+' must not be silently submitted as zero');assert.equal(vm.runInContext('nmrCurrent.id',missing.ctx),id,'invalid input must preserve the already-open task');assert.match(missing.nodes.get('nmrMessage').textContent,/填写/);
+ }
+ for(const [field,value] of [['nmrGoss','NaN'],['nmrTheta','Infinity'],['nmrGoss','1.1'],['nmrGrains','1.5'],['nmrSeed','2147483648'],['nmrThickness','0'],['nmrMaterial','bad/name']]){
+  const invalidForm=harness();await flush();invalidForm.ctx.nmrRender(base);for(const [name,initial] of Object.entries(form))invalidForm.nodes.set(name,Object.assign(new Node(),{value:String(initial)}));invalidForm.nodes.get(field).value=value;
+  const before=invalidForm.calls.length;await invalidForm.ctx.nmrPrepare();assert.equal(invalidForm.calls.slice(before).filter(c=>c.method==='POST').length,0,field+' invalid value must not create a task');assert.equal(vm.runInContext('nmrCurrent.id',invalidForm.ctx),id);
+ }
+ const zero=harness();await flush();for(const [name,value] of Object.entries({...form,nmrGoss:0,nmrTheta:0,nmrSi:0,nmrSeed:0}))zero.nodes.set(name,Object.assign(new Node(),{value:String(value)}));
+ let savedData;zero.ctx.fetch=async(url,options={})=>{if(options.method==='POST'){savedData=JSON.parse(options.body);return {ok:true,json:async()=>({...base,recipe:savedData})}}return {ok:true,json:async()=>url.endsWith('/resources')?{native_submission_allowed:true}:url.endsWith('/calibrations')?[{id:base.recipe.calibration_id}]:[]}};
+ await zero.ctx.nmrPrepare();assert.deepEqual(savedData.params,{f_Goss:0,theta_0_deg:0,halfwidth_deg:6.5,Si_content:0});assert.equal(savedData.seed,0);assert.equal(vm.runInContext('nmrCurrent.status',zero.ctx),'ready','explicit zero is allowed');assert.equal(zero.nodes.get('nmrStart').disabled,false);
+
+ // Editing the form while CPU preparation waits must not select the old recipe for GPU start.
+ const edited=harness();await flush();for(const [name,value] of Object.entries(form))edited.nodes.set(name,Object.assign(new Node(),{value:String(value)}));let prepared;
+ edited.ctx.fetch=async(url,options={})=>({ok:true,json:async()=>options.method==='POST'?new Promise(resolve=>prepared=resolve):url.endsWith('/resources')?{native_submission_allowed:true}:url.endsWith('/calibrations')?[{id:base.recipe.calibration_id}]:[base]});
+ const making=edited.ctx.nmrPrepare();await flush();edited.nodes.get('nmrGoss').value='.9';prepared(base);await making;
+ assert.equal(vm.runInContext('nmrCurrent',edited.ctx),null,'a saved older recipe must not become the current startable task after form edits');assert.equal(edited.nodes.get('nmrStart').disabled,true);assert.equal(edited.nodes.get('nmrGoss').value,'.9');assert.match(edited.nodes.get('nmrMessage').textContent,/输入已变化/);assert.ok(edited.nodes.get('nmrMessage').children.some(node=>node.href==='/native-material-runs?run='+id),'old saved task remains explicitly reopenable');
+
+ const copy=harness();await flush();copy.ctx.nmrRender({...base,status:'completed'});for(const [name,value] of Object.entries({...form,nmrMaterial:'NEW_INPUT',nmrGoss:.4}))copy.nodes.set(name,Object.assign(new Node(),{value:String(value)}));const beforeCopy=copy.calls.length;copy.ctx.nmrLoadRecipe();
+ assert.equal(copy.nodes.get('nmrMaterial').value,'CPU_FIXTURE');assert.equal(copy.nodes.get('nmrGoss').value,'0.855');assert.equal(copy.nodes.get('nmrGrains').value,'1');assert.deepEqual(JSON.parse(JSON.stringify(copy.ctx.nmrReadRecipe())),base.recipe);assert.equal(copy.calls.length,beforeCopy,'copying a saved recipe is read-only and creates no task');assert.equal(vm.runInContext('nmrCurrent.status',copy.ctx),'completed');assert.match(copy.nodes.get('nmrMessage').textContent,/全部参数/);
+ const noBank=harness();await flush();noBank.ctx.nmrRender({...base,recipe:{...base.recipe,calibration_id:'cal_bbbbbbbbbbbb'}});for(const [name,value] of Object.entries(form))noBank.nodes.set(name,Object.assign(new Node(),{value:String(value)}));noBank.nodes.get('nmrMaterial').value='KEEP_INPUT';noBank.ctx.nmrLoadRecipe();assert.equal(noBank.nodes.get('nmrMaterial').value,'KEEP_INPUT');assert.equal(noBank.nodes.get('nmrCalibration').value,base.recipe.calibration_id);assert.match(noBank.nodes.get('nmrMessage').textContent,/校准库不在当前目录/);
+
  console.log('Native material UI: CPU prepare, separate GPU start, pause/resume budget, CPU mode and stale open isolation: PASS');
 })().catch(e=>{console.error(e);process.exitCode=1});
