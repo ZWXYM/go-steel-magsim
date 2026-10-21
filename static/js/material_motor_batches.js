@@ -1,5 +1,5 @@
 /* Saved calibrated-material batches; polling never starts or retries a task. */
-const MBB={catalog:[],selected:new Set(),record:null,loading:false,actionPending:false,selectionCalibration:null,catalogGeneration:0,generation:0,historyGeneration:0,timer:null,plotBatch:null,plotMode:'all',plotSelected:new Set()};
+const MBB={catalog:[],selected:new Set(),record:null,loading:false,actionPending:false,preparePending:false,viewRevision:0,observedView:null,selectionCalibration:null,catalogGeneration:0,generation:0,historyGeneration:0,timer:null,plotBatch:null,plotMode:'all',plotSelected:new Set()};
 let mbPowerGeneration=0;const mbPowerCache=new Map();
 const mb$=id=>document.getElementById(id),mbText=(tag,text)=>{const n=document.createElement(tag);n.textContent=text;return n};
 const mbLabels={prepared:'计划已准备，尚未开始',prepared_source_changed:'准备后程序已更新，请保留旧计划',starting:'正在启动串行控制',running:'正在串行推进',completed:'批量已完成',completed_with_failures:'批量结束，包含失败或跳过项',needs_attention:'需要检查后显式接续',failed:'失败，现场保留',paused:'已暂停，阶段与结果保留'};
@@ -20,12 +20,21 @@ async function mbCatalog(){
  catch(error){if(generation===MBB.catalogGeneration)mb$('batchPrepareError').textContent=error.message}
  finally{if(generation===MBB.catalogGeneration)mb$('batchCatalogRefresh').disabled=false}
 }
+function mbRecipe(){const calibration=mb$('batchCalibration').value;return {materials:[...MBB.selected].map(key=>({calibration,key})),cores:Number(mb$('batchCores').value),measurement_protocol:mb$('batchProtocol').value}}
+function mbPreparedMatches(data,recipe){return /^bhbatch_[a-f0-9]{12}$/.test(data?.id)&&data.cores===recipe.cores&&data.measurement_protocol===recipe.measurement_protocol&&Array.isArray(data.items)&&JSON.stringify(data.items.map(item=>({calibration:item.selection?.calibration,key:item.selection?.key})))===JSON.stringify(recipe.materials)}
+function mbPrepareNotice(message,id){const out=mb$('batchPrepareStatus');out.replaceChildren();out.textContent=message;if(/^bhbatch_[a-f0-9]{12}$/.test(id)){const link=mbText('a','打开已保存计划 '+id);link.href='/calibrated-motor/batches?batch='+id;out.append(link)}}
 async function mbPrepare(){
- const button=mb$('batchPrepare');if(button.disabled)return;button.disabled=true;mb$('batchPrepareError').textContent='';
- try{if(!MBB.selected.size||MBB.selected.size>8)throw Error('请选择1–8种材料');const calibration=mb$('batchCalibration').value;
- const data=await mbAPI('/api/workbench/calibrated-motor/batches',{materials:[...MBB.selected].map(key=>({calibration,key})),cores:Number(mb$('batchCores').value),measurement_protocol:mb$('batchProtocol').value});
- await mbHistory(data.id);mb$('batchPrepareError').textContent='';
- }catch(error){mb$('batchPrepareError').textContent=error.message}finally{button.disabled=false}
+ const button=mb$('batchPrepare');if(button.disabled||MBB.preparePending)return;MBB.preparePending=true;button.disabled=true;mb$('batchPrepareError').textContent='';mbPrepareNotice('');
+ const recipe=mbRecipe(),view=mb$('batchHistory').value,revision=MBB.viewRevision;
+ const current=()=>revision===MBB.viewRevision&&view===mb$('batchHistory').value&&JSON.stringify(recipe)===JSON.stringify(mbRecipe());
+ try{if(!recipe.materials.length||recipe.materials.length>8)throw Error('请选择1–8种材料');
+ const data=await mbAPI('/api/workbench/calibrated-motor/batches',recipe);
+ if(!mbPreparedMatches(data,recipe))throw Error('准备响应与提交的材料或协议不一致，请检查保存清单；不会自动重试。');
+ if(!current()){mbPrepareNotice('先前提交的计划已保存，当前选择和结果视图保持。 ',data.id);return}
+ const opened=await mbHistory(data.id,current);
+ mbPrepareNotice(opened?'计划已准备，尚未开始原生分析。 ':'先前提交的计划已保存，可按需重开。 ',data.id);
+ }catch(error){if(current())mb$('batchPrepareError').textContent=error.message;else mbPrepareNotice('先前请求未确认：'+error.message+'；当前选择保持，请先检查保存清单。')}
+ finally{MBB.preparePending=false;button.disabled=false}
 }
 function mbName(item){const entry=MBB.catalog.find(r=>r.id===item.selection?.calibration)?.entries.find(e=>e.key===item.selection?.key);return entry?.available?entry.label:item.source.material_name}
 function mbCounts(record){const results=record.items.filter(r=>r.result_available);return {reused:results.filter(r=>r.status==='reused_result').length,passed:results.filter(r=>r.metrics?.torque_numerical_acceptance===true).length,bad:results.filter(r=>r.metrics?.torque_numerical_acceptance===false).length,unknown:results.filter(r=>![true,false].includes(r.metrics?.torque_numerical_acceptance)).length}}
@@ -106,7 +115,7 @@ function mbPlot(record){
  m.time_ms.forEach((v,k)=>add('circle',{cx:x(v),cy:y(m.torque_Nm[k]),r:1.8,fill:color}));const label=mbText('span',mbName(item));label.style.color=color;legend.append(label)});
 }
 async function mbLoad(){
- const artifact=mb$('batchHistory').value,generation=++MBB.generation;if(MBB.timer)clearTimeout(MBB.timer);MBB.timer=null;mb$('batchError').textContent='';
+ const artifact=mb$('batchHistory').value,generation=++MBB.generation;if(MBB.observedView!==artifact){MBB.observedView=artifact;++MBB.viewRevision}if(MBB.timer)clearTimeout(MBB.timer);MBB.timer=null;mb$('batchError').textContent='';
  if(MBB.record?.id!==artifact)mbReset(artifact?'正在读取批量 '+artifact:'尚未选择批量计划');
  MBB.record=null;MBB.canStart=false;MBB.loading=!!artifact;mbButtons();if(!artifact)return;
  const settled=await Promise.allSettled([mbAPI('/api/workbench/calibrated-motor/batches/'+artifact),mbAPI('/api/workbench/resources')]);if(generation!==MBB.generation)return;
@@ -117,18 +126,19 @@ async function mbLoad(){
  if(settled[1].status==='fulfilled'&&settled[1].value.source_restart_required)mb$('batchError').textContent='源码已更新，请重新运行启动器打开匹配版本；仍可查看结果或请求阶段结束后暂停。';
  if(['starting','running'].includes(settled[0].value.status))MBB.timer=setTimeout(mbLoad,3000);
 }
-async function mbHistory(preferred){
- const generation=++MBB.historyGeneration;mb$('batchError').textContent='';try{const records=await mbAPI('/api/workbench/calibrated-motor/batches');if(generation!==MBB.historyGeneration)return;
+async function mbHistory(preferred,mayReplace=()=>true){
+ const generation=++MBB.historyGeneration;mb$('batchError').textContent='';try{const records=await mbAPI('/api/workbench/calibrated-motor/batches');if(generation!==MBB.historyGeneration||!mayReplace())return false;
  const select=mb$('batchHistory'),old=preferred||select.value||(typeof location!=='undefined'?new URLSearchParams(location.search).get('batch'):null);++MBB.generation;if(MBB.timer)clearTimeout(MBB.timer);MBB.timer=null;select.replaceChildren();
  for(const r of records){const o=mbText('option',r.id+' · '+(mbLabels[r.status]||r.status));o.value=r.id;select.append(o)}
  if(old){if(!records.some(r=>r.id===old)){select.value='';mbReset('指定的批量记录不存在');mb$('batchError').textContent='指定的批量记录不存在，请选择现有记录。';return}select.value=old}
  if(records.length)await mbLoad();else mbReset('尚无批量计划，请先选择保存材料。');
- }catch(error){if(generation===MBB.historyGeneration){++MBB.generation;if(MBB.timer)clearTimeout(MBB.timer);MBB.timer=null;mbReset('批量清单读取失败');mb$('batchError').textContent=error.message}}
+ return !!MBB.record&&MBB.record.id===preferred&&select.value===preferred;
+ }catch(error){if(generation===MBB.historyGeneration&&mayReplace()){++MBB.generation;if(MBB.timer)clearTimeout(MBB.timer);MBB.timer=null;mbReset('批量清单读取失败');mb$('batchError').textContent=error.message}return false}
 }
 async function mbAction(action){
  if(!['start','resume','pause'].includes(action)||!MBB.record||MBB.loading||MBB.actionPending||MBB.record.id!==mb$('batchHistory').value)return;
  mbButtons();if(mb$({start:'batchStart',resume:'batchResume',pause:'batchPause'}[action]).disabled)return;
- const artifact=MBB.record.id;MBB.actionPending=true;mbButtons();let failure='';
+ const artifact=MBB.record.id;++MBB.viewRevision;MBB.actionPending=true;mbButtons();let failure='';
  try{await mbAPI('/api/workbench/calibrated-motor/batches/'+artifact+'/'+action,{})}
  catch(error){failure=error.message}
  finally{MBB.actionPending=false;if(mb$('batchHistory').value===artifact){await mbLoad();if(failure&&mb$('batchHistory').value===artifact)mb$('batchError').textContent=failure+(mb$('batchError').textContent?'；'+mb$('batchError').textContent:'')}else mbButtons()}

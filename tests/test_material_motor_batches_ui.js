@@ -8,7 +8,7 @@ class Node{
  querySelectorAll(tag){return this.children.flatMap(n=>[...(n.tag===tag?[n]:[]),...n.querySelectorAll(tag)])}
  text(){return this.textContent+this.children.map(n=>n.text()).join(' ')}
 }
-const record={id:'bhbatch_aaaaaaaaaaaa',status:'prepared',dispatch_compatible:true,pause_requested:false,
+const record={id:'bhbatch_aaaaaaaaaaaa',status:'prepared',dispatch_compatible:true,pause_requested:false,cores:2,measurement_protocol:'v8_2_cycle1',
  budget:{max_new_imports:1,max_new_motor_solves:1,cores:2,gpus:0},
  totals:{materials:1,actual_torque_results:1,new_completed_motor_solves:0},items:[{id:'item_01',status:'reused_result',result_available:true,
  selection:{calibration:'cal_a',key:'prediction:pred_a'},source:{material_name:'WB_a',excluded_grades:['B30P105']},
@@ -146,5 +146,56 @@ function harness(api){
  const powerMismatch=harness(async()=>({...powerRun,id:'bhexec_444444444444'}));powerMismatch.c.mbRender(powerBatch,true);await flush();assert.match(powerMismatch.nodes.get('batchRows').children[0].children[4].text(),/工况未核对/);assert.match(powerMismatch.nodes.get('batchRows').text(),/0\.000000/);
  const missingPower=harness(async()=>{throw Error('must not fetch without helper')});missingPower.c.MotorPower=undefined;missingPower.c.mbRender(powerBatch,true);await flush();assert.equal(missingPower.calls.length,0);assert.match(missingPower.nodes.get('batchRows').text(),/工况未核对/);
  assert.equal(JSON.stringify(powerMetrics),JSON.stringify(powerRun.result.metrics));
+ // A delayed CPU plan must not replace the batch the user switched to.
+ let prepareReady;const prepareWait=new Promise(resolve=>prepareReady=resolve);
+ const delayedPrepare=harness(async(url,options)=>options.method==='POST'?prepareWait:url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')?[record,{...record,id:next}]:url.endsWith('/'+next)?{...record,id:next}:record);
+ vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',delayedPrepare.c);
+ await delayedPrepare.c.mbLoad();const preparing=delayedPrepare.c.mbPrepare();
+ delayedPrepare.nodes.get('batchHistory').value=next;await delayedPrepare.c.mbLoad();
+ prepareReady(record);await preparing;
+ assert.equal(delayedPrepare.nodes.get('batchHistory').value,next,'late preparation must retain the newly viewed batch');
+ assert.equal(vm.runInContext('MBB.record.id',delayedPrepare.c),next);
+ assert.ok(delayedPrepare.nodes.get('batchPrepareStatus').querySelectorAll('a').some(a=>a.href==='/calibrated-motor/batches?batch='+record.id));
+ assert.equal(delayedPrepare.calls.filter(c=>c.method==='POST').length,1);
+ // Configuration edits preserve the form and expose the earlier saved plan.
+ for(const field of ['batchCores','batchProtocol','batchCalibration','selection']){
+  let finish;const wait=new Promise(resolve=>finish=resolve),race=harness(async(url,options)=>options.method==='POST'?wait:record);
+  vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',race.c);const pending=race.c.mbPrepare();
+  if(field==='selection')vm.runInContext('MBB.selected=new Set(["fit:B23R075"])',race.c);
+  else race.nodes.get(field).value={batchCores:'1',batchProtocol:'periodic_cycle3_v1',batchCalibration:'cal_b'}[field];
+  await race.c.mbPrepare();finish(record);await pending;
+  assert.equal(race.calls.length,1);assert.equal(race.calls[0].method,'POST');
+  assert.match(race.nodes.get('batchPrepareStatus').text(),/已保存/);assert.equal(race.nodes.get('batchPrepare').disabled,false);
+ }
+ // A second late window exists while the saved-history GET is pending.
+ for(const reject of [false,true]){
+  let finishHistory;const historyWait=new Promise((resolve,fail)=>finishHistory=reject?fail:resolve);
+  const race=harness(async(url,options)=>options.method==='POST'?record:url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')?historyWait:url.endsWith('/'+next)?{...record,id:next}:record);
+  vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',race.c);await race.c.mbLoad();const pending=race.c.mbPrepare();await flush();
+  race.nodes.get('batchHistory').value=next;await race.c.mbLoad();
+  finishHistory(reject?Error('earlier history failed'):[record,{...record,id:next}]);await pending;
+  assert.equal(vm.runInContext('MBB.record.id',race.c),next);assert.doesNotMatch(race.nodes.get('batchError').textContent,/earlier history/);
+  assert.match(race.nodes.get('batchPrepareStatus').text(),/已保存/);
+ }
+ // A failed earlier POST cannot overwrite errors belonging to a newly edited form.
+ let rejectPrepare;const failedWait=new Promise((resolve,reject)=>rejectPrepare=reject),failedPrepare=harness(async()=>failedWait);
+ vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',failedPrepare.c);const failedPending=failedPrepare.c.mbPrepare();
+ failedPrepare.nodes.get('batchCores').value='1';failedPrepare.nodes.get('batchPrepareError').textContent='current form message';
+ rejectPrepare(Error('older preparation failed'));await failedPending;
+ assert.equal(failedPrepare.nodes.get('batchPrepareError').textContent,'current form message');assert.match(failedPrepare.nodes.get('batchPrepareStatus').text(),/先前请求未确认/);
+ // Unexpected identity/configuration never navigates or automatically retries.
+ for(const bad of [{...record,id:'invalid'},{...record,cores:1},{...record,measurement_protocol:'other'},{...record,items:[]}]){
+  const mismatch=harness(async()=>bad);vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',mismatch.c);await mismatch.c.mbPrepare();
+  assert.match(mismatch.nodes.get('batchPrepareError').textContent,/不一致/);assert.equal(mismatch.calls.length,1);
+ }
+ // Starting an explicitly viewed batch also takes precedence over a pending plan.
+ let finishPrepared;const waitPrepared=new Promise(resolve=>finishPrepared=resolve),newPlan={...record,id:'bhbatch_cccccccccccc'};
+ const actDuringPrepare=harness(async(url,options)=>url.endsWith('/batches')&&options.method==='POST'?waitPrepared:url.endsWith('/resources')?{cpu_only:false}:record);
+ vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',actDuringPrepare.c);await actDuringPrepare.c.mbLoad();const waitingPrepare=actDuringPrepare.c.mbPrepare();
+ await actDuringPrepare.c.mbAction('start');finishPrepared(newPlan);await waitingPrepare;
+ assert.equal(vm.runInContext('MBB.record.id',actDuringPrepare.c),record.id);assert.equal(actDuringPrepare.calls.filter(c=>c.method==='POST').length,2);
+ assert.equal(actDuringPrepare.calls.filter(c=>c.url.endsWith('/start')).length,1);assert.match(actDuringPrepare.nodes.get('batchPrepareStatus').text(),/已保存/);
+ // Normal unchanged preparation still opens exactly its returned plan.
+ assert.equal(vm.runInContext('MBB.record.id',prepare.c),record.id);assert.match(prepare.nodes.get('batchPrepareStatus').text(),/尚未开始/);
  console.log('Calibrated batch UI: exact CPU preparation, no auto dispatch, pause/resume gates, zero/null, stale/resource isolation, bound power and cached GET-only reads: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
