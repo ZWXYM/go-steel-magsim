@@ -205,8 +205,9 @@ def save_amat_file(content: str, mat_name: str,
     """保存到 data/exports/<mat_name>.amat，返回文件路径。"""
     if artifact_name is not None and (not isinstance(artifact_name,str) or not re.fullmatch(r'[A-Za-z0-9_-]+',artifact_name)):
         raise ValueError('独立导出文件名只能含字母、数字、下划线和连字符')
-    Path(export_dir).mkdir(parents=True, exist_ok=True)
-    path = Path(export_dir) / f'{artifact_name if artifact_name is not None else mat_name}.amat'
+    folder = Path(export_dir).resolve() if artifact_name is not None else Path(export_dir)
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f'{artifact_name if artifact_name is not None else mat_name}.amat'
     if artifact_name is not None:
         if _metadata_path_for_amat(path).exists():
             raise FileExistsError('独立导出元数据已存在，原文件保留')

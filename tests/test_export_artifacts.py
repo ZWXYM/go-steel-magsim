@@ -1,5 +1,6 @@
 """HTTP export isolation using the real formatter, without native work or proxy fitting."""
 import json
+import os
 import tempfile
 import threading
 import unittest
@@ -99,6 +100,17 @@ class ExportArtifactTests(unittest.TestCase):
         real.export_from_prediction(prediction('B'),'same',export_dir=str(self.root),artifact_name='b')
         entries=real.list_exports(str(self.root));self.assertEqual({e['name'] for e in entries},{'legacy.amat','a.amat','b.amat'})
         self.assertTrue(all(e['metadata_path'] for e in entries if e['name']!='legacy.amat'))
+
+    def test_HTTP_export_from_a_different_workspace_uses_the_saved_absolute_path(self):
+        old=Path.cwd();workspace=self.root/'workspace';workspace.mkdir()
+        try:
+            os.chdir(workspace)
+            with patch.object(web,'_get_mx',return_value=real),web.app.test_client() as client:
+                response=client.post('/api/analyze/export-maxwell',json=dict(H_RD=[0,100,800,2000],B_RD=[0,.8,1.2,1.4],mat_name='WORKSPACE_TEST'))
+                self.assertEqual(response.status_code,200);artifact=response.headers['X-Material-Artifact'];path=workspace/'data/exports'/artifact
+                self.assertEqual(path.read_bytes(),response.data);meta=json.loads(path.with_suffix('.metadata.json').read_text());self.assertEqual(Path(meta['amat_path']),path)
+                response.close()
+        finally:os.chdir(old)
 
 
 if __name__=='__main__':unittest.main()

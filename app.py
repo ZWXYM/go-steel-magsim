@@ -28,6 +28,7 @@ for _d in ['data/exports', 'data/datasets', 'data/models', 'data/pipelines', 'in
 MODULES_DIR = os.path.join(SCRIPT_DIR, 'modules')
 sys.path.insert(0, SCRIPT_DIR)
 sys.path.insert(0, MODULES_DIR)  # 所有子模块统一放 modules/
+from modules.task_output import capture_task_stdout
 
 import mx3_generator as gis
 import batch_scheduler as gpb
@@ -57,14 +58,13 @@ def create_task(name):
 
 def run_task(tid, func, *args, **kwargs):
     def worker():
-        buf = io.StringIO(); old = sys.stdout; sys.stdout = buf
+        buf = io.StringIO()
         try:
-            result = func(*args, **kwargs)
-            sys.stdout = old
+            with capture_task_stdout(buf):
+                result = func(*args, **kwargs)
             tasks[tid].update({'status': 'completed', 'output': buf.getvalue(), 'result': result,
                                'finished': datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
         except Exception as e:
-            sys.stdout = old
             tasks[tid].update({'status': 'failed', 'output': buf.getvalue(), 'error': str(e),
                                'traceback': traceback.format_exc(),
                                'finished': datetime.now().strftime('%Y-%m-%d %H:%M:%S')})

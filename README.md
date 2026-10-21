@@ -173,3 +173,5 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 旧代理的并发预测/材料出口已修复共享模型串用，常规训练独立完成后再发布默认实例；保留旧权重与数值算法，见[模型绑定说明](docs/model_selection_20261021.md)。
 
 两种HTTP材料出口现在独立保存每次导出，保留指定材料名、输入参数和原导出；同名并发下载不会串文件，见[导出保存说明](docs/export_artifacts_20261021.md)。
+
+后台任务的并行Python日志已按线程隔离，成功/失败后恢复输出流；切换工作目录后的HTTP材料下载路径已修复，见[运行说明](docs/task_runtime_20261021.md)。
