@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # GO-Steel MagSim — Python 依赖
 # 安装命令: pip install -r requirements.txt
 # 建议 Python 3.10+

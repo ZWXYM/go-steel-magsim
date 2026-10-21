@@ -54,3 +54,15 @@ PyAEDT的Python导入路径是ansys.aedt.core，已安装分发包名称是pyaed
 MuMax任务使用现有.runtime/mumax3/mumax3.exe、MUMAX3_EXE或PATH配置，并需要兼容GPU。只查看旧结果不会运行该程序。完整原生工程、缓存和论文归档不随公开副本发布；公开副本没有本机历史任务，不应为了填满页面而重新提交旧任务。
 
 当前主工作区保存21份材料和原作者扫描/优化结果，保持原资源根目录和存储即可重开。缺少本机原生工程时，校准和只读结果入口仍可分别使用；电机目录错误应先检查资源路径，而非重新计算材料或重装Web依赖。
+
+## 独立CPU环境实测（2026-10-21）
+
+新建不继承系统包的Python3.10环境，官方PyPI安装Web依赖后pip check无冲突。使用本机已运行的11个直接依赖版本约束安装，保存完整解析版本为requirements-cpu-py310-win-tested.txt；该文件用于Windows/Python3.10的CPU复现，不用于独立AEDT环境。
+
+requirements.txt已补UTF-8编码声明，修复旧pip在GBK Windows读取中文注释时的UnicodeDecodeError，依赖约束本身不变。两次后续下载超时的日志保留；改用上述直接版本约束后安装成功。完整公开app导入、5个页面、四样品8组26点曲线/40行误差、B30排除预测、9材料条目、6文件下载及26成员ZIP均在独立环境通过。校准/预测数值与保存基线在1e-10相对容差内一致；未运行原生求解或GPU训练。原系统环境保留。
+
+复现本次已解析组合，可在新.venv中运行：
+
+```powershell
+.venv\Scripts\python.exe -m pip install -r requirements.txt -c requirements-cpu-py310-win-tested.txt
+```
