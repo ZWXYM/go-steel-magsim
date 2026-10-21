@@ -224,6 +224,18 @@ function harness(api){
  }
  const pendingOnly=harness(async()=>{throw Error('must not fetch')});pendingOnly.c.mbRender({...compareRecord,items:compareRecord.items.map(i=>({...i,result_available:false}))},false);
  pendingOnly.nodes.get('batchBaseline').value='item_01';await pendingOnly.c.mbCompare();assert.equal(pendingOnly.calls.length,0);
+ // A transient record=null during a same-batch refresh is not a change of viewed result.
+ let finishComparison,finishRefresh;const duringComparison=new Promise(resolve=>finishComparison=resolve),duringRefresh=new Promise(resolve=>finishRefresh=resolve);
+ const refreshingComparison=harness(async url=>url.includes('/comparison?')?duringComparison:url.endsWith('/resources')?{cpu_only:false}:duringRefresh);
+ refreshingComparison.c.mbRender(compareRecord,false);refreshingComparison.nodes.get('batchBaseline').value='item_01';refreshingComparison.c.mbComparisonClear();
+ const pendingBaseline=refreshingComparison.c.mbCompare(),sameBatchRefresh=refreshingComparison.c.mbLoad();
+ finishComparison(comparison());await pendingBaseline;
+ assert.equal(refreshingComparison.nodes.get('batchCompareRows').children.length,2,'same-batch status refresh must preserve the pending comparison response');
+ assert.equal(refreshingComparison.nodes.get('batchCompareRead').disabled,true,'new comparison reads wait until the batch refresh finishes');
+ finishRefresh(compareRecord);await sameBatchRefresh;
+ assert.equal(refreshingComparison.nodes.get('batchCompareRows').children.length,2);assert.equal(refreshingComparison.nodes.get('batchCompareCSV').hidden,false);
+ assert.doesNotMatch(refreshingComparison.nodes.get('batchCompareStatus').textContent,/正在读取/);assert.equal(refreshingComparison.nodes.get('batchCompareRead').disabled,false);
+ assert.ok(refreshingComparison.calls.every(c=>c.method==='GET'));assert.equal(refreshingComparison.calls.filter(c=>c.url.includes('/comparison?')).length,1);
  compared.c.mbReset('reset');assert.equal(compared.nodes.get('batchComparePanel').hidden,true);assert.equal(compared.nodes.get('batchCompareCSV').hidden,true);
  console.log('Calibrated batch UI: explicit GET-only baseline deltas, exact CPU preparation, stale/resource isolation, pause/resume, bound power and cached reads: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});

@@ -59,6 +59,7 @@ function mbPlotURL(record){if(typeof history==='undefined'||typeof location==='u
 function mbPlotMode(mode){if(!MBB.record)return;MBB.plotMode=mode;mbPlot(MBB.record)}
 function mbButtons(){
  const r=MBB.record,bound=r&&r.id===mb$('batchHistory').value&&!MBB.loading&&!MBB.actionPending;
+ mb$('batchCompareRead').disabled=!!(MBB.loading||!r||r.id!==mb$('batchHistory').value||mbComparison.pending||!mb$('batchBaseline').value);
  mb$('batchStart').disabled=!(bound&&MBB.canStart&&r.status==='prepared'&&r.dispatch_compatible);
  mb$('batchResume').disabled=!(bound&&MBB.canStart&&['paused','needs_attention'].includes(r.status)&&r.dispatch_compatible);
  mb$('batchPause').disabled=!(bound&&['prepared','starting','running'].includes(r.status)&&!r.pause_requested);
@@ -96,7 +97,7 @@ function mbComparisonClear(){
  ++mbComparison.generation;mbComparison.pending=false;mbComparison.data=null;
  mb$('batchCompareRows').replaceChildren();mb$('batchCompareError').textContent='';mb$('batchCompareStatus').textContent='选择基准后点击比较，只读取已有结果。';
  for(const id of ['batchCompareCSV','batchCompareJSON']){mb$(id).hidden=true;mb$(id).href=''}
- mb$('batchCompareRead').disabled=!mb$('batchBaseline').value;
+ mb$('batchCompareRead').disabled=MBB.loading||!mb$('batchBaseline').value;
 }
 function mbComparisonSetup(record){
  const signature=JSON.stringify(record.items.map(i=>[i.id,i.selection,i.source,i.execution_id,i.model_version,i.measurement_protocol,i.result_available,i.metrics]));
@@ -112,7 +113,8 @@ async function mbCompare(){
  if(!record||MBB.loading||record.id!==mb$('batchHistory').value||mbComparison.pending||!record.items.some(i=>i.id===baseline&&i.result_available))return;
  mbComparisonClear();const generation=++mbComparison.generation;mbComparison.pending=true;button.disabled=true;
  mb$('batchCompareStatus').textContent='正在读取保存工况与原转矩结果…';const url='/api/workbench/calibrated-motor/batches/'+record.id+'/comparison?baseline='+encodeURIComponent(baseline);
- const current=()=>generation===mbComparison.generation&&MBB.record?.id===record.id&&mb$('batchHistory').value===record.id&&mb$('batchBaseline').value===baseline;
+ const signature=mbComparison.signature;
+ const current=()=>generation===mbComparison.generation&&mbComparison.batch===record.id&&mbComparison.signature===signature&&mb$('batchHistory').value===record.id&&mb$('batchBaseline').value===baseline;
  try{const data=await mbAPI(url);if(!current())return;
   if(data.version!=='batch_baseline_comparison_v1'||data.batch!==record.id||data.baseline_item!==baseline||!Array.isArray(data.entries)||JSON.stringify(data.entries.map(e=>e.item))!==JSON.stringify(record.items.map(i=>i.id)))throw Error('比较响应与当前批量或基准不一致，请刷新重开。');
   const value=v=>v===null||v===undefined?'—':typeof v==='number'&&Number.isFinite(v)?v.toFixed(6):(()=>{throw Error('比较指标不是有限数值')})();
@@ -126,7 +128,7 @@ async function mbCompare(){
   mb$('batchCompareRows').replaceChildren(...rows);mbComparison.data=data;mb$('batchCompareStatus').textContent='基准 '+mbName(record.items.find(i=>i.id===baseline))+'；差值 = 当前条目 − 基准，百分比 = 差值 ÷ 正基准 × 100%。保持材料选择顺序。';
   for(const [id,format] of [['batchCompareCSV','csv'],['batchCompareJSON','json']]){mb$(id).href=url+'&format='+format;mb$(id).download=record.id+'_'+baseline+'_comparison.'+format;mb$(id).hidden=false}
  }catch(error){if(current()){mb$('batchCompareError').textContent=error.message;mb$('batchCompareStatus').textContent='比较未完成；原始结果与当前批量保持。'}}
- finally{if(generation===mbComparison.generation){mbComparison.pending=false;button.disabled=!mb$('batchBaseline').value}}
+ finally{if(generation===mbComparison.generation){mbComparison.pending=false;button.disabled=MBB.loading||!mb$('batchBaseline').value}}
 }
 async function mbLoadPower(item,cell,batchId,generation){
  if(!item.result_available)return;
