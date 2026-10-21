@@ -1,0 +1,20 @@
+{
+  "version": "four_fit_public_evidence_manifest_v1",
+  "files": {
+    "comparison_baseline_B27R090.csv": "833622c20c7252b5a2141460ac6537f3dffbfceb6e7c2d91115716106e143b0c",
+    "comparison_baseline_B27R090.json": "8546424c1a6388b7b704dcc5a72a4897a830ca51bf12dcb6b16a36cd5f4f3c1f",
+    "metrics.csv": "e5a1688710376d0dfb5d6de2b29caba3bd642750b473bd2c73eae6d62a28e5cc",
+    "README.md": "8adf5bf90b7e941384b5f124838e290ca8465da9603ee8d42c55b1c3a1dcf694",
+    "summary.json": "c543bd36da26e9fb170415455789fd02b0709155bdb332b18556a2525459fde4",
+    "official_csv/B23R075_Torque.csv": "0fcec68ddee5de35695e904804f84319de0fca1513987203f5a500977a13baef",
+    "official_csv/B27R090_Torque.csv": "2c49b85a91a08ab95eab6c533af10fc5bccfa8ab1c87122d370e6da7b6180efa",
+    "official_csv/B27R095_Torque.csv": "40edfd0763e177241c94d894e50894d631a810ad6a4d4a5df2dc851c0d54a64d",
+    "official_csv/B30P105_Torque.csv": "ac2dc2752f86002d6d9017bb9a2472b4dfe8c27dff46b124b49c04b73812e09c"
+  },
+  "new_motor_solves_in_source_campaign": 3,
+  "reused_motor_results": 1,
+  "new_motor_solves_in_review": 0,
+  "original_official_CSV_preserved": true,
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false
+}

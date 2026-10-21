@@ -1,0 +1,163 @@
+{
+  "batch": "bhbatch_023b799db12a",
+  "status": "completed",
+  "new_completed_motor_solves": 3,
+  "reused_motor_results": 1,
+  "materials": [
+    {
+      "item": "item_01",
+      "material": "B23R075",
+      "execution": "bhexec_e96007ab29e3",
+      "analysis_plan": "bhanalysis_70fdc6e5474b",
+      "native_import": "calimport_54e7e38bb40d",
+      "source": {
+        "AMAT_sha256": "ef79c8660dea2949006164c09ad7078cbc6b7ad96af05e447b7ec2eac8c442ef",
+        "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "excluded_grades": [],
+        "material_name": "WB_B23R075_8fff23daed9e",
+        "metadata_sha256": "79863e4ece2f17a5bb63cb433f500f8c58564b69f25aec33deeb3386ad3b41d5",
+        "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "template_sha256": "e88490aaf9f1578834f16afbdd1229093cc38503aa6d2ed7afd7f87aafca951a",
+        "training_grades": [
+          "B23R075",
+          "B27R090",
+          "B27R095",
+          "B30P105"
+        ]
+      },
+      "model_version": "V8_2_object_CS_BH_only_torque_v1",
+      "measurement_protocol": "v8_2_cycle1",
+      "speed_rpm": 3000,
+      "T_avg_Nm": 1.6453586021350657,
+      "T_min_Nm": -4.55732321120572,
+      "T_max_Nm": 2.47792365463379,
+      "K_T_ripple_pct": 427.58137081547846,
+      "electromagnetic_mechanical_power_W": 516.9046496988294,
+      "torque_numerical_acceptance": false,
+      "nonpositive_points": 1,
+      "torque_csv_sha256": "0fcec68ddee5de35695e904804f84319de0fca1513987203f5a500977a13baef",
+      "source_samples": 31,
+      "new_motor_solve": false
+    },
+    {
+      "item": "item_02",
+      "material": "B27R090",
+      "execution": "bhexec_0abebfc5c29b",
+      "analysis_plan": "bhanalysis_b004f22dd83f",
+      "native_import": "calimport_09095534df85",
+      "source": {
+        "AMAT_sha256": "af52ce28c164f51498ff2d7e7b16e0778592b5e886ad17bac94130ddc4234ab5",
+        "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "excluded_grades": [],
+        "material_name": "WB_B27R090_8fff23daed9e",
+        "metadata_sha256": "4e35d750b4b111b5dde152451dc867e771c2e3f63fd075dca60488745fdf677a",
+        "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "template_sha256": "e88490aaf9f1578834f16afbdd1229093cc38503aa6d2ed7afd7f87aafca951a",
+        "training_grades": [
+          "B23R075",
+          "B27R090",
+          "B27R095",
+          "B30P105"
+        ]
+      },
+      "model_version": "V8_2_object_CS_BH_only_torque_v1",
+      "measurement_protocol": "v8_2_cycle1",
+      "speed_rpm": 3000,
+      "T_avg_Nm": 1.871272499241121,
+      "T_min_Nm": 1.14593737694303,
+      "T_max_Nm": 2.53585456025039,
+      "K_T_ripple_pct": 74.27657831080344,
+      "electromagnetic_mechanical_power_W": 587.8775936480517,
+      "torque_numerical_acceptance": true,
+      "nonpositive_points": 0,
+      "torque_csv_sha256": "2c49b85a91a08ab95eab6c533af10fc5bccfa8ab1c87122d370e6da7b6180efa",
+      "source_samples": 31,
+      "new_motor_solve": true
+    },
+    {
+      "item": "item_03",
+      "material": "B27R095",
+      "execution": "bhexec_cfd4f08b6823",
+      "analysis_plan": "bhanalysis_820394480374",
+      "native_import": "calimport_069f0d34bbca",
+      "source": {
+        "AMAT_sha256": "d3799e12aa879e9fa155748321ddec5d4ce210608f0fcfac863241c75be540d4",
+        "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "excluded_grades": [],
+        "material_name": "WB_B27R095_8fff23daed9e",
+        "metadata_sha256": "305a80b5e511247fd9823c76c6cadc366bd5d1bd4d436b397c6e2d33f097d078",
+        "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "template_sha256": "e88490aaf9f1578834f16afbdd1229093cc38503aa6d2ed7afd7f87aafca951a",
+        "training_grades": [
+          "B23R075",
+          "B27R090",
+          "B27R095",
+          "B30P105"
+        ]
+      },
+      "model_version": "V8_2_object_CS_BH_only_torque_v1",
+      "measurement_protocol": "v8_2_cycle1",
+      "speed_rpm": 3000,
+      "T_avg_Nm": 1.5395580617137152,
+      "T_min_Nm": -0.0973690241199885,
+      "T_max_Nm": 3.15641642781608,
+      "K_T_ripple_pct": 211.3454200171061,
+      "electromagnetic_mechanical_power_W": 483.6664296454749,
+      "torque_numerical_acceptance": false,
+      "nonpositive_points": 1,
+      "torque_csv_sha256": "40edfd0763e177241c94d894e50894d631a810ad6a4d4a5df2dc851c0d54a64d",
+      "source_samples": 31,
+      "new_motor_solve": true
+    },
+    {
+      "item": "item_04",
+      "material": "B30P105",
+      "execution": "bhexec_66e918f0e63b",
+      "analysis_plan": "bhanalysis_1e58816d7af9",
+      "native_import": "calimport_523b65ae3aed",
+      "source": {
+        "AMAT_sha256": "816594387910d0a97b7456f3c2441b088e3f0601b8c720a66e8d23c89b600e70",
+        "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "excluded_grades": [],
+        "material_name": "WB_B30P105_8fff23daed9e",
+        "metadata_sha256": "7a29b74c89c1486f7f9de1631df94fb581d8cd26ba35aa35e9bf2782b3080063",
+        "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+        "template_sha256": "e88490aaf9f1578834f16afbdd1229093cc38503aa6d2ed7afd7f87aafca951a",
+        "training_grades": [
+          "B23R075",
+          "B27R090",
+          "B27R095",
+          "B30P105"
+        ]
+      },
+      "model_version": "V8_2_object_CS_BH_only_torque_v1",
+      "measurement_protocol": "v8_2_cycle1",
+      "speed_rpm": 3000,
+      "T_avg_Nm": 5.767007046684072,
+      "T_min_Nm": -20.6843119115401,
+      "T_max_Nm": 177.377464903004,
+      "K_T_ripple_pct": 3434.394569162633,
+      "electromagnetic_mechanical_power_W": 1811.758697106325,
+      "torque_numerical_acceptance": false,
+      "nonpositive_points": 6,
+      "torque_csv_sha256": "ac2dc2752f86002d6d9017bb9a2472b4dfe8c27dff46b124b49c04b73812e09c",
+      "source_samples": 31,
+      "new_motor_solve": true
+    }
+  ],
+  "baseline_for_summary": "item_02",
+  "original_numerical_acceptance_counts": {
+    "passed": 1,
+    "failed": 3
+  },
+  "version": "four_fit_motor_batch_evidence_v1",
+  "measurement_protocol": "v8_2_cycle1",
+  "model_version": "V8_2_object_CS_BH_only_torque_v1",
+  "scope": "Saved same-bank fit-material results under a common motor setup; software batch analysis, not independent material validation or final optimization ranking",
+  "power_definition": "T_avg_Nm * 2*pi * 3000/60; electromagnetic mechanical power before mechanical losses, not nameplate rating",
+  "cumulative_project_completed_Maxwell": 48,
+  "cumulative_project_MuMax": 682,
+  "new_native_solves_during_review": 0,
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false
+}
