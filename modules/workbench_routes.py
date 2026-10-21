@@ -30,6 +30,7 @@ from modules.material_batch_reports import report_bundle as material_batch_repor
 from modules.material_batch_reports import baseline_comparison, baseline_comparison_csv, baseline_report_bundle
 from modules.native_pair_exports import NativePairExports
 from modules.native_material_runs import NativeMaterialRuns
+from modules.torque_windows import TorqueWindows,create_torque_window_routes
 
 SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md'))
 
@@ -60,6 +61,7 @@ def create_workbench(project,storage=None,root=None):
     native_runs=NativeMaterialRuns(calibration,motor,native_pairs,storage/'native_material_runs')
     identity=runtime_identity(project,root,storage)
     bp=Blueprint('workbench',__name__)
+    bp.register_blueprint(create_torque_window_routes(TorqueWindows(material_batches)))
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
         bp.record_once(lambda state:install_cpu_policy(state.app))
     bp.record_once(lambda state:install_source_guard(state.app,identity))

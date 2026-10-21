@@ -185,3 +185,5 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 主平台两类训练共用明确任务，支持状态失败恢复、刷新重开和相同请求去重，详见[训练任务说明](docs/platform_training_20261022.md)。
 
 模型加载/删除已限定到准确模型目录；当前选择与列表刷新保持一致，见[模型管理说明](docs/model_paths_20261022.md)。
+
+校准材料批量新增[自选时间区间的转矩查看、统计与完整原数据下载](docs/torque_windows_20261022.md)，可直接从批量结果重开同一批量；不重求解或更改原指标/判据。

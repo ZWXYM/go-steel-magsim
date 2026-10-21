@@ -72,7 +72,7 @@ function mbReset(message){
  mbComparisonReset();
  MBB.record=null;MBB.canStart=false;MBB.loading=false;MBB.plotBatch=null;mbButtons();
  mb$('batchStatus').textContent=message;mb$('batchBudget').textContent='';mb$('batchTotals').textContent='';mb$('batchRows').replaceChildren();
- mb$('batchBundle').hidden=true;mb$('batchBundle').href='';mb$('batchPlotPanel').hidden=true;
+ mb$('batchBundle').hidden=true;mb$('batchBundle').href='';const windowLink=mb$('batchWindowLink');if(windowLink){windowLink.hidden=true;windowLink.href=''}mb$('batchPlotPanel').hidden=true;
  mb$('batchWaveforms').replaceChildren();mb$('batchPlotLegend').replaceChildren();mb$('batchPlotChoices').replaceChildren();
 }
 function mbRender(record,canStart){
@@ -82,6 +82,7 @@ function mbRender(record,canStart){
  const b=record.budget;mb$('batchBudget').textContent=`最多新增 ${b.max_new_imports} 次材料导入、${b.max_new_motor_solves} 次电机分析；${b.cores}核 / ${b.gpus} GPU。每次导入240秒、每次电机1200秒；已有结果直接复用。`;
  mb$('batchError').textContent=record.error||'';mbButtons();
  mb$('batchBundle').hidden=false;mb$('batchBundle').href='/api/workbench/calibrated-motor/batches/'+record.id+'/bundle';
+ const windowLink=mb$('batchWindowLink');if(windowLink){windowLink.href='/calibrated-motor/torque-windows?batch='+encodeURIComponent(record.id);windowLink.hidden=!record.items.some(row=>row.result_available)}
  mb$('batchTotals').textContent=`${record.totals.materials}种材料 · 可读取实际转矩 ${record.totals.actual_torque_results}项 · 本批新增完成 ${record.totals.new_completed_motor_solves}项 · 复用 ${counts.reused}项 · 原数值判据：通过 ${counts.passed}项 / 未通过 ${counts.bad}项 / 未报告 ${counts.unknown}项`+(record.pause_requested?(record.status==='paused'?' · 已暂停，可显式接续':' · 已请求暂停，等待当前阶段结束'):'');
  const rows=mb$('batchRows');rows.replaceChildren();const number=v=>v===null||v===undefined?'—':Number(v).toFixed(6);
  for(const item of record.items){const row=document.createElement('tr'),name=document.createElement('td'),m=item.result_available?item.metrics||{}:{};name.append(mbText('strong',mbName(item)),mbText('small',' · '+item.selection.key));

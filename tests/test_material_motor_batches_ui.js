@@ -28,6 +28,8 @@ function harness(api){
  assert.equal(h.nodes.get('batchStart').disabled,false);assert.equal(h.nodes.get('batchResume').disabled,true);
  assert.match(h.nodes.get('batchRows').text(),/0\.000000/);assert.match(h.nodes.get('batchRows').text(),/—/);assert.match(h.nodes.get('batchRows').text(),/B30P105/);
  assert.ok(h.calls.every(c=>c.method==='GET'));assert.equal(h.timers.length,0);
+ assert.equal(h.nodes.get('batchWindowLink').href,'/calibrated-motor/torque-windows?batch='+record.id);
+ const legacy=harness(async()=>record),legacyGet=legacy.c.document.getElementById;legacy.c.document.getElementById=id=>id==='batchWindowLink'?null:legacyGet(id);legacy.c.mbRender(record,true);legacy.c.mbReset('old template remains readable');assert.equal(legacy.nodes.get('batchStatus').textContent,'old template remains readable');
  assert.equal(h.urls.at(-1),'/calibrated-motor/batches?batch=bhbatch_aaaaaaaaaaaa');
  const linked=structuredClone(record);linked.items[0].analysis_url='/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa';linked.items[0].execution_id='bhexec_bbbbbbbbbbbb';
  const exact=harness(async()=>linked);exact.c.mbRender(linked,true);
