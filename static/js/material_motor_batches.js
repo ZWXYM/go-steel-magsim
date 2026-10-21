@@ -53,8 +53,11 @@ function mbPlotSelection(record){
  return available;
 }
 function mbPlotURL(record){if(typeof history==='undefined'||typeof location==='undefined')return;const query=new URLSearchParams();query.set('batch',record.id);
+ const baseline=mbComparison.batch===record.id?mb$('batchBaseline').value:'',valid=record.items.some(i=>i.id===baseline&&i.result_available);
+ if(valid)query.set('baseline',baseline);
  if(MBB.plotMode!=='all')query.set('plot',MBB.plotMode==='manual'?[...MBB.plotSelected].join(','):MBB.plotMode);
- history.replaceState(null,'',location.pathname+'?'+query.toString());
+ const url=location.pathname+'?'+query.toString();history.replaceState(null,'',url);
+ const link=mb$('batchComparisonLink');link.hidden=!valid;link.href=valid?url:'';
 }
 function mbPlotMode(mode){if(!MBB.record)return;MBB.plotMode=mode;mbPlot(MBB.record)}
 function mbButtons(){
@@ -87,11 +90,12 @@ function mbRender(record,canStart){
  const bad=item.result_available&&m.torque_numerical_acceptance===false,quality=mbText('td',!item.result_available?'尚无结果':bad?'数值异常 · 原值保留':m.torque_numerical_acceptance===true?'通过原判据':'未报告');if(bad)quality.className='error';
  const phase=mbText('td',mbItemLabels[item.status]||item.status);
  const power=mbText('td','—');power.className='derivedPower';row.append(name,phase,quality,mbText('td',number(m.T_avg_Nm)),power,mbText('td',number(m.T_min_Nm)+' / '+number(m.T_max_Nm)),mbText('td',number(m.K_T_ripple_pct)),mbText('td',item.error||item.execution_id||'尚无实际转矩结果'));rows.append(row);mbLoadPower(item,power,record.id,powerGeneration)}
- mbPlot(record);mbComparisonSetup(record);
+ mbComparisonSetup(record);mbPlot(record);
 }
 function mbComparisonReset(){
  ++mbComparison.generation;mbComparison.pending=false;mbComparison.data=null;mbComparison.batch=null;mbComparison.signature=null;
  const panel=mb$('batchComparePanel');if(!panel)return;panel.hidden=true;mb$('batchBaseline').replaceChildren();mbComparisonClear();
+ mb$('batchComparisonLink').hidden=true;mb$('batchComparisonLink').href='';
 }
 function mbComparisonClear(){
  ++mbComparison.generation;mbComparison.pending=false;mbComparison.data=null;
@@ -102,11 +106,23 @@ function mbComparisonClear(){
 function mbComparisonSetup(record){
  const signature=JSON.stringify(record.items.map(i=>[i.id,i.selection,i.source,i.execution_id,i.model_version,i.measurement_protocol,i.result_available,i.metrics]));
  if(mbComparison.batch===record.id&&mbComparison.signature===signature)return;
- const previous=mbComparison.batch===record.id?mb$('batchBaseline').value:'';mbComparisonClear();
+ const sameBatch=mbComparison.batch===record.id,previous=sameBatch?mb$('batchBaseline').value:'';mbComparisonClear();
  mbComparison.batch=record.id;mbComparison.signature=signature;mb$('batchComparePanel').hidden=false;
  const select=mb$('batchBaseline');select.replaceChildren();const empty=mbText('option','请选择基准材料');empty.value='';select.append(empty);
  for(const item of record.items){const option=mbText('option',mbName(item)+' · '+item.id+(item.result_available?'':' · 尚无结果'));option.value=item.id;option.disabled=!item.result_available;select.append(option)}
- select.value=record.items.some(i=>i.id===previous&&i.result_available)?previous:'';mb$('batchCompareRead').disabled=!select.value;
+ let choice=previous;
+ if(!sameBatch&&typeof location!=='undefined'){
+  const query=new URLSearchParams(location.search),ids=query.getAll('baseline');
+  if(query.getAll('batch').length===1&&query.get('batch')===record.id&&ids.length){
+   if(ids.length===1&&record.items.some(i=>i.id===ids[0]&&i.result_available))choice=ids[0];
+   else mb$('batchCompareError').textContent='链接中的基准不存在、尚无结果或重复，请手动选择；未读取比较。';
+  }
+ }
+ select.value=record.items.some(i=>i.id===choice&&i.result_available)?choice:'';mb$('batchCompareRead').disabled=MBB.loading||!select.value;
+}
+function mbBaselineChanged(){
+ mbComparisonClear();const record=MBB.record;
+ if(record&&record.id===mb$('batchHistory').value&&mbComparison.batch===record.id)mbPlotURL(record);
 }
 async function mbCompare(){
  const record=MBB.record,baseline=mb$('batchBaseline').value,button=mb$('batchCompareRead');
@@ -188,7 +204,7 @@ async function mbAction(action){
  finally{MBB.actionPending=false;if(mb$('batchHistory').value===artifact){await mbLoad();if(failure&&mb$('batchHistory').value===artifact)mb$('batchError').textContent=failure+(mb$('batchError').textContent?'；'+mb$('batchError').textContent:'')}else mbButtons()}
 }
 if(typeof document!=='undefined'){
- mb$('batchBaseline').onchange=mbComparisonClear;mb$('batchCompareRead').onclick=mbCompare;
+ mb$('batchBaseline').onchange=mbBaselineChanged;mb$('batchCompareRead').onclick=mbCompare;
  mb$('batchPlotAll').onclick=()=>mbPlotMode('all');mb$('batchPlotAccepted').onclick=()=>mbPlotMode('accepted');mb$('batchPlotNone').onclick=()=>mbPlotMode('none');
  mb$('batchCatalogRefresh').onclick=mbCatalog;mb$('batchCalibration').onchange=mbEntries;mb$('batchSelectFit').onclick=()=>mbSelectFits();mb$('batchClearSelection').onclick=()=>mbSelectFits(true);
  mb$('batchPrepare').onclick=mbPrepare;mb$('batchRefresh').onclick=()=>mbHistory();mb$('batchHistory').onchange=mbLoad;

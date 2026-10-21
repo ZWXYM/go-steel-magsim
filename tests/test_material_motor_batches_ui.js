@@ -14,8 +14,8 @@ const record={id:'bhbatch_aaaaaaaaaaaa',status:'prepared',dispatch_compatible:tr
  selection:{calibration:'cal_a',key:'prediction:pred_a'},source:{material_name:'WB_a',excluded_grades:['B30P105']},
  analysis_url:'/calibrated-motor/analysis/plan_a',execution_id:'bhexec_existing',metrics:{T_avg_Nm:0,T_min_Nm:0,T_max_Nm:0,K_T_ripple_pct:null}}]};
 function harness(api){
- const nodes=new Map(),calls=[],timers=[],urls=[];
- const c=vm.createContext({document:undefined,MotorPower:require('../static/js/motor_power.js'),URLSearchParams,location:{search:'',pathname:'/calibrated-motor/batches'},history:{replaceState:(state,title,url)=>urls.push(url)},setTimeout:(fn,ms)=>{timers.push(ms);return timers.length},clearTimeout:()=>{},
+ const nodes=new Map(),calls=[],timers=[],urls=[],location={search:'',pathname:'/calibrated-motor/batches'};
+ const c=vm.createContext({document:undefined,MotorPower:require('../static/js/motor_power.js'),URLSearchParams,location,history:{replaceState:(state,title,url)=>{urls.push(url);location.search=url.includes('?')?'?'+url.split('?')[1]:''}},setTimeout:(fn,ms)=>{timers.push(ms);return timers.length},clearTimeout:()=>{},
  fetch:async(url,options={})=>{calls.push({url,method:options.method||'GET',body:options.body});return {ok:true,json:async()=>api(url,options)}}});
  vm.runInContext(fs.readFileSync('static/js/material_motor_batches.js','utf8'),c);
  c.document={getElementById:id=>{if(!nodes.has(id))nodes.set(id,new Node(['batchHistory','batchCalibration','batchBaseline'].includes(id)?'select':'div'));return nodes.get(id)},createElement:tag=>new Node(tag),createElementNS:(ns,tag)=>new Node(tag)};
@@ -239,5 +239,37 @@ function harness(api){
  assert.ok(refreshingComparison.calls.every(c=>c.method==='GET'));assert.equal(refreshingComparison.calls.filter(c=>c.url.includes('/comparison?')).length,1);
  compared.c.mbReset('reset');assert.equal(compared.nodes.get('batchComparePanel').hidden,true);assert.equal(compared.nodes.get('batchCompareCSV').hidden,true);
  assert.equal(compared.nodes.get('batchCompareZIP').hidden,true);assert.equal(compared.nodes.get('batchCompareZIP').href,'');
+ // Bookmark restoration preserves the baseline alongside plot filters; reads remain explicit.
+ const bookmark=harness(async()=>comparison(compareRecord.id,'item_02'));
+ bookmark.c.location.search='?batch='+compareRecord.id+'&baseline=item_02&plot=accepted';bookmark.c.mbRender(compareRecord,false);
+ assert.equal(bookmark.nodes.get('batchBaseline').value,'item_02');assert.equal(bookmark.calls.length,0);
+ assert.equal(bookmark.urls.at(-1),'/calibrated-motor/batches?batch='+compareRecord.id+'&baseline=item_02&plot=accepted');
+ assert.equal(bookmark.nodes.get('batchComparisonLink').hidden,false);assert.equal(bookmark.nodes.get('batchComparisonLink').href,bookmark.urls.at(-1));
+ bookmark.c.mbPlotMode('none');assert.match(bookmark.urls.at(-1),/baseline=item_02&plot=none$/);
+ await bookmark.c.mbCompare();assert.equal(bookmark.calls.length,1);assert.equal(bookmark.calls[0].method,'GET');
+ const bookmarkedRows=bookmark.nodes.get('batchCompareRows').text();bookmark.c.mbRender(compareRecord,false);
+ assert.equal(bookmark.nodes.get('batchCompareRows').text(),bookmarkedRows);assert.equal(bookmark.calls.length,1);
+ bookmark.nodes.get('batchBaseline').value='item_01';bookmark.c.mbBaselineChanged();
+ assert.match(bookmark.urls.at(-1),/baseline=item_01&plot=none$/);assert.equal(bookmark.nodes.get('batchCompareZIP').hidden,true);
+ assert.equal(bookmark.nodes.get('batchCompareRows').children.length,0);
+ bookmark.nodes.get('batchBaseline').value='';bookmark.c.mbBaselineChanged();assert.doesNotMatch(bookmark.urls.at(-1),/baseline=/);
+ assert.equal(bookmark.nodes.get('batchComparisonLink').hidden,true);assert.equal(bookmark.nodes.get('batchCompareRead').disabled,true);
+ // Missing, unavailable or duplicated baselines cannot silently select a different result.
+ for(const query of ['baseline=missing','baseline=item_01&baseline=item_02','baseline=']){
+  const badLink=harness(async()=>{throw Error('must not read comparison')});badLink.c.location.search='?batch='+compareRecord.id+'&'+query;badLink.c.mbRender(compareRecord,false);
+  assert.equal(badLink.nodes.get('batchBaseline').value,'');assert.match(badLink.nodes.get('batchCompareError').textContent,/链接中的基准/);
+  assert.equal(badLink.nodes.get('batchComparisonLink').hidden,true);await badLink.c.mbCompare();assert.equal(badLink.calls.length,0);
+ }
+ const unavailableLink=harness(async()=>record);unavailableLink.c.location.search='?batch='+record.id+'&baseline=item_01';
+ unavailableLink.c.mbRender({...record,items:[{...record.items[0],result_available:false}]},false);
+ assert.equal(unavailableLink.nodes.get('batchBaseline').value,'');assert.match(unavailableLink.nodes.get('batchCompareError').textContent,/尚无结果/);
+ const otherLink=harness(async()=>record);otherLink.c.location.search='?batch=bhbatch_bbbbbbbbbbbb&baseline=item_01';otherLink.c.mbRender(compareRecord,false);
+ assert.equal(otherLink.nodes.get('batchBaseline').value,'');assert.equal(otherLink.nodes.get('batchCompareError').textContent,'');
+ // Cross-batch navigation discards the prior baseline, while a changed result invalidates only its old comparison.
+ bookmark.nodes.get('batchBaseline').value='item_02';bookmark.c.mbBaselineChanged();await bookmark.c.mbCompare();
+ bookmark.c.mbRender({...compareRecord,items:compareRecord.items.map((i,n)=>n?{...i,execution_id:'bhexec_new'}:i)},false);
+ assert.equal(bookmark.nodes.get('batchBaseline').value,'item_02');assert.equal(bookmark.nodes.get('batchCompareZIP').hidden,true);
+ bookmark.c.mbRender({...compareRecord,id:'bhbatch_bbbbbbbbbbbb'},false);
+ assert.equal(bookmark.nodes.get('batchBaseline').value,'');assert.doesNotMatch(bookmark.urls.at(-1),/baseline=/);assert.equal(bookmark.nodes.get('batchComparisonLink').hidden,true);
  console.log('Calibrated batch UI: explicit GET-only baseline deltas, exact CPU preparation, stale/resource isolation, pause/resume, bound power and cached reads: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
