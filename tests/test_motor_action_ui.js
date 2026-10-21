@@ -64,5 +64,24 @@ function harness(){
  // Archive list refresh cannot re-enable a pending archive export.
  const archive=harness(),arWait=deferred();archive.routes.set('POST motor/archive/export',()=>arWait.promise);const ar=archive.c.exportArchive();await archive.c.loadArchive();assert.equal(archive.el('exportArchive').disabled,true);await archive.c.exportArchive();assert.equal(archive.posts().length,1);
  arWait.resolve(reply({files:{'reports_bundle.zip':'/bundle','summary.csv':'/csv','summary.md':'/md'},case_count:1,csv_verified_count:0}));await ar;assert.equal(archive.el('exportArchive').disabled,false);
+
+ // Fractional or missing cores must not be silently rounded into a different request.
+ for(const text of ['1.5','','0','33','2oops']){const invalid=harness();invalid.el('cores').value=text;await invalid.c.prepareMotor();assert.equal(invalid.posts().length,0,'invalid core input must not create a scan: '+text);assert.match(invalid.el('queueNotice').textContent,/核数/);assert.equal(invalid.el('prepareMotor').disabled,false)}
+ const exponent=harness();exponent.el('cores').value='1e1';exponent.routes.set('POST motor/jobs',()=>reply(job(A)));await exponent.c.prepareMotor();assert.equal(exponent.posts()[0].body.cores,10,'scientific notation in a number input must keep its numeric value');
+
+ const noMaterial=harness();noMaterial.state.materials=[];await noMaterial.c.prepareMotor();assert.equal(noMaterial.posts().length,0);assert.match(noMaterial.el('queueNotice').textContent,/至少选择/);
+ const recoverInput=harness();recoverInput.el('cores').value='1.5';await recoverInput.c.prepareMotor();recoverInput.el('cores').value='2';recoverInput.routes.set('POST motor/jobs',()=>reply(job(A)));await recoverInput.c.prepareMotor();assert.equal(recoverInput.el('error').style.display,'none');assert.equal(recoverInput.posts().length,1);
+
+ // Saved configuration is a read-only per-job view, kept through polling redraws.
+ const manifest=(row,cores=2)=>({id:row.id,cores,model_version:'FROZEN_MODEL',design:'Motor-CAD 2',setup:'Setup1',aedt_version:'2025.1',measurement_protocol:row.measurement_protocol,cases:row.cases.map(c=>({id:c.id,material:c.material})),template_sha256:'a'.repeat(64)});
+ const cfg=harness();await cfg.c.jobs();const waiting=deferred(),configRoute='files/motor/'+A+'/manifest.json';cfg.routes.set('GET '+configRoute,()=>waiting.promise);const openConfig=cfg.c.toggleMotorConfiguration(A);
+ await cfg.c.jobs();await cfg.c.toggleMotorConfiguration(A);assert.match(cfg.el('jobs').innerHTML,/正在读取本任务保存配置/);assert.equal(cfg.calls.filter(c=>c.route===configRoute).length,1);
+ waiting.resolve(reply(manifest(cfg.state.rows[0])));await openConfig;assert.match(cfg.el('jobs').innerHTML,/核数<\/th><td>2/);assert.match(cfg.el('jobs').innerHTML,/FROZEN_MODEL/);assert.match(cfg.el('jobs').innerHTML,new RegExp('/files/motor/'+A+'/manifest.json'));
+ await cfg.c.jobs();assert.match(cfg.el('jobs').innerHTML,/核数<\/th><td>2/);await cfg.c.toggleMotorConfiguration(A);assert.doesNotMatch(cfg.el('jobs').innerHTML,/核数<\/th><td>/);await cfg.c.toggleMotorConfiguration(A);assert.match(cfg.el('jobs').innerHTML,/核数<\/th><td>2/);assert.equal(cfg.calls.filter(c=>c.route===configRoute).length,1);assert.equal(cfg.posts().length,0);
+ cfg.routes.set('GET '+configRoute,()=>reply({...manifest(cfg.state.rows[0]),id:B,cores:31}));await cfg.c.readMotorConfiguration(A);assert.match(cfg.el('jobs').innerHTML,/配置暂不可读/);assert.doesNotMatch(cfg.el('jobs').innerHTML,/核数<\/th><td>31/);assert.equal(cfg.posts().length,0);
+ cfg.routes.set('GET '+configRoute,()=>reply(manifest(cfg.state.rows[0],4)));await cfg.c.readMotorConfiguration(A);assert.match(cfg.el('jobs').innerHTML,/核数<\/th><td>4/);assert.equal(cfg.posts().length,0);
+ cfg.state.rows[0].measurement_protocol='periodic_cycle3_v1';await cfg.c.jobs();assert.match(cfg.el('jobs').innerHTML,/协议不一致/);assert.doesNotMatch(cfg.el('jobs').innerHTML,/核数<\/th><td>4/);
+
+ const cpuConfig=harness();vm.runInContext('cpuOnly=true',cpuConfig.c);await cpuConfig.c.jobs();cpuConfig.routes.set('GET '+configRoute,()=>reply(manifest(cpuConfig.state.rows[0])));await cpuConfig.c.toggleMotorConfiguration(A);assert.match(cpuConfig.el('jobs').innerHTML,/FROZEN_MODEL/);assert.equal(cpuConfig.posts().length,0);
  console.log('Motor actions UI: single submit/recovery/continue/export, pending redraw, read ordering, exact source, CPU preparation and no automatic native retry: PASS');
 })().catch(e=>{console.error(e);process.exitCode=1});
