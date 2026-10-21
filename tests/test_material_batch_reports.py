@@ -3,12 +3,15 @@ import copy
 import csv
 import io
 import json
+import math
 import unittest
 import zipfile
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from modules.material_batch_reports import report_bundle, summary_markdown, torque_findings, metrics_nonpositive_points, material_inputs, result_counts
+from modules.material_batch_reports import (report_bundle, summary_markdown, torque_findings,
+    metrics_nonpositive_points, material_inputs, result_counts, verified_operating_point,
+    operating_points, operating_points_csv)
 from modules.material_library import sha
 
 
@@ -138,6 +141,87 @@ class BatchReportTests(unittest.TestCase):
             self.assertTrue(all(e['identity_status']=='unavailable' and e['source_material_id'] is None for e in identities['entries']))
             self.assertEqual(archive.read('item_01/Torque Plots.csv'),b'Time,Torque\r\n0,0\r\n')
             self.assertIn('不补写参数',archive.read('summary.md').decode())
+
+    def power_fixture(self):
+        record=self.record();item=record['items'][0]
+        item.update(execution_id='bhexec_aaaaaaaaaaaa',measurement_protocol=record['measurement_protocol'],
+            records=dict(execution=dict(id='bhexec_aaaaaaaaaaaa'),analysis_plan=dict(id='bhanalysis_bbbbbbbbbbbb')))
+        item['metrics']['torque_csv_sha256']='a'*64
+        execution=dict(id=item['execution_id'],analysis_plan_id='bhanalysis_bbbbbbbbbbbb',result_available=True,
+            material_name=item['source']['material_name'],effective_bank_sha256=item['source']['effective_bank_sha256'],
+            excluded_grades=list(item['source']['excluded_grades']),measurement_protocol=item['measurement_protocol'],
+            requested_protocol=dict(speed_rpm=3000),result=dict(material_name=item['source']['material_name'],
+                model_version=item['model_version'],native_configuration_verified=True,native_analyze_succeeded=True,
+                metrics=copy.deepcopy(item['metrics'])))
+        return record,execution
+
+    def test_power_uses_verified_saved_speed_and_preserves_zero_and_signed_torque(self):
+        record,execution=self.power_fixture();item=record['items'][0];before=copy.deepcopy((record,execution))
+        point=verified_operating_point(item,execution)
+        self.assertEqual(point,dict(speed_rpm=3000,electromagnetic_mechanical_power_W=0))
+        self.assertEqual((record,execution),before)
+        for torque in (-2,2):
+            item['metrics']['T_avg_Nm']=execution['result']['metrics']['T_avg_Nm']=torque
+            execution['requested_protocol']['speed_rpm']=1500
+            self.assertAlmostEqual(verified_operating_point(item,execution)['electromagnetic_mechanical_power_W'],torque*50*math.pi)
+
+    def test_missing_nonfinite_or_unverified_operating_point_never_uses_default_speed(self):
+        for speed in (None,0,-1,True,'3000',float('nan'),float('inf')):
+            record,execution=self.power_fixture();execution['requested_protocol']['speed_rpm']=speed
+            with self.subTest(speed=speed),self.assertRaises(ValueError):verified_operating_point(record['items'][0],execution)
+        for key in ('native_configuration_verified','native_analyze_succeeded'):
+            record,execution=self.power_fixture();execution['result'][key]=False
+            with self.subTest(key=key),self.assertRaises(ValueError):verified_operating_point(record['items'][0],execution)
+        record,execution=self.power_fixture();execution['requested_protocol']={}
+        with self.assertRaises(ValueError):verified_operating_point(record['items'][0],execution)
+        for torque in (True,'2',float('nan'),float('inf')):
+            record,execution=self.power_fixture();record['items'][0]['metrics']['T_avg_Nm']=execution['result']['metrics']['T_avg_Nm']=torque
+            with self.subTest(torque=torque),self.assertRaises(ValueError):verified_operating_point(record['items'][0],execution)
+
+    def test_power_rejects_other_execution_plan_material_bank_scope_protocol_model_and_csv(self):
+        mutations=(lambda e:e.update(id='bhexec_cccccccccccc'),lambda e:e.update(analysis_plan_id='another'),
+            lambda e:e.update(material_name='other'),lambda e:e.update(effective_bank_sha256='other'),
+            lambda e:e.update(excluded_grades=[]),lambda e:e.update(measurement_protocol='other'),
+            lambda e:e['result'].update(model_version='other'),lambda e:e['result'].update(material_name='other'),
+            lambda e:e['result']['metrics'].update(torque_csv_sha256='b'*64),
+            lambda e:e['result']['metrics'].update(T_avg_Nm=1))
+        for mutate in mutations:
+            record,execution=self.power_fixture();mutate(execution)
+            with self.subTest(mutation=mutate),self.assertRaises(ValueError):verified_operating_point(record['items'][0],execution)
+
+    def test_operating_point_reader_skips_pending_and_leaves_unreadable_values_blank(self):
+        record,execution=self.power_fixture();record['items'][1]['metrics']=dict(T_avg_Nm=999)
+        reads=[]
+        def read(key):reads.append(key);raise OSError('record unavailable')
+        manager=SimpleNamespace(chain=SimpleNamespace(execution=SimpleNamespace(get=read)))
+        before=copy.deepcopy(record);points=operating_points(manager,record)
+        self.assertEqual(reads,[execution['id']]);self.assertEqual(points['entries'][0]['status'],'unverified')
+        self.assertIsNone(points['entries'][0]['speed_rpm']);self.assertIsNone(points['entries'][0]['electromagnetic_mechanical_power_W'])
+        self.assertIsNone(points['entries'][1]['T_avg_Nm']);self.assertEqual(points['entries'][1]['status'],'unavailable')
+        rows=list(csv.DictReader(io.StringIO(operating_points_csv(points).decode('utf-8-sig'))))
+        self.assertEqual(rows[0]['speed_rpm'],'');self.assertEqual(rows[0]['electromagnetic_mechanical_power_W'],'')
+        self.assertEqual(record,before);self.assertEqual(points['new_native_solves'],0)
+
+    def test_power_csv_and_json_add_to_report_without_changing_original_member_bytes(self):
+        record,execution=self.power_fixture();execution['result']['metrics']['T_avg_Nm']=record['items'][0]['metrics']['T_avg_Nm']=-2
+        record['items'][0]['metrics']['torque_numerical_acceptance']=False
+        with patch.object(self,'record',return_value=record):source=self.package()
+        source_bytes=source.getvalue();manager=SimpleNamespace(bundle=lambda artifact:io.BytesIO(source_bytes),
+            chain=SimpleNamespace(execution=SimpleNamespace(get=lambda key:execution)))
+        with zipfile.ZipFile(source) as original,zipfile.ZipFile(report_bundle(manager,'test')) as report:
+            for name in ('batch.json','summary.csv','item_01/Torque Plots.csv'):
+                self.assertEqual(report.read(name),original.read(name))
+            points=json.loads(report.read('operating_points.json'));self.assertFalse(points['efficiency_enabled'])
+            row=points['entries'][0];self.assertEqual(row['speed_rpm'],3000)
+            self.assertAlmostEqual(row['electromagnetic_mechanical_power_W'],-200*math.pi)
+            self.assertIs(row['torque_numerical_acceptance'],False)
+            csv_rows=list(csv.DictReader(io.StringIO(report.read('operating_points.csv').decode('utf-8-sig'))))
+            self.assertAlmostEqual(float(csv_rows[0]['electromagnetic_mechanical_power_W']),-200*math.pi)
+            self.assertEqual(csv_rows[1]['electromagnetic_mechanical_power_W'],'')
+            self.assertIn('不是铭牌额定功率',report.read('summary.md').decode())
+            manifest=json.loads(report.read('manifest.json'));self.assertEqual(manifest['version'],'calibrated_batch_summary_v4')
+            for name,digest in manifest['files'].items():self.assertEqual(sha(report.read(name)),digest)
+        self.assertEqual(source.getvalue(),source_bytes)
 
 
 if __name__=='__main__':unittest.main()

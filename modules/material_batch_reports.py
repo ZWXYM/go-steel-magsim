@@ -3,13 +3,14 @@ import io
 import csv
 import json
 import math
+import re
 import zipfile
 from pathlib import PurePosixPath, Path
 
 from modules.material_library import sha
 from modules.material_input_view import MaterialInputView, PARAMETERS
 
-VERSION='calibrated_batch_summary_v3'
+VERSION='calibrated_batch_summary_v4'
 
 
 def torque_findings(metrics):
@@ -108,7 +109,82 @@ def material_inputs_csv(identities):
     return stream.getvalue().encode('utf-8-sig')
 
 
-def summary_markdown(record, identities=None):
+def verified_operating_point(item, execution):
+    """Bind the saved operating point to this batch item before deriving power."""
+    def finite(value):
+        return isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(value)
+    source=item.get('source') or {};metrics=item.get('metrics') or {}
+    result=execution.get('result') or {};actual=result.get('metrics') or {};records=item.get('records') or {}
+    if (item.get('result_available') is not True or execution.get('result_available') is not True
+            or not isinstance(item.get('execution_id'),str) or not re.fullmatch(r'bhexec_[a-f0-9]{12}',item['execution_id'])
+            or execution.get('id')!=item['execution_id']
+            or (records.get('execution') or {}).get('id')!=execution['id']
+            or (records.get('analysis_plan') or {}).get('id')!=execution.get('analysis_plan_id')
+            or not execution.get('analysis_plan_id')
+            or result.get('native_configuration_verified') is not True or result.get('native_analyze_succeeded') is not True):
+        raise ValueError('执行身份、分析计划或原生工况未核验')
+    for key in ('material_name','effective_bank_sha256'):
+        if not isinstance(source.get(key),str) or not source[key] or execution.get(key)!=source[key]:
+            raise ValueError('执行与本条材料来源不符：'+key)
+    if (result.get('material_name')!=source['material_name']
+            or not isinstance(source.get('excluded_grades'),list)
+            or not isinstance(execution.get('excluded_grades'),list)
+            or execution['excluded_grades']!=source['excluded_grades']
+            or not isinstance(item.get('measurement_protocol'),str) or not item['measurement_protocol']
+            or execution.get('measurement_protocol')!=item['measurement_protocol']
+            or not isinstance(item.get('model_version'),str) or not item['model_version']
+            or result.get('model_version')!=item['model_version']):
+        raise ValueError('材料、排除范围、周期或结果版本不符')
+    csv_hash=metrics.get('torque_csv_sha256')
+    if (not isinstance(csv_hash,str) or not re.fullmatch(r'[a-f0-9]{64}',csv_hash)
+            or actual.get('torque_csv_sha256')!=csv_hash
+            or not finite(metrics.get('T_avg_Nm')) or not finite(actual.get('T_avg_Nm'))
+            or actual['T_avg_Nm']!=metrics['T_avg_Nm']):
+        raise ValueError('官方转矩CSV或平均转矩与本条结果不符')
+    speed=(execution.get('requested_protocol') or {}).get('speed_rpm')
+    if not finite(speed) or speed<=0:raise ValueError('保存转速缺失或无效')
+    power=actual['T_avg_Nm']*2*math.pi*speed/60
+    if not math.isfinite(power):raise ValueError('功率折算不是有限数值')
+    return dict(speed_rpm=speed,electromagnetic_mechanical_power_W=power)
+
+
+def operating_points(batches, record):
+    entries=[];saved={}
+    for item in record['items']:
+        metrics=(item.get('metrics') or {}) if item.get('result_available') else {}
+        entry=dict(item=item['id'],material_name=item['source']['material_name'],
+            execution=item.get('execution_id'),analysis_plan=(item.get('records',{}).get('analysis_plan') or {}).get('id'),
+            measurement_protocol=item.get('measurement_protocol'),model_version=item.get('model_version'),
+            effective_bank_sha256=item['source']['effective_bank_sha256'],excluded_grades=item['source']['excluded_grades'],
+            torque_csv_sha256=metrics.get('torque_csv_sha256'),T_avg_Nm=metrics.get('T_avg_Nm'),
+            torque_numerical_acceptance=metrics.get('torque_numerical_acceptance'),speed_rpm=None,
+            electromagnetic_mechanical_power_W=None,status='unavailable',error='尚无实际转矩结果')
+        if item.get('result_available'):
+            try:
+                key=item['execution_id']
+                if key not in saved:saved[key]=batches.chain.execution.get(key)
+                entry.update(verified_operating_point(item,saved[key]),status='verified_saved_operating_point',error=None)
+            except (AttributeError,KeyError,TypeError,ValueError,OSError,OverflowError) as error:
+                entry.update(status='unverified',error='保存工况未能核对：'+str(error))
+        entries.append(entry)
+    return dict(version='batch_operating_points_v1',batch=record['id'],entries=entries,
+        power_definition='T_avg_Nm * 2*pi * saved_speed_rpm / 60; electromagnetic mechanical power, before mechanical losses; not nameplate rating',
+        scope='Derived from verified saved execution and official torque CSV; not an efficiency or material ranking',
+        new_native_solves=0,new_predictions=0,efficiency_enabled=False,optimization_ranking_enabled=False)
+
+
+def operating_points_csv(points):
+    stream=io.StringIO(newline='');writer=csv.writer(stream)
+    fields=('item','material_name','execution','analysis_plan','measurement_protocol','model_version',
+        'effective_bank_sha256','excluded_grades','T_avg_Nm','speed_rpm','electromagnetic_mechanical_power_W',
+        'torque_numerical_acceptance','status','error','torque_csv_sha256')
+    writer.writerow(fields)
+    for entry in points['entries']:
+        writer.writerow([json.dumps(entry[key],ensure_ascii=False) if key=='excluded_grades' else entry.get(key) for key in fields])
+    return stream.getvalue().encode('utf-8-sig')
+
+
+def summary_markdown(record, identities=None, operating=None):
     counts=result_counts(record)
     inputs={entry['item']:entry for entry in (identities or {}).get('entries',[])}
     lines=['# 批量任务摘要','',f"批量：`{record['id']}`；状态：{cell(record['status'])}。",
@@ -140,6 +216,14 @@ def summary_markdown(record, identities=None):
         elif row.get('error'):
             lines.append('  异常：'+cell(row['error']))
         else:lines.append('  尚无可读取的实际转矩结果。')
+    if operating:
+        lines+=['','## 保存工况与转矩折算功率','',
+            '使用本条执行已核验的转速，按平均转矩×2πn/60折算电磁机械功率，未扣机械损耗，不是铭牌额定功率。工况无法核对时留空；原数值异常仍保留。',
+            '| 条目 | 保存转速 r/min | 折算功率 W | 工况核对 |',
+            '| --- | ---: | ---: | --- |']
+        for entry in operating['entries']:
+            lines.append('| '+' | '.join([cell(entry['item']),number(entry['speed_rpm']),
+                number(entry['electromagnetic_mechanical_power_W']),cell('已核对' if entry['status']=='verified_saved_operating_point' else entry['error'])])+' |')
     lines+=['','保持选择顺序，未做材料排名。原转矩点不平滑、不重采样；标定、留出与预测身份分别保留。',
         '仅汇总已保存转矩，不补损耗或效率，不提交任何原生求解。','']
     return '\n'.join(lines)
@@ -154,7 +238,7 @@ def report_bundle(batches, artifact):
             raise ValueError('源批量包路径不符')
         files={name:archive.read(name) for name in names}
     original=files.pop('manifest.json');manifest=json.loads(original)
-    if any(name in files for name in ('summary.md','review.csv','source_manifest.json','material_inputs.json','material_inputs.csv')):
+    if any(name in files for name in ('summary.md','review.csv','source_manifest.json','material_inputs.json','material_inputs.csv','operating_points.json','operating_points.csv')):
         raise ValueError('源批量包已包含派生报告，未覆盖')
     if set(files)!=set(manifest['files']) or any(sha(files[n])!=h for n,h in manifest['files'].items()):
         raise ValueError('源批量包文件哈希不符，未生成摘要')
@@ -165,7 +249,10 @@ def report_bundle(batches, artifact):
     identities=material_inputs(batches,record)
     files['material_inputs.json']=json.dumps(identities,ensure_ascii=False,indent=2).encode('utf8')
     files['material_inputs.csv']=material_inputs_csv(identities)
-    files['summary.md']=summary_markdown(record,identities).encode('utf8')
+    points=operating_points(batches,record)
+    files['operating_points.json']=json.dumps(points,ensure_ascii=False,indent=2,allow_nan=False).encode('utf8')
+    files['operating_points.csv']=operating_points_csv(points)
+    files['summary.md']=summary_markdown(record,identities,points).encode('utf8')
     review=io.StringIO(newline='');writer=csv.writer(review)
     writer.writerow(['item','material','execution','torque_numerical_acceptance','findings','nonpositive_points_count','nonpositive_times_ms','nonpositive_torque_Nm','nonpositive_points_in_metric_window'])
     for row in record['items']:
