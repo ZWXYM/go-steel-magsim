@@ -119,8 +119,8 @@ class HistoryAPITests(unittest.TestCase):
         self.archive();other=ScriptJobHistory(self.root/'other_history',web._script_instance)
         with patch.object(web,'_script_journal_for',return_value=other):self.assertEqual(self.client.get('/api/jobs/history').json['records'],[])
     def test_complete_reader_logs_raw_stdout_and_exit_status(self):
-        job=web._make_job(str(self.script),['never-execute']);web.running_jobs[job['id']]=job;done=threading.Event();raw=b'\x1b[31mGlobal Progress: 1/1\n';proc=SimpleNamespace(stdout=iter([raw]),wait=lambda:None,returncode=0,pid=12345)
-        with patch.object(web.subprocess,'Popen',return_value=proc),patch.object(web,'_advance_queue',side_effect=done.set),patch.object(web,'_start_job',self.original_start):
+        job=web._make_job(str(self.script),['never-execute']);web.running_jobs[job['id']]=job;done=threading.Event();raw=b'\x1b[31mGlobal Progress: 1/1\n';proc=SimpleNamespace(stdout=iter([raw]),wait=lambda:None,returncode=0,pid=12345,poll=lambda:0)
+        with patch.object(web,'ScriptProcessTree',side_effect=ValueError('synthetic identity')),patch.object(web.subprocess,'Popen',return_value=proc),patch.object(web,'_advance_queue',side_effect=done.set),patch.object(web,'_start_job',self.original_start):
             self.assertTrue(web._start_job(job));self.assertTrue(done.wait(4))
         saved=self.history.read(job['id']);self.assertTrue(saved['done']);self.assertEqual(saved['status'],'completed');self.assertEqual(saved['completed'],1)
         token=web._workspace_token()

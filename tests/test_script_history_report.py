@@ -48,6 +48,11 @@ class ScriptHistoryReportTests(unittest.TestCase):
         value=self.history.report_snapshot();self.assertEqual((value['record_count'],value['readable_count']),(2,1))
         self.assertIn('read_error',value['records'][1]);self.assertEqual(before,p.read_bytes())
 
+    def test_stop_attention_error_is_reported_without_exposing_control_internals(self):
+        self.save(status='needs_attention',process_control_error='SYNTHETIC_REMAINING_CHILD',stop_control=dict(private_control='PRIVATE_CONTROL'))
+        value=self.history.report_snapshot();self.assertEqual(value['records'][0]['process_control_error'],'SYNTHETIC_REMAINING_CHILD')
+        self.assertNotIn('PRIVATE_CONTROL',json.dumps(value))
+
     def test_record_limit_is_visible_and_does_not_remove_history(self):
         self.save();self.save('job_B')
         with patch('modules.script_job_history.MAX_RECORDS',1):value=self.history.report_snapshot()

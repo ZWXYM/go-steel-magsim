@@ -99,7 +99,7 @@ class ScriptJobHistory:
                      readable=False,read_only_history=True,worker_state='not_checked',can_stop_here=False)
             try:
                 value=self.read(path.parent.name)
-                for key in ('script','status','queued_at','started','finished','saved_utc','journal_error'):
+                for key in ('script','status','queued_at','started','finished','saved_utc','journal_error','process_control_error'):
                     if isinstance(value.get(key),str):row[key]=value[key][:4096]
                 row.update(readable=True,done=value['done'],revision=value['revision'])
                 row['owner']={key:value['owner'][key][:4096] if isinstance(value['owner'][key],str) else value['owner'][key]

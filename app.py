@@ -30,6 +30,7 @@ sys.path.insert(0, SCRIPT_DIR)
 sys.path.insert(0, MODULES_DIR)  # 所有子模块统一放 modules/
 from modules.task_output import capture_task_stdout
 from modules.script_job_history import ScriptJobHistory
+from modules.script_process_control import ScriptProcessTree
 
 import mx3_generator as gis
 import batch_scheduler as gpb
@@ -835,7 +836,7 @@ def full_direction_analysis():
 def clear_done_jobs():
     """从 running_jobs 中移除已完成/失败/停止的任务。"""
     with _script_dispatch_lock:
-        done_ids = [jid for jid, job in list(running_jobs.items()) if job.get('done') and (job.get('process') is None or job['process'].poll() is not None)]
+        done_ids = [jid for jid, job in list(running_jobs.items()) if job.get('done') and not job.get('termination_attention') and (job.get('process') is None or job['process'].poll() is not None)]
         for jid in done_ids:
             _record_script_job(running_jobs[jid])
             running_jobs.pop(jid, None)
@@ -1055,7 +1056,7 @@ def _record_script_job(job,required=False):
         with job['lock']:
             if '_history_journal' not in job:job['_history_journal']=_script_journal_for(job['workspace_origin']['path'])
             job['revision']=job.get('revision',0)+1
-            fields=('id','script','workspace_origin','status','done','started','queued_at','finished','total','completed','failed','request_id','request_identity','stop_requested','runner_pid','journal_error','revision')
+            fields=('id','script','workspace_origin','status','done','started','queued_at','finished','total','completed','failed','request_id','request_identity','stop_requested','runner_pid','journal_error','revision','process_owner','stop_control','process_control_error','termination_attention')
             snapshot={key:job[key] for key in fields if key in job}
             snapshot.update(owner=_script_instance,saved_utc=datetime.now(timezone.utc).isoformat(),recent_lines=job['lines'][-50:])
             accepted=job['_history_journal'].save(snapshot)
@@ -1099,11 +1100,13 @@ def _make_job(filename, cmd):
         'completed': 0,
         'failed': 0,
         'lock': threading.RLock(),
+        'lifecycle_lock': threading.RLock(),
     }
 
 def _active_job():
     """Return the currently running (non-done, non-queued) job, if any."""
     for jid, job in list(running_jobs.items()):
+        if job.get('termination_attention'):return job
         proc = job.get('process')
         if proc is not None and proc.poll() is None:
             return job
@@ -1136,8 +1139,17 @@ def _start_job(job):
             job['process'] = proc
             job['status'] = 'running'
             if isinstance(getattr(proc,'pid',None),int):job['runner_pid']=proc.pid
+            if isinstance(getattr(proc,'pid',None),int):
+                try:
+                    job['_process_tree']=ScriptProcessTree(proc)
+                    job['process_owner']=job['_process_tree'].identity()
+                except Exception as error:
+                    if proc.poll() is None:job['process_control_error']='进程身份未核对：'+str(error)
             _record_script_job(job);last_save=time.monotonic()
             for raw_line in proc.stdout:
+                if job.get('_process_tree'):
+                    try:job['_process_tree'].observe()
+                    except Exception as error:job['process_control_error']='子进程读取失败：'+str(error)
                 for e in ['utf-8', enc, 'latin-1']:
                     try:
                         line = raw_line.decode(e).rstrip('\r\n'); break
@@ -1158,7 +1170,8 @@ def _start_job(job):
                     _record_script_job(job);last_save=time.monotonic()
             proc.wait()
             rc = proc.returncode
-            job['status'] = 'stopped' if job.get('stop_requested') else 'completed' if rc == 0 else f'failed(rc={rc})'
+            with job['lifecycle_lock']:
+                job['status'] = 'stopped' if job.get('stop_requested') else 'completed' if rc == 0 else f'failed(rc={rc})'
         except Exception as e:
             with job['lock']:
                 job['lines'].append(f'[RUNNER ERROR] {e}')
@@ -1171,9 +1184,19 @@ def _start_job(job):
                 if stream is not None:
                     try:stream.close()
                     except OSError as error:job['journal_error']='日志关闭失败：'+str(error)
-            job['done'] = True
-            job['finished'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            _record_script_job(job)
+            with job['lifecycle_lock']:
+                job['_reader_finished']=True
+                if job.get('_process_tree'):
+                    try:
+                        remaining=job['_process_tree'].remaining()
+                        if remaining:
+                            job['termination_attention']=True
+                            job['process_control_error']='本任务仍有已核对的进程未退出；队列保持等待'
+                    except Exception as error:
+                        job['termination_attention']=True;job['process_control_error']='无法核对任务进程是否退出：'+str(error)
+                if job.get('termination_attention'):job.update(status='needs_attention',done=False)
+                else:job.update(done=True,finished=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                _record_script_job(job)
             # ── Start next queued job ────────────────────────
             _advance_queue()
 
@@ -1314,6 +1337,8 @@ def job_status(job_id):
         'log_cursor': log_cursor,
         'workspace_origin': job.get('workspace_origin'), 'request_id': job.get('request_id'),
         'journal_error': job.get('journal_error'),
+        'process_owner': job.get('process_owner'), 'stop_control': job.get('stop_control'),
+        'termination_attention': job.get('termination_attention',False), 'process_control_error': job.get('process_control_error'),
     })
 
 
@@ -1359,24 +1384,30 @@ def _stop_job_locked(job_id):
             job.update(status='stopped',done=True,finished=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             _record_script_job(job)
             return jsonify(success=True,message='已取消排队，未启动进程')
-        if job.get('stop_requested'):
+        if job.get('stop_requested') and not job.get('termination_attention'):
             return jsonify(success=True,message='停止信号已发送，等待进程退出')
     proc = job.get('process')
-    if proc and proc.poll() is None:
-        try:
-            import signal
-            job['stop_requested'] = True
-            if os.name == 'nt':
-                proc.terminate()
-            else:
-                proc.send_signal(signal.SIGTERM)
-            if not job.get('done'):
-                job['status'] = 'stopping'
-            _record_script_job(job)
-            return jsonify({'success': True, 'message': '停止信号已发送，等待进程退出'})
-        except Exception as e:
-            job['stop_requested'] = False
-            return jsonify({'error': str(e)}), 500
+    if proc and (proc.poll() is None or job.get('termination_attention') or not job.get('done')):
+        control=job.get('_process_tree')
+        if control is None:return jsonify(error='当前服务没有本任务的进程身份，未向未知进程发送停止信号',code='script_stop_unverified'),409
+        with job['lifecycle_lock']:
+            job.update(stop_requested=True,termination_attention=True,status='stopping',done=False)
+            try:
+                result=control.stop();job['stop_control']=result
+                confirmed=result['confirmed'] and (result['root_alive_at_request'] or result.get('action_started') or job.get('_reader_finished'))
+                if confirmed:
+                    job['termination_attention']=False;job.pop('process_control_error',None)
+                    if job.get('_reader_finished'):job.update(status='stopped',done=True,finished=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                    _record_script_job(job)
+                else:
+                    job.update(status='needs_attention',process_control_error='停止未能确认全部已知进程退出；队列保持等待，可检查后重试停止')
+                    _record_script_job(job)
+            except Exception as error:
+                job.update(status='needs_attention',process_control_error='停止核对失败：'+str(error));_record_script_job(job)
+                return jsonify(error=job['process_control_error'],code='script_stop_needs_attention'),409
+        if not confirmed:return jsonify(error=job['process_control_error'],code='script_stop_needs_attention',stop_control=result),409
+        if job.get('_reader_finished'):_advance_queue()
+        return jsonify(success=True,message='本任务已核对的进程树已退出，等待日志读取结束',stop_control=result)
     if not job.get('done'):
         return jsonify(error='任务正在启动，请等待状态更新后再停止'),409
     return jsonify(success=True,message='任务已经结束')

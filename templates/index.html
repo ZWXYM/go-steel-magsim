@@ -957,6 +957,16 @@ select option{background:var(--bg-2)}
   </div>
 </div>
 
+<!-- Script stop confirmation -->
+<dialog id="exec-stop-confirm" aria-labelledby="exec-stop-confirm-title" style="background:var(--bg-2);color:var(--t1);border:1px solid var(--border-hi);border-radius:10px;padding:24px;width:min(520px,92vw)">
+  <h3 id="exec-stop-confirm-title">确认停止此任务</h3>
+  <p id="exec-stop-confirm-identity" style="overflow-wrap:anywhere"></p>
+  <p>将停止本任务已核对的进程树，已保存输出保留。</p>
+  <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px">
+    <button type="button" class="btn btn-g" id="exec-stop-confirm-cancel" autofocus>返回</button>
+    <button type="button" class="btn btn-danger" id="exec-stop-confirm-accept">确认停止</button>
+  </div>
+</dialog>
 <!-- Download check modal -->
 <div id="dl-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;align-items:center;justify-content:center">
   <div style="background:var(--bg-2);border:1px solid var(--border-hi);border-radius:10px;padding:24px 26px;max-width:520px;width:92%;max-height:80vh;overflow-y:auto">

@@ -1,10 +1,12 @@
 /* A panel follows one script/job; closing its view never stops the worker. */
 let _execJobId=null,_execScript=null,_execSource=null,_elapsedTimer=null,_execQueueTimer=null,_jobPollTimer=null;
 let _execEpoch=0,_execLookupEpoch=0,_execPanelOpen=false;
+let _execStopPrompt=null;
 const _execSubmissions=new Map(),_execStops=new Set();
 const _execLogLineLimit=2000;
 function _execCurrent(epoch,job){return _execPanelOpen&&epoch===_execEpoch&&(job==null||job===_execJobId)}
 function _detachExecView(){
+  if(_execStopPrompt)_execStopPrompt.finish(false);
   if(_execSource){_execSource.close();_execSource=null}
   if(_elapsedTimer){clearInterval(_elapsedTimer);_elapsedTimer=null}
   if(_execQueueTimer){clearTimeout(_execQueueTimer);_execQueueTimer=null}
@@ -35,7 +37,7 @@ function clearExecLog(){document.getElementById('exec-log').innerHTML=''}
 function _showExecState(status,done){
   document.getElementById('exec-current').textContent=done?
     (status==='completed'?'任务已完成。':status==='stopped'?'任务已停止，已输出内容保留。':'任务已结束：'+status+'；请查看保存日志。'):
-    (status==='queued'?'排队等待前序任务完成。':status==='starting'?'正在启动执行进程。':status==='stopping'?'正在等待执行进程停止。':'执行中，正在接收输出。');
+    (status==='queued'?'排队等待前序任务完成。':status==='starting'?'正在启动执行进程。':status==='stopping'?'正在等待执行进程停止。':status==='needs_attention'?'任务进程退出尚未确认，队列保持等待；请检查后重试停止。':'执行中，正在接收输出。');
 }
 function _execFinished(jobId,status){
   const record=_execSubmissions.get(_execScript);if(record?.response?.job_id===jobId)_execSubmissions.delete(_execScript);
@@ -72,6 +74,7 @@ async function _reconnectStream(jobId,epoch=_execEpoch){
     document.getElementById('exec-stop-btn').disabled=_execStops.has(jobId)||response.status==='starting'||response.status==='stopping';
     if(response.status==='queued'||response.status==='starting')_pollUntilRunning(jobId,epoch);
     else {_startElapsedTimer(response.started,epoch,jobId);_openSSE(jobId,epoch)}
+    return response;
   }catch(error){_execReconnectError(error,epoch,jobId)}
 }
 function _openSSE(jobId,epoch=_execEpoch){
@@ -93,7 +96,7 @@ function _openSSE(jobId,epoch=_execEpoch){
 }
 function _updateExecBadge(status,done){
   const node=document.getElementById('exec-status-badge');if(!node)return;
-  node.textContent=done?(status==='completed'?'✓ 完成':status==='stopped'?'⏹ 已停止':'✗ '+status):status==='queued'?'⏳ 排队中':status==='starting'?'启动中':status==='stopping'?'停止中':'运行中';
+  node.textContent=done?(status==='completed'?'✓ 完成':status==='stopped'?'⏹ 已停止':'✗ '+status):status==='queued'?'⏳ 排队中':status==='starting'?'启动中':status==='stopping'?'停止中':status==='needs_attention'?'停止需核对':'运行中';
 }
 function _startElapsedTimer(started,epoch=_execEpoch,jobId=_execJobId){
   if(_elapsedTimer)clearInterval(_elapsedTimer);const base=started?new Date(started).getTime():Date.now();
@@ -124,12 +127,37 @@ async function startExec(){
 function _pollUntilRunning(jobId,epoch=_execEpoch){
   if(_execQueueTimer)clearTimeout(_execQueueTimer);_execQueueTimer=setTimeout(()=>{_execQueueTimer=null;if(_execCurrent(epoch,jobId))_reconnectStream(jobId,epoch)},3000);
 }
+function _confirmExecStop(script,jobId,epoch){
+  const dialog=document.getElementById('exec-stop-confirm');
+  if(!dialog||typeof dialog.showModal!=='function')return confirm('停止或取消 '+script+' 的任务 '+jobId+'？');
+  if(_execStopPrompt)_execStopPrompt.finish(false);
+  return new Promise((resolve,reject)=>{
+    let finished=false;
+    const accept=document.getElementById('exec-stop-confirm-accept'),cancel=document.getElementById('exec-stop-confirm-cancel');
+    const finish=value=>{
+      if(finished)return;finished=true;_execStopPrompt=null;
+      accept.onclick=null;cancel.onclick=null;dialog.oncancel=null;
+      if(dialog.open)dialog.close();resolve(!!value&&_execCurrent(epoch,jobId));
+    };
+    document.getElementById('exec-stop-confirm-identity').textContent=script+' · '+jobId;
+    accept.onclick=()=>finish(true);cancel.onclick=()=>finish(false);dialog.oncancel=event=>{event.preventDefault();finish(false)};
+    _execStopPrompt={finish};
+    try{dialog.showModal()}catch(error){finished=true;_execStopPrompt=null;accept.onclick=null;cancel.onclick=null;dialog.oncancel=null;reject(error)}
+  });
+}
 async function stopExec(){
-  const jobId=_execJobId,epoch=_execEpoch;if(!_execPanelOpen||!jobId||_execStops.has(jobId)||!confirm('停止或取消 '+_execScript+' 的任务 '+jobId+'？'))return;
+  const jobId=_execJobId,epoch=_execEpoch;if(!_execPanelOpen||!jobId||_execStops.has(jobId))return;
+  let retryable=false,cancelled=false;
   _execStops.add(jobId);document.getElementById('exec-stop-btn').disabled=true;
-  try{const response=await api('/api/jobs/'+encodeURIComponent(jobId)+'/stop',{method:'POST'});if(response.error||response.success!==true)throw Error(response.error||'停止未获确认');if(_execCurrent(epoch,jobId)){toast(response.message||'停止请求已接收','inf');await _reconnectStream(jobId,epoch)}}
+  try{
+    const decision=_confirmExecStop(_execScript,jobId,epoch),accepted=typeof decision==='boolean'?decision:await decision;
+    if(!accepted||!_execCurrent(epoch,jobId)){cancelled=true;return}
+    const response=await api('/api/jobs/'+encodeURIComponent(jobId)+'/stop',{method:'POST'});
+    if(response.code==='script_stop_needs_attention'&&_execCurrent(epoch,jobId)){toast(response.error,'err');const state=await _reconnectStream(jobId,epoch);retryable=state?.status==='needs_attention'&&!state.done;return}
+    if(response.error||response.success!==true)throw Error(response.error||'停止未获确认');if(_execCurrent(epoch,jobId)){toast(response.message||'停止请求已接收','inf');await _reconnectStream(jobId,epoch)}
+  }
   catch(error){if(_execCurrent(epoch,jobId)){toast('停止失败：'+error.message,'err');document.getElementById('exec-stop-btn').disabled=false}}
-  finally{_execStops.delete(jobId)}
+  finally{_execStops.delete(jobId);if((retryable||cancelled)&&_execCurrent(epoch,jobId))document.getElementById('exec-stop-btn').disabled=false}
 }
 
 function appendExecLine(line){

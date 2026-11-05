@@ -95,13 +95,14 @@ class ScriptDispatchTests(unittest.TestCase):
         self.post();self.start.assert_not_called();self.assertEqual(len(web.job_queue),1)
 
     def test_stop_signals_once_and_waits_for_actual_completion(self):
-        job=self.record();proc=Mock();proc.poll.return_value=None;job.update(status='running',process=proc);web.running_jobs[job['id']]=job
+        job=self.record();proc=Mock();proc.poll.return_value=None;control=Mock();control.stop.return_value=dict(confirmed=True,root_alive_at_request=True);job.update(status='running',process=proc,_process_tree=control);web.running_jobs[job['id']]=job
         for _ in range(2):self.assertTrue(self.client.post('/api/jobs/'+job['id']+'/stop').json['success'])
-        (proc.terminate if os.name=='nt' else proc.send_signal).assert_called_once();self.assertEqual(job['status'],'stopping');self.assertFalse(job['done'])
+        control.stop.assert_called_once();proc.terminate.assert_not_called();self.assertEqual(job['status'],'stopping');self.assertFalse(job['done'])
 
     def test_failed_stop_remains_retryable(self):
-        job=self.record();proc=Mock();proc.poll.return_value=None;proc.terminate.side_effect=OSError('synthetic failure');proc.send_signal.side_effect=OSError('synthetic failure');job.update(status='running',process=proc);web.running_jobs[job['id']]=job
-        self.assertEqual(self.client.post('/api/jobs/'+job['id']+'/stop').status_code,500);self.assertFalse(job['stop_requested']);self.assertFalse(job['done'])
+        job=self.record();proc=Mock();proc.poll.return_value=None;control=Mock();control.stop.side_effect=[dict(confirmed=False,root_alive_at_request=True),dict(confirmed=True,root_alive_at_request=True)];job.update(status='running',process=proc,_process_tree=control);web.running_jobs[job['id']]=job
+        response=self.client.post('/api/jobs/'+job['id']+'/stop');self.assertEqual(response.status_code,409);self.assertTrue(job['termination_attention']);self.assertFalse(job['done'])
+        self.assertTrue(self.client.post('/api/jobs/'+job['id']+'/stop').json['success']);self.assertFalse(job['termination_attention']);self.assertEqual(control.stop.call_count,2)
 
     def test_reader_uses_saved_directory_and_preserves_stopped_state(self):
         job=self.record();job['workspace_origin']['path']=str(self.root);job['stop_requested']=True;done=threading.Event()

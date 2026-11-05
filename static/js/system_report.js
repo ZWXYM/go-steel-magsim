@@ -26,7 +26,7 @@
    for(const row of history.records){
     const tr=node('tr'),identity=node('td'),origin=node('td');identity.append(node('div',row.id),node('small',row.script||row.state_file));
     origin.append(node('div',row.workspace_origin?.path||'未登记原目录'),node('small',`${row.owner?.id||'未登记实例'} · PID ${row.owner?.pid??'—'} · 修订 ${row.revision??'—'}`));
-    tr.append(identity,node('td',row.status||'无法读取'),origin,node('td',row.read_error||row.journal_error||'—'));table.append(tr);
+    tr.append(identity,node('td',row.status||'无法读取'),origin,node('td',row.read_error||row.process_control_error||row.journal_error||'—'));table.append(tr);
    }
    const scroll=node('div');scroll.className='scroll';scroll.append(table);scripts.append(scroll);
   }
