@@ -14,7 +14,7 @@ sys.path.insert(0,str(PROJECT))
 from modules.material_calibration import file_hash
 from modules.motor_workbench import collect_metrics,write_json,license_config
 from modules.motor_workbench import write_scan_summary
-from modules.motor_queue import process_identity,identity_status
+from modules.motor_queue import process_identity,identity_status,require_native_pid,configure_native_transport,bind_new_native_session
 from modules.motor_model_audit import audit_project,comparison_status,LOSS_POLICY
 
 
@@ -69,7 +69,8 @@ def solve_case(path,case,manifest,preflight_only=False):
         if config:
             os.environ['ANSYSLMD_LICENSE_FILE']=config
     from ansys.aedt.core import Desktop,Maxwell2d
-    existing={p.pid for p in psutil.process_iter(['name']) if (p.info['name'] or '').lower()=='ansysedt.exe'}
+    configure_native_transport(manifest.get('aedt_transport','auto'))
+    existing={p.pid for p in psutil.process_iter()}
     project=path/case['project']
     if not project.resolve().is_relative_to(path.resolve()) or file_hash(project)!=case['project_sha256']:
         raise ValueError('扫描副本路径/哈希改变')
@@ -82,15 +83,14 @@ def solve_case(path,case,manifest,preflight_only=False):
     owned=False
     try:
         desktop=Desktop(version=manifest['aedt_version'],non_graphical=True,new_desktop=True,close_on_exit=False)
-        pid=desktop.aedt_process_id
-        if pid in existing:
-            raise RuntimeError('未取得独立 AEDT 进程，拒绝改动已有会话')
+        identity=bind_new_native_session(desktop,existing);pid=identity['pid']
         owned=True
-        write_json(folder/'desktop_session.json',dict(identity=process_identity(pid),
+        write_json(folder/'desktop_session.json',dict(identity=identity,
             dedicated_session=True,created_utc=datetime.now(timezone.utc).isoformat()))
         app=Maxwell2d(project=str(project),design=manifest['design'],solution_type='Transient',
             version=manifest['aedt_version'],non_graphical=True,new_desktop=False,
             aedt_process_id=pid,close_on_exit=False,remove_lock=False)
+        require_native_pid(app.odesktop,pid)
         cycles=3 if manifest.get('measurement_protocol')=='periodic_cycle3_v1' else 1
         app['NumTorqueCycles']=str(cycles)
         if abs(float(app.get_evaluated_value('NumTorqueCycles'))-cycles)>1e-8:
@@ -149,6 +149,7 @@ def solve_case(path,case,manifest,preflight_only=False):
         raise
     finally:
         if desktop is not None and owned:
+            require_native_pid(desktop.odesktop,pid)
             desktop.release_desktop(close_projects=True,close_on_exit=True)
 
 

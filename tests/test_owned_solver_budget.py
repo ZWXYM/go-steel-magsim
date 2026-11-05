@@ -29,6 +29,7 @@ class OwnedBudgetTests(unittest.TestCase):
         write_json(self.folder/'desktop_session.json',dict(dedicated_session=True,closed=False,identity=self.identity))
         write_json(self.root/'motor/queue.lock',dict(torque_execution_id=self.folder.name,token='fixture-token'))
         self.desktop=MagicMock();self.desktop.aedt_process_id=123;self.desktop.odesktop.GetProjectList.return_value=['motor']
+        self.desktop.odesktop.GetProcessID.return_value=123
         self.desktop.odesktop.GetActiveProject.return_value.GetPath.return_value=str(self.folder/'case')
         self.desktop.stop_simulations.return_value='stopped';self.factory=MagicMock(return_value=self.desktop)
 
@@ -79,6 +80,12 @@ class OwnedBudgetTests(unittest.TestCase):
         self.desktop.aedt_process_id=999
         with self.assertRaisesRegex(ValueError,'不是原专用会话'):self.call()
         self.desktop.stop_simulations.assert_not_called();self.desktop.release_desktop.assert_not_called()
+
+    def test_requested_pid_is_insufficient_when_native_server_is_different(self):
+        self.desktop.odesktop.GetProcessID.return_value=999
+        with self.assertRaisesRegex(ValueError,'实际会话PID'):self.call()
+        self.desktop.stop_simulations.assert_not_called();self.desktop.release_desktop.assert_not_called()
+        self.desktop.odesktop.GetProjectList.assert_not_called()
 
     def test_completed_or_closed_job_never_connects(self):
         write_json(self.folder/'result.json',{})

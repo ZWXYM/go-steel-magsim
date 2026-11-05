@@ -8,7 +8,8 @@ PROJECT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT))
 sys.path.insert(0, str(PROJECT/'modules'))
 from modules.maxwell_exporter import generate_amat_content
-from modules.maxwell_material_transport import compatible_import_copy, directional_curves, load_contract, native_arguments, verify_saved_material
+from modules.maxwell_material_transport import (compatible_import_copy, directional_curves, load_contract, native_arguments, verify_saved_material,
+    equivalent_material_name,equivalent_native_arguments,verify_saved_equivalent_material)
 
 
 def fixture(directory, legacy=False):
@@ -28,6 +29,75 @@ def fixture(directory, legacy=False):
 
 
 class MaterialTransport(unittest.TestCase):
+    def scalar_fixture(self,source,contract,direction):
+        c=contract['curves'];curve=c[direction];values=', '.join(str(x) for pair in zip(curve['H'],curve['B']) for x in pair)
+        return source+f"""
+$begin '{equivalent_material_name(contract,direction)}'
+conductivity='{c['conductivity_S_per_m']}'
+mass_density='{c['mass_density_kg_per_m3']}'
+core_loss_equiv_cut_depth='{c['core_loss_equiv_cut_depth']}'
+core_loss_kh='0'
+core_loss_kc='0'
+core_loss_ke='0'
+core_loss_kdc='0'
+$begin 'permeability'
+property_type='nonlinear'
+BTypeForSingleCurve='Normal'
+HUnit='A_per_meter'
+BUnit='tesla'
+IsTemperatureDependent='false'
+$begin 'BHCoordinates'
+Points[{2*len(curve['H'])}: {values}]
+$end 'BHCoordinates'
+$end 'permeability'
+$end '{equivalent_material_name(contract,direction)}'
+"""
+
+    def test_equivalent_payload_uses_unchanged_source_direction_and_no_tensor(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path);before=json.dumps(c,sort_keys=True)
+            for d in ('RD','TD'):
+                args=equivalent_native_arguments(c,d);mu=next(v for v in args if isinstance(v,list) and v[0]=='NAME:permeability')
+                self.assertEqual(mu[1:3],['property_type:=','nonlinear'])
+                coordinates=next(v for v in mu if isinstance(v,list) and v[0]=='NAME:BHCoordinates')
+                self.assertEqual([p[1:] for p in coordinates[2:]],[list(p) for p in zip(c['curves'][d]['H'],c['curves'][d]['B'])])
+            self.assertEqual(json.dumps(c,sort_keys=True),before)
+
+    def test_equivalent_saved_material_preserves_original_tensor_and_nodes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path)
+            for d in ('RD','TD'):
+                saved=self.scalar_fixture(path.read_text(),c,d);result=verify_saved_equivalent_material(saved,c,d)
+                self.assertEqual(result['equivalent_direction'],d);self.assertTrue(result['source_points_unchanged'])
+                self.assertEqual(result['curve_points'],3);self.assertFalse(result['directional_field_verified'])
+
+    def test_equivalent_wrong_unit_or_intrinsic_curve_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path);saved=self.scalar_fixture(path.read_text(),c,'RD')
+            for a,b in (("HUnit='A_per_meter'","HUnit='Oe'"),("BUnit='tesla'","BUnit='uGauss'"),("BTypeForSingleCurve='Normal'","BTypeForSingleCurve='Intrinsic'")):
+                # Change only the appended scalar; the original source remains intact.
+                original=path.read_text();changed=original+saved[len(original):].replace(a,b)
+                with self.assertRaises(ValueError):verify_saved_equivalent_material(changed,c,'RD')
+
+    def test_equivalent_changed_node_cannot_pass_as_original_curve(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path);source=path.read_text();saved=self.scalar_fixture(source,c,'RD')
+            changed=source+saved[len(source):].replace('1.1','1.2')
+            with self.assertRaisesRegex(ValueError,'原H/B节点'):verify_saved_equivalent_material(changed,c,'RD')
+
+    def test_equivalent_nonzero_loss_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path);source=path.read_text();saved=self.scalar_fixture(source,c,'RD')
+            changed=source+saved[len(source):].replace("core_loss_kh='0'","core_loss_kh='1'")
+            with self.assertRaisesRegex(ValueError,'损耗系数'):verify_saved_equivalent_material(changed,c,'RD')
+
+    def test_equivalent_requires_source_tensor_and_explicit_direction(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path);saved=self.scalar_fixture('',c,'RD')
+            with self.assertRaises(ValueError):verify_saved_equivalent_material(saved,c,'RD')
+            for direction in ('ND','rd',None):
+                with self.assertRaises(ValueError):equivalent_native_arguments(c,direction)
+
     def test_new_export_omits_unsupported_empty_modifier_and_quoted_set(self):
         with tempfile.TemporaryDirectory() as tmp:
             text = fixture(tmp).read_text()

@@ -36,6 +36,50 @@ def identity_status(identity):
         return 'unknown'
 
 
+def require_native_pid(native_desktop, expected_pid):
+    """Read the server PID; a client-side requested PID is not an attachment proof."""
+    if type(expected_pid) is not int or expected_pid<=0:
+        raise ValueError('原生会话PID无效')
+    try:
+        actual=native_desktop.GetProcessID()
+    except Exception as error:
+        raise ValueError('无法从AEDT核对实际会话PID；未继续操作') from error
+    if type(actual) is not int or actual!=expected_pid:
+        raise ValueError(f'AEDT实际会话PID与已核对会话不符：期望{expected_pid}，实际{actual}；未继续操作')
+    return actual
+
+
+def native_transport_setting():
+    requested=os.environ.get('MAGSIM_AEDT_TRANSPORT','auto')
+    if requested not in ('auto','grpc','com'):raise ValueError('AEDT连接方式必须为auto、grpc或com')
+    return requested
+
+
+def configure_native_transport(requested):
+    if requested not in ('auto','grpc','com'):raise ValueError('AEDT连接方式必须为auto、grpc或com')
+    if requested!='auto':
+        from ansys.aedt.core.generic.settings import settings
+        settings.use_grpc_api=requested=='grpc'
+    return requested
+
+
+def bind_new_native_session(desktop, existing_pids):
+    """Bind a newly created COM/gRPC server, including COM clients with no PID field."""
+    client_pid=desktop.aedt_process_id
+    if client_pid is not None and (type(client_pid) is not int or client_pid<=0 or client_pid in existing_pids):
+        raise ValueError('没有确认新专用AEDT进程，未操作已有会话')
+    try:actual=desktop.odesktop.GetProcessID()
+    except Exception as error:raise ValueError('无法读取新AEDT的实际PID') from error
+    if (type(actual) is not int or actual<=0 or actual in existing_pids
+            or client_pid is not None and client_pid!=actual):
+        raise ValueError('新AEDT实际PID无效、属于已有会话或与客户端不符')
+    if list(desktop.odesktop.GetProjectList()):raise ValueError('新专用AEDT含有未预期工程，未继续操作')
+    identity=process_identity(actual)
+    if client_pid is None:desktop.aedt_process_id=actual
+    require_native_pid(desktop.odesktop,actual)
+    return identity
+
+
 class QueueLease:
     """File stays on disk; OS releases its byte lock after process exit."""
     def __init__(self,path):

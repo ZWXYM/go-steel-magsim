@@ -10,7 +10,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 
 SCHEMA='go_steel_system_runtime_v1'
-IDENTITY_KEYS=('schema','project_path','root_path','storage_path','cpu_only','auto_resume_queue','source_fingerprint')
+IDENTITY_KEYS=('schema','project_path','root_path','storage_path','cpu_only','auto_resume_queue','aedt_transport','source_fingerprint')
 
 
 def default_root(project):
@@ -35,11 +35,14 @@ def source_manifest(project):
 
 
 def runtime_identity(project,root,storage,*,cpu_only=None,auto_resume_queue=None):
+    transport=os.environ.get('MAGSIM_AEDT_TRANSPORT','auto')
+    if transport not in ('auto','grpc','com'):raise ValueError('AEDT连接方式必须为auto、grpc或com')
     manifest,fingerprint=source_manifest(project)
     return dict(schema=SCHEMA,project_path=str(Path(project).resolve()),root_path=str(Path(root).resolve()),
         storage_path=str(Path(storage).resolve()),source_fingerprint=fingerprint,source_file_count=len(manifest),
         cpu_only=os.environ.get('MAGSIM_CPU_ONLY')=='1' if cpu_only is None else cpu_only,
         auto_resume_queue=os.environ.get('MAGSIM_AUTO_RESUME_QUEUE','1')=='1' if auto_resume_queue is None else auto_resume_queue,
+        aedt_transport=transport,
         started_utc=datetime.now(timezone.utc).isoformat(),process_id=os.getpid(),
         identity_scope='Source snapshot at startup; later file edits do not reload this process')
 

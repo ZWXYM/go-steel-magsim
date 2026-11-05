@@ -21,6 +21,13 @@ from modules.workbench_routes import create_workbench
 
 
 class RuntimeEntry(unittest.TestCase):
+    def test_native_transport_is_part_of_reusing_the_same_service(self):
+        with patch.dict(os.environ,{'MAGSIM_AEDT_TRANSPORT':'auto'}):automatic=self.identity()
+        with patch.dict(os.environ,{'MAGSIM_AEDT_TRANSPORT':'com'}):compatibility=self.identity()
+        self.assertEqual(automatic['source_fingerprint'],compatibility['source_fingerprint'])
+        self.assertFalse(same_runtime(automatic,compatibility))
+        self.assertEqual(compatibility['aedt_transport'],'com')
+
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)

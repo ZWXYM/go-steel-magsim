@@ -13,7 +13,7 @@ from pathlib import Path
 from modules.material_library import sha
 from modules.maxwell_material_transport import load_contract
 from modules.maxwell_native_readiness import require_configured_license_connection
-from modules.motor_queue import QueueLease, identity_status, process_identity,DispatchWindow
+from modules.motor_queue import QueueLease, identity_status, process_identity,DispatchWindow,native_transport_setting
 from modules.motor_workbench import write_json
 
 SUPPORT = ('modules/calibrated_motor_native.py', 'modules/maxwell_material_transport.py',
@@ -31,7 +31,7 @@ def bank_digest(blob):
 def verify_inputs(folder, project):
     folder, project = Path(folder).resolve(), Path(project).resolve()
     manifest = json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
-    if (manifest['id'] != folder.name or manifest.get('new_native_solves') != 0 or
+    if (manifest['id'] != folder.name or manifest.get('new_native_solves') != 0 or manifest.get('aedt_transport','auto') not in ('auto','grpc','com') or
             manifest.get('efficiency_enabled') is not False or
             manifest.get('optimization_ranking_enabled') is not False or
             manifest.get('budget') != dict(native_sessions=1, field_solves=0, motor_solves=0, wall_seconds=240)):
@@ -81,6 +81,7 @@ class CalibratedMotorNative:
     def prepare(self, data):
         if not isinstance(data, dict) or set(data) != {'preparation'}:
             raise ValueError('请选择已冻结的电机准备副本')
+        transport=native_transport_setting()
         parent = self.preparation.get(data['preparation'])
         origin = self.preparation.path(parent['id'])
         artifact = 'calimport_'+uuid.uuid4().hex[:12]
@@ -96,7 +97,7 @@ class CalibratedMotorNative:
             preparation_id=parent['id'], material_name=parent['material_name'], cores=parent['cores'],
             parent_bank_sha256=parent['parent_bank_sha256'], effective_bank_sha256=parent['effective_bank_sha256'],
             training_grades=parent['training_grades'], excluded_grades=parent['excluded_grades'],
-            material_contract=parent['material_contract'], new_native_solves=0,
+            material_contract=parent['material_contract'], new_native_solves=0,aedt_transport=transport,
             efficiency_enabled=False, optimization_ranking_enabled=False,
             budget=dict(native_sessions=1, field_solves=0, motor_solves=0, wall_seconds=240),
             input_hashes={p.relative_to(folder).as_posix():sha(p.read_bytes()) for p in inputs.iterdir()},

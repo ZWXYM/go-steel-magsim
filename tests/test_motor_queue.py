@@ -5,18 +5,88 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 import zipfile
 from pathlib import Path
 from unittest.mock import patch,Mock
 
 PROJECT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(PROJECT))
-from modules.motor_queue import QueueLease,process_identity,identity_status
+from modules.motor_queue import QueueLease,process_identity,identity_status,require_native_pid,native_transport_setting,configure_native_transport,bind_new_native_session
 from modules.motor_workbench import MotorWorkbench,write_json,collect_metrics,acceptance_reason
 from test_workbench import csv_fixture
 
 
 class QueueRecovery(unittest.TestCase):
+    def test_new_COM_session_can_bind_its_native_pid_when_client_field_is_none(self):
+        desktop=Mock();desktop.aedt_process_id=None;desktop.odesktop.GetProcessID.return_value=123;desktop.odesktop.GetProjectList.return_value=[]
+        identity=dict(pid=123,create_time=456.)
+        with patch('modules.motor_queue.process_identity',return_value=identity) as identify:
+            self.assertEqual(bind_new_native_session(desktop,{1,2}),identity)
+        identify.assert_called_once_with(123);self.assertEqual(desktop.aedt_process_id,123)
+        desktop.release_desktop.assert_not_called();desktop.odesktop.QuitApplication.assert_not_called()
+
+    def test_new_grpc_session_keeps_matching_client_and_native_pid(self):
+        desktop=Mock();desktop.aedt_process_id=123;desktop.odesktop.GetProcessID.return_value=123;desktop.odesktop.GetProjectList.return_value=[]
+        with patch('modules.motor_queue.process_identity',return_value=dict(pid=123,create_time=456.)):
+            self.assertEqual(bind_new_native_session(desktop,{1,2})['pid'],123)
+
+    def test_new_native_session_never_adopts_existing_or_conflicting_server(self):
+        for client,actual,existing in ((None,123,{123}),(124,123,set()),(123,123,{123})):
+            desktop=Mock();desktop.aedt_process_id=client;desktop.odesktop.GetProcessID.return_value=actual
+            with self.assertRaises(ValueError):bind_new_native_session(desktop,existing)
+            self.assertEqual(desktop.aedt_process_id,client);desktop.release_desktop.assert_not_called()
+
+    def test_new_session_with_preexisting_project_is_left_untouched(self):
+        desktop=Mock();desktop.aedt_process_id=None;desktop.odesktop.GetProcessID.return_value=123;desktop.odesktop.GetProjectList.return_value=['UserProject']
+        with self.assertRaisesRegex(ValueError,'未预期工程'):bind_new_native_session(desktop,set())
+        self.assertIsNone(desktop.aedt_process_id);desktop.release_desktop.assert_not_called()
+
+    def test_new_session_without_actual_server_pid_cannot_be_claimed(self):
+        for actual in (None,True,'123',0):
+            desktop=Mock();desktop.aedt_process_id=None;desktop.odesktop.GetProcessID.return_value=actual
+            with self.assertRaises(ValueError):bind_new_native_session(desktop,set())
+            self.assertIsNone(desktop.aedt_process_id)
+
+    def test_native_transport_is_validated_before_preparing_a_task(self):
+        for requested in ('auto','grpc','com'):
+            with patch.dict('os.environ',{'MAGSIM_AEDT_TRANSPORT':requested}):self.assertEqual(native_transport_setting(),requested)
+        with patch.dict('os.environ',{'MAGSIM_AEDT_TRANSPORT':'unknown'}):
+            with self.assertRaises(ValueError):native_transport_setting()
+
+    def test_native_transport_changes_only_this_interpreters_explicit_setting(self):
+        setting=SimpleNamespace(use_grpc_api=None)
+        with patch.dict(sys.modules,{'ansys.aedt.core.generic.settings':SimpleNamespace(settings=setting)}):
+            configure_native_transport('auto');self.assertIsNone(setting.use_grpc_api)
+            configure_native_transport('com');self.assertFalse(setting.use_grpc_api)
+            configure_native_transport('grpc');self.assertTrue(setting.use_grpc_api)
+            with self.assertRaises(ValueError):configure_native_transport('unknown')
+
+    def test_native_pid_is_read_from_server(self):
+        api=Mock();api.GetProcessID.return_value=123
+        self.assertEqual(require_native_pid(api,123),123)
+        api.GetProcessID.assert_called_once_with()
+
+    def test_native_pid_mismatch_does_not_mutate_or_close_a_session(self):
+        api=Mock();api.GetProcessID.return_value=999
+        with self.assertRaisesRegex(ValueError,'实际会话PID.*期望123.*实际999'):
+            require_native_pid(api,123)
+        self.assertEqual([c[0] for c in api.mock_calls],['GetProcessID'])
+
+    def test_native_pid_never_coerces_unknown_or_invalid_values(self):
+        for actual in (None,True,'123',123.0,Mock()):
+            api=Mock();api.GetProcessID.return_value=actual
+            with self.assertRaises(ValueError):require_native_pid(api,123)
+        for expected in (None,True,0,-1,'123'):
+            api=Mock()
+            with self.assertRaises(ValueError):require_native_pid(api,expected)
+            api.GetProcessID.assert_not_called()
+
+    def test_native_pid_query_failure_is_visible(self):
+        api=Mock();api.GetProcessID.side_effect=RuntimeError('fixture unavailable')
+        with self.assertRaisesRegex(ValueError,'无法从AEDT'):
+            require_native_pid(api,123)
+
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)

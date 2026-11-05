@@ -231,3 +231,4 @@ static/js/system_recent.js -text
 tests/test_system_recent_ui.js -text
 static/js/motor_power.js -text
 tests/test_motor_power_ui.js -text
+docs/engineering_motor_mode_20261105.md -text

@@ -96,6 +96,7 @@ if __name__=='__main__':
         print(json.dumps(dict(project_path=str(PROJECT),root_path=str(root),storage_path=str(storage),
             cpu_only=os.environ.get('MAGSIM_CPU_ONLY')=='1',
             auto_resume_queue=os.environ.get('MAGSIM_AUTO_RESUME_QUEUE')=='1',
+            aedt_transport=os.environ.get('MAGSIM_AEDT_TRANSPORT','auto'),
             requested_port=args.port,page=args.page,read_only=True,application_started=False,
             scope='Resolved launch configuration only; no license checkout or native readiness certification'),
             ensure_ascii=False,indent=2),flush=True)

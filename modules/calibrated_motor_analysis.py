@@ -1,6 +1,7 @@
 """CPU plans and official torque output for BH-only materials; never solve."""
 import io
 import json
+import math
 import re
 import shutil
 import uuid
@@ -11,14 +12,18 @@ from pathlib import Path
 import numpy as np
 from modules.material_library import sha
 from modules.maxwell_material_transport import load_contract, verify_saved_material
-from modules.motor_model_audit import audit_project
+from modules.motor_model_audit import audit_project,one,value
 from modules.motor_workbench import numeric_csv, unit, write_json
 
 VERSION='BH_only_torque_output_v1'
 PROTOCOLS={
     'v8_2_cycle1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10]),
     'periodic_cycle3_v1':dict(cycles=3,source_samples=91,stop_s=.03,selected_window_ms=[20,30]),
-    'v8_2_cycle1_smooth_bh_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],solver_settings={'SmoothBHCurve':True})}
+    'v8_2_cycle1_smooth_bh_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],solver_settings={'SmoothBHCurve':True}),
+    'v8_2_cycle1_RD_equivalent_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1'),
+    'v8_2_cycle1_TD_equivalent_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='TD',constitutive_model='scalar_direction_equivalent_v1'),
+    'v8_2_cycle1_RD_equivalent_stable_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1',
+        solver_settings={'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100})}
 
 
 def protocol(name):
@@ -29,8 +34,24 @@ def protocol(name):
 
 
 def execution_model_version(measurement):
-    protocol(measurement)
+    p=protocol(measurement)
+    if p.get('equivalent_direction'):
+        return 'V8_2_scalar_'+p['equivalent_direction']+'_equivalent_BH_only'+('_stable' if p.get('solver_settings') else '')+'_v1'
     return 'V8_2_object_CS_BH_only_torque_smoothBH_v1' if measurement=='v8_2_cycle1_smooth_bh_v1' else 'V8_2_object_CS_BH_only_torque_v1'
+
+
+def verify_solver_settings(saved_text,requested):
+    if not requested:return {}
+    setup=one(saved_text,'Setup1');found={}
+    for key,expected in requested.items():
+        actual=value(setup,key);found[key]=actual
+        if type(expected) is bool:matches=actual==str(expected).lower()
+        elif type(expected) in (int,float):
+            try:matches=math.isfinite(float(actual)) and math.isclose(float(actual),expected,rel_tol=1e-12,abs_tol=1e-12)
+            except (TypeError,ValueError):matches=False
+        else:matches=False
+        if not matches:raise ValueError('实际保存求解设置不符：'+key)
+    return found
 
 
 def collect_torque(path,measurement='v8_2_cycle1'):

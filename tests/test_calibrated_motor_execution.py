@@ -9,6 +9,7 @@ import sys
 import time
 import unittest
 from types import SimpleNamespace
+from pathlib import Path
 from unittest.mock import MagicMock,patch
 
 from flask import Flask
@@ -31,7 +32,7 @@ class ExecutionTests(unittest.TestCase):
 
     def audit(self,cycles=1):
         return dict(local_CS_verified=True,moving_insert_count=48,
-            inserts=[dict(material=self.plan['material_name']) for _ in range(48)],
+            inserts=[dict(name='GOES_'+str(i),material=self.plan['material_name']) for i in range(48)],
             core_loss=dict(complete_insert_coverage=True,enabled_object_names=['Rotor','Stator']+['GOES_'+str(i) for i in range(48)]),
             operating_point=dict(speed_rpm=3000,poles=4,cycles=str(cycles),points_per_cycle='30'),
             setup=dict(StopTime='.03s' if cycles==3 else '.01s',TimeStep='.000333333333333s',UseAdaptiveTimeStep='false',
@@ -64,14 +65,54 @@ class ExecutionTests(unittest.TestCase):
 
     def fake_run(self,record,app=None):
         self.measurement=record['measurement_protocol'];folder=self.simulated_start(record);desktop=MagicMock();desktop.release_desktop.return_value=True
+        desktop.odesktop.GetProcessID.return_value=os.getpid()
         app=app or self.mock_app();cycles=record['requested_protocol']['cycles']
         with patch.object(worker,'require_configured_license_connection',return_value={'TCP':True}),\
              patch.object(worker,'create_session',return_value=(desktop,process_identity())),\
              patch.object(worker,'open_app',return_value=app),\
+             patch.object(worker,'verify_solver_settings',side_effect=lambda text,requested:{k:str(v).lower() for k,v in (requested or {}).items()}),\
              patch.object(worker,'launch_budget_watch',return_value=None),\
              patch.object(worker,'verify_model',return_value=self.audit(cycles)),patch.object(worker,'export_report',side_effect=self.export):
             state=worker.run(folder,self.motor.storage,self.native.storage)
         return folder,state,app,desktop
+
+    def test_equivalent_protocols_have_distinct_model_identity(self):
+        from modules.calibrated_motor_analysis import protocol,execution_model_version
+        original=protocol('v8_2_cycle1')
+        self.assertNotIn('equivalent_direction',original)
+        versions={execution_model_version('v8_2_cycle1')}
+        for direction in ('RD','TD'):
+            name='v8_2_cycle1_'+direction+'_equivalent_v1';p=protocol(name)
+            self.assertEqual(p['equivalent_direction'],direction);self.assertEqual(p['source_samples'],31)
+            self.assertEqual(p['requested_time_step_s'],original['requested_time_step_s'])
+            versions.add(execution_model_version(name))
+        self.assertEqual(len(versions),3)
+
+    def test_open_app_requires_the_servers_actual_pid_before_configuration(self):
+        app=MagicMock();app.odesktop.GetProcessID.return_value=999
+        with patch.dict(sys.modules,{'ansys.aedt.core':SimpleNamespace(Maxwell2d=MagicMock(return_value=app))}):
+            with self.assertRaisesRegex(ValueError,'实际会话PID'):
+                worker.open_app(Path('unused.aedt'),dict(design='Motor',aedt_version='2025.1'),dict(pid=123))
+        app.analyze_setup.assert_not_called();app.save_project.assert_not_called()
+
+    def equivalent_configuration(self,direction):
+        record=self.ready('v8_2_cycle1_'+direction+'_equivalent_v1');folder=self.exe.path(record['id']);app=self.mock_app()
+        app.materials.odefinition_manager.GetProjectMaterialNames.return_value=[]
+        with patch.object(worker,'verify_model',return_value=self.audit()) as model,\
+             patch.object(worker,'verify_saved_equivalent_material',return_value={'equivalent_direction':direction,'source_points_unchanged':True}):
+            result=worker.configure(app,folder/'inputs/motor.aedt',record,folder)
+        name=worker.equivalent_material_name(record['material_contract'],direction)
+        args=app.materials.odefinition_manager.AddMaterial.call_args.args[0]
+        self.assertEqual(args,worker.equivalent_native_arguments(record['material_contract'],direction))
+        for row in self.audit()['inserts']:self.assertEqual(app.modeler[row['name']].material_name,name)
+        self.assertTrue(result['original_loss_selection_preserved']);self.assertTrue((folder/'equivalent_material.json').exists())
+        self.assertTrue(model.call_args.kwargs['execution_material']);app.analyze_setup.assert_not_called()
+
+    def test_RD_equivalent_configuration_changes_only_the_new_material_assignment(self):
+        self.equivalent_configuration('RD')
+
+    def test_TD_equivalent_configuration_uses_the_TD_source(self):
+        self.equivalent_configuration('TD')
 
     def test_smooth_diagnostic_preserves_legacy_protocol_and_uses_distinct_model_version(self):
         from modules.calibrated_motor_analysis import protocol,execution_model_version
@@ -85,11 +126,11 @@ class ExecutionTests(unittest.TestCase):
     def test_smooth_configuration_requires_actual_saved_flag_before_analyze(self):
         record=self.ready('v8_2_cycle1_smooth_bh_v1');folder=self.exe.path(record['id']);app=self.mock_app()
         before=self.audit();before['setup']['SmoothBHCurve']='false';after=copy.deepcopy(before);after['setup']['SmoothBHCurve']='true'
-        with patch.object(worker,'verify_model',side_effect=[before,after]):
+        with patch.object(worker,'verify_model',side_effect=[before,after]),patch.object(worker,'verify_solver_settings',return_value={'SmoothBHCurve':'true'}):
             configuration=worker.configure(app,folder/'inputs/motor.aedt',record,folder)
         self.assertIs(app.get_setup.return_value.props['SmoothBHCurve'],True)
         self.assertEqual(configuration['solver_settings_requested'],{'SmoothBHCurve':True});app.analyze_setup.assert_not_called()
-        with patch.object(worker,'verify_model',return_value=before):
+        with patch.object(worker,'verify_model',return_value=before),patch.object(worker,'verify_solver_settings',side_effect=ValueError('平滑设置未保存')):
             with self.assertRaisesRegex(ValueError,'平滑设置'):worker.configure(app,folder/'inputs/motor.aedt',record,folder)
         app.analyze_setup.assert_not_called()
 
@@ -98,10 +139,10 @@ class ExecutionTests(unittest.TestCase):
         self.assertEqual(state['status'],'completed');saved=read(folder/'result.json')
         self.assertEqual(saved['model_version'],'V8_2_object_CS_BH_only_torque_smoothBH_v1')
         self.assertEqual(saved['solver_settings'],{'SmoothBHCurve':True});self.assertFalse(saved['efficiency_enabled'])
-        with patch('modules.calibrated_motor_execution.audit_project',return_value=self.audit()):
+        with patch('modules.calibrated_motor_execution.audit_project',return_value=self.audit()),patch('modules.calibrated_motor_execution.verify_solver_settings',return_value={'SmoothBHCurve':'true'}):
             self.assertTrue(self.exe.get(record['id'])['result_available'])
         bad=self.audit();bad['setup']['SmoothBHCurve']='false'
-        with patch('modules.calibrated_motor_execution.audit_project',return_value=bad):
+        with patch('modules.calibrated_motor_execution.audit_project',return_value=bad),patch('modules.calibrated_motor_execution.verify_solver_settings',return_value={'SmoothBHCurve':'true'}):
             with self.assertRaisesRegex(ValueError,'平滑诊断'):self.exe.get(record['id'])
 
     def test_smooth_requested_inputs_are_frozen_and_original_plan_is_not_rewritten(self):
@@ -256,6 +297,7 @@ class ExecutionTests(unittest.TestCase):
 
     def test_mocked_app_initialization_failure_releases_only_owned_session(self):
         record=self.ready();folder=self.simulated_start(record);desktop=MagicMock();desktop.release_desktop.return_value=True
+        desktop.odesktop.GetProcessID.return_value=os.getpid()
         with patch.object(worker,'require_configured_license_connection',return_value={'TCP':True}),\
              patch.object(worker,'create_session',return_value=(desktop,process_identity())),\
              patch.object(worker,'open_app',side_effect=RuntimeError('mock initialization failure')):

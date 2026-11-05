@@ -14,7 +14,7 @@ from modules.material_library import sha
 from modules.maxwell_material_transport import native_arguments, verify_saved_material
 from modules.maxwell_native_readiness import require_configured_license_connection
 from modules.motor_model_audit import audit_project
-from modules.motor_queue import QueueLease, process_identity, identity_status
+from modules.motor_queue import QueueLease, process_identity, identity_status, require_native_pid,configure_native_transport,bind_new_native_session
 from modules.motor_workbench import license_config, write_json
 
 
@@ -83,15 +83,15 @@ def run(folder):
         if configured: os.environ.setdefault('ANSYSLMD_LICENSE_FILE',configured)
         import psutil
         from ansys.aedt.core import Desktop,Maxwell2d
+        configure_native_transport(manifest.get('aedt_transport','auto'))
         # Every pre-existing PID is excluded, even when its name is unreadable.
         existing={p.pid for p in psutil.process_iter()}
         desktop=Desktop(version='2025.1',non_graphical=True,new_desktop=True,close_on_exit=False)
-        pid=desktop.aedt_process_id
-        if not pid or pid in existing: raise ValueError('AEDT未建立新的专用会话')
-        identity=process_identity(pid);owned=True
+        identity=bind_new_native_session(desktop,existing);pid=identity['pid'];owned=True
         write_json(folder/'desktop_session.json',dict(identity=identity,dedicated_session=True,closed=False))
         app=Maxwell2d(project=str(project),design='Motor-CAD 2',version='2025.1',
             non_graphical=True,new_desktop=False,aedt_process_id=pid,close_on_exit=False,remove_lock=False)
+        require_native_pid(app.odesktop,pid)
         summary=import_and_preflight(app,project,manifest['material_contract'],folder)
         summary.update(parent_bank_sha256=manifest['parent_bank_sha256'],effective_bank_sha256=manifest['effective_bank_sha256'],
             excluded_grades=manifest['excluded_grades'],preparation_id=manifest['preparation_id'])
@@ -102,6 +102,7 @@ def run(folder):
         cleanup_error=None
         if owned and desktop is not None and identity_status(identity)=='alive':
             try:
+                require_native_pid(desktop.odesktop,identity['pid'])
                 if desktop.release_desktop(close_projects=True,close_on_exit=True) is False:
                     raise ValueError('原生API未确认释放专用会话')
                 write_json(folder/'desktop_session.json',dict(identity=identity,dedicated_session=True,closed=True))

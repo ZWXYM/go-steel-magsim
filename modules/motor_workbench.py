@@ -18,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 from modules.material_calibration import file_hash
-from modules.motor_queue import QueueLease,process_identity,identity_status,active_processes,DispatchWindow
+from modules.motor_queue import QueueLease,process_identity,identity_status,active_processes,DispatchWindow,native_transport_setting
 from modules.motor_model_audit import audit_project,comparison_status,LOSS_POLICY
 
 GOES=re.compile(r"Name='(GOES_V3_\d{2}(?:_\d+)?)'")
@@ -309,7 +309,7 @@ class MotorWorkbench:
         manifest=dict(id=job_id,created_utc=datetime.now(timezone.utc).isoformat(),status='prepared',
             template_sha256=cat['template_sha256'],template_source=str(self.template),
             model_version='V8_2_object_CS_loss_scope_v2',design='Motor-CAD 2',setup='Setup1',cores=cores,
-            aedt_version='2025.1',cases=cases,worker_sha256=file_hash(self.project/'tools/motor_scan_worker.py'),
+            aedt_version='2025.1',aedt_transport=native_transport_setting(),cases=cases,worker_sha256=file_hash(self.project/'tools/motor_scan_worker.py'),
             support_source_sha256={name:file_hash(self.project/name) for name in ('modules/motor_workbench.py','modules/material_calibration.py','modules/motor_queue.py','modules/motor_model_audit.py')},
             measurement_protocol=measurement,torque_cycles=3 if measurement=='periodic_cycle3_v1' else 1,
             result_reuse=False,existing_results_deleted=False,new_desktop=True,

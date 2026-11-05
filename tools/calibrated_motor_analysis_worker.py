@@ -14,12 +14,13 @@ from pathlib import Path
 
 PROJECT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(PROJECT))
-from modules.calibrated_motor_analysis import collect_torque,execution_model_version
+from modules.calibrated_motor_analysis import collect_torque,execution_model_version,verify_solver_settings
 from modules.calibrated_motor_execution import read,verify_inputs,verify_model,BUDGET,BUDGET_STOP_POLICY
 from modules.material_library import sha
-from modules.motor_queue import QueueLease,process_identity,identity_status
+from modules.motor_queue import QueueLease,process_identity,identity_status,require_native_pid,configure_native_transport,bind_new_native_session
 from modules.motor_workbench import write_json,license_config
 from modules.maxwell_native_readiness import require_configured_license_connection
+from modules.maxwell_material_transport import equivalent_material_name,equivalent_native_arguments,verify_saved_equivalent_material
 from tools.motor_scan_worker import export_report
 
 def launch_budget_watch(folder,deadline):
@@ -74,9 +75,11 @@ def stop_owned_at_budget(folder,desktop_factory=None):
     if desktop_factory is None:
         from ansys.aedt.core import Desktop
         desktop_factory=Desktop
+    configure_native_transport(m.get('aedt_transport','auto'))
     desktop=desktop_factory(version=m['aedt_version'],non_graphical=True,new_desktop=False,
         aedt_process_id=identity['pid'],close_on_exit=False)
     if desktop.aedt_process_id!=identity['pid'] or identity_status(identity)!='alive':raise ValueError('连接的会话不是原专用会话，未停止')
+    require_native_pid(desktop.odesktop,identity['pid'])
     projects=list(desktop.odesktop.GetProjectList())
     if projects!=['motor']:raise ValueError('专用会话包含非本案工程，未停止')
     path=Path(desktop.odesktop.GetActiveProject().GetPath()).resolve()
@@ -125,6 +128,16 @@ def seconds(value):
 
 def configure(app,project,m,folder):
     before=verify_model(project,m);p=m['requested_protocol']
+    direction=p.get('equivalent_direction')
+    if direction:
+        name=equivalent_material_name(m['material_contract'],direction)
+        if name.casefold() in {n.casefold() for n in app.materials.odefinition_manager.GetProjectMaterialNames()}:
+            raise ValueError('新执行副本已有同名方向等效材料；不覆盖')
+        app.materials.odefinition_manager.AddMaterial(equivalent_native_arguments(m['material_contract'],direction))
+        for row in before['inserts']:app.modeler[row['name']].material_name=name
+        app.save_project(str(project))
+        transported=verify_saved_equivalent_material(project.read_text(encoding='utf-8-sig'),m['material_contract'],direction)
+        write_json(folder/'equivalent_material.json',transported)
     app['NumTorqueCycles']=str(p['cycles']);app['NumTorquePointsPerCycle']='30'
     if (abs(float(app.get_evaluated_value('NumTorqueCycles'))-p['cycles'])>1e-8 or
         abs(float(app.get_evaluated_value('NumTorquePointsPerCycle'))-30)>1e-8):raise ValueError('周期/采样变量未实际应用')
@@ -134,7 +147,7 @@ def configure(app,project,m,folder):
         SaveFieldsType='Every N Steps',**{'N Steps':'1','Steps From':'0s','Steps To':format(p['stop_s'],'.12g')+'s'})
     if p.get('solver_settings'):setup.props.update(p['solver_settings'])
     if setup.update() is not True:raise ValueError('原生时间设置更新失败')
-    app.save_project(str(project));after=verify_model(project,m)
+    app.save_project(str(project));after=verify_model(project,m,execution_material=True)
     if (after['operating_point']['cycles']!=str(p['cycles']) or after['operating_point']['points_per_cycle']!='30' or
         not math.isclose(seconds(after['setup']['StopTime']),p['stop_s'],rel_tol=1e-10,abs_tol=1e-12) or
         not math.isclose(seconds(after['setup']['TimeStep']),p['requested_time_step_s'],rel_tol=1e-10,abs_tol=1e-12) or
@@ -142,13 +155,12 @@ def configure(app,project,m,folder):
         after['setup']['FastReachSteadyState']!='false' or
         set(before['core_loss']['enabled_object_names'])!=set(after['core_loss']['enabled_object_names'])):
         raise ValueError('实际保存周期/时间设置或原损耗对象与请求不符')
-    if p.get('solver_settings') and after['setup'].get('SmoothBHCurve')!='true':
-        raise ValueError('实际保存B-H平滑设置与诊断协议不符，未求解')
+    saved_solver=verify_solver_settings(project.read_text(encoding='utf-8-sig'),p.get('solver_settings'))
     valid=app.validate_simple(str(folder/'validation.log'))
     if valid!=1:raise ValueError('实际分析工程预检未通过：'+str(valid))
     record=dict(native_configuration_verified=True,requested_protocol=p,setup=after['setup'],operating_point=after['operating_point'],
         validation=valid,configured_project_sha256=sha(project.read_bytes()),core_loss_object_names=after['core_loss']['enabled_object_names'],
-        original_loss_selection_preserved=True,solver_settings_requested=p.get('solver_settings',{}),efficiency_enabled=False,optimization_ranking_enabled=False)
+        original_loss_selection_preserved=True,solver_settings_requested=p.get('solver_settings',{}),solver_settings_saved=saved_solver,efficiency_enabled=False,optimization_ranking_enabled=False)
     write_json(folder/'configuration.json',record);return record
 
 def execute(app,project,m,folder,deadline,phase):
@@ -165,7 +177,7 @@ def execute(app,project,m,folder,deadline,phase):
     phase('collecting');report=folder/'case/reports/Torque Plots.csv'
     export_report(app,'WB_BH_Torque',['-Moving1.Torque'],report)
     metrics=collect_torque(report,m['measurement_protocol'])
-    app.save_project(str(project));verify_model(project,m)
+    app.save_project(str(project));verify_model(project,m,execution_material=True)
     result=dict(execution_id=m['id'],analysis_plan_id=m['analysis_plan_id'],native_import_id=m['native_import_id'],
         material_name=m['material_name'],model_version=execution_model_version(m['measurement_protocol']),measurement_protocol=m['measurement_protocol'],
         parent_bank_sha256=m['parent_bank_sha256'],effective_bank_sha256=m['effective_bank_sha256'],
@@ -176,6 +188,11 @@ def execute(app,project,m,folder,deadline,phase):
         efficiency_enabled=False,optimization_ranking_enabled=False,source_scope='actual_calibrated_material_motor_torque_only')
     if m['requested_protocol'].get('solver_settings'):
         result['solver_settings']=m['requested_protocol']['solver_settings']
+    if m['requested_protocol'].get('equivalent_direction'):
+        result.update(constitutive_model='scalar_direction_equivalent_v1',equivalent_direction=m['requested_protocol']['equivalent_direction'],
+            actual_material_name=equivalent_material_name(m['material_contract'],m['requested_protocol']['equivalent_direction']),
+            model_scope='Direction-equivalent scalar B-H engineering comparison; not local RD/TD anisotropy',
+            equivalent_material_verification=read(folder/'equivalent_material.json'))
     write_json(folder/'result.json',result)
     names=['execution_id','material_name','measurement_protocol','T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_csv_sha256']
     with (folder/'summary.csv').open('w',encoding='utf-8-sig',newline='') as stream:
@@ -189,23 +206,23 @@ def create_session(project,m,folder):
     configured,_=license_config()
     if configured:os.environ.setdefault('ANSYSLMD_LICENSE_FILE',configured)
     from ansys.aedt.core import Desktop
+    configure_native_transport(m.get('aedt_transport','auto'))
     existing={p.pid for p in psutil.process_iter()}
     desktop=Desktop(version=m['aedt_version'],non_graphical=True,new_desktop=True,close_on_exit=False)
-    pid=desktop.aedt_process_id
-    if not pid or pid in existing:
-        write_json(folder/'desktop_unowned.json',dict(pid=pid,reason='not demonstrably new; untouched'))
-        raise ValueError('没有确认新专用AEDT进程，未操作已有会话')
-    try:identity=process_identity(pid)
-    except Exception:
-        write_json(folder/'desktop_session.json',dict(identity={'pid':pid},dedicated_session_unconfirmed=True,closed=False));raise
-    write_json(folder/'desktop_session.json',dict(identity=identity,dedicated_session=True,closed=False))
+    try:identity=bind_new_native_session(desktop,existing)
+    except Exception as error:
+        write_json(folder/'desktop_unowned.json',dict(pid=desktop.aedt_process_id,reason=str(error),untouched=True));raise
+    write_json(folder/'desktop_session.json',dict(identity=identity,dedicated_session=True,closed=False,
+        requested_transport=m.get('aedt_transport','auto'),actual_transport='grpc' if desktop.is_grpc_api else 'com',native_PID_verified=True))
     # Record ownership before app construction, which can fail independently.
     return desktop,identity
 
 def open_app(project,m,identity):
     from ansys.aedt.core import Maxwell2d
-    return Maxwell2d(project=str(project),design=m['design'],version=m['aedt_version'],non_graphical=True,
+    app=Maxwell2d(project=str(project),design=m['design'],version=m['aedt_version'],non_graphical=True,
         new_desktop=False,aedt_process_id=identity['pid'],close_on_exit=False,remove_lock=False)
+    require_native_pid(app.odesktop,identity['pid'])
+    return app
 
 def claim_queue(folder,motor_storage,state):
     # Windows venv python.exe is a launcher that waits for its real child.
@@ -269,6 +286,7 @@ def run(folder,motor_storage,native_storage):
             status=identity_status(identity)
             if status=='alive':
                 try:
+                    require_native_pid(desktop.odesktop,identity['pid'])
                     if desktop.release_desktop(close_projects=True,close_on_exit=True) is False:raise ValueError('原生API未确认释放')
                     write_json(folder/'desktop_session.json',dict(identity=identity,dedicated_session=True,closed=True))
                 except Exception as exc:cleanup_error=str(exc)

@@ -11,7 +11,7 @@ from unittest.mock import patch
 import numpy as np
 from flask import Flask
 import test_calibrated_motor_native as fixtures
-from modules.calibrated_motor_analysis import CalibratedMotorAnalysis,collect_torque
+from modules.calibrated_motor_analysis import CalibratedMotorAnalysis,collect_torque,protocol,execution_model_version,verify_solver_settings
 from modules.motor_waveforms import MotorWaveforms
 from modules.motor_workbench import collect_metrics,write_json
 from modules.material_library import sha
@@ -20,6 +20,26 @@ from test_workbench import csv_fixture
 
 
 class BHAnalysisTests(unittest.TestCase):
+    def test_stable_equivalent_has_a_new_identity_and_unchanged_time_and_curve_role(self):
+        original=protocol('v8_2_cycle1_RD_equivalent_v1');stable=protocol('v8_2_cycle1_RD_equivalent_stable_v1')
+        for key in ('equivalent_direction','cycles','source_samples','stop_s','requested_time_step_s'):
+            self.assertEqual(original[key],stable[key])
+        self.assertNotIn('solver_settings',original)
+        self.assertEqual(stable['solver_settings'],{'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100})
+        self.assertNotEqual(execution_model_version(original['id']),execution_model_version(stable['id']))
+
+    def test_saved_stable_settings_require_every_native_field(self):
+        fields=protocol('v8_2_cycle1_RD_equivalent_stable_v1')['solver_settings']
+        text="$begin 'Setup1'\nSmoothBHCurve=true\nUseNonLinearIterNum=true\nMinIterNum=1\nMaxIterNum=100\n$end 'Setup1'"
+        self.assertEqual(verify_solver_settings(text,fields)['MaxIterNum'],'100')
+        for before,after in (('SmoothBHCurve=true','SmoothBHCurve=false'),('UseNonLinearIterNum=true','UseNonLinearIterNum=false'),('MinIterNum=1','MinIterNum=0'),('MaxIterNum=100','MaxIterNum=20')):
+            with self.assertRaises(ValueError):verify_solver_settings(text.replace(before,after),fields)
+
+    def test_missing_or_nonfinite_solver_setting_is_not_a_successful_transfer(self):
+        for text in ("$begin 'Setup1'\n$end 'Setup1'","$begin 'Setup1'\nMaxIterNum=nan\n$end 'Setup1'"):
+            with self.assertRaises(ValueError):verify_solver_settings(text,{'MaxIterNum':100})
+        self.assertEqual(verify_solver_settings('',None),{})
+
     @classmethod
     def setUpClass(cls): fixtures.CalibratedNativeTests.setUpClass.__func__(cls)
     @classmethod

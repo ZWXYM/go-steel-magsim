@@ -176,3 +176,48 @@ def verify_saved_material(saved_text, contract):
         curve_points={d:len(actual[d]['H']) for d in ('RD', 'TD')},
         axis_mapping=contract['axis_mapping'], directional_field_verified=False,
         loss_calibration_verified=False, motor_ranking_eligible=False)
+
+
+def equivalent_material_name(contract,direction):
+    if direction not in ('RD','TD'):raise ValueError('方向等效材料必须选择RD或TD')
+    return contract['material_name']+'_'+direction+'_EQ_v1'
+
+
+def equivalent_native_arguments(contract,direction):
+    """Use one unchanged directional curve as an explicitly isotropic BH law."""
+    name=equivalent_material_name(contract,direction)
+    args=native_arguments(contract);args[0]='NAME:'+name
+    axis=1 if direction=='RD' else 2
+    for index,item in enumerate(args):
+        if isinstance(item,list) and item[0]=='NAME:permeability':
+            component=next(p for p in item if isinstance(p,list) and p[0]=='NAME:component'+str(axis))
+            component[0]='NAME:permeability';args[index]=component
+            return args
+    raise ValueError('原材料缺少方向B-H曲线')
+
+
+def verify_saved_equivalent_material(saved_text,contract,direction):
+    """Keep the original tensor and check the scalar copy against its source nodes."""
+    verify_saved_material(saved_text,contract)
+    name=equivalent_material_name(contract,direction);body=one(saved_text,name);mu=one(body,'permeability')
+    if (value(mu,'property_type')!='nonlinear' or (value(mu,'BTypeForSingleCurve') or '').casefold()!='normal'
+            or value(mu,'HUnit')!='A_per_meter' or value(mu,'BUnit')!='tesla'
+            or value(mu,'IsTemperatureDependent')!='false'):
+        raise ValueError('方向等效材料不是显式物理H/正常B的标量曲线')
+    match=re.search(r'Points\[(\d+):\s*([^\]]+)\]',one(mu,'BHCoordinates'))
+    if not match:raise ValueError('方向等效材料未保存B-H节点')
+    raw=[float(x.strip()) for x in match[2].split(',')];source=contract['curves'][direction]
+    expected=np.column_stack([source['H'],source['B']])
+    if (int(match[1])!=len(raw) or len(raw)!=expected.size
+            or not np.allclose(np.asarray(raw).reshape(-1,2),expected,rtol=1e-10,atol=2e-7)):
+        raise ValueError('方向等效材料改变了原H/B节点')
+    for field in ('core_loss_kh','core_loss_kc','core_loss_ke','core_loss_kdc'):
+        if float(value(body,field))!=0:raise ValueError('方向等效B-H材料不得填造损耗系数')
+    for field,key in (('conductivity','conductivity_S_per_m'),('mass_density','mass_density_kg_per_m3')):
+        if float(value(body,field))!=contract['curves'][key]:raise ValueError('方向等效材料改变了'+field)
+    if cut_depth_meters(value(body,'core_loss_equiv_cut_depth'))!=contract['curves']['core_loss_equiv_cut_depth_m']:
+        raise ValueError('方向等效材料改变了叠片厚度')
+    return dict(material_name=name,source_material_name=contract['material_name'],equivalent_direction=direction,
+        constitutive_model='scalar_direction_equivalent_v1',curve_points=len(source['H']),source_points_unchanged=True,
+        serialized_transport_verified=True,directional_field_verified=False,loss_calibration_verified=False,
+        scope='One directional normal B-H curve used isotropically for engineering comparison; no local RD/TD response or efficiency')
