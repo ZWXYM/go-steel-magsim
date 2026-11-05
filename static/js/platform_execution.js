@@ -47,6 +47,14 @@ async function _reconnectStream(jobId,epoch=_execEpoch){
     }
     if(response.error||response.id!==jobId||response.script!==_execScript)throw Error(response.error||'任务身份与当前脚本不一致');
     document.getElementById('exec-log').innerHTML='';(response.recent_lines||[]).forEach(appendExecLine);
+    if(response.read_only_history){
+      updateExecProgress(response.completed,response.failed,response.total);
+      _detachExecView();document.getElementById('exec-status-badge').textContent='历史保存状态：'+response.status+'（未核对当前进程）';
+      document.getElementById('exec-current').textContent='只读历史；完整日志见脚本历史页。查看不会恢复或停止原任务。';
+      const record=_execSubmissions.get(_execScript);if(record?.response?.job_id===jobId)_execSubmissions.delete(_execScript);
+      _execJobId=null;document.getElementById('exec-stop-btn').disabled=true;
+      const start=document.getElementById('exec-start-btn');start.disabled=false;start.style.display='';start.textContent='新建执行';return;
+    }
     updateExecProgress(response.completed,response.failed,response.total);_updateExecBadge(response.status,response.done);
     if(response.done){_execFinished(jobId,response.status);return}
     document.getElementById('exec-start-btn').disabled=true;document.getElementById('exec-start-btn').style.display='none';
@@ -61,7 +69,7 @@ function _openSSE(jobId,epoch=_execEpoch){
   source.onmessage=event=>{
     if(!_execCurrent(epoch,jobId)||_execSource!==source)return;
     try{
-      const data=JSON.parse(event.data);(data.lines||[]).forEach(appendExecLine);updateExecProgress(data.completed,data.failed,data.total);
+      const data=JSON.parse(event.data);if(typeof data.line==='string')appendExecLine(data.line);(data.lines||[]).forEach(appendExecLine);updateExecProgress(data.completed,data.failed,data.total);
       if(data.done){_execFinished(jobId,data.status);loadTaskScripts()}
     }catch(error){_execReconnectError(error,epoch,jobId)}
   };

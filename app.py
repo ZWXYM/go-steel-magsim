@@ -4,7 +4,7 @@ Fe-Si 多晶微磁学仿真集成平台 - Flask Backend v2
 import sys, os, threading, uuid, json, io, traceback, re, shutil, subprocess, time, zipfile as zf_mod2, contextlib
 import locale, hashlib
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime,timezone
 from flask import Flask, request, jsonify, render_template, send_file, Response, stream_with_context, g
 
 import matplotlib
@@ -29,6 +29,7 @@ MODULES_DIR = os.path.join(SCRIPT_DIR, 'modules')
 sys.path.insert(0, SCRIPT_DIR)
 sys.path.insert(0, MODULES_DIR)  # 所有子模块统一放 modules/
 from modules.task_output import capture_task_stdout
+from modules.script_job_history import ScriptJobHistory
 
 import mx3_generator as gis
 import batch_scheduler as gpb
@@ -836,6 +837,7 @@ def clear_done_jobs():
     with _script_dispatch_lock:
         done_ids = [jid for jid, job in list(running_jobs.items()) if job.get('done') and (job.get('process') is None or job['process'].poll() is not None)]
         for jid in done_ids:
+            _record_script_job(running_jobs[jid])
             running_jobs.pop(jid, None)
     return jsonify({'cleared': len(done_ids)})
 
@@ -1037,6 +1039,32 @@ job_queue = []          # list of (job_id) waiting to run
 job_queue_lock = threading.Lock()
 _script_dispatch_lock = threading.RLock()
 _script_requests = {}  # Small idempotency receipts survive clearing terminal job cards.
+_script_instance=dict(id=uuid.uuid4().hex,pid=os.getpid(),started_utc=datetime.now(timezone.utc).isoformat())
+_script_journals={}
+_script_journals_lock=threading.RLock()
+
+
+def _script_journal_for(workspace=None):
+    root=Path(workspace or os.getcwd()).resolve()/'data/script_jobs'
+    with _script_journals_lock:
+        return _script_journals.setdefault(str(root),ScriptJobHistory(root,_script_instance))
+
+
+def _record_script_job(job,required=False):
+    try:
+        with job['lock']:
+            if '_history_journal' not in job:job['_history_journal']=_script_journal_for(job['workspace_origin']['path'])
+            job['revision']=job.get('revision',0)+1
+            fields=('id','script','workspace_origin','status','done','started','queued_at','finished','total','completed','failed','request_id','request_identity','stop_requested','runner_pid','journal_error','revision')
+            snapshot={key:job[key] for key in fields if key in job}
+            snapshot.update(owner=_script_instance,saved_utc=datetime.now(timezone.utc).isoformat(),recent_lines=job['lines'][-50:])
+            accepted=job['_history_journal'].save(snapshot)
+            if required and not accepted:raise ValueError('历史修订冲突，未下发任务')
+            return accepted
+    except (OSError,ValueError,UnicodeError) as error:
+        job['journal_error']='历史记录写入失败：'+str(error)
+        if required:raise
+        return False
 
 def _parse_script_total(filename):
     try:
@@ -1070,7 +1098,7 @@ def _make_job(filename, cmd):
         'total': _parse_script_total(filename),
         'completed': 0,
         'failed': 0,
-        'lock': threading.Lock(),
+        'lock': threading.RLock(),
     }
 
 def _active_job():
@@ -1087,10 +1115,16 @@ def _start_job(job):
     """Actually launch the subprocess for a job. Call from a thread."""
     job['status'] = 'starting'
     job['started'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    try:_record_script_job(job,required=True)
+    except (OSError,ValueError,UnicodeError):
+        job.update(status='error',done=True,finished=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        return False
     enc = locale.getpreferredencoding(False) or 'utf-8'
 
     def reader():
+        text_log=raw_log=None
         try:
+            text_log,raw_log=job['_history_journal'].open_logs(job['id'])
             proc = subprocess.Popen(
                 job['cmd'],
                 stdout=subprocess.PIPE,
@@ -1101,6 +1135,8 @@ def _start_job(job):
             )
             job['process'] = proc
             job['status'] = 'running'
+            if isinstance(getattr(proc,'pid',None),int):job['runner_pid']=proc.pid
+            _record_script_job(job);last_save=time.monotonic()
             for raw_line in proc.stdout:
                 for e in ['utf-8', enc, 'latin-1']:
                     try:
@@ -1115,34 +1151,52 @@ def _start_job(job):
                     job['failed'] += 1
                 with job['lock']:
                     job['lines'].append(line)
+                for stream,chunk in ((text_log,line+'\n'),(raw_log,raw_line)):
+                    try:stream.write(chunk);stream.flush()
+                    except OSError as error:job['journal_error']='执行继续，日志写入失败：'+str(error)
+                if time.monotonic()-last_save>=1:
+                    _record_script_job(job);last_save=time.monotonic()
             proc.wait()
             rc = proc.returncode
             job['status'] = 'stopped' if job.get('stop_requested') else 'completed' if rc == 0 else f'failed(rc={rc})'
         except Exception as e:
             with job['lock']:
                 job['lines'].append(f'[RUNNER ERROR] {e}')
+            if text_log is not None:
+                try:text_log.write(f'[RUNNER ERROR] {e}\n');text_log.flush()
+                except OSError:pass
             job['status'] = 'error'
         finally:
+            for stream in (text_log,raw_log):
+                if stream is not None:
+                    try:stream.close()
+                    except OSError as error:job['journal_error']='日志关闭失败：'+str(error)
             job['done'] = True
             job['finished'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            _record_script_job(job)
             # ── Start next queued job ────────────────────────
             _advance_queue()
 
-    threading.Thread(target=reader, daemon=True).start()
+    try:threading.Thread(target=reader, daemon=True).start()
+    except (OSError,RuntimeError) as error:
+        job['lines'].append('[RUNNER ERROR] '+str(error))
+        job.update(status='error',done=True,finished=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        _record_script_job(job)
+        return False
+    return True
 
 def _advance_queue():
     """Start the next job in queue, if any."""
     with _script_dispatch_lock:
         if _active_job():
             return
-        with job_queue_lock:
-            while job_queue:
-                job = running_jobs.get(job_queue.pop(0))
-                if job and not job.get('done') and job.get('status') == 'queued':
-                    break
-            else:
-                return
-        _start_job(job)
+        while True:
+            with job_queue_lock:
+                while job_queue:
+                    job = running_jobs.get(job_queue.pop(0))
+                    if job and not job.get('done') and job.get('status') == 'queued':break
+                else:return
+            if _start_job(job) is not False:return
 
 @app.route('/api/run-script', methods=['POST'])
 def run_script():
@@ -1175,21 +1229,29 @@ def run_script():
                 if existing.get('request_identity')!=identity:
                     return jsonify(error='原请求已经绑定其他脚本或目录'),409
                 return jsonify(job_id=existing['id'],total=existing['total'],queued=existing['status']=='queued',reused=True)
+            try:historical=_script_journal_for().receipt(request_id,identity)
+            except (OSError,ValueError,UnicodeError) as error:return jsonify(error=str(error)),409
+            if historical:
+                return jsonify(job_id=historical['id'],total=historical.get('total',0),queued=False,reused=True,read_only_history=True)
         job=_make_job(filename,cmd);job.update(request_id=request_id,request_identity=identity)
         running_jobs[job['id']]=job
+        try:_record_script_job(job,required=True)
+        except (OSError,ValueError,UnicodeError) as error:
+            job.update(status='error',done=True,finished=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            return jsonify(error='未下发任务，历史目录不可写：'+str(error),job_id=job['id']),500
         if request_id:_script_requests[request_id]=dict(identity=identity,job_id=job['id'],total=job['total'])
         if _active_job():
             with job_queue_lock:job_queue.append(job['id']);position=len(job_queue)
             return jsonify(job_id=job['id'],total=job['total'],queued=True,queue_pos=position,reused=False)
-        _start_job(job)
+        if _start_job(job) is False:_advance_queue()
         return jsonify(job_id=job['id'],total=job['total'],queued=False,reused=False)
 
 @app.route('/api/jobs/<job_id>/stream')
 def stream_job(job_id):
     if job_id not in running_jobs:
         return jsonify({'error': 'Job not found'}), 404
+    job = running_jobs[job_id]
     def generate():
-        job = running_jobs[job_id]
         offset = 0
         while True:
             with job['lock']:
@@ -1219,8 +1281,11 @@ def stream_job(job_id):
 
 @app.route('/api/jobs/<job_id>/status')
 def job_status(job_id):
-    if job_id not in running_jobs:
-        return jsonify(error='任务记录不在当前服务中；未重新下发任务',code='job_not_found'),404
+    if request.args.get('history')=='1' or job_id not in running_jobs:
+        try:
+            return jsonify(_script_journal_for().view(job_id))
+        except FileNotFoundError:return jsonify(error='任务记录不在当前服务中；未重新下发任务',code='job_not_found'),404
+        except (OSError,ValueError,UnicodeError) as error:return jsonify(error=str(error),code='history_unreadable'),400
     job = running_jobs[job_id]
     with job['lock']:
         recent = job['lines'][-50:]
@@ -1232,7 +1297,31 @@ def job_status(job_id):
         'started': job['started'], 'finished': job['finished'],
         'recent_lines': recent,
         'workspace_origin': job.get('workspace_origin'), 'request_id': job.get('request_id'),
+        'journal_error': job.get('journal_error'),
     })
+
+
+@app.get('/script-history')
+def script_history_page():
+    return render_template('script_history.html')
+
+
+@app.get('/api/jobs/history')
+def script_history_catalog():
+    try:
+        return jsonify(dict(_script_journal_for().rows(),workspace=os.getcwd(),workspace_token=_workspace_token()))
+    except (OSError,ValueError,UnicodeError) as error:return jsonify(error=str(error)),400
+
+
+@app.get('/api/jobs/<job_id>/files/<name>')
+def script_history_file(job_id,name):
+    if request.args.get('workspace_token')!=_workspace_token():
+        return jsonify(error='工作目录已改变，请刷新历史记录后下载',code='workspace_changed'),409
+    try:
+        path=_script_journal_for().log_path(job_id,name)
+        return send_file(path,as_attachment=True,download_name=job_id+'_'+name,mimetype='text/plain; charset=utf-8' if name=='stdout.log' else 'application/octet-stream')
+    except FileNotFoundError as error:return jsonify(error=str(error)),404
+    except (OSError,ValueError,UnicodeError) as error:return jsonify(error=str(error)),400
 
 @app.route('/api/jobs/<job_id>/stop', methods=['POST'])
 def stop_job(job_id):
@@ -1242,13 +1331,17 @@ def stop_job(job_id):
 
 def _stop_job_locked(job_id):
     if job_id not in running_jobs:
-        return jsonify({'error': 'Not found'}), 404
+        try:_script_journal_for().read(job_id)
+        except FileNotFoundError:return jsonify(error='Not found'),404
+        except (OSError,ValueError,UnicodeError) as error:return jsonify(error=str(error)),400
+        return jsonify(error='这是历史记录，当前服务不控制原进程',code='history_read_only'),409
     job = running_jobs[job_id]
     with _script_dispatch_lock:
         if not job.get('done') and job['status']=='queued':
             with job_queue_lock:
                 job_queue[:]=[jid for jid in job_queue if jid!=job_id]
             job.update(status='stopped',done=True,finished=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            _record_script_job(job)
             return jsonify(success=True,message='已取消排队，未启动进程')
         if job.get('stop_requested'):
             return jsonify(success=True,message='停止信号已发送，等待进程退出')
@@ -1263,6 +1356,7 @@ def _stop_job_locked(job_id):
                 proc.send_signal(signal.SIGTERM)
             if not job.get('done'):
                 job['status'] = 'stopping'
+            _record_script_job(job)
             return jsonify({'success': True, 'message': '停止信号已发送，等待进程退出'})
         except Exception as e:
             job['stop_requested'] = False

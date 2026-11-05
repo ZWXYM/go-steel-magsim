@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock,patch
+from modules.script_job_history import ScriptJobHistory
 import app as web
 
 
@@ -14,7 +15,8 @@ class ScriptDispatchTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name)
         self.script=self.root/'synthetic script.bat';self.script.write_text('rem never execute\n')
         self.started=[];self.start=Mock(side_effect=self.fake_start)
-        for change in (patch.object(web,'running_jobs',{}),patch.object(web,'job_queue',[]),patch.object(web,'_script_requests',{}),patch.object(web,'_start_job',self.start)):
+        self.journal=ScriptJobHistory(self.root/'history',web._script_instance)
+        for change in (patch.object(web,'running_jobs',{}),patch.object(web,'job_queue',[]),patch.object(web,'_script_requests',{}),patch.object(web,'_script_journal_for',return_value=self.journal),patch.object(web,'_start_job',self.start)):
             change.start();self.addCleanup(change.stop)
         self.client=web.app.test_client()
 
@@ -58,7 +60,8 @@ class ScriptDispatchTests(unittest.TestCase):
         self.assertEqual(self.client.post('/api/jobs/clear-done').json['cleared'],1)
         second=self.post(request_id='script_request_123').json
         self.assertEqual(first['job_id'],second['job_id']);self.assertTrue(second['reused']);self.assertEqual(self.start.call_count,1)
-        self.assertEqual(self.client.get('/api/jobs/'+first['job_id']+'/status').json['code'],'job_not_found')
+        saved=self.client.get('/api/jobs/'+first['job_id']+'/status').json
+        self.assertTrue(saved['read_only_history']);self.assertEqual(saved['status'],'completed')
 
     def test_advance_waits_for_active_job(self):
         self.post();self.post();web._advance_queue();self.assertEqual(self.start.call_count,1);self.assertEqual(len(web.job_queue),1)
