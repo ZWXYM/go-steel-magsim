@@ -1,0 +1,55 @@
+{
+  "schema": "explicit_identical_report_archive_bindings_v1",
+  "version": "V8_2_bound_report_CSV_v1",
+  "scope": "Separate derived collection; original V8_2 final archive remains unchanged. No silent prefix fallback.",
+  "aliases": [
+    {
+      "case": "nippon_steel_23zdkh75",
+      "source_prefix": "clean_resolved2",
+      "project_name": "motorcad_full_v8_1_nippon_steel_23zdkh75.aedt",
+      "final_report": "final_resolved_official_report.json",
+      "source_report": "clean_resolved2_official_report.json",
+      "files": {
+        "final_resolved_official_report.json": {
+          "sha256": "36f5d6665f3946cf94e1224e8f9e83e1a528bfd05bd92a794f1afb18474c99a5",
+          "bytes": 3289
+        },
+        "clean_resolved2_official_report.json": {
+          "sha256": "36f5d6665f3946cf94e1224e8f9e83e1a528bfd05bd92a794f1afb18474c99a5",
+          "bytes": 3289
+        },
+        "clean_resolved2_reports/Drive Current Plots.csv": {
+          "sha256": "5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8",
+          "bytes": 3308
+        },
+        "clean_resolved2_reports/Torque Plots.csv": {
+          "sha256": "6b09e5d4c9b5e30966156ad8a48e038bce939ad5934f729149171b51443833b5",
+          "bytes": 1581
+        },
+        "clean_resolved2_maxwell_reports/CoreLoss.csv": {
+          "sha256": "b47af465a232b54e2a1c646bbe520382a6706c30e213e6b461384958760faa67",
+          "bytes": 1011
+        },
+        "clean_resolved2_maxwell_reports/input_voltage.csv": {
+          "sha256": "e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d",
+          "bytes": 764
+        },
+        "clean_resolved2_maxwell_reports/SolidLoss.csv": {
+          "sha256": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+          "bytes": 564
+        },
+        "clean_resolved2_maxwell_reports/StrandedLoss.csv": {
+          "sha256": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+          "bytes": 1029
+        }
+      },
+      "metric_tolerances": {
+        "T_avg_Nm": 6e-05,
+        "K_T_ripple_pct": 0.006,
+        "P_Fe_W": 0.0006,
+        "P_Cu_W": 0.0006
+      }
+    }
+  ],
+  "new_native_solves": 0
+}

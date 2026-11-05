@@ -1,7 +1,7 @@
 /* Inventory and exact downloads only. No new plans, predictions or native work. */
 (function(root){
  'use strict';
- const validDataset=id=>/^(v8_1|v8_2_archive|scan_[a-f0-9]{12})$/.test(id),validCal=id=>/^cal_[a-f0-9]{12}$/.test(id),validPack=id=>/^pack_[a-f0-9]{16}$/.test(id);
+ const validDataset=id=>/^(v8_1|v8_2_archive|v8_2_bound_archive|scan_[a-f0-9]{12})$/.test(id),validCal=id=>/^cal_[a-f0-9]{12}$/.test(id),validPack=id=>/^pack_[a-f0-9]{16}$/.test(id);
  const numeric=value=>Number.isFinite(value)?value.toFixed(6):'未记录';
  if(typeof module==='object'&&module.exports)module.exports={validDataset,validCal,validPack,numeric};
  if(!root.document)return;

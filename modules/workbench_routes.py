@@ -35,6 +35,7 @@ from modules.torque_windows import TorqueWindows,create_torque_window_routes
 from modules.system_report import SystemReport,create_system_report_routes
 from modules.system_data import SystemData,create_system_data_routes
 from modules.system_data_builder import SystemDataBuilder
+from modules.motor_constraint_studies import MotorConstraintStudies,create_constraint_study_routes
 
 SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md'))
 
@@ -70,6 +71,7 @@ def create_workbench(project,storage=None,root=None,script_history=None):
     bp.register_blueprint(create_system_report_routes(SystemReport(storage,lambda:runtime_view(identity),license_status,script_history)))
     data_builder=SystemDataBuilder(storage,calibration,optimization,materials,material_batches,plans)
     bp.register_blueprint(create_system_data_routes(SystemData(storage,optimization,material_batches,data_builder)))
+    bp.register_blueprint(create_constraint_study_routes(MotorConstraintStudies(optimization,storage/'optimization_sensitivity')))
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
         bp.record_once(lambda state:install_cpu_policy(state.app))
     bp.record_once(lambda state:install_source_guard(state.app,identity))

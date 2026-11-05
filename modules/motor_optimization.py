@@ -14,6 +14,7 @@ from modules.material_calibration import file_hash
 from modules.motor_workbench import collect_metrics, write_json
 from modules.motor_model_audit import audit_project
 from modules.motor_dataset_export import dataset_usage
+from modules.motor_archive_bindings import BoundMotorArchive, DATASET_ID as BOUND_ARCHIVE_ID, VERSION as BOUND_ARCHIVE_VERSION
 from modules.motor_failure_diagnostics import diagnose_job,readable_motor_jobs
 
 
@@ -108,6 +109,7 @@ def screen_rows(rows, reference, torque_reference, config):
 class MotorOptimization:
     def __init__(self, root, storage, motor):
         self.root, self.storage, self.motor = Path(root).resolve(), Path(storage).resolve(), motor
+        self.bound_archive=BoundMotorArchive(self.root,motor)
 
     def source_file(self, source, name):
         allowed = WORKFLOW_FILES.get(source, ())
@@ -145,6 +147,8 @@ class MotorOptimization:
             values.append(dict(id='v8_1', title='V8_1 原保存指标（原处理口径）'))
         if self.motor.archived_results():
             values.append(dict(id='v8_2_archive', title='V8_2 final 结果（官方CSV/原摘要）'))
+            if self.bound_archive.available():
+                values.append(dict(id=BOUND_ARCHIVE_ID,title='V8_2 同报告绑定CSV补齐版（含原6案，不新增独立材料）'))
         for job in readable_motor_jobs(self.motor):
             if job['status'] in ('completed', 'completed_with_failures'):
                 values.append(dict(id=job['id'], title=job['id']+' · '+job.get('measurement_protocol', 'v8_2_cycle1')))
@@ -160,15 +164,19 @@ class MotorOptimization:
             references = [dict(normalized(data[name], True), case='original_'+name) for name in ('baseline', 'control')]
             version, protocol = 'V8_1_original_saved', 'original_processed_metrics'
             scope = '沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径'
-        elif dataset_id == 'v8_2_archive':
-            for item in self.motor.archived_results():
+        elif dataset_id in ('v8_2_archive', BOUND_ARCHIVE_ID):
+            bound=dataset_id==BOUND_ARCHIVE_ID
+            for item in self.bound_archive.records() if bound else self.motor.archived_results():
                 metrics = item.get('metrics') or {}
                 rows.append(normalized(dict(item.get('display_metrics') or {}, case=item['case'], material=item['case'], reason=item.get('reason')),
                                        bool(item.get('csv_verified') and metrics.get('accepted')), source='official_CSV_verified' if item.get('csv_verified') else 'report_only'))
+                if bound:
+                    rows[-1].update(actual_csv_prefix=item['actual_csv_prefix'],source_report_binding=item.get('report_binding'))
                 for relative, meta in item.get('files', {}).items():
-                    hashes['archive/'+item['case']+'/'+relative] = meta['sha256']
-            version, protocol = 'V8_2_final_resolved', 'v8_2_cycle1'
-            scope = '作者 V8_2 final 单周期库材料结果；缺CSV和异常行保留，独立展示状态'
+                    hashes[('bound_archive/' if bound else 'archive/')+item['case']+'/'+relative] = meta['sha256']
+            version, protocol = BOUND_ARCHIVE_VERSION if bound else 'V8_2_final_resolved', 'v8_2_cycle1'
+            scope = ('作者V8_2同报告绑定CSV补齐集合；23ZDKH75明确使用clean_resolved2，报告与final字节一致。保留原6案及异常，不新增独立样品，不认证48插片损耗/RD-TD或稳态最终排名。'
+                     if bound else '作者 V8_2 final 单周期库材料结果；缺CSV和异常行保留，独立展示状态')
         elif isinstance(dataset_id, str) and re.fullmatch(r'scan_[0-9a-f]{12}', dataset_id):
             state = self.motor.state(dataset_id)
             if state['status'] not in ('completed', 'completed_with_failures'):

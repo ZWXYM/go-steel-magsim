@@ -10,6 +10,7 @@ from pathlib import Path, PurePosixPath
 VERSION = 'motor_engineering_dataset_bundle_v2'
 METRICS = ('T_avg_Nm','K_T_ripple_pct','P_Fe_W','eta_estimate_pct')
 READER_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+DATASET_ID_PATTERN = r'v8_1|v8_2_archive|v8_2_bound_archive|scan_[a-f0-9]{12}'
 
 
 def digest(blob):
@@ -20,12 +21,16 @@ def dataset_usage(dataset):
     historical=dataset['id']=='v8_1'
     native=[row for row in dataset['rows'] if not historical and row.get('input_accepted') is True
         and row.get('input_source')=='official_CSV_verified']
-    return dict(version='motor_dataset_usage_v1',
+    result=dict(version='motor_dataset_usage_v1',
         kind='historical_processed_estimate' if historical else 'per_row_official_source',
         native_csv_accepted_count=len(native),saved_accepted_is_not_native_verification=True,
         independently_measured=False,final_physical_optimization_certified=False,
         note=('V8_1历史导出包含谐波处理/转矩列同步和材料宏观铁损估算；原判据通过不等于原生CSV验证，不能作为新增损耗改善证据。'
               if historical else '原生CSV来源与原数值判据逐行核对；报告估算、周期范围及损耗边界保持，不视为独立实测认证。'))
+    if dataset['id']=='v8_2_bound_archive':
+        result.update(derived_from_dataset='v8_2_archive',same_cases_not_new_independent_samples=True)
+        result['note']+=' 补齐版包含原归档的重复案例，23ZDKH75按同报告合同读取clean_resolved2，原final归档不变。'
+    return result
 
 
 def metric_csv(dataset, rows):
@@ -67,6 +72,9 @@ def dataset_bundle(manager, dataset_id):
         elif dataset_id=='v8_2_archive':
             if len(relative.parts)<3 or relative.parts[0]!='archive':raise ValueError('归档来源不属于该版本')
             path=manager.motor.archive_file(relative.parts[1],PurePosixPath(*relative.parts[2:]).as_posix())
+        elif dataset_id=='v8_2_bound_archive':
+            if len(relative.parts)<3 or relative.parts[0]!='bound_archive':raise ValueError('绑定归档来源不属于该版本')
+            path=manager.bound_archive.source_file(relative.parts[1],PurePosixPath(*relative.parts[2:]).as_posix())
         elif scan_source:
             folder=manager.motor.path(dataset_id).resolve();path=(folder/portable).resolve()
             if not path.is_relative_to(folder):raise ValueError('扫描来源越出所选任务')

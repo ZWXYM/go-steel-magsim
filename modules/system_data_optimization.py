@@ -4,7 +4,7 @@ import json
 import re
 import zipfile
 
-from modules.motor_dataset_export import dataset_usage
+from modules.motor_dataset_export import dataset_usage,DATASET_ID_PATTERN
 from modules.system_data import json_bytes, sha256
 
 FILES = ('analysis.json', 'ranking.csv', 'analysis.md', 'analysis_bundle.zip')
@@ -22,7 +22,7 @@ class SavedOptimizationExports:
         if (report['id'] != artifact or report['meets_limits_count'] != sum(row.get('meets_limits') is True for row in report['ranked'])
                 or report['best_case'] != next((row['case'] for row in report['ranked'] if row.get('meets_limits') is True), None)):
             raise ValueError('原筛选身份或保存行状态不符')
-        if not re.fullmatch(r'v8_1|v8_2_archive|scan_[a-f0-9]{12}',report['dataset']['id']):
+        if not re.fullmatch(DATASET_ID_PATTERN,report['dataset']['id']):
             raise ValueError('原筛选的数据集身份不符')
         try:
             with zipfile.ZipFile(io.BytesIO(files['analysis_bundle.zip'])) as archive:

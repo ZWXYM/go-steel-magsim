@@ -10,7 +10,7 @@ from pathlib import Path
 
 from modules.calibration_transfer import load_bank
 from modules.material_batch_reports import report_bundle
-from modules.motor_dataset_export import dataset_bundle
+from modules.motor_dataset_export import dataset_bundle,DATASET_ID_PATTERN
 from modules.system_data import WorkpackStore, MAX_CONTENT_BYTES, json_bytes, sha256
 
 VERSION = 'system_data_workpack_v3'
@@ -110,7 +110,7 @@ class SystemDataBuilder:
         seen=set()
         for selected in selection['datasets']:
             if (not isinstance(selected, dict) or set(selected) != {'id','source_hashes_sha256'}
-                    or not isinstance(selected['id'], str) or not re.fullmatch(r'v8_1|v8_2_archive|scan_[a-f0-9]{12}',selected['id'])
+                    or not isinstance(selected['id'], str) or not re.fullmatch(DATASET_ID_PATTERN,selected['id'])
                     or selected['id'] in seen):
                 raise ValueError('电机数据集选择无效或重复')
             seen.add(selected['id'])

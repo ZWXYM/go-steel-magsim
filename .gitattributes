@@ -253,3 +253,15 @@ docs/system_data_20261106.md -text
 calibration/system_data_center_20261106/** -text
 modules/system_data_optimization.py -text
 tests/test_system_data_optimization.py -text
+modules/motor_archive_bindings.py -text
+tests/test_motor_archive_bindings.py -text
+go_steel_data/output/motor_archive_bindings_v1.json -text
+docs/bound_motor_archive_20261106.md -text
+calibration/bound_motor_archive_20261106/** -text
+modules/motor_constraint_studies.py -text
+templates/motor_constraint_studies.html -text
+static/js/motor_constraint_studies.js -text
+tests/test_motor_constraint_studies.py -text
+tests/test_motor_constraint_studies_ui.js -text
+docs/motor_constraint_studies_20261106.md -text
+tools/replay_constraint_study.py -text

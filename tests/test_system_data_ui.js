@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const script=fs.readFileSync(path.join(__dirname,'../static/js/system_data.js'),'utf8');
 const {validDataset,validCal,validPack}=require('../static/js/system_data.js');
-assert(validDataset('scan_aaaaaaaaaaaa'));assert(!validDataset('../v8_1'));assert(!validCal('javascript:bad'));assert(validPack('pack_0123456789abcdef'));
+assert(validDataset('scan_aaaaaaaaaaaa'));assert(validDataset('v8_2_bound_archive'));assert(!validDataset('../v8_1'));assert(!validCal('javascript:bad'));assert(validPack('pack_0123456789abcdef'));
 const fixture={schema:'go_steel_system_data_v1',created_utc:'2026-11-06',scope:'saved inventory',
  counts:{complete:true,dataset_count:2,row_count:4,original_accepted_count:2,native_csv_accepted_count:1},package_build_available:true,
  packages:[{id:'pack_0123456789abcdef',readable:true,title:'<script>原包</script>',created_utc:'2026-11-06',member_count:54,bytes:1000,sha256:'a'.repeat(64),description:'private snapshot'}],
