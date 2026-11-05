@@ -1,0 +1,46 @@
+{
+  "version": "three_cycle_M6_review_v1",
+  "job": "scan_663138d5d52a",
+  "plan": "plan_25b7f993ae4c",
+  "model_version": "V8_2_object_CS_loss_scope_v2",
+  "measurement_protocol": "periodic_cycle3_v1",
+  "material": "AK Steel - M-6 Carlite",
+  "metrics": {
+    "T_avg_Nm": 1.8314038779214497,
+    "K_T_ripple_pct": 53.73455292405353,
+    "P_Fe_W": 32.12808200191126,
+    "P_Cu_W": 49.175064125305035,
+    "P_out_W": 575.3524968633884,
+    "eta_estimate_pct": 87.6186023839013
+  },
+  "periodic_stability": {
+    "cycles_compared": [
+      2,
+      3
+    ],
+    "max_phase_torque_delta_Nm": 0.7084452913167301,
+    "relative_mean_torque_change": 0.017124289426381285,
+    "relative_core_loss_change": 0.08855825475994,
+    "thresholds": {
+      "phase_torque_Nm": 0.1,
+      "mean_torque_relative": 0.02,
+      "core_loss_relative": 0.05
+    },
+    "passed": false
+  },
+  "raw_torque_points": 91,
+  "selected_torque_points": 31,
+  "official_csv_units_normalized": true,
+  "metrics_independently_recomputed": true,
+  "accepted": false,
+  "native_PID_confirmed_exited": true,
+  "loss_insert_coverage": 48,
+  "budget_stop_triggered": false,
+  "new_completed_Maxwell": 1,
+  "cumulative_Maxwell": 57,
+  "cumulative_motor": 22,
+  "cumulative_magnetostatic": 35,
+  "cumulative_MuMax": 682,
+  "scope": "Three-cycle response failed existing cycle-2/3 consistency thresholds; keep raw data, no steady-state or final loss-ranking claim",
+  "automatic_retry": false
+}

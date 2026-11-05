@@ -239,3 +239,5 @@ modules/execution_material_export.py -text
 tests/test_execution_material_export.py -text
 docs/actual_motor_material_exports_20261106.md -text
 calibration/actual_material_exports_20261106/** -text
+docs/author_library_data_20261106.md -text
+calibration/author_library_data_20261106/** -text

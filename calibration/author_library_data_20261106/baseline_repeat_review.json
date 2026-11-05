@@ -1,0 +1,50 @@
+{
+  "protocol": {
+    "version": "retrospective_same_model_repeat_v1",
+    "current_job": "scan_fd1f6e8b9d87",
+    "prior_job": "scan_8605c25b1635",
+    "case": "case_01",
+    "material": "AK Steel - M-6 Carlite",
+    "new_solves": 0,
+    "thresholds": {
+      "mean_torque_relative": 0.01,
+      "ripple_absolute_percentage_points": 1.0,
+      "core_loss_relative": 0.01,
+      "copper_loss_relative": 0.01
+    },
+    "scope": "Retrospective engineering repeat check; not external material validation, mesh convergence or loss calibration"
+  },
+  "scope_checks": {
+    "template_sha256_equal": true,
+    "model_version_equal": true,
+    "measurement_protocol_equal": true,
+    "material_equal": true,
+    "both_insert_loss_48": true,
+    "native_material_definition_bytes_equal": true
+  },
+  "all_scope_checks_passed": true,
+  "differences": {
+    "T_avg_Nm": -0.010883013382600781,
+    "K_T_ripple_pct": 2.1914058366570828,
+    "P_Fe_W": 3.570334514586932,
+    "P_Cu_W": 0.0
+  },
+  "checked_differences": {
+    "mean_torque_relative": 0.0058088054767901605,
+    "ripple_absolute_percentage_points": 2.1914058366570828,
+    "core_loss_relative": 0.1983199988909092,
+    "copper_loss_relative": 0.0
+  },
+  "gates": {
+    "mean_torque_relative": true,
+    "ripple_absolute_percentage_points": false,
+    "core_loss_relative": false,
+    "copper_loss_relative": true
+  },
+  "engineering_repeat_check_passed": false,
+  "source_results_sha256": {
+    "motor": "4e0619af8c244d5b87919958e80d5a008f69b79a3faab9bc25acf11282d47830"
+  },
+  "new_native_solves": 0,
+  "prospective_external_validation": false
+}

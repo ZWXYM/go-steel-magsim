@@ -90,5 +90,23 @@ class MotorDatasetExport(unittest.TestCase):
             self.assertEqual(list(csv.DictReader(io.StringIO(archive.read('accepted_metrics.csv').decode('utf-8-sig')))),[])
             self.assertEqual(len(list(csv.DictReader(io.StringIO(archive.read('metrics.csv').decode('utf-8-sig'))))),2)
 
+    def test_v81_original_pass_flags_remain_but_processed_values_never_become_native_evidence(self):
+        self.data.update(id='v8_1',source_hashes={'motor/v8_1/outputs/v8_1_material_comparison.json':digest(self.source.read_bytes())})
+        self.manager.source_file=lambda *_:self.source
+        with zipfile.ZipFile(dataset_bundle(self.manager,'v8_1')) as archive:
+            self.assertEqual(len(list(csv.DictReader(io.StringIO(archive.read('accepted_metrics.csv').decode('utf-8-sig'))))),1)
+            self.assertEqual(list(csv.DictReader(io.StringIO(archive.read('native_csv_metrics.csv').decode('utf-8-sig')))),[])
+            usage=json.loads(archive.read('data_usage.json'))
+            self.assertEqual(usage['kind'],'historical_processed_estimate');self.assertEqual(usage['native_csv_accepted_count'],0)
+            self.assertIn('铁损估算',usage['note']);self.assertTrue(self.data['rows'][0]['input_accepted'])
+
+    def test_native_subset_requires_explicit_official_source_and_original_pass(self):
+        with zipfile.ZipFile(dataset_bundle(self.manager,self.data['id'])) as archive:
+            native=list(csv.DictReader(io.StringIO(archive.read('native_csv_metrics.csv').decode('utf-8-sig'))))
+            self.assertEqual([r['case'] for r in native],['one'])
+        self.data['rows'][0].pop('input_source')
+        with zipfile.ZipFile(dataset_bundle(self.manager,self.data['id'])) as archive:
+            self.assertEqual(list(csv.DictReader(io.StringIO(archive.read('native_csv_metrics.csv').decode('utf-8-sig')))),[])
+
 
 if __name__=='__main__':unittest.main()

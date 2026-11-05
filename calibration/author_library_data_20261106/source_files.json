@@ -1,0 +1,26 @@
+{
+  "files": {
+    "case_01/reports/Torque Plots.csv": "267398ffb68d45f3c757c0be1f500b4422341bf7e38c5bc9517481bb9bb96f74",
+    "case_01/reports/Drive Current Plots.csv": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+    "case_01/maxwell_reports/CoreLoss.csv": "e00968e5ce592d92ecccd77492ed00203f0714f4849be5c92158c4823e2274b9",
+    "case_01/maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "case_01/maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+    "case_02/reports/Torque Plots.csv": "341a83915f42f3a72636b1c087a5c6619503b54ab7f51afec2fb584682fd1cfc",
+    "case_02/reports/Drive Current Plots.csv": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+    "case_02/maxwell_reports/CoreLoss.csv": "37628ebba4898563682a6e6b5db2b4ece8e63bfb26e342bb4a99a12a34fcb5c7",
+    "case_02/maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "case_02/maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+    "prior_M6_repeat/maxwell_reports/CoreLoss.csv": "7268fb309971ed0bbaa2c522866a004c45f740c664da2b9ac1d589951c8faa88",
+    "prior_M6_repeat/maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "prior_M6_repeat/reports/Torque Plots.csv": "26bafe204fe0dcea9d445fef54718347667895a200e5e25f5fed9264b12bb1a4"
+  },
+  "job": "scan_fd1f6e8b9d87",
+  "plan": "plan_7f60d4b58a03",
+  "manifest_sha256": "b83d7b0d16b81f8fac60c11b5e9f2221d34cec319ecfd54eab059326728b28cd",
+  "max_new_motor_solves": 2,
+  "actual_completed_motor_solves": 2,
+  "independent_recomputation": true,
+  "raw_time_and_loss_units": "Use each official CSV header; this run includes ns and mW, normalized metrics use SI",
+  "old_results_untouched": true,
+  "full_native_projects_private": true
+}

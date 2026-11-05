@@ -24,7 +24,10 @@ async function loaded(h,dataset=a){h.node('dataset').value=dataset.id;await h.c.
  const valid=harness(async(url,options)=>url.endsWith('/analyze')?report():url.endsWith('/history')?[]:a);
  await loaded(valid);await valid.c.analyze();assert.equal(valid.node('result').hidden,false);
  assert.equal(valid.node('datasetBundle').hidden,false);assert.equal(valid.node('datasetBundle').href,'/api/workbench/optimization/datasets/v8_1/bundle');assert.equal(valid.node('datasetBundle').download,'v8_1_data.zip');
+ const historicalView=harness(async()=>({...a,data_usage:{note:'历史处理/估算，不能当原生损耗验证'}}));await loaded(historicalView);
+ assert.match(historicalView.node('datasetScope').textContent,/历史处理\/估算/);assert.equal(historicalView.node('datasetBundle').hidden,false);assert.equal(posts(historicalView).length,0);
  assert.match(valid.node('result').innerHTML,/v8_1 \/ VERSION_A \/ original/);assert.match(valid.node('result').innerHTML,/转矩基准 original_baseline/);
+ assert.match(valid.node('result').innerHTML,/历史处理\/铁损估算/);
  assert.match(valid.node('result').innerHTML,/0\.000/);assert.match(valid.node('result').innerHTML,/—/);
  assert.deepEqual(JSON.parse(posts(valid)[0].body),{dataset:a.id,reference:'original_control',config});assert.equal(posts(valid).length,1);
  const historyError=harness(async url=>url.endsWith('/analyze')?report():url.endsWith('/history')?Promise.reject(Error('history offline')):a);
@@ -81,6 +84,7 @@ async function loaded(h,dataset=a){h.node('dataset').value=dataset.id;await h.c.
  const reopen=harness(async url=>url.includes('/files/analysis.json')?saved:restoreData);await loaded(reopen,restoreData);
  const inputsBefore=value(reopen,'configValues()');await reopen.c.loadSavedScreen(saved.id);
  assert.equal(reopen.node('savedScreenPanel').hidden,false);assert.match(reopen.node('savedScreenResult').innerHTML,/保存的筛选结果/);assert.match(reopen.node('savedScreenResult').innerHTML,/original_baseline/);
+ assert.match(reopen.node('savedScreenResult').innerHTML,/历史处理\/铁损估算/);
  assert.deepEqual(JSON.parse(JSON.stringify(value(reopen,'configValues()'))),JSON.parse(JSON.stringify(inputsBefore)));assert.equal(reopen.node('result').hidden,true);
  await reopen.c.reuseSavedScreen();assert.equal(reopen.node('ripple_weight').value,'0.25');assert.equal(reopen.node('min_ripple_reduction_pct').value,'7');assert.equal(reopen.node('reference').value,saved.reference);assert.match(reopen.node('analysisStatus').textContent,/尚未重新筛选/);assert.equal(posts(reopen).length,0);
  // Changed source/version/protocol/missing reference leave the current form untouched.

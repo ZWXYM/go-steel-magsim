@@ -1,0 +1,10 @@
+{
+  "version": "historical_V81_processing_audit_v1",
+  "macro_core_loss_records": 14,
+  "source_output_sha256": "a629481f52f086f82e23f994b02ce1ab03cca57c725f0c45ba69fe173fb6f1e0",
+  "source_collector_sha256": "38df0f1fdbcb5ced48bc36e25eec3be31a6761f6f35ad01a2ca0ddc5809c91d5",
+  "observed_method": "material_macro_core_loss",
+  "torque_processing": "harmonic_clean; cleaned TorqueDQ synchronized to other torque columns",
+  "interpretation": "Preserved historical processing/estimation, not native loss measurements or new physical optimization evidence",
+  "new_processing_executed": false
+}

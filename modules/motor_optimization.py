@@ -13,6 +13,7 @@ from pathlib import Path
 from modules.material_calibration import file_hash
 from modules.motor_workbench import collect_metrics, write_json
 from modules.motor_model_audit import audit_project
+from modules.motor_dataset_export import dataset_usage
 from modules.motor_failure_diagnostics import diagnose_job,readable_motor_jobs
 
 
@@ -215,6 +216,7 @@ class MotorOptimization:
             raise ValueError('未知结果数据集')
         references += [r for r in rows if r['input_accepted'] and all(finite(r['metrics'].get(n)) for n in METRICS)]
         return dict(id=dataset_id, version=version, measurement_protocol=protocol, scope=scope,
+                    data_usage=dataset_usage(dict(id=dataset_id,rows=rows)),
                     rows=rows, references=references, source_hashes=hashes,
                     default_reference='original_control' if dataset_id=='v8_1' else (references[0]['case'] if references else None))
 
@@ -252,7 +254,8 @@ class MotorOptimization:
         (output/'analysis.md').write_text('\n'.join([
             '# 电机工程筛选', '', f"数据集：{dataset['id']} / {dataset['version']} / {dataset['measurement_protocol']}",
             f"基准：{reference_id}；转矩基准：{torque_ref['case']}", f"满足配置：{report['meets_limits_count']}/{len(rows)}；首选：{report['best_case'] or '无'}",
-            dataset['scope'], '配置与源文件哈希见 analysis.json；原数据保留，未新增求解。', '',
+            dataset['scope'], (dataset.get('data_usage') or {}).get('note',''),
+            '配置与源文件哈希见 analysis.json；原数据保留，未新增求解。', '',
             '| 案例 | 满足配置 | 分数 | 原因 |', '| --- | --- | --- | --- |',
             *[f"| {r['case']} | {r['meets_limits']} | {r['score']} | {'; '.join(r['reasons'])} |" for r in rows]
         ]), encoding='utf-8')

@@ -1,0 +1,70 @@
+{
+  "id": "opt_02445f20cd8c",
+  "config": {
+    "min_ripple_reduction_pct": 30.0,
+    "max_iron_loss_increase_pct": 0.0,
+    "min_torque_change_pct": 0.0,
+    "ripple_weight": 0.6,
+    "iron_loss_weight": 0.3,
+    "efficiency_weight": 10.0
+  },
+  "reference": "case_01",
+  "torque_reference": "case_01",
+  "ranked": [
+    {
+      "case": "case_01",
+      "material": "AK Steel - M-6 Carlite",
+      "metrics": {
+        "T_avg_Nm": 1.8626542269476667,
+        "K_T_ripple_pct": 21.708956378284423,
+        "P_Fe_W": 21.573231522219945,
+        "eta_estimate_pct": 89.21385680128847
+      },
+      "input_accepted": true,
+      "input_source": "official_CSV_verified",
+      "input_error": null,
+      "score": 0.0,
+      "meets_limits": false,
+      "reasons": [
+        "脉动降幅未达要求"
+      ],
+      "ripple_reduction_pct": 0.0,
+      "iron_loss_reduction_pct": 0.0,
+      "torque_change_pct": 0.0,
+      "efficiency_change_pctpt": 0.0
+    },
+    {
+      "case": "case_02",
+      "material": "Nippon Steel - 23ZDMH80",
+      "metrics": {
+        "T_avg_Nm": 1.8751805934066346,
+        "K_T_ripple_pct": 66.53421897187899,
+        "P_Fe_W": 28.47537852505297,
+        "eta_estimate_pct": 88.35399067896554
+      },
+      "input_accepted": true,
+      "input_source": "official_CSV_verified",
+      "input_error": null,
+      "score": -142.0865558459542,
+      "meets_limits": false,
+      "reasons": [
+        "脉动降幅未达要求",
+        "铁损增幅超过限值"
+      ],
+      "ripple_reduction_pct": -206.48280742981035,
+      "iron_loss_reduction_pct": -31.994033882795765,
+      "torque_change_pct": 0.6725009010123604,
+      "efficiency_change_pctpt": -0.8598661223229271
+    }
+  ],
+  "meets_limits_count": 0,
+  "best_case": null,
+  "new_native_solves": 0,
+  "final_physical_optimization_certified": false,
+  "dataset": {
+    "id": "scan_fd1f6e8b9d87",
+    "version": "V8_2_object_CS_loss_scope_v2",
+    "measurement_protocol": "v8_2_cycle1",
+    "scope": "本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界"
+  }
+}
