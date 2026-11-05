@@ -36,16 +36,19 @@ class SystemDataBuilder:
         self.calibration, self.optimization, self.materials, self.batches = calibration, optimization, materials, batches
         from modules.system_data_optimization import SavedOptimizationExports
         self.optimization_exports=SavedOptimizationExports(optimization,plans)
+        from modules.system_data_studies import SavedConstraintExports
+        self.constraint_exports=SavedConstraintExports(optimization,Path(storage)/'optimization_sensitivity')
 
     def build(self, selection):
-        if (not isinstance(selection, dict) or set(selection) not in ({'calibration', 'datasets', 'batch'}, {'calibration', 'datasets', 'batch', 'optimization'})
+        if (not isinstance(selection, dict) or not {'calibration', 'datasets', 'batch'} <= set(selection)
+                or set(selection)-{'calibration', 'datasets', 'batch', 'optimization', 'constraint_study'}
                 or not isinstance(selection['datasets'], list) or len(selection['datasets']) > 16):
             raise ValueError('请明确选择校准、至多16份电机数据集及可选批量')
-        if not selection['calibration'] and not selection['datasets'] and not selection['batch'] and not selection.get('optimization'):
+        if not selection['calibration'] and not selection['datasets'] and not selection['batch'] and not selection.get('optimization') and not selection.get('constraint_study'):
             raise ValueError('请至少选择一项已有数据')
         files, source_files = {}, {}
         index = dict(version=VERSION, created_utc=datetime.now(timezone.utc).isoformat(),
-                     calibration=None, datasets=[], calibrated_batch=None, optimization=None, producer_sha256=PRODUCER_SHA256,
+                     calibration=None, datasets=[], calibrated_batch=None, optimization=None, constraint_study=None, producer_sha256=PRODUCER_SHA256,
                      private_only=True, new_native_solves=0, new_predictions=0, new_analyses=0)
 
         def put(name, blob):
@@ -154,6 +157,13 @@ class SystemDataBuilder:
                     raise ValueError('所选原筛选与当前同名数据集的来源不同，请分开打包')
             for name,blob in content.items():put('optimization/'+name,blob)
             index['optimization']=optimization
+        if selection.get('constraint_study') is not None:
+            study,content=self.constraint_exports.collect(selection['constraint_study'])
+            for row in index['datasets']:
+                if row['id']==study['dataset'] and row['source_hashes']!=study['source_hashes']:
+                    raise ValueError('所选约束研究与当前同名数据集的来源不同，请分开打包')
+            for name,blob in content.items():put('constraint_studies/'+study['id']+'/'+name,blob)
+            index['constraint_study']=study
         if any(sha256(path.read_bytes())!=checksum for path,checksum in source_files.items()):
             raise ValueError('校准来源在打包期间变化，未登记新包')
         put('selection.json',json_bytes(selection))
@@ -170,6 +180,8 @@ calibrated_motor/仅在选择批量时包含；保留实际材料、官方转矩
 
 optimization/仅在明确选择已有筛选时包含；原analysis/ranking/说明/ZIP逐字节保留，附其关联原计划（如有）与当前使用范围说明。不重新评分、不改基准、权重、约束或“无改善候选”的结果；历史估算不改称原生损耗改善。
 
+constraint_studies/仅在明确选择已有约束研究时包含；原六个文件逐字节保存，不重新评分。配置组数不是新增材料，原默认候选数和约束范围保持；同名数据集来源不同需分开打包。
+
 CSV单位以原文件列头为准；ns/mW等原列保持。数据集内指标按各自原公式和时间窗口生成。原效率估算未覆盖全部机械/杂散损耗，转矩折算功率不作为铭牌额定功率。参阅原报告/来源metadata，不把历史估算标为实测。
 
 manifest.json核对文件完整性；本包是私有冻结快照，不随新任务更新，不自动公开到GitHub。完整原生工程、日志和缓存仍保留在原任务目录。
@@ -181,4 +193,5 @@ manifest.json核对文件完整性；本包是私有冻结快照，不随新任�
             for name,blob in files.items(): archive.writestr(name,blob)
         return self.store.register_bytes(out.getvalue(),'所选系统数据 '+index['created_utc'],
             '网页冻结快照：'+str(len(index['datasets']))+'份版本独立电机数据集；校准'+('已包含' if cal else '未选择')+
-            '，校准电机批量'+('已包含' if batch else '未选择')+'，已有原筛选'+('已包含' if index['optimization'] else '未选择')+'。原始异常和使用范围保持。')
+            '，校准电机批量'+('已包含' if batch else '未选择')+'，已有原筛选'+('已包含' if index['optimization'] else '未选择')+
+            '，已有约束研究'+('已包含' if index['constraint_study'] else '未选择')+'。原始异常和使用范围保持。')

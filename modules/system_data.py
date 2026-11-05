@@ -202,6 +202,7 @@ class SystemData:
         return dict(schema='go_steel_system_data_v1', created_utc=datetime.now(timezone.utc).isoformat(),
             datasets=datasets, calibrations=calibrations, calibrated_batches=batches, packages=self.packages.records(),
             optimizations=self.builder.optimization_exports.catalog() if self.builder is not None else [],
+            constraint_studies=self.builder.constraint_exports.catalog() if self.builder is not None else [],
             package_build_available=self.builder is not None,
             counts=dict(dataset_count=len(readable), row_count=sum(row['row_count'] for row in readable),
                 original_accepted_count=sum(row['original_accepted_count'] for row in readable),

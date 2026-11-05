@@ -42,7 +42,7 @@
   }
  }
  let busy=false,building=false,catalog=null;
- function formDisabled(disabled){for(const id of ['packageCalibration','packageBatch','packageOptimization','packageDatasets','packageBuild'])$(id).disabled=disabled}
+ function formDisabled(disabled){for(const id of ['packageCalibration','packageBatch','packageOptimization','packageStudy','packageDatasets','packageBuild'])$(id).disabled=disabled}
  function buildOptions(data){
   const previousCal=$('packageCalibration').value,previousBatch=$('packageBatch').value,previousOptimization=$('packageOptimization').value;
   const checked=new Set(Array.from($('packageDatasets').querySelectorAll('input:checked')).map(input=>input.value));
@@ -57,6 +57,10 @@
   $('packageOptimization').replaceChildren(element('option','不包含原筛选'));$('packageOptimization').children[0].value='';
   for(const row of readable){const option=element('option',row.id+' · '+row.dataset+' · '+row.meets_limits_count+'案满足 · 基准'+row.reference);option.value=row.id;$('packageOptimization').append(option)}
   $('packageOptimization').value=readable.some(row=>row.id===previousOptimization)?previousOptimization:'';
+  const previousStudy=$('packageStudy').value,studies=(data.constraint_studies||[]).filter(row=>row.readable&&/^csens_[a-f0-9]{12}$/.test(row.id));
+  $('packageStudy').replaceChildren(element('option','不包含约束研究'));$('packageStudy').children[0].value='';
+  for(const row of studies){const option=element('option',row.id+' · '+row.dataset+' · '+row.configuration_count+'组 · 原默认'+row.original_default_candidate_count+'候选');option.value=row.id;$('packageStudy').append(option)}
+  $('packageStudy').value=studies.some(row=>row.id===previousStudy)?previousStudy:'';
   $('optimizationRecordStatus').textContent='已有原筛选 '+readable.length+'/'+optimizations.length+' 份可读取。保留原基准、权重、约束、数据口径和无改善候选；不重新评分。'+(readable.length<optimizations.length?' 其余记录文件待检查。':'');
   $('packageDatasets').replaceChildren(element('legend','电机数据集（至多16份）'));
   for(const row of data.datasets.filter(row=>row.readable&&validDataset(row.id))){const label=element('label'),input=element('input');input.type='checkbox';input.value=row.id;input.checked=hadOptions?checked.has(row.id):false;label.append(input,element('span',' '+row.title+' '));$('packageDatasets').append(label,element('br'))}
@@ -67,15 +71,17 @@
   const cal=catalog.calibrations.find(row=>row.id===$('packageCalibration').value&&row.readable);
   const batch=(catalog.calibrated_batches||[]).find(row=>row.id===$('packageBatch').value&&row.available);
   const optimization=(catalog.optimizations||[]).find(row=>row.id===$('packageOptimization').value&&row.readable);
+  const study=(catalog.constraint_studies||[]).find(row=>row.id===$('packageStudy').value&&row.readable);
   const ids=Array.from($('packageDatasets').querySelectorAll('input:checked')).map(input=>input.value);
-  if(!cal&&!batch&&!optimization&&!ids.length){$('packageBuildStatus').textContent='请至少选择一项已有数据。';return}
+  if(!cal&&!batch&&!optimization&&!study&&!ids.length){$('packageBuildStatus').textContent='请至少选择一项已有数据。';return}
   if(ids.length>16){$('packageBuildStatus').textContent='每包最多16份电机数据集，请分开选择。';return}
   const selected=catalog.datasets.filter(row=>ids.includes(row.id)&&row.readable);
   if(selected.length!==ids.length){$('packageBuildStatus').textContent='所选记录已变化，请刷新后重新选择。';return}
   const payload={calibration:cal?{id:cal.id,report_sha256:cal.report_sha256}:null,
    datasets:selected.map(row=>({id:row.id,source_hashes_sha256:row.source_hashes_sha256})),
    batch:batch?{id:batch.id,source_binding_sha256:batch.source_binding_sha256}:null,
-   optimization:optimization?{id:optimization.id,source_binding_sha256:optimization.source_binding_sha256}:null};
+   optimization:optimization?{id:optimization.id,source_binding_sha256:optimization.source_binding_sha256}:null,
+   constraint_study:study?{id:study.id,source_binding_sha256:study.source_binding_sha256}:null};
   building=true;formDisabled(true);$('dataRefresh').disabled=true;$('packageBuildResult').replaceChildren();$('packageBuildStatus').textContent='正在收集所选原文件和核对来源，请等待…';
   try{
    const response=await fetch('/api/workbench/system-data/packages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}),record=await response.json();if(!response.ok)throw Error(record.error||'生成失败');

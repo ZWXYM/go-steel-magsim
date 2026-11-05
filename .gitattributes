@@ -265,3 +265,5 @@ tests/test_motor_constraint_studies.py -text
 tests/test_motor_constraint_studies_ui.js -text
 docs/motor_constraint_studies_20261106.md -text
 tools/replay_constraint_study.py -text
+modules/system_data_studies.py -text
+tests/test_system_data_studies.py -text
