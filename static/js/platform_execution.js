@@ -2,6 +2,7 @@
 let _execJobId=null,_execScript=null,_execSource=null,_elapsedTimer=null,_execQueueTimer=null,_jobPollTimer=null;
 let _execEpoch=0,_execLookupEpoch=0,_execPanelOpen=false;
 const _execSubmissions=new Map(),_execStops=new Set();
+const _execLogLineLimit=2000;
 function _execCurrent(epoch,job){return _execPanelOpen&&epoch===_execEpoch&&(job==null||job===_execJobId)}
 function _detachExecView(){
   if(_execSource){_execSource.close();_execSource=null}
@@ -148,6 +149,7 @@ function appendExecLine(line){
   div.style.cssText = (color || '') + ';padding:1px 0';
   div.textContent = line;
   log.appendChild(div);
+  while(log.children.length>_execLogLineLimit)log.removeChild(log.children[0]);
   if(document.getElementById('exec-autoscroll')?.checked)
     log.scrollTop = log.scrollHeight;
 }

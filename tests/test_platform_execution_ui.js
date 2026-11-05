@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const code=fs.readFileSync('static/js/platform_execution.js','utf8'),tick=()=>new Promise(setImmediate);
 function harness(){
- const nodes=new Map(),get=id=>{if(!nodes.has(id))nodes.set(id,{textContent:'',innerHTML:'',disabled:false,style:{},children:[],appendChild(node){this.children.push(node)},checked:false});return nodes.get(id)},calls=[],pending=[],streams=[],timers=new Map(),messages=[];let sequence=0,id=0;
+ const nodes=new Map(),get=id=>{if(!nodes.has(id))nodes.set(id,{textContent:'',innerHTML:'',disabled:false,style:{},children:[],appendChild(node){this.children.push(node)},removeChild(node){const at=this.children.indexOf(node);if(at>=0)this.children.splice(at,1)},checked:false});return nodes.get(id)},calls=[],pending=[],streams=[],timers=new Map(),messages=[];let sequence=0,id=0;
  class EventSource{constructor(url){this.url=url;this.readyState=1;this.closed=false;streams.push(this)}close(){this.closed=true}}
  const c=vm.createContext({document:{getElementById:get,createElement:()=>({style:{}})},api:(url,options={})=>{calls.push({url,method:options.method||'GET',body:options.body});return new Promise((resolve,reject)=>pending.push({resolve,reject}))},EventSource,setInterval:fn=>{const key=++id;timers.set(key,fn);return key},clearInterval:key=>timers.delete(key),setTimeout:fn=>{const key=++id;timers.set(key,fn);return key},clearTimeout:key=>timers.delete(key),crypto:{randomUUID:()=>`execution_request_${++sequence}_123`},loadTaskScripts(){},toast:(...m)=>messages.push(m),confirm:()=>true,console});
  vm.runInContext(code,c);return{c,get,calls,pending,streams,timers,messages};
@@ -31,4 +31,6 @@ async function connect(h,script,job){h.c.openExecPanel(script,3,job);respond(h,s
  assert.match(cursor.get('exec-current').textContent,/执行中/);source.onmessage({data:JSON.stringify({done:true,status:'completed',cursor:4,completed:3,total:3,failed:0})});assert.equal(cursor.get('exec-current').textContent,'任务已完成。');
  for(const [status,done,expected] of [['queued',false,/排队/],['starting',false,/正在启动/],['stopping',false,/等待.*停止/],['stopped',true,/已停止/],['failed(rc=2)',true,/已结束.*failed/]]){const view=harness();view.c.openExecPanel('A.bat',3,'job_A');respond(view,state('job_A','A.bat',{status,done}));await tick();assert.match(view.get('exec-current').textContent,expected);assert.equal(view.calls.filter(call=>call.method==='POST').length,0)}
  console.log('Current-step text follows queued, starting, running, stopping and final states without changing logs or dispatching jobs');
+ const long=harness();for(let i=0;i<2050;i++)long.c.appendExecLine('synthetic_'+i);assert.equal(long.get('exec-log').children.length,2000);assert.equal(long.get('exec-log').children[0].textContent,'synthetic_50');assert.equal(long.get('exec-log').children.at(-1).textContent,'synthetic_2049');assert.equal(long.calls.length,0);
+ console.log('Long console keeps its latest 2000 display nodes without sending any mutation request');
 })().catch(error=>{console.error(error);process.exitCode=1});
