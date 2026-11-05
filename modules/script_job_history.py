@@ -91,6 +91,27 @@ class ScriptJobHistory:
         rows.sort(key=lambda row:(str(row.get('queued_at') or ''),row['id']),reverse=True)
         return dict(records=rows,limit_reached=len(paths)>MAX_RECORDS,history_root=str(self.root))
 
+    def report_snapshot(self):
+        """Bounded metadata only; saved states do not assert a worker is alive."""
+        paths=sorted(self.root.glob('*/state.json'));rows=[]
+        for path in paths[:MAX_RECORDS]:
+            row=dict(id=path.parent.name,state_file=path.relative_to(self.root).as_posix(),
+                     readable=False,read_only_history=True,worker_state='not_checked',can_stop_here=False)
+            try:
+                value=self.read(path.parent.name)
+                for key in ('script','status','queued_at','started','finished','saved_utc','journal_error'):
+                    if isinstance(value.get(key),str):row[key]=value[key][:4096]
+                row.update(readable=True,done=value['done'],revision=value['revision'])
+                row['owner']={key:value['owner'][key][:4096] if isinstance(value['owner'][key],str) else value['owner'][key]
+                              for key in ('id','pid','started_utc') if isinstance(value['owner'].get(key),(str,int)) and not isinstance(value['owner'][key],bool)}
+                origin=value.get('workspace_origin')
+                if isinstance(origin,dict):row['workspace_origin']={key:origin[key][:4096] for key in ('path','token') if isinstance(origin.get(key),str)}
+            except (OSError,ValueError,UnicodeError) as error:row['read_error']=str(error)[:1000]
+            rows.append(row)
+        return dict(schema='script_job_report_v1',history_root=str(self.root),records=rows,
+                    record_count=len(rows),readable_count=sum(row['readable'] for row in rows),
+                    limit_reached=len(paths)>MAX_RECORDS,read_only_history=True,worker_state='not_checked')
+
     def view(self,job_id):
         value=self.read(job_id);files=[];errors={}
         for name in ('stdout.log','stdout.raw'):

@@ -2277,7 +2277,7 @@ def pipeline_list():
 
 
 from modules.workbench_routes import create_workbench
-app.register_blueprint(create_workbench(SCRIPT_DIR))
+app.register_blueprint(create_workbench(SCRIPT_DIR,script_history=lambda workspace:_script_journal_for(workspace).report_snapshot()))
 
 if __name__ == '__main__':
     print("="*60)

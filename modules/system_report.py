@@ -28,8 +28,8 @@ def invalid_number(value):raise ValueError('非有限JSON数值：'+value)
 
 
 class SystemReport:
-    def __init__(self,storage,runtime,license_status):
-        self.storage=Path(storage).resolve();self.runtime=runtime;self.license_status=license_status
+    def __init__(self,storage,runtime,license_status,script_history=None):
+        self.storage=Path(storage).resolve();self.runtime=runtime;self.license_status=license_status;self.script_history=script_history
 
     def _record(self,path):
         row=dict(directory_id=path.parent.name,state_file=path.relative_to(self.storage).as_posix(),readable=False,status=None,state_file_sha256=None)
@@ -74,6 +74,12 @@ class SystemReport:
                 result[name]=dict(ok=True,value=value)
             except Exception as error:result[name]=dict(ok=False,error=str(error)[:1000])
         result['record_groups']=[self._group(*spec) for spec in GROUPS]
+        if self.script_history is not None:
+            try:
+                value=self.script_history(result['workspace_at_capture'])
+                if not isinstance(value,dict) or value.get('schema')!='script_job_report_v1' or not isinstance(value.get('records'),list):raise ValueError('脚本历史摘要格式不可读')
+                result['script_history']=dict(ok=True,value=value)
+            except Exception as error:result['script_history']=dict(ok=False,error=str(error)[:1000])
         result['report_sha256']=hashlib.sha256(report_bytes(result)).hexdigest()
         return result
 

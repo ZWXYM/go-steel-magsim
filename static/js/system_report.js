@@ -17,6 +17,19 @@
    for(const row of group.records){const tr=node('tr');tr.append(node('td',row.id||row.directory_id),node('td',row.status||'未记录状态'),node('td',row.state_file),node('td',row.read_error||row.error||'—'));table.append(tr)}
    const scroll=node('div');scroll.className='scroll';scroll.append(table);section.append(scroll);groups.append(section);
   }
+  const scripts=$('reportScripts');scripts.replaceChildren();const snapshot=report.script_history;
+  if(!snapshot)scripts.append(node('p','当前实例未提供脚本历史摘要。'));
+  else if(!snapshot.ok)scripts.append(node('p','脚本历史读取失败：'+snapshot.error));
+  else{
+   const history=snapshot.value;scripts.append(node('p','历史目录：'+history.history_root),node('p',`${history.record_count} 条记录 · ${history.readable_count} 条可读${history.limit_reached?' · 仅列出前1000条':''}`));
+   const table=node('table'),head=node('tr');for(const label of ['脚本 / 记录','保存状态','原执行目录 / 实例','读取错误'])head.append(node('th',label));table.append(head);
+   for(const row of history.records){
+    const tr=node('tr'),identity=node('td'),origin=node('td');identity.append(node('div',row.id),node('small',row.script||row.state_file));
+    origin.append(node('div',row.workspace_origin?.path||'未登记原目录'),node('small',`${row.owner?.id||'未登记实例'} · PID ${row.owner?.pid??'—'} · 修订 ${row.revision??'—'}`));
+    tr.append(identity,node('td',row.status||'无法读取'),origin,node('td',row.read_error||row.journal_error||'—'));table.append(tr);
+   }
+   const scroll=node('div');scroll.className='scroll';scroll.append(table);scripts.append(scroll);
+  }
   $('reportIdentity').textContent='当前报告摘要：'+report.report_sha256;
  }
  async function refresh(){
@@ -24,6 +37,7 @@
   try{
    const response=await fetch('/api/workbench/system-report'),report=await response.json();if(current!==epoch)return;
    if(!response.ok||report.schema!=='go_steel_system_report_v1'||!Array.isArray(report.record_groups)||!report.record_groups.every(group=>group&&Array.isArray(group.records)&&group.records.every(row=>row&&typeof row==='object'))||!(/^[a-f0-9]{64}$/).test(report.report_sha256||''))throw Error(report.error||'报告格式不可读');
+   if(report.script_history?.ok&&(!report.script_history.value||report.script_history.value.schema!=='script_job_report_v1'||!Array.isArray(report.script_history.value.records)||!report.script_history.value.records.every(row=>row&&typeof row==='object')))throw Error('脚本历史摘要格式不可读');
    render(report);accepted=JSON.parse(JSON.stringify(report));$('reportStatus').textContent='报告已读取，下载将保存当前显示的快照。';
   }catch(error){if(current===epoch)$('reportStatus').textContent='读取失败：'+error.message+(accepted?'；保留上一次报告。':'')}
   finally{if(current===epoch){pending=false;$('reportRefresh').disabled=false;$('reportDownload').disabled=!accepted}}

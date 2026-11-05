@@ -36,7 +36,7 @@ from modules.system_report import SystemReport,create_system_report_routes
 SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md'))
 
 
-def create_workbench(project,storage=None,root=None):
+def create_workbench(project,storage=None,root=None,script_history=None):
     project=Path(project).resolve()
     root=Path(root or os.environ.get('GO_STEEL_THESIS_ROOT') or
         (project.parent if project.name=='magsim' and (project.parent/'calibration/pilot_20261003_n8/manifest.json').is_file() else project)).resolve()
@@ -64,7 +64,7 @@ def create_workbench(project,storage=None,root=None):
     bp=Blueprint('workbench',__name__)
     bp.register_blueprint(create_torque_window_routes(TorqueWindows(material_batches)))
     from modules.motor_workbench import license_status
-    bp.register_blueprint(create_system_report_routes(SystemReport(storage,lambda:runtime_view(identity),license_status)))
+    bp.register_blueprint(create_system_report_routes(SystemReport(storage,lambda:runtime_view(identity),license_status,script_history)))
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
         bp.record_once(lambda state:install_cpu_policy(state.app))
     bp.record_once(lambda state:install_source_guard(state.app,identity))
