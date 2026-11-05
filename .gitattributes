@@ -241,3 +241,15 @@ docs/actual_motor_material_exports_20261106.md -text
 calibration/actual_material_exports_20261106/** -text
 docs/author_library_data_20261106.md -text
 calibration/author_library_data_20261106/** -text
+modules/system_data.py -text
+modules/system_data_builder.py -text
+tools/register_system_data.py -text
+templates/system_data.html -text
+static/js/system_data.js -text
+tests/test_system_data.py -text
+tests/test_system_data_builder.py -text
+tests/test_system_data_ui.js -text
+docs/system_data_20261106.md -text
+calibration/system_data_center_20261106/** -text
+modules/system_data_optimization.py -text
+tests/test_system_data_optimization.py -text

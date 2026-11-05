@@ -1,0 +1,40 @@
+{
+  "batch": {
+    "id": "bhbatch_71f143ac9644",
+    "source_binding_sha256": "26649dca5003d6d86147c3e3d47e80d3254ae661fbf84e53b92ff31548f50a28"
+  },
+  "calibration": {
+    "id": "cal_8fff23daed9e",
+    "report_sha256": "69ddd3ad8507cbbc3ee4ed7de560c22ade806847c2d86e54cf4d2bff09839190"
+  },
+  "datasets": [
+    {
+      "id": "v8_1",
+      "source_hashes_sha256": "e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16"
+    },
+    {
+      "id": "v8_2_archive",
+      "source_hashes_sha256": "8b379569ed1ecd5823daccb71f02a817e748891b5e9346dda1f5692de2426eb1"
+    },
+    {
+      "id": "scan_663138d5d52a",
+      "source_hashes_sha256": "c8d2f5e09003a53ef24da191465d6adf90353e1087b61c0dafe2eaa0503776af"
+    },
+    {
+      "id": "scan_fd1f6e8b9d87",
+      "source_hashes_sha256": "3932ef9979be5b953bd4d03431ddd72fcd9d1b6edeba8a093cfd3f7e34946e60"
+    },
+    {
+      "id": "scan_8605c25b1635",
+      "source_hashes_sha256": "42c56a47f80a943bd18e731bdfca4cf85473da33352303a1b023f5331b6efaed"
+    },
+    {
+      "id": "scan_bd3b82a53ef6",
+      "source_hashes_sha256": "1342f53fe0d536c208d688317955669b3d59a3bb24a0842e58e019bc25354031"
+    },
+    {
+      "id": "scan_a300ab06268f",
+      "source_hashes_sha256": "573c190d2f4d60e64a491ec97cc0d88cd16ab80a14c266f9031107912de2a156"
+    }
+  ]
+}

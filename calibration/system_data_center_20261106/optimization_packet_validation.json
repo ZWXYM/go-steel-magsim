@@ -1,0 +1,33 @@
+{
+  "package_id": "pack_355717d3746838e8",
+  "package_sha256": "355717d3746838e86ddbacecd8d69122ad56fde9f7f68af67062bf47cda10c35",
+  "bytes": 884430,
+  "member_count": 32,
+  "actual_browser_generation_and_download": true,
+  "original_analysis_id": "opt_02445f20cd8c",
+  "original_plan_id": "plan_7f60d4b58a03",
+  "original_reference": "case_01",
+  "original_config": {
+    "efficiency_weight": 10.0,
+    "iron_loss_weight": 0.3,
+    "max_iron_loss_increase_pct": 0.0,
+    "min_ripple_reduction_pct": 30.0,
+    "min_torque_change_pct": 0.0,
+    "ripple_weight": 0.6
+  },
+  "no_improvement_candidates_preserved": true,
+  "raw_analysis_and_rank_and_plan_files_byte_exact": true,
+  "analysis_and_current_dataset_source_hashes_equal": true,
+  "preexisting_data_leaf_files_unchanged": 229,
+  "old_storage_evidence_files_unchanged": 684,
+  "new_native_solves": 0,
+  "new_predictions": 0,
+  "new_analyses": 0,
+  "completed_Maxwell": 57,
+  "completed_MuMax": 682,
+  "private_archive_not_published": true,
+  "pixel_screenshot_validation": false,
+  "backend_tests": 767,
+  "JS": 27,
+  "AST": 202
+}

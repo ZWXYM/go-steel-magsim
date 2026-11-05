@@ -6,6 +6,7 @@ from flask import request,jsonify
 def install_cpu_policy(app):
     @app.before_request
     def cpu_only_submissions():
+        if request.method=='POST' and request.path=='/api/workbench/system-data/packages':return None
         if request.method not in ('GET','HEAD','OPTIONS'):
             path=request.path
             safe=request.method=='POST' and (path in ('/api/workbench/native-material-runs','/api/workbench/native-pairs','/api/workbench/calibrated-motor/batches','/api/workbench/material-motor/prepare-or-reuse','/api/workbench/calibrated-motor/executions','/api/workbench/calibrated-motor/analysis-plans','/api/workbench/calibrated-motor/native-imports','/api/workbench/calibrated-motor','/api/workbench/calibrate','/api/workbench/motor/jobs','/api/workbench/motor/archive/export','/api/workbench/optimization/analyze','/api/workbench/optimization/plans','/api/workbench/waveforms/compare','/api/workbench/waveforms/export')
