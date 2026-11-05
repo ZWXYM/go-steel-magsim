@@ -14,9 +14,11 @@ function _execReconnectError(error,epoch,job){
   const start=document.getElementById('exec-start-btn');start.disabled=false;start.style.display='';start.textContent='重新连接';
   document.getElementById('exec-stop-btn').disabled=true;
 }
+let _execLogCursor=null;
 function openExecPanel(filename,totalTasks,existingJobId){
   _detachExecView();++_execEpoch;++_execLookupEpoch;_execPanelOpen=true;_execScript=filename;_execJobId=existingJobId||null;
   const epoch=_execEpoch,record=_execSubmissions.get(filename),start=document.getElementById('exec-start-btn');
+  _execLogCursor=null;
   document.getElementById('exec-title').textContent=(existingJobId?'进度: ':'执行: ')+filename;
   start.disabled=!!existingJobId||!!record?.pending;start.style.display=existingJobId?'none':'';start.textContent=record&&!record.response?'核对原请求':'▶ 开始执行';
   document.getElementById('exec-stop-btn').disabled=true;
@@ -46,7 +48,9 @@ async function _reconnectStream(jobId,epoch=_execEpoch){
       const start=document.getElementById('exec-start-btn');start.disabled=false;start.style.display='';start.textContent='新建执行';document.getElementById('exec-stop-btn').disabled=true;return;
     }
     if(response.error||response.id!==jobId||response.script!==_execScript)throw Error(response.error||'任务身份与当前脚本不一致');
-    document.getElementById('exec-log').innerHTML='';(response.recent_lines||[]).forEach(appendExecLine);
+    _execLogCursor=Number.isSafeInteger(response.log_cursor)&&response.log_cursor>=0?response.log_cursor:null;
+    document.getElementById('exec-log').innerHTML='';
+    if(_execLogCursor!==null||response.done||response.read_only_history)(response.recent_lines||[]).forEach(appendExecLine);
     if(response.read_only_history){
       updateExecProgress(response.completed,response.failed,response.total);
       _detachExecView();document.getElementById('exec-status-badge').textContent='历史保存状态：'+response.status+'（未核对当前进程）';
@@ -65,11 +69,13 @@ async function _reconnectStream(jobId,epoch=_execEpoch){
 }
 function _openSSE(jobId,epoch=_execEpoch){
   if(!_execCurrent(epoch,jobId))return;
-  if(_execSource)_execSource.close();const source=new EventSource('/api/jobs/'+encodeURIComponent(jobId)+'/stream');_execSource=source;
+  if(_execSource)_execSource.close();const source=new EventSource('/api/jobs/'+encodeURIComponent(jobId)+'/stream'+(_execLogCursor!==null?'?after='+_execLogCursor:''));_execSource=source;
   source.onmessage=event=>{
     if(!_execCurrent(epoch,jobId)||_execSource!==source)return;
     try{
-      const data=JSON.parse(event.data);if(typeof data.line==='string')appendExecLine(data.line);(data.lines||[]).forEach(appendExecLine);updateExecProgress(data.completed,data.failed,data.total);
+      const data=JSON.parse(event.data),cursor=Number.isSafeInteger(data.cursor)&&data.cursor>=0?data.cursor:null;
+      if(typeof data.line==='string'&&(cursor===null||_execLogCursor===null||cursor>_execLogCursor))appendExecLine(data.line);
+      (data.lines||[]).forEach(appendExecLine);if(cursor!==null)_execLogCursor=Math.max(_execLogCursor??0,cursor);updateExecProgress(data.completed,data.failed,data.total);
       if(data.done){_execFinished(jobId,data.status);loadTaskScripts()}
     }catch(error){_execReconnectError(error,epoch,jobId)}
   };

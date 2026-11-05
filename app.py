@@ -1251,8 +1251,17 @@ def stream_job(job_id):
     if job_id not in running_jobs:
         return jsonify({'error': 'Job not found'}), 404
     job = running_jobs[job_id]
+    cursors=[request.args.get('after')]
+    if request.headers.get('Last-Event-ID'):cursors.append(request.headers['Last-Event-ID'])
+    if any(value is not None and not re.fullmatch(r'[0-9]{1,16}',value) for value in cursors):
+        return jsonify(error='日志游标无效，请重新读取任务状态',code='invalid_log_cursor'),400
+    initial_offset=max((int(value) for value in cursors if value is not None),default=0)
+    with job['lock']:
+        if initial_offset>len(job['lines']):return jsonify(error='日志游标超出当前任务，请重新读取状态',code='invalid_log_cursor'),400
     def generate():
-        offset = 0
+        offset = initial_offset
+        last_heartbeat=time.monotonic()
+        yield ': stream ready\n\n'
         while True:
             with job['lock']:
                 cur_len = len(job['lines'])
@@ -1265,12 +1274,17 @@ def stream_job(job_id):
                     'total': job['total'],
                     'failed': job['failed'],
                     'status': job['status'],
+                    'cursor': offset+1,
                 })
-                yield f"data: {payload}\n\n"
+                yield f"id: {offset+1}\ndata: {payload}\n\n"
                 offset += 1
             if job['done']:
-                yield f"data: {json.dumps({'done': True, 'status': job['status'], 'completed': job['completed'], 'total': job['total'], 'failed': job['failed']})}\n\n"
+                yield f"id: {offset}\ndata: {json.dumps({'done': True, 'cursor': offset, 'status': job['status'], 'completed': job['completed'], 'total': job['total'], 'failed': job['failed']})}\n\n"
                 break
+            now=time.monotonic()
+            if now-last_heartbeat>=15:
+                yield ': keep-alive\n\n'
+                last_heartbeat=now
             time.sleep(0.15)
     return Response(
         stream_with_context(generate()),
@@ -1289,6 +1303,7 @@ def job_status(job_id):
     job = running_jobs[job_id]
     with job['lock']:
         recent = job['lines'][-50:]
+        log_cursor = len(job['lines'])
     return jsonify({
         'id': job_id, 'script': job['script'],
         'status': job['status'], 'done': job['done'],
@@ -1296,6 +1311,7 @@ def job_status(job_id):
         'failed': job['failed'],
         'started': job['started'], 'finished': job['finished'],
         'recent_lines': recent,
+        'log_cursor': log_cursor,
         'workspace_origin': job.get('workspace_origin'), 'request_id': job.get('request_id'),
         'journal_error': job.get('journal_error'),
     })
