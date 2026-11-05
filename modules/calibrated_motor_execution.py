@@ -11,6 +11,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 
 from modules.calibrated_motor_analysis import collect_torque,protocol,execution_model_version,verify_solver_settings
+from modules.execution_material_export import execution_material_exports, FILES as MATERIAL_EXPORT_FILES
 from modules.material_library import sha
 from modules.maxwell_material_transport import load_contract,verify_saved_material,equivalent_material_name,verify_saved_equivalent_material
 from modules.maxwell_native_readiness import require_configured_license_connection
@@ -232,12 +233,17 @@ class CalibratedMotorExecution:
 
     def download(self,artifact,name):
         record=self.get(artifact)
+        if name in MATERIAL_EXPORT_FILES:
+            return io.BytesIO(execution_material_exports(record,self.path(artifact))[name])
         allowed={'manifest.json','state.json'}
         if record['result_available']:
             allowed.update({'result.json','summary.csv','case/reports/Torque Plots.csv'})
             if record['requested_protocol'].get('equivalent_direction'):allowed.add('equivalent_material.json')
         if name not in allowed:raise ValueError('该任务当前没有可下载的官方结果')
         return self.path(artifact)/name
+
+    def material_exports(self,artifact):
+        return execution_material_exports(self.get(artifact),self.path(artifact))
 
     def bundle(self,artifact):
         record=self.get(artifact);folder=self.path(artifact);out=io.BytesIO()
@@ -248,4 +254,6 @@ class CalibratedMotorExecution:
                 if (folder/name).is_file():archive.write(folder/name,name)
             if record['result_available']:
                 for name in ('result.json','summary.csv','case/reports/Torque Plots.csv'):archive.write(folder/name,name)
+                if record['requested_protocol'].get('equivalent_direction'):
+                    for name,blob in execution_material_exports(record,folder).items():archive.writestr(name,blob)
         out.seek(0);return out

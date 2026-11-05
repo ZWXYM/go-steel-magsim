@@ -10,7 +10,7 @@ from pathlib import PurePosixPath, Path
 from modules.material_library import sha
 from modules.material_input_view import MaterialInputView, PARAMETERS
 
-VERSION='calibrated_batch_summary_v4'
+VERSION='calibrated_batch_summary_v5'
 
 
 def torque_findings(metrics):
@@ -229,9 +229,26 @@ def baseline_comparison(batches, record, baseline):
         elif differences:entry['notes'].append('标定来源不同，差值同时包含校准库/留出范围差异')
         if base['torque_numerical_acceptance'] is not True:entry['notes'].append('基准未通过或未报告原转矩判据')
         if point['torque_numerical_acceptance'] is not True:entry['notes'].append('本条未通过或未报告原转矩判据')
+        qualification=list(entry['comparison_reasons'])
+        if base['torque_numerical_acceptance'] is not True:qualification.append('基准未通过或未报告原转矩判据')
+        if point['torque_numerical_acceptance'] is not True:qualification.append('本条未通过或未报告原转矩判据')
+        if not scope_known or differences:qualification.append('标定来源/训练与排除范围不同或不完整')
+        if base['T_avg_Nm'] is None or base['T_avg_Nm']<=0:qualification.append('基准平均转矩非正或缺失')
+        if point['T_avg_Nm'] is None or point['T_avg_Nm']<=0:qualification.append('本条平均转矩非正或缺失')
+        entry.update(engineering_comparison_eligible=not qualification,engineering_comparison_reasons=qualification)
+        for key in ('delta_T_avg_Nm','delta_T_avg_pct','delta_power_W','delta_power_pct'):
+            entry['qualified_'+key]=entry[key] if not qualification else None
         rows.append(entry)
+    eligible=sum(row['engineering_comparison_eligible'] for row in rows)
+    alternatives=sum(row['engineering_comparison_eligible'] and row['item']!=baseline for row in rows)
     return dict(version='batch_baseline_comparison_v1',batch=record['id'],baseline_item=baseline,entries=rows,
         baseline_torque_numerical_acceptance=base['torque_numerical_acceptance'],
+        qualification_version='same_source_numeric_screen_v1',eligible_comparison_count=eligible,
+        qualified_alternative_count=alternatives,engineering_comparison_available=alternatives>0,
+        comparison_summary=(f'含基准{eligible}项可列工程差值；另有{alternatives}项可与基准比较。' if alternatives else
+            '当前没有另一个同来源、同工况且通过原转矩判据的材料，暂不能形成材料性能比较。'),
+        qualification_scope='Same verified setup and calibration lineage; both saved torque acceptance flags true and positive mean. This is an engineering screen, not steady-state, loss or directional validation.',
+        raw_delta_scope='Unqualified delta_* fields retain diagnostic differences, including failed results; use qualified_delta_* for the screened engineering view.',
         power_definition=points['power_definition'],scope='Saved model result differences under the same template, model version, protocol and speed; not causal material effects or ranking',
         percentage_definition='100 * (item - baseline) / baseline; only a positive baseline has a percentage',
         new_native_solves=0,new_predictions=0,efficiency_enabled=False,optimization_ranking_enabled=False)
@@ -242,12 +259,44 @@ def baseline_comparison_csv(comparison):
     fields=('batch','baseline_item','item','material_name','calibration','material_key','execution','analysis_plan','template_sha256','model_version',
         'measurement_protocol','speed_rpm','T_avg_Nm','electromagnetic_mechanical_power_W','delta_T_avg_Nm','delta_T_avg_pct',
         'delta_power_W','delta_power_pct','torque_numerical_acceptance','baseline_torque_numerical_acceptance','calibration_scope_matches_baseline',
-        'comparison_status','comparison_reasons','percentage_unavailable_reason','notes','calibration_scope','torque_csv_sha256')
+        'comparison_status','comparison_reasons','percentage_unavailable_reason','notes','calibration_scope','torque_csv_sha256',
+        'engineering_comparison_eligible','engineering_comparison_reasons','qualified_delta_T_avg_Nm',
+        'qualified_delta_T_avg_pct','qualified_delta_power_W','qualified_delta_power_pct')
     writer.writerow(fields)
     for entry in comparison['entries']:
         values=dict(entry,batch=comparison['batch'])
         writer.writerow([json.dumps(values[key],ensure_ascii=False) if isinstance(values.get(key),(list,dict)) else values.get(key) for key in fields])
     return stream.getvalue().encode('utf-8-sig')
+
+
+def engineering_comparison_csv(comparison):
+    """Screened view beside, never in place of, complete diagnostic values."""
+    stream=io.StringIO(newline='');writer=csv.writer(stream)
+    fields=('item','material_name','execution','baseline_item','T_avg_Nm','electromagnetic_mechanical_power_W',
+        'qualified_delta_T_avg_Nm','qualified_delta_T_avg_pct','qualified_delta_power_W','qualified_delta_power_pct',
+        'measurement_protocol','model_version','torque_csv_sha256')
+    writer.writerow(fields)
+    for row in comparison['entries']:
+        if row['engineering_comparison_eligible']:writer.writerow([row.get(key) for key in fields])
+    return stream.getvalue().encode('utf-8-sig')
+
+
+def engineering_comparison_markdown(comparison):
+    lines=['# 保存结果的工程比较','',f"批量：`{comparison['batch']}`；指定基准：`{comparison['baseline_item']}`。",
+        comparison['comparison_summary'],'',
+        '仅列同模板/协议/模型/转速、同校准来源且双方通过原转矩判据的差值。通过此筛选不等于稳态、损耗或局部方向认证。',
+        '| 条目 | 材料 | 转矩差 Nm | 转矩变化 % | 功率差 W | 功率变化 % |',
+        '| --- | --- | ---: | ---: | ---: | ---: |']
+    for row in comparison['entries']:
+        if row['engineering_comparison_eligible']:
+            lines.append('| '+' | '.join([cell(row['item']),cell(row['material_name']),
+                *[number(row['qualified_'+key]) for key in ('delta_T_avg_Nm','delta_T_avg_pct','delta_power_W','delta_power_pct')]])+' |')
+    lines+=['','## 未列工程差值的条目','']
+    for row in comparison['entries']:
+        if not row['engineering_comparison_eligible']:
+            lines.append('- '+cell(row['item'])+' / '+cell(row['material_name'])+'：'+'；'.join(map(cell,row['engineering_comparison_reasons']))+'。')
+    lines+=['','comparison.json / comparison.csv 保留全部原指标、异常标记与诊断差值；异常大值不能解释为性能提升。原始CSV与实际材料见 saved_batch_report/。未更改原始数据、求解或排名。','']
+    return '\n'.join(lines)
 
 
 def summary_markdown(record, identities=None, operating=None):
@@ -352,7 +401,9 @@ def baseline_report_bundle(batches, artifact, baseline):
     files={'saved_batch_report/'+name:blob for name,blob in report.items()}
     files['comparison.json']=json.dumps(comparison,ensure_ascii=False,indent=2,allow_nan=False).encode('utf8')
     files['comparison.csv']=baseline_comparison_csv(comparison)
-    files['manifest.json']=json.dumps(dict(version='batch_baseline_report_bundle_v1',batch=artifact,baseline_item=baseline,
+    files['engineering_comparison.csv']=engineering_comparison_csv(comparison)
+    files['engineering_comparison.md']=engineering_comparison_markdown(comparison).encode('utf8')
+    files['manifest.json']=json.dumps(dict(version='batch_baseline_report_bundle_v2',batch=artifact,baseline_item=baseline,
         producer_sha256=sha(Path(__file__).read_bytes()),files={name:sha(blob) for name,blob in files.items()},
         saved_report_members_preserved=True,new_native_solves=0,new_predictions=0,
         efficiency_enabled=False,optimization_ranking_enabled=False),ensure_ascii=False,indent=2).encode('utf8')

@@ -232,3 +232,10 @@ tests/test_system_recent_ui.js -text
 static/js/motor_power.js -text
 tests/test_motor_power_ui.js -text
 docs/engineering_motor_mode_20261105.md -text
+modules/motor_dataset_export.py -text
+tests/test_motor_dataset_export.py -text
+docs/motor_dataset_export_20261106.md -text
+modules/execution_material_export.py -text
+tests/test_execution_material_export.py -text
+docs/actual_motor_material_exports_20261106.md -text
+calibration/actual_material_exports_20261106/** -text

@@ -1,6 +1,8 @@
 # GO-Steel MagSim — 取向硅钢微磁仿真与材料校准
 
-## 当前系统（2026-10-21）
+## 当前系统（2026-11-06）
+
+优化页可直接[下载当前作者数据集及原文件](docs/motor_dataset_export_20261106.md)；方向等效电机结果支持[实际求解材料、B-H节点和来源下载](docs/actual_motor_material_exports_20261106.md)。工程比较筛选原数值异常，完整原值继续保留，原作者优化程序与已存结果沿用。
 
 双击 `start_system.cmd` 打开统一首页，使用实际显示的端口；首页可在线阅读和下载操作说明。完整用法见[系统使用说明](docs/system_user_guide.md)，功能交付核对见[系统交付检查](docs/system_delivery_acceptance_20261020.md)。
 

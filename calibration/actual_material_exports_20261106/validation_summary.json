@@ -1,0 +1,20 @@
+{
+  "main_backend_baseline_passed": 737,
+  "main_alias_followup_passed": 8,
+  "main_unchanged_python_bound": 193,
+  "AST": 195,
+  "JS": 26,
+  "actual_material_downloads_verified": 12,
+  "actual_material_points_verified": 104,
+  "official_torque_points_preserved": 124,
+  "native_parser_verified": true,
+  "export_native_import_roundtrip_verified": false,
+  "browser_downloads_verified": 5,
+  "browser_AX_interaction_verified": true,
+  "pixel_screenshot_validation": false,
+  "qualified_alternative_count": 0,
+  "failed_torque_results_retained": 3,
+  "new_native_solves_for_exports": 0,
+  "cumulative_Maxwell": 54,
+  "cumulative_MuMax": 682
+}

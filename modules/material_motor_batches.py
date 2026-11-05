@@ -265,6 +265,9 @@ class MaterialMotorBatches:
                 *[m.get(k) for k in ('T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct')],row.get('error') or ''])
             if row['result_available']:
                 files[row['id']+'/Torque Plots.csv']=self.chain.execution.download(row['execution_id'],'case/reports/Torque Plots.csv').read_bytes()
+                if protocol(record['measurement_protocol']).get('equivalent_direction'):
+                    for name,blob in self.chain.execution.material_exports(row['execution_id']).items():
+                        files[row['id']+'/'+name]=blob
         files['summary.csv']=stream.getvalue().encode('utf-8-sig')
         files['manifest.json']=json.dumps(dict(files={n:sha(b) for n,b in files.items()},efficiency_enabled=False,
             optimization_ranking_enabled=False,new_native_solves=0),indent=2).encode()

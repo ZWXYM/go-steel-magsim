@@ -10,9 +10,15 @@ function metricsTable(rows,saved=false){return '<div class="tablewrap"><table><t
 async function workflow(){const v=await api('workflow');$('rule').textContent=v.original_criteria+'；'+v.score_definition;$('workflow').innerHTML=v.stages.map(s=>`<div class="stage"><h3>${esc(s.title)}</h3>${s.available?`<p class="muted">原生成时间 ${esc(s.generated||'未登记')} · ${s.rows.length} 行 · ${s.ranked.length} 个原排序项</p>${Object.keys(s.files).map(n=>`<a href="/api/workbench/optimization/sources/${s.id}/${encodeURIComponent(n)}">${esc(n)}</a>`).join(' · ')}<details><summary>查看原保存指标</summary>${metricsTable(s.ranked.length?s.ranked:s.rows,true)}</details>`:'此资源目录未附带原输出'}</div>`).join('');$('scripts').innerHTML=v.scripts.length?v.scripts.map(s=>`<p><code>${esc(s.relative_path)}</code><br><span class="muted">${esc(s.sha256)}</span></p>`).join(''):'尚未配置原电机程序目录'}
 function screeningContext(){return JSON.stringify([loadGeneration,$('dataset').value,current?.id,$('reference').value,...keys.map(k=>$(k).value)])}
 function updateScreeningButtons(){
+ updateDatasetDownload();
  $('analyze').disabled=reusingScreen||analysisPending||!current?.references.length||current.id!==$('dataset').value;
  $('bindPlan').disabled=reusingScreen||preparingPlan||!current?.id.startsWith('scan_')||!current?.references.length||current.id!==$('dataset').value;
  $('preparePlan').disabled=reusingScreen||preparingPlan||!planAvailable;updateSavedScreenControls();
+}
+function updateDatasetDownload(){
+ const link=$('datasetBundle'),ready=Boolean(current&&current.id===$('dataset').value);
+ link.hidden=!ready;link.href=ready?'/api/workbench/optimization/datasets/'+encodeURIComponent(current.id)+'/bundle':'';
+ link.download=ready?current.id+'_data.zip':'';
 }
 function screeningChanged(){
  $('result').hidden=true;$('analysisStatus').textContent=analysisPending?'当前选择或配置已变更；此前请求返回后可重新保存。':'配置已变更；请重新保存筛选与排序。';

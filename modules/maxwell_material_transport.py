@@ -216,7 +216,7 @@ def verify_saved_equivalent_material(saved_text,contract,direction):
     for field,key in (('conductivity','conductivity_S_per_m'),('mass_density','mass_density_kg_per_m3')):
         if float(value(body,field))!=contract['curves'][key]:raise ValueError('方向等效材料改变了'+field)
     if cut_depth_meters(value(body,'core_loss_equiv_cut_depth'))!=contract['curves']['core_loss_equiv_cut_depth_m']:
-        raise ValueError('方向等效材料改变了叠片厚度')
+        raise ValueError('方向等效材料改变了等效切边深度')
     return dict(material_name=name,source_material_name=contract['material_name'],equivalent_direction=direction,
         constitutive_model='scalar_direction_equivalent_v1',curve_points=len(source['H']),source_points_unchanged=True,
         serialized_transport_verified=True,directional_field_verified=False,loss_calibration_verified=False,

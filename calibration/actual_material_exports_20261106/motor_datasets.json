@@ -1,0 +1,72 @@
+{
+  "version": "motor_dataset_HTTP_review_v1",
+  "datasets": [
+    {
+      "dataset": "v8_1",
+      "version": "V8_1_original_saved",
+      "measurement_protocol": "original_processed_metrics",
+      "rows": 16,
+      "accepted": 14,
+      "source_files_included": 1,
+      "source_files_not_included": 0,
+      "all_source_hashes_verified": true,
+      "bundle_members": 8,
+      "bundle_sha256": "1cf740ce1d84d2eb3f80841b0bbc3a279eaaca76fbf35359b9a7c31a22271698"
+    },
+    {
+      "dataset": "v8_2_archive",
+      "version": "V8_2_final_resolved",
+      "measurement_protocol": "v8_2_cycle1",
+      "rows": 6,
+      "accepted": 4,
+      "source_files_included": 36,
+      "source_files_not_included": 0,
+      "all_source_hashes_verified": true,
+      "bundle_members": 43,
+      "bundle_sha256": "a28fa7024c98c6201687b28fc28cf96f5b5f9b95be41d9bc8866053d5eb5b9be"
+    },
+    {
+      "dataset": "scan_8605c25b1635",
+      "version": "V8_2_object_CS_loss_scope_v2",
+      "measurement_protocol": "v8_2_cycle1",
+      "rows": 1,
+      "accepted": 1,
+      "source_files_included": 7,
+      "source_files_not_included": 0,
+      "all_source_hashes_verified": true,
+      "bundle_members": 14,
+      "bundle_sha256": "5891cbd67df42c43081bbcdeceddd63c5f7faedc06686ac996afbd0d223f2846"
+    },
+    {
+      "dataset": "scan_bd3b82a53ef6",
+      "version": "V8_2_object_CS_loss_scope_v2",
+      "measurement_protocol": "v8_2_cycle1",
+      "rows": 2,
+      "accepted": 1,
+      "source_files_included": 9,
+      "source_files_not_included": 0,
+      "all_source_hashes_verified": true,
+      "bundle_members": 16,
+      "bundle_sha256": "67d7941e1cf5d9fd5a306a15f96de0a60193af38370826a3a190793a68ee7af7"
+    },
+    {
+      "dataset": "scan_a300ab06268f",
+      "version": "V8_2_object_CS_loss_scope_v2",
+      "measurement_protocol": "v8_2_cycle1",
+      "rows": 1,
+      "accepted": 1,
+      "source_files_included": 7,
+      "source_files_not_included": 0,
+      "all_source_hashes_verified": true,
+      "bundle_members": 14,
+      "bundle_sha256": "aa30ae3656910a05ffad245da536ecc028033838dc88bc2b69a01277b8993565"
+    }
+  ],
+  "dataset_count": 5,
+  "all_rows": 26,
+  "saved_accepted_rows": 21,
+  "independent_material_count_not_claimed": true,
+  "new_analyses": 0,
+  "new_predictions": 0,
+  "new_native_solves": 0
+}

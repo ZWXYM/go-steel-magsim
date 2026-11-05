@@ -12,6 +12,7 @@ from modules.workbench_cpu_policy import install_cpu_policy
 from modules.system_runtime import runtime_identity
 from modules.runtime_source_guard import runtime_view,install_source_guard
 from modules.motor_optimization import MotorOptimization
+from modules.motor_dataset_export import dataset_bundle as motor_dataset_bundle
 from modules.motor_failure_diagnostics import diagnose_job,append_export_diagnostics,readable_motor_jobs
 from modules.optimization_plans import OptimizationPlans
 from modules.motor_waveforms import MotorWaveforms
@@ -432,6 +433,11 @@ def create_workbench(project,storage=None,root=None,script_history=None):
     @bp.get('/api/workbench/optimization/datasets/<dataset_id>')
     def optimization_dataset(dataset_id):
         return jsonify(optimization.dataset(dataset_id))
+
+    @bp.get('/api/workbench/optimization/datasets/<dataset_id>/bundle')
+    def optimization_dataset_bundle(dataset_id):
+        return send_file(motor_dataset_bundle(optimization,dataset_id),as_attachment=True,
+            download_name=dataset_id+'_data.zip',mimetype='application/zip')
 
     @bp.post('/api/workbench/optimization/analyze')
     def optimization_analyze():

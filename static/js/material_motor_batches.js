@@ -136,13 +136,15 @@ async function mbCompare(){
   if(data.version!=='batch_baseline_comparison_v1'||data.batch!==record.id||data.baseline_item!==baseline||!Array.isArray(data.entries)||JSON.stringify(data.entries.map(e=>e.item))!==JSON.stringify(record.items.map(i=>i.id)))throw Error('比较响应与当前批量或基准不一致，请刷新重开。');
   const value=v=>v===null||v===undefined?'—':typeof v==='number'&&Number.isFinite(v)?v.toFixed(6):(()=>{throw Error('比较指标不是有限数值')})();
   const rows=[];for(const entry of data.entries){const row=document.createElement('tr'),item=record.items.find(i=>i.id===entry.item),notes=[...(entry.comparison_reasons||[]),...(entry.notes||[])];
+   for(const key of ['delta_T_avg_Nm','delta_T_avg_pct','delta_power_W','delta_power_pct'])value(entry[key]);
+   if(entry.engineering_comparison_eligible!==true)notes.push(...(entry.engineering_comparison_reasons||['尚未核对工程比较资格']));
    if(entry.percentage_unavailable_reason)notes.push(entry.percentage_unavailable_reason);
    row.append(mbText('td',mbName(item)+(entry.item===baseline?' · 基准':'')),
-    mbText('td',entry.comparison_status==='same_saved_setup'?'同模板 / 同协议 / 同转速':'不可比较'),
-    mbText('td',value(entry.delta_T_avg_Nm)),mbText('td',value(entry.delta_T_avg_pct)),mbText('td',value(entry.delta_power_W)),mbText('td',value(entry.delta_power_pct)),
+    mbText('td',entry.engineering_comparison_eligible===true?'可列工程差值':entry.comparison_status==='same_saved_setup'?'同工况 · 诊断原值见下载':'不可比较'),
+    ...['delta_T_avg_Nm','delta_T_avg_pct','delta_power_W','delta_power_pct'].map(key=>mbText('td',value(entry.engineering_comparison_eligible===true?entry['qualified_'+key]:null))),
     mbText('td',entry.torque_numerical_acceptance===true?'通过原判据':entry.torque_numerical_acceptance===false?'数值异常 · 原值保留':'判据未报告'),mbText('td',notes.join('；')||'标定来源相同'));
    rows.push(row)}
-  mb$('batchCompareRows').replaceChildren(...rows);mbComparison.data=data;mb$('batchCompareStatus').textContent='基准 '+mbName(record.items.find(i=>i.id===baseline))+'；差值 = 当前条目 − 基准，百分比 = 差值 ÷ 正基准 × 100%。保持材料选择顺序。';
+  mb$('batchCompareRows').replaceChildren(...rows);mbComparison.data=data;mb$('batchCompareStatus').textContent='基准 '+mbName(record.items.find(i=>i.id===baseline))+'；'+(data.comparison_summary||'工程比较资格尚未核对。')+' 差值 = 当前条目 − 基准，保持材料选择顺序；下载保留全部诊断原值。';
   for(const [id,format] of [['batchCompareCSV','csv'],['batchCompareJSON','json'],['batchCompareZIP','zip']]){mb$(id).href=url+'&format='+format;mb$(id).download=record.id+'_'+baseline+'_comparison.'+format;mb$(id).hidden=false}
  }catch(error){if(current()){mb$('batchCompareError').textContent=error.message;mb$('batchCompareStatus').textContent='比较未完成；原始结果与当前批量保持。'}}
  finally{if(generation===mbComparison.generation){mbComparison.pending=false;button.disabled=MBB.loading||!mb$('batchBaseline').value}}

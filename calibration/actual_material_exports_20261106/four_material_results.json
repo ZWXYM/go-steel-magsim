@@ -1,0 +1,68 @@
+{
+  "batch": "bhbatch_71f143ac9644",
+  "cases": [
+    {
+      "grade": "fit:B23R075",
+      "execution": "bhexec_6f5721965105",
+      "model": "V8_2_scalar_RD_equivalent_BH_only_stable_v1",
+      "mean_Nm": 1.270994107550043,
+      "min_Nm": -5.77735364427406,
+      "max_Nm": 3.74928042102952,
+      "ripple_pct": 749.5419537126756,
+      "accepted": false,
+      "official_CSV_sha256": "83294382e7fef43a784dabed22473aae45f94623dedd74445f3b6c6c5b2386fe",
+      "native_PID_confirmed_exited": true,
+      "original_points": 31,
+      "original_BH_points": 26
+    },
+    {
+      "grade": "fit:B27R090",
+      "execution": "bhexec_73e74debb43d",
+      "model": "V8_2_scalar_RD_equivalent_BH_only_stable_v1",
+      "mean_Nm": 565.6943135733358,
+      "min_Nm": -971.460005728424,
+      "max_Nm": 18120.710876171,
+      "ripple_pct": 3374.9978431459595,
+      "accepted": false,
+      "official_CSV_sha256": "6b3546feeae30a60408aed1bef8163abac7041335562bf57d22669d717b81121",
+      "native_PID_confirmed_exited": true,
+      "original_points": 31,
+      "original_BH_points": 26
+    },
+    {
+      "grade": "fit:B27R095",
+      "execution": "bhexec_e7941a594aaa",
+      "model": "V8_2_scalar_RD_equivalent_BH_only_stable_v1",
+      "mean_Nm": 1.7751849100269317,
+      "min_Nm": 1.30411862828504,
+      "max_Nm": 2.30690275343239,
+      "ripple_pct": 56.48899556791164,
+      "accepted": true,
+      "official_CSV_sha256": "c3ac5ec2a86b42874d24b3bacb17ae044f07f5904d8d963368981406663f5bb4",
+      "native_PID_confirmed_exited": true,
+      "original_points": 31,
+      "original_BH_points": 26
+    },
+    {
+      "grade": "fit:B30P105",
+      "execution": "bhexec_f7a409929b46",
+      "model": "V8_2_scalar_RD_equivalent_BH_only_stable_v1",
+      "mean_Nm": -0.162004485378085,
+      "min_Nm": -90.5822940944966,
+      "max_Nm": 67.6566184252041,
+      "ripple_pct": -97675.6366654934,
+      "accepted": false,
+      "official_CSV_sha256": "6d591781fde181eca8cfc67a676650be028c90507edf1a591553419d47778486",
+      "native_PID_confirmed_exited": true,
+      "original_points": 31,
+      "original_BH_points": 26
+    }
+  ],
+  "total_cases": 4,
+  "total_original_torque_points": 124,
+  "new_completed_Maxwell": 3,
+  "cumulative_Maxwell": 54,
+  "cumulative_MuMax": 682,
+  "passed": 1,
+  "failed": 3
+}

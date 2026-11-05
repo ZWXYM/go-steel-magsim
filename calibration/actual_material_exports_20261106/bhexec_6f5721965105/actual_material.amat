@@ -1,0 +1,40 @@
+# Actual saved direction-equivalent motor material: WB_B23R075_8fff23daed9e_RD_EQ_v1
+# Source execution: bhexec_6f5721965105; source direction: RD
+# Isotropic normal B-H engineering model. Uncalibrated zero loss placeholders.
+$begin 'WB_B23R075_8fff23daed9e_RD_EQ_v1'
+				CoordinateSystemType='Cartesian'
+				BulkOrSurfaceType=1
+				$begin 'PhysicsTypes'
+					set('Electromagnetic')
+				$end 'PhysicsTypes'
+				permittivity='1'
+				$begin 'permeability'
+					property_type='nonlinear'
+					BTypeForSingleCurve='normal'
+					HUnit='A_per_meter'
+					BUnit='tesla'
+					IsTemperatureDependent=false
+					$begin 'BHCoordinates'
+						DimUnits[2: '', '']
+						Points[52: 0, 0, 0.1, 8.8e-05, 0.2, 0.000349185259991, 0.5, 0.00213930493274, 1, 0.00827544698229, 2, 0.0308149997721, 5, 0.150101668723, 10, 0.650142276271, 20, 1.51547615418, 50, 1.83925565419, 100, 1.91933623035, 200, 1.94791023538, 500, 1.96098213437, 800, 1.96135912549, 1000, 1.9616104529, 1500, 1.96223877143, 2000, 1.96286708996, 3000, 1.96412372702, 5000, 1.96663700115, 7500, 1.9697785938, 10000, 1.97292018645, 15000, 1.97920337176, 20000, 1.98548655707, 30000, 1.99805292768, 40000, 2.0106192983, 50000, 2.02318566891]
+					$end 'BHCoordinates'
+					$begin 'Temperatures'
+					$end 'Temperatures'
+					RecoilPermeability='1'
+				$end 'permeability'
+				conductivity='2000000'
+				$begin 'core_loss_type'
+					property_type='ChoiceProperty'
+					Choice='Electrical Steel'
+				$end 'core_loss_type'
+				core_loss_kh='0'
+				core_loss_kc='0'
+				core_loss_ke='0'
+				core_loss_kdc='0'
+				mass_density='7650'
+				core_loss_equiv_cut_depth='0.00023meter'
+				ModTime=1793891539
+				Library=''
+				LibLocation='Project'
+				ModSinceLib=false
+$end 'WB_B23R075_8fff23daed9e_RD_EQ_v1'

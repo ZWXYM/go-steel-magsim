@@ -71,6 +71,7 @@ function bhaActual(record){
  const power=bhaPower(record),cell=document.createElement('div');cell.append(bhaText('span','电磁机械功率'),bhaText('strong',power?power.power_W.toFixed(3):'—'),bhaText('small',power?'W · '+power.speed_rpm+' r/min':'W · 保存工况待核对'));out.append(cell);
  bhaPlot(m,'actualTorque');const links=bha$('actualLinks');links.replaceChildren();
  for(const [label,path] of [['原转矩CSV','case/reports/Torque Plots.csv'],['转矩汇总CSV','summary.csv'],['结果JSON','result.json']]){const link=bhaText('a',label);link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
+ if(saved.constitutive_model==='scalar_direction_equivalent_v1')for(const [label,path] of [['实际求解材料AMAT','actual_material.amat'],['实际B-H节点CSV','actual_material_BH.csv'],['实际材料来源JSON','actual_material.metadata.json']]){const link=bhaText('a',label);link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
  const review=bhaText('button','查看异常与求解记录');review.onclick=()=>bhaLoadReview(record.id);links.append(review);
  const markdown=bhaText('a','下载检查摘要');markdown.href='/api/workbench/calibrated-motor/executions/'+record.id+'/review.md';links.append(markdown);
  if(fixedURL){const permalink=bhaText('a','本条结果链接');permalink.href=fixedURL;links.append(permalink)}

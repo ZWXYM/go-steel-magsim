@@ -1,0 +1,61 @@
+{
+  "B_definition": "normal_B",
+  "B_unit": "T",
+  "H_axis": "physical_A_per_m",
+  "H_scale": 1.0,
+  "H_unit": "A/m",
+  "applied_material_law": "isotropic_normal_BH",
+  "conductivity_S_per_m": 2000000.0,
+  "constitutive_model": "scalar_direction_equivalent_v1",
+  "core_loss_status": "uncalibrated_zero_placeholders",
+  "curve_nodes_source": "actual_saved_native_material_definition",
+  "curve_points": 26,
+  "declared_sheet_thickness_mm": 0.23,
+  "directional_field_verified": false,
+  "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "efficiency_enabled": false,
+  "excluded_grades": [],
+  "export_roundtrip_verified": false,
+  "exported_directions": [
+    "RD"
+  ],
+  "files_sha256": {
+    "actual_material.amat": "2ad91cf264269c7f73faf4350522f333b3e6da3049e5ce56519c2f668b3bd07c",
+    "actual_material_BH.csv": "8747e0755968aaee4622bb40f1d8e6461062c737a4cc871b65719580ef6f14dc"
+  },
+  "mass_density_kg_per_m3": 7650.0,
+  "material_name": "WB_B23R075_8fff23daed9e_RD_EQ_v1",
+  "measurement_protocol": "v8_2_cycle1_RD_equivalent_stable_v1",
+  "model_version": "V8_2_scalar_RD_equivalent_BH_only_stable_v1",
+  "native_equivalent_cut_edge_depth_m": 0.00023,
+  "native_saved_definition_verified": true,
+  "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "reader_sha256": "f8b827f171fcb440d2addf0681af6651c3d566d09439c3ad39758bc432ae929b",
+  "scope": "Material actually assigned in this saved direction-equivalent execution; a single directional source curve is used isotropically. No measured anisotropy or calibrated loss claim.",
+  "solver_settings_saved": {
+    "MaxIterNum": "100",
+    "MinIterNum": "1",
+    "SmoothBHCurve": "true",
+    "UseNonLinearIterNum": "true"
+  },
+  "source_analysis_plan": "bhanalysis_a2bfb721a0ce",
+  "source_direction": "RD",
+  "source_execution": "bhexec_6f5721965105",
+  "source_import_amat_sha256": "ef79c8660dea2949006164c09ad7078cbc6b7ad96af05e447b7ec2eac8c442ef",
+  "source_import_metadata_sha256": "79863e4ece2f17a5bb63cb433f500f8c58564b69f25aec33deeb3386ad3b41d5",
+  "source_material_name": "WB_B23R075_8fff23daed9e",
+  "source_native_quality_status": "numerical_screen_failed",
+  "source_points_unchanged": true,
+  "source_solved_project_sha256": "55947f5c89e4908b6dc285888bab008b358bd875659103550985f7fcb3378c75",
+  "source_strict_training_eligible": false,
+  "source_torque_CSV_sha256": "83294382e7fef43a784dabed22473aae45f94623dedd74445f3b6c6c5b2386fe",
+  "status": "engineering_direction_equivalent_BH_only",
+  "torque_numerical_acceptance": false,
+  "training_grades": [
+    "B23R075",
+    "B27R090",
+    "B27R095",
+    "B30P105"
+  ],
+  "version": "execution_direction_equivalent_material_v1"
+}

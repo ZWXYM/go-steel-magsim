@@ -23,6 +23,7 @@ async function loaded(h,dataset=a){h.node('dataset').value=dataset.id;await h.c.
  const html=fs.readFileSync(project+'/templates/motor_optimization.html','utf8');assert.match(html,/src="\/static\/js\/motor_optimization.js" defer/);assert.equal((html.match(/oninput="screeningChanged\(\)"/g)||[]).length,6);
  const valid=harness(async(url,options)=>url.endsWith('/analyze')?report():url.endsWith('/history')?[]:a);
  await loaded(valid);await valid.c.analyze();assert.equal(valid.node('result').hidden,false);
+ assert.equal(valid.node('datasetBundle').hidden,false);assert.equal(valid.node('datasetBundle').href,'/api/workbench/optimization/datasets/v8_1/bundle');assert.equal(valid.node('datasetBundle').download,'v8_1_data.zip');
  assert.match(valid.node('result').innerHTML,/v8_1 \/ VERSION_A \/ original/);assert.match(valid.node('result').innerHTML,/转矩基准 original_baseline/);
  assert.match(valid.node('result').innerHTML,/0\.000/);assert.match(valid.node('result').innerHTML,/—/);
  assert.deepEqual(JSON.parse(posts(valid)[0].body),{dataset:a.id,reference:'original_control',config});assert.equal(posts(valid).length,1);
@@ -31,9 +32,15 @@ async function loaded(h,dataset=a){h.node('dataset').value=dataset.id;await h.c.
 
  let finish;const delayed=new Promise(r=>finish=r),stale=harness(async url=>url.endsWith('/analyze')?delayed:url.endsWith('/history')?[]:url.endsWith('/v8_1')?a:b);
  await loaded(stale);const saving=stale.c.analyze();await stale.c.analyze();await loaded(stale,b);
+ assert.equal(stale.node('datasetBundle').href,'/api/workbench/optimization/datasets/v8_2_archive/bundle');
  assert.equal(stale.node('analyze').disabled,true);finish(report());await saving;
  assert.equal(stale.node('result').hidden,true);assert.equal(value(stale,'current.id'),b.id);assert.equal(posts(stale).length,1);
  assert.match(stale.node('analysisStatus').textContent,/先前配置.*历史/);assert.equal(stale.node('analyze').disabled,false);
+ let finishDataset;const datasetWait=new Promise(resolve=>finishDataset=resolve),downloading=harness(async()=>datasetWait);
+ const pendingDataset=downloading.c.loadDataset();assert.equal(downloading.node('datasetBundle').hidden,true);assert.equal(downloading.node('datasetBundle').href,'');
+ downloading.node('dataset').value=b.id;const laterDataset=downloading.c.loadDataset();finishDataset(b);await Promise.all([pendingDataset,laterDataset]);
+ assert.equal(downloading.node('datasetBundle').href,'/api/workbench/optimization/datasets/v8_2_archive/bundle');assert.equal(posts(downloading).length,0);
+ const badDownload=harness(async()=>{throw Error('offline')});await loaded(badDownload);assert.equal(badDownload.node('datasetBundle').hidden,true);assert.equal(badDownload.node('datasetBundle').href,'');
 
  let configFinish;const configWait=new Promise(r=>configFinish=r),changed=harness(async url=>url.endsWith('/analyze')?configWait:url.endsWith('/history')?[]:a);
  await loaded(changed);const configSave=changed.c.analyze();changed.node('ripple_weight').value='0.2';changed.c.screeningChanged();configFinish(report());await configSave;

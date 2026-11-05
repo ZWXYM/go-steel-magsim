@@ -11,7 +11,8 @@ from unittest.mock import patch
 
 from modules.material_batch_reports import (report_bundle, summary_markdown, torque_findings,
     metrics_nonpositive_points, material_inputs, result_counts, verified_operating_point,
-    operating_points, operating_points_csv, baseline_comparison, baseline_comparison_csv, baseline_report_bundle)
+    operating_points, operating_points_csv, baseline_comparison, baseline_comparison_csv, baseline_report_bundle,
+    engineering_comparison_csv, engineering_comparison_markdown)
 from modules.material_library import sha
 
 
@@ -219,7 +220,7 @@ class BatchReportTests(unittest.TestCase):
             self.assertAlmostEqual(float(csv_rows[0]['electromagnetic_mechanical_power_W']),-200*math.pi)
             self.assertEqual(csv_rows[1]['electromagnetic_mechanical_power_W'],'')
             self.assertIn('不是铭牌额定功率',report.read('summary.md').decode())
-            manifest=json.loads(report.read('manifest.json'));self.assertEqual(manifest['version'],'calibrated_batch_summary_v4')
+            manifest=json.loads(report.read('manifest.json'));self.assertEqual(manifest['version'],'calibrated_batch_summary_v5')
             for name,digest in manifest['files'].items():self.assertEqual(sha(report.read(name)),digest)
         self.assertEqual(source.getvalue(),source_bytes)
 
@@ -292,6 +293,46 @@ class BaselineComparisonTests(unittest.TestCase):
         for value in (None,'',True,'other'):
             with self.assertRaises(ValueError):baseline_comparison(manager,record,value)
 
+    def test_failed_large_results_keep_raw_deltas_but_never_get_qualified_improvements(self):
+        record,runs,manager=self.comparison_fixture();before=copy.deepcopy(record)
+        item=record['items'][1];item['metrics']['T_avg_Nm']=565.
+        runs[item['execution_id']]['result']['metrics']['T_avg_Nm']=565.
+        result=baseline_comparison(manager,record,'item_01');row=result['entries'][1]
+        self.assertEqual(row['delta_T_avg_Nm'],563.)
+        self.assertFalse(row['engineering_comparison_eligible'])
+        self.assertIsNone(row['qualified_delta_T_avg_Nm']);self.assertIsNone(row['qualified_delta_power_pct'])
+        self.assertEqual(result['eligible_comparison_count'],1);self.assertEqual(result['qualified_alternative_count'],0)
+        self.assertFalse(result['engineering_comparison_available'])
+        self.assertIn('暂不能形成材料性能比较',result['comparison_summary'])
+        self.assertEqual(len(list(csv.DictReader(io.StringIO(engineering_comparison_csv(result).decode('utf-8-sig'))))),1)
+        self.assertNotIn('565',engineering_comparison_markdown(result))
+        self.assertEqual(record['items'][0],before['items'][0])
+
+    def test_both_passed_same_source_entries_have_qualified_deltas_without_changing_raw(self):
+        record,runs,manager=self.comparison_fixture();item=record['items'][1]
+        item['metrics']['torque_numerical_acceptance']=runs[item['execution_id']]['result']['metrics']['torque_numerical_acceptance']=True
+        before=copy.deepcopy((record,runs));result=baseline_comparison(manager,record,'item_01');row=result['entries'][1]
+        self.assertTrue(row['engineering_comparison_eligible']);self.assertEqual(row['qualified_delta_T_avg_pct'],-50)
+        self.assertEqual(result['qualified_alternative_count'],1);self.assertTrue(result['engineering_comparison_available'])
+        self.assertEqual((record,runs),before)
+
+    def test_different_training_scope_or_nonpositive_base_keeps_qualified_fields_blank(self):
+        for change in ('source','zero'):
+            record,runs,manager=self.comparison_fixture();item=record['items'][1]
+            item['metrics']['torque_numerical_acceptance']=runs[item['execution_id']]['result']['metrics']['torque_numerical_acceptance']=True
+            if change=='source':item['source']['training_grades']=['other']
+            else:record['items'][0]['metrics']['T_avg_Nm']=runs[record['items'][0]['execution_id']]['result']['metrics']['T_avg_Nm']=0
+            row=baseline_comparison(manager,record,'item_01')['entries'][1]
+            with self.subTest(change=change):
+                self.assertFalse(row['engineering_comparison_eligible']);self.assertIsNotNone(row['delta_T_avg_Nm'])
+                self.assertIsNone(row['qualified_delta_T_avg_Nm']);self.assertTrue(row['engineering_comparison_reasons'])
+
+    def test_unknown_acceptance_never_defaults_to_passed_for_engineering_export(self):
+        record,runs,manager=self.comparison_fixture();record['items'][0]['metrics'].pop('torque_numerical_acceptance')
+        result=baseline_comparison(manager,record,'item_01')
+        self.assertFalse(any(row['engineering_comparison_eligible'] for row in result['entries']))
+        self.assertEqual(list(csv.DictReader(io.StringIO(engineering_comparison_csv(result).decode('utf-8-sig')))),[])
+
 
 class BaselineBundleTests(unittest.TestCase):
     def fixture(self,corrupt=False):
@@ -311,6 +352,8 @@ class BaselineBundleTests(unittest.TestCase):
             self.assertEqual(set(manifest['files']),set(names)-{'manifest.json'})
             for name,digest in manifest['files'].items():self.assertEqual(sha(bundle.read(name)),digest)
             self.assertEqual(bundle.read('saved_batch_report/item_01/Torque Plots.csv'),b'Time,Torque\r\n0,0\r\n')
+            self.assertEqual(bundle.read('engineering_comparison.csv'),engineering_comparison_csv(result))
+            self.assertEqual(bundle.read('engineering_comparison.md').decode(),engineering_comparison_markdown(result))
         self.assertEqual(manager.bundle(artifact).getvalue(),original)
 
     def test_wrong_baseline_batch_or_corrupted_original_never_makes_a_comparison_bundle(self):

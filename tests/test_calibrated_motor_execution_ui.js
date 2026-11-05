@@ -43,6 +43,9 @@ const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaa
  assert.match(a.nodes.get('actualMetrics').text(),/—/);assert.match(a.nodes.get('actualLinks').children[0].href,/bhexec_aaaaaaaaaaaa\/files\/case\/reports/);
  assert.equal(a.nodes.get('referenceStatus').text(),reference);assert.equal(a.nodes.get('torque').children,plot);
  assert.ok(!a.nodes.get('executions').text().includes('other'));assert.ok(a.calls.every(c=>c.method==='GET'));
+ const equivalent=harness(async()=>[]);equivalent.context.bhaActual({...current,result:{...current.result,constitutive_model:'scalar_direction_equivalent_v1'}});
+ for(const name of ['actual_material.amat','actual_material_BH.csv','actual_material.metadata.json'])assert.ok(equivalent.nodes.get('actualLinks').children.some(link=>link.href==='/api/workbench/calibrated-motor/executions/'+current.id+'/files/'+name));
+ assert.ok(!a.nodes.get('actualLinks').children.some(link=>link.href?.endsWith('/actual_material.amat')));assert.equal(equivalent.calls.length,0);
 
  const b=harness(async url=>{if(url.endsWith('/resources'))throw Error('fixture resource failure');return [{...current,status:'prepared',result_available:false}]});
  await b.context.bhaLoadExecutions();
