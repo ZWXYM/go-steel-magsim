@@ -54,7 +54,7 @@ async function mlRefresh(){
  const generation=ML.catalogGeneration=(ML.catalogGeneration||0)+1;++ML.generation;ml$('detail').hidden=true;ml$('error').textContent='';ml$('refresh').disabled=true;
  try{const v=await mlApi('/api/workbench/material-inputs');if(generation!==ML.catalogGeneration)return;ML.records=v.records;const s=ml$('calibration'),old=s.value,oldKey=ML.key;
  const query=!ML.requestUsed&&typeof location!=='undefined'?new URLSearchParams(location.search):new URLSearchParams();ML.requestUsed=true;
- const requested=query.get('calibration'),key=query.get('key');s.replaceChildren();for(const r of v.records){const o=mlText('option',r.id+(r.error?' · 读取异常':''));o.value=r.id;s.append(o)}
+ const requested=query.get('calibration'),key=query.get('key');s.replaceChildren();for(const r of v.records){const o=mlText('option',r.id+(r.display_label?' · '+r.display_label:'')+(r.error?' · 读取异常':''));o.value=r.id;s.append(o)}
  if(requested){if(!v.records.some(r=>r.id===requested)){ml$('entries').replaceChildren();ml$('error').textContent='链接指定的校准记录不存在，请选择现有记录。';return}s.value=requested;mlEntries(key||undefined)}
  else{if(v.records.some(r=>r.id===old))s.value=old;mlEntries(s.value===old&&oldKey?oldKey:undefined)}
  }catch(e){if(generation===ML.catalogGeneration)ml$('error').textContent=e.message}finally{if(generation===ML.catalogGeneration)ml$('refresh').disabled=false}

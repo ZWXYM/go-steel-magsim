@@ -10,6 +10,7 @@ from urllib.parse import quote
 
 import numpy as np
 from modules.calibration_transfer import load_bank
+from modules.calibration_regularized import default_eligible
 from modules.maxwell_material_transport import load_contract
 
 
@@ -60,7 +61,8 @@ class MaterialLibrary:
                 base = self._base(folder.name)
                 report = self._read(base, 'report.json')
                 row.update(created_utc=report.get('created_utc'), calibration_version=report.get('calibration_version'),
-                           selected_grades=report.get('selected_grades', []))
+                           selected_grades=report.get('selected_grades', []),
+                           default_eligible=default_eligible(report),display_label=report.get('display_label'))
                 for key in self._keys(base, report):
                     entry = dict(key=key, kind=key.split(':')[0], label=key.split(':')[-1], available=False)
                     try:
@@ -73,6 +75,7 @@ class MaterialLibrary:
             except (ValueError, KeyError, TypeError, OSError) as error:
                 row['error'] = str(error)
             records.append(row)
+        records.sort(key=lambda row:row.get('default_eligible',True) is False)
         return dict(records=records, new_predictions=0, new_native_solves=0, source_records_changed=False)
 
     def detail(self, artifact, key):

@@ -135,11 +135,16 @@ def error_metrics(H,B,reference):
 
 def select_candidate(training_samples):
     """This interface accepts training samples ONLY, not an outer test sample."""
+    return select_from_candidates(training_samples,CANDIDATES,protocol())
+
+
+def select_from_candidates(training_samples,candidates,model_protocol):
+    """Shared arithmetic; each saved model freezes its own candidate protocol."""
     samples=checked_samples(training_samples)
     if len(samples)<3:
         raise ValueError('内层材料选参至少需要三个训练材料（外层检验至少四个）')
     scores=[]
-    for candidate in CANDIDATES:
+    for candidate in candidates:
         folds=[]
         for target in samples:
             training=[s for s in samples if s['grade']!=target['grade']]
@@ -154,20 +159,26 @@ def select_candidate(training_samples):
         scores.append(dict(candidate=candidate['id'],selection_loss_T=loss,folds=folds))
     best=min(range(len(scores)),key=lambda i:(scores[i]['selection_loss_T'],i))
     return dict(candidate=scores[best]['candidate'],training_grades=[s['grade'] for s in samples],
-        training_sha256=digest(samples),protocol_sha256=digest(protocol()),scores=scores)
+        training_sha256=digest(samples),protocol_sha256=digest(model_protocol),scores=scores)
 
 class TransferBank:
+    BANK_VERSION=VERSION
+    STATUS='experimental_nested_material_cv'
+    protocol_definition=staticmethod(protocol)
+    candidate_config=staticmethod(config)
+    select_training=staticmethod(select_candidate)
+
     def __init__(self,payload):
-        if (payload.get('calibration_version')!=VERSION or payload.get('physics_version')!=PHYSICS_VERSION
-                or payload.get('H_axis')!='physical_A_per_m' or payload.get('protocol_sha256')!=digest(protocol())):
+        if (payload.get('calibration_version')!=self.BANK_VERSION or payload.get('physics_version')!=PHYSICS_VERSION
+                or payload.get('H_axis')!='physical_A_per_m' or payload.get('protocol_sha256')!=digest(self.protocol_definition())):
             raise ValueError('Unsupported transfer protocol/physics/H axis')
         self.payload=copy.deepcopy(payload)
         self.samples=checked_samples(payload['training_samples'])
-        self.candidate=config(payload['selection']['candidate'])
+        self.candidate=self.candidate_config(payload['selection']['candidate'])
         if payload['selection']['training_sha256']!=digest(self.samples):
             raise ValueError('Transfer training source/selection mismatch')
         if (payload['selection']['training_grades']!=[s['grade'] for s in self.samples]
-                or payload['selection']['protocol_sha256']!=digest(protocol())):
+                or payload['selection']['protocol_sha256']!=digest(self.protocol_definition())):
             raise ValueError('Transfer selection membership/protocol mismatch')
         self.texture_sampling_version=payload['texture_sampling_version']
         if self.texture_sampling_version not in (LEGACY_SAMPLING_VERSION,SAMPLING_VERSION):
@@ -176,10 +187,10 @@ class TransferBank:
     @classmethod
     def fit(cls,samples,texture_sampling_version=LEGACY_SAMPLING_VERSION,selection=None):
         samples=checked_samples(samples)
-        selection=selection or select_candidate(samples)
-        return cls(dict(calibration_version=VERSION,physics_version=PHYSICS_VERSION,
+        selection=selection or cls.select_training(samples)
+        return cls(dict(calibration_version=cls.BANK_VERSION,physics_version=PHYSICS_VERSION,
             texture_sampling_version=texture_sampling_version,H_axis='physical_A_per_m',
-            status='experimental_nested_material_cv',protocol_sha256=digest(protocol()),
+            status=cls.STATUS,protocol_sha256=digest(cls.protocol_definition()),
             training_samples=samples,selection=selection))
 
     @property
@@ -196,7 +207,7 @@ class TransferBank:
             # A full-bank selected config has seen excluded references during
             # inner CV. Re-select on eligible samples; do not reuse that config.
             eligible=[s for s in self.samples if s['grade'] not in set(exclude_grades)]
-            fold=TransferBank.fit(eligible,self.texture_sampling_version)
+            fold=type(self).fit(eligible,self.texture_sampling_version)
             result=fold.correct(H,B_sim,params,direction=direction,weight_cap=weight_cap,
                 physics_version=physics_version,texture_sampling_version=texture_sampling_version)
             result['excluded_grades']=sorted(set(exclude_grades))
@@ -208,7 +219,7 @@ class TransferBank:
         if weight_cap==0:
             guarded=b.copy()
         return dict(H=h.tolist(),B=guarded.tolist(),B_raw=b.tolist(),delta_B=(proposed-b).tolist(),
-            calibration_version=VERSION,physics_version=physics_version,H_axis='physical_A_per_m',H_scale=1.,
+            calibration_version=self.BANK_VERSION,physics_version=physics_version,H_axis='physical_A_per_m',H_scale=1.,
             calibration_sha256=self.bank_sha256,texture_sampling_version=self.texture_sampling_version,
             anchor_weights={s['grade']:float(v) for s,v in zip(self.samples,w)},excluded_grades=[],
             transfer_candidate=self.candidate['id'],native_beta=self.candidate['native_beta'],
@@ -216,10 +227,12 @@ class TransferBank:
             prediction_mode='known_anchor_calibration' if exact else 'cross_material_transfer',
             selection_training_grades=self.payload['selection']['training_grades'],
             selection_training_sha256=self.payload['selection']['training_sha256'],
-            protocol_sha256=digest(protocol()),guard=guard,status=self.payload['status'],**domain)
+            protocol_sha256=digest(self.protocol_definition()),guard=guard,status=self.payload['status'],**domain)
 
 def load_bank(path):
     payload=json.loads(Path(path).read_text(encoding='utf-8'))
+    from modules.calibration_regularized import VERSION as REGULARIZED_VERSION,RegularizedTransferBank
+    if payload.get('calibration_version')==REGULARIZED_VERSION:return RegularizedTransferBank(payload)
     return TransferBank(payload) if payload.get('calibration_version')==VERSION else CalibrationBank(payload)
 
 def legacy_bank(samples,sampling):
@@ -232,15 +245,15 @@ def legacy_bank(samples,sampling):
     return CalibrationBank(dict(calibration_version=LEGACY_VERSION,physics_version=PHYSICS_VERSION,
         H_axis='physical_A_per_m',texture_sampling_version=sampling,anchors=anchors))
 
-def nested_validation(samples,sampling=LEGACY_SAMPLING_VERSION):
+def nested_validation(samples,sampling=LEGACY_SAMPLING_VERSION,bank_type=TransferBank):
     samples=checked_samples(samples)
     if len(samples)<4:
         raise ValueError('嵌套材料留出至少需要四个材料；少材料请使用原协议')
     rows,curves,folds,banks=[],[],[],{}
     for target in samples:
         training=[s for s in samples if s['grade']!=target['grade']]
-        selection=select_candidate(training)
-        bank=TransferBank.fit(training,sampling,selection)
+        selection=bank_type.select_training(training)
+        bank=bank_type.fit(training,sampling,selection)
         baseline=legacy_bank(training,sampling)
         folds.append(dict(heldout=target['grade'],selection=selection,bank_sha256=bank.bank_sha256))
         banks[target['grade']]=bank.payload
@@ -267,6 +280,6 @@ def nested_validation(samples,sampling=LEGACY_SAMPLING_VERSION):
         summaries[method]=dict(mean_rmse_T=float(np.mean([r['rmse_T'] for r in values])),
             max_abs_B800_error_T=max(abs(r['B800_error_T']) for r in values),
             B800_0_05T_pass_all=all(abs(r['B800_error_T'])<.05 for r in values))
-    return dict(protocol=protocol(),protocol_sha256=digest(protocol()),metrics=rows,comparisons=curves,
+    return dict(protocol=bank_type.protocol_definition(),protocol_sha256=digest(bank_type.protocol_definition()),metrics=rows,comparisons=curves,
         outer_folds=folds,holdout_banks=banks,summaries=summaries,
         independently_validated=False,prospective_external_validation=False)

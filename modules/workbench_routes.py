@@ -36,6 +36,7 @@ from modules.system_report import SystemReport,create_system_report_routes
 from modules.system_data import SystemData,create_system_data_routes
 from modules.system_data_builder import SystemDataBuilder
 from modules.motor_constraint_studies import MotorConstraintStudies,create_constraint_study_routes
+from modules.calibration_regularized import default_eligible
 
 SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md'))
 
@@ -508,7 +509,11 @@ def create_workbench(project,storage=None,root=None,script_history=None):
     @bp.get('/api/workbench/calibrations')
     def calibrations():
         paths=sorted((storage/'calibration').glob('cal_*/report.json'),key=lambda p:p.stat().st_mtime,reverse=True)
-        return jsonify([json.loads(p.read_text(encoding='utf-8')) for p in paths])
+        records=[json.loads(p.read_text(encoding='utf-8')) for p in paths]
+        for row in records:
+            if not default_eligible(row):row['default_eligible']=False
+        records.sort(key=lambda row:not default_eligible(row))
+        return jsonify(records)
 
     @bp.get('/api/workbench/calibrations/<artifact>/beta-trial-preview')
     def beta_trial_preview(artifact):

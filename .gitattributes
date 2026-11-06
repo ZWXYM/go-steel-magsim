@@ -269,3 +269,7 @@ modules/system_data_studies.py -text
 tests/test_system_data_studies.py -text
 docs/launch_entries_20261106.md -text
 calibration/motor_interpolation_20261106/** -text
+modules/calibration_regularized.py -text
+tests/test_calibration_regularized.py -text
+docs/regularized_bank_20261106.md -text
+calibration/regularized_bank_20261106/** -text

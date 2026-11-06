@@ -1,0 +1,23 @@
+{
+  "model_version": "fixed_h_regularized_transfer_v3",
+  "bank_sha256": "1ccd070a3dbba851d7a5ba11010abd8981a47c8900fcd6bf8e6a9fca0b8bfaf2",
+  "effective_bank_sha256": "8a471ac48187c99bf1786ab7c7ad6b5528c12fd673c10d10973686fbd85b726c",
+  "material_holdout": {
+    "mean_rmse_T": 0.03080126816727495,
+    "max_abs_B800_error_T": 0.0603564043850644,
+    "B800_0_05T_pass_all": false
+  },
+  "original_nested_material_holdout": {
+    "mean_rmse_T": 0.04404264729019529,
+    "max_abs_B800_error_T": 0.10615668757659735,
+    "B800_0_05T_pass_all": false
+  },
+  "curves": 208,
+  "metrics": 48,
+  "default_replaced": false,
+  "new_physical_solves": 0,
+  "new_training": 0,
+  "new_independent_materials": 0,
+  "prospective_external_validation": false,
+  "scope": "Retrospective optional version using the same four development materials; not prospective validation or motor/loss certification."
+}

@@ -310,6 +310,7 @@ def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
     import numpy as np
     from modules.material_calibration import VERSION, PHYSICS_VERSION, validated_curve
     from modules.calibration_transfer import VERSION as TRANSFER_VERSION
+    from modules.calibration_regularized import VERSION as REGULARIZED_VERSION
     from modules.texture_sampling import LEGACY_SAMPLING_VERSION
     from modules.native_quality import validate_quality, unassessed_quality
     quality=validate_quality(rd.get('native_quality',unassessed_quality()))
@@ -319,7 +320,7 @@ def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
     if rd.get('calibration_native_quality_sha256','legacy_unassessed') != td.get('calibration_native_quality_sha256','legacy_unassessed'):
         raise ValueError('RD and TD have different calibration source quality')
     for curve in (rd, td):
-        if (curve.get('calibration_version') not in (VERSION,TRANSFER_VERSION)
+        if (curve.get('calibration_version') not in (VERSION,TRANSFER_VERSION,REGULARIZED_VERSION)
                 or curve.get('physics_version') != PHYSICS_VERSION
                 or curve.get('H_axis') != 'physical_A_per_m'
                 or curve.get('H_scale') != 1.0):
@@ -382,13 +383,16 @@ def export_calibrated_pair(rd: dict, td: dict, mat_name: str, *,
         native_quality_contract_version=quality['contract_version'],native_quality_sha256=quality['quality_sha256'],
         calibration_native_quality_sha256=rd.get('calibration_native_quality_sha256','legacy_unassessed'),
         strict_training_eligible=False)
-    if rd['calibration_version']==TRANSFER_VERSION:
+    if rd['calibration_version'] in (TRANSFER_VERSION,REGULARIZED_VERSION):
         metadata.update(transfer_candidate=rd['transfer_candidate'],native_beta=rd['native_beta'],
             effective_native_beta=rd['effective_native_beta'],prediction_mode=rd['prediction_mode'],
             selection_training_grades=rd['selection_training_grades'],
             selection_training_sha256=rd['selection_training_sha256'],protocol_sha256=rd['protocol_sha256'],
             RD_extrapolation_limited=rd['extrapolation_limited'],TD_extrapolation_limited=td['extrapolation_limited'],
             composition_effect_identified=False,prospective_external_validation=False)
+    if rd['calibration_version']==REGULARIZED_VERSION:
+        metadata.update(development_status='explicit_optional_regularized_candidate',
+            automatic_deployment=False,default_eligible=False)
     return save_amat_file(content, mat_name, export_dir, metadata)
 
 

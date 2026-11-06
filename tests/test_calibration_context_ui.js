@@ -62,6 +62,13 @@ async function loaded(h,id=A){await h.c.loadCalibration(id)}
  assert.match(choose.urls.at(-1),new RegExp('calibration='+B));assert.match(choose.urls.at(-1),/pair=nativepair_aaaaaaaaaaaa/);assert.match(choose.urls.at(-1),/#motor$/);
  const reopening=harness(async url=>url.endsWith('/calibrations')?[{id:A,selected_grades:['S0']},{id:B,selected_grades:['S0']}]:calibration(url.endsWith('/'+B)?B:A));
  reopening.c.location.search=choose.c.location.search;await reopening.c.calibrationHistory(true);assert.equal(value(reopening,'current.id'),B);assert.ok(reopening.calls.every(c=>c.method==='GET'));
+ const trialRecord={...calibration(C),default_eligible:false,display_label:'低权重候选',original_nested_material_holdout:{mean_rmse_T:.04}};trialRecord.comparisons=trialRecord.comparisons.map(c=>({...c,original_nested_holdout_B:[0,.5,1.05]}));
+ const optIn=harness(async url=>url.endsWith('/calibrations')?[trialRecord,calibration(A)]:url.endsWith('/'+C)?trialRecord:calibration(A));
+ await optIn.c.calibrationHistory(true);assert.equal(value(optIn,'current.id'),A,'an optional development record must not become the default');
+ assert.match(optIn.node('history').innerHTML,/低权重候选/);
+ const explicitTrial=harness(async url=>url.endsWith('/calibrations')?[trialRecord,calibration(A)]:trialRecord);explicitTrial.c.location.search='?calibration='+C;
+ await explicitTrial.c.calibrationHistory(true);assert.equal(value(explicitTrial,'current.id'),C);assert.match(explicitTrial.node('fitNote').textContent,/不自动替换/);assert.equal(explicitTrial.node('betaTrialSection').hidden,true);assert.equal(explicitTrial.node('originalProtocolLegend').hidden,false);assert.match(explicitTrial.node('curve').innerHTML,/#b24a93/);
+ const onlyTrials=harness(async()=>[trialRecord]);await onlyTrials.c.calibrationHistory(true);assert.equal(value(onlyTrials,'current'),null,'a page with no normal bank must wait for an explicit choice');
  const absent=harness(async()=>[]);absent.c.location.search='?calibration='+B;await assert.rejects(absent.c.calibrationHistory(true),/指定的校准库不存在/);assert.equal(value(absent,'current'),null);
  const recovered=harness(async url=>url.endsWith('/'+A)?Promise.reject(Error('library missing')):calibration(B));await loaded(recovered,A);assert.equal(recovered.node('error').style.display,'block');
  await loaded(recovered,B);assert.equal(value(recovered,'current.id'),B);assert.equal(recovered.node('error').style.display,'none');assert.equal(recovered.node('error').textContent,'');

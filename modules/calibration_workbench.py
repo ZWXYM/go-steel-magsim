@@ -18,6 +18,7 @@ from modules.material_calibration import (CalibrationBank, PHYSICS_VERSION, VERS
     file_hash, features, validated_curve)
 from modules.calibration_transfer import (VERSION as TRANSFER_VERSION, TransferBank,
     load_bank, nested_validation, protocol, digest, select_candidate)
+from modules.calibration_regularized import VERSION as REGULARIZED_VERSION,RegularizedTransferBank
 from modules.maxwell_exporter import export_calibrated_pair
 from modules.native_quality import audit_pilot, unassessed_quality
 from modules.calibration_domain import bank_parameter_support
@@ -92,11 +93,11 @@ class CalibrationWorkbench:
             curve['calibration_native_quality_sha256']=report['native_quality_sha256']
 
     def calibrate(self,grades,calibration_version=VERSION):
-        if calibration_version not in (VERSION,TRANSFER_VERSION):
+        if calibration_version not in (VERSION,TRANSFER_VERSION,REGULARIZED_VERSION):
             raise ValueError('未知校准协议')
         if not isinstance(grades,list) or len(grades)<2 or len(set(grades))!=len(grades) or not set(grades)<=set(GRADES):
             raise ValueError('请至少选择两个不同的已知材料')
-        if calibration_version==TRANSFER_VERSION and len(grades)<4:
+        if calibration_version in (TRANSFER_VERSION,REGULARIZED_VERSION) and len(grades)<4:
             raise ValueError('嵌套材料留出至少需要四个材料；少材料请使用原协议')
         payload,manifest=self.source()
         samples={s['grade']:s for s in self.samples(include_quality=True)['samples']}
@@ -108,8 +109,9 @@ class CalibrationWorkbench:
                 raw=np.asarray(samples[grade]['curves'][d]['raw_B'])
                 np.testing.assert_allclose(raw,values.mean(axis=0),atol=1e-12)
                 sources[grade+'_'+d]=source
-        if calibration_version==TRANSFER_VERSION:
-            return self._generalize(grades,samples,sources,payload)
+        if calibration_version in (TRANSFER_VERSION,REGULARIZED_VERSION):
+            bank_type=RegularizedTransferBank if calibration_version==REGULARIZED_VERSION else TransferBank
+            return self._generalize(grades,samples,sources,payload,bank_type)
         payload=copy.deepcopy(payload)
         payload['anchors']=[a for a in payload['anchors'] if a['grade'] in grades]
         bank=CalibrationBank(payload)
@@ -163,17 +165,24 @@ class CalibrationWorkbench:
                     bundle.write(file,file.relative_to(directory).as_posix())
         return report
 
-    def _generalize(self,grades,samples,sources,source_payload):
+    def _generalize(self,grades,samples,sources,source_payload,bank_type=TransferBank):
         # Audit annotations must not enter model selection/source identity.
         selected=[{k:v for k,v in samples[g].items() if k!='native_quality'} for g in sorted(grades)]
-        validation=nested_validation(selected,source_payload.get('texture_sampling_version','legacy_multi_peak_importance_v1'))
-        bank=TransferBank.fit(selected,source_payload.get('texture_sampling_version','legacy_multi_peak_importance_v1'))
+        validation=nested_validation(selected,source_payload.get('texture_sampling_version','legacy_multi_peak_importance_v1'),bank_type)
+        bank=bank_type.fit(selected,source_payload.get('texture_sampling_version','legacy_multi_peak_importance_v1'))
+        baseline_validation=None
+        if bank_type is RegularizedTransferBank:
+            baseline_validation=nested_validation(selected,bank.texture_sampling_version)
         artifact='cal_'+uuid.uuid4().hex[:12]
         directory=self.storage/artifact
         directory.mkdir(parents=True,exist_ok=False)
-        write_json(directory/'protocol.json',protocol())
+        write_json(directory/'protocol.json',bank_type.protocol_definition())
         write_json(directory/'bank.json',bank.payload)
         fits,rows={},validation['metrics']
+        if baseline_validation is not None:
+            rows.extend(dict(row,method='original_nested_material_holdout') for row in baseline_validation['metrics']
+                if row['method']=='nested_material_holdout')
+            write_json(directory/'original_nested_validation.json',baseline_validation)
         for sample in selected:
             for d in ('RD','TD'):
                 c=sample['curves'][d]
@@ -186,11 +195,14 @@ class CalibrationWorkbench:
         for c in comparisons:
             c['corrected_B']=fits[(c['grade'],c['direction'])]['B']
             c['fit_weights']=fits[(c['grade'],c['direction'])]['anchor_weights']
+            if baseline_validation is not None:
+                original=next(row for row in baseline_validation['comparisons'] if row['grade']==c['grade'] and row['direction']==c['direction'])
+                c['original_nested_holdout_B']=original['holdout_B']
         fit_rows=[r for r in rows if r['method']=='calibration_fit']
         report=dict(id=artifact,created_utc=datetime.now(timezone.utc).isoformat(),selected_grades=grades,
             bank_sha256=bank.bank_sha256,source_bank_sha256=file_hash(self.pilot/'calibration_bank.json'),
             source_manifest_sha256=file_hash(self.pilot/'manifest.json'),
-            calibration_version=TRANSFER_VERSION,physics_version=PHYSICS_VERSION,
+            calibration_version=bank_type.BANK_VERSION,physics_version=PHYSICS_VERSION,
             texture_sampling_version=bank.texture_sampling_version,H_axis='physical_A_per_m',
             evidence_status='existing_processed_references_and_report_parameters',
             independently_validated=False,prospective_external_validation=False,
@@ -201,18 +213,27 @@ class CalibrationWorkbench:
             calibration_fit=dict(mean_rmse_T=float(np.mean([r['rmse_T'] for r in fit_rows])),
                 max_abs_B800_error_T=max(abs(r['B800_error_T']) for r in fit_rows),
                 B800_0_05T_pass_all=all(abs(r['B800_error_T'])<.05 for r in fit_rows)),
-            nested_validation=dict(protocol=protocol(),protocol_sha256=digest(protocol()),
+            nested_validation=dict(protocol=bank_type.protocol_definition(),protocol_sha256=digest(bank_type.protocol_definition()),
                 outer_folds=validation['outer_folds'],deployment_selection=bank.payload['selection']),
             producer_sha256={p:file_hash(Path(__file__).parent.parent/p) for p in
                 ('modules/calibration_transfer.py','modules/calibration_workbench.py','modules/maxwell_exporter.py')},
             new_native_solves=0,known_material_exports={},holdout_material_exports={})
+        if bank_type is RegularizedTransferBank:
+            report.update(default_eligible=False,display_label='低微磁权重开发候选',
+                development_status='explicit_optional_regularized_candidate',automatic_deployment=False,
+                frozen_development_trial='native_residual_beta_quarter_trial_v1',
+                development_acceptance_target_met=report['material_holdout']['B800_0_05T_pass_all'])
+            report['original_nested_material_holdout']=baseline_validation['summaries']['nested_material_holdout']
+            report['original_nested_protocol_sha256']=baseline_validation['protocol_sha256']
+            report['producer_sha256']['modules/calibration_regularized.py']=file_hash(Path(__file__).parent/'calibration_regularized.py')
         self._attach_quality(directory,report,fits,samples,grades)
         write_csv(directory/'metrics.csv',rows)
         write_csv(directory/'curves.csv',(dict(grade=c['grade'],direction=c['direction'],H_A_per_m=h,
             B_raw_T=raw,B_reference_T=ref,B_corrected_T=fit,B_holdout_T=hold,
-            B_legacy_holdout_T=old,B_reference_only_T=control)
-            for c in comparisons for h,raw,ref,fit,hold,old,control in zip(c['H'],c['raw_B'],c['reference_B'],
-                c['corrected_B'],c['holdout_B'],c['legacy_holdout_B'],c['reference_only_B'])))
+            B_legacy_holdout_T=old,B_reference_only_T=control,
+            **({'B_original_nested_holdout_T':c['original_nested_holdout_B'][i]} if 'original_nested_holdout_B' in c else {}))
+            for c in comparisons for i,(h,raw,ref,fit,hold,old,control) in enumerate(zip(c['H'],c['raw_B'],c['reference_B'],
+                c['corrected_B'],c['holdout_B'],c['legacy_holdout_B'],c['reference_only_B']))))
         holdout_dir=directory/'holdout_banks'
         holdout_dir.mkdir()
         for grade in grades:
@@ -221,7 +242,7 @@ class CalibrationWorkbench:
                 export_dir=str(directory/'materials'))
             report['known_material_exports'][grade]=dict(path=Path(fullpath).relative_to(directory).as_posix(),
                 sha256=file_hash(fullpath),loss_status='uncalibrated_BH_only')
-            fold=TransferBank(validation['holdout_banks'][grade])
+            fold=bank_type(validation['holdout_banks'][grade])
             write_json(holdout_dir/(grade+'.json'),fold.payload)
             held={}
             for d in ('RD','TD'):

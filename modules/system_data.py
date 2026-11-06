@@ -182,7 +182,8 @@ class SystemData:
                 report = json.loads(blob)
                 if not re.fullmatch(r'cal_[a-f0-9]{12}', path.parent.name) or report['id'] != path.parent.name:
                     raise ValueError('校准记录身份不符')
-                calibrations.append(dict(readable=True, report_sha256=sha256(blob), **{key: report[key] for key in (
+                calibrations.append(dict(readable=True, report_sha256=sha256(blob),display_label=report.get('display_label'),
+                    default_eligible=report.get('default_eligible',True), **{key: report[key] for key in (
                     'id', 'created_utc', 'selected_grades', 'bank_sha256', 'calibration_version', 'H_axis',
                     'calibration_fit', 'material_holdout', 'evidence_status', 'independently_validated')}))
             except (OSError, ValueError, KeyError, TypeError) as error:

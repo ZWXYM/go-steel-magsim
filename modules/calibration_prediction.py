@@ -19,7 +19,7 @@ def resolve_prediction_bank(bank,exclude_grades=()):
     if excluded:
         if isinstance(bank,TransferBank):
             eligible=[s for s in bank.samples if s['grade'] not in excluded]
-            effective=TransferBank.fit(eligible,bank.texture_sampling_version)
+            effective=type(bank).fit(eligible,bank.texture_sampling_version)
         elif isinstance(bank,CalibrationBank):
             payload=copy.deepcopy(bank.payload)
             payload['anchors']=[a for a in payload['anchors'] if a['grade'] not in excluded]

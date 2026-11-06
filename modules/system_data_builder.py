@@ -78,6 +78,8 @@ class SystemDataBuilder:
             put('calibration/bank.json', bank_blob)
             columns = {'raw_B_T':'raw_B', 'reference_B_T':'reference_B', 'calibration_fit_B_T':'corrected_B',
                        'material_holdout_B_T':'holdout_B', 'legacy_holdout_B_T':'legacy_holdout_B', 'reference_only_B_T':'reference_only_B'}
+            if any('original_nested_holdout_B' in pair for pair in report['comparisons']):
+                columns['original_protocol_holdout_B_T']='original_nested_holdout_B'
             rows, identities = [], set()
             for pair in report['comparisons']:
                 key = (pair['grade'], pair['direction'])
@@ -105,6 +107,8 @@ class SystemDataBuilder:
                 for grade in report['selected_grades']:
                     put('calibration/materials/'+kind+'_'+grade+'.zip',self.materials.bundle(cal['id'],kind+':'+grade).getvalue())
             index['calibration']=dict(id=cal['id'], bank_sha256=bank.bank_sha256, report_sha256=sha256(report_blob),
+                calibration_version=report.get('calibration_version',bank.payload.get('calibration_version')),
+                display_label=report.get('display_label'),default_eligible=report.get('default_eligible',True),
                 selected_grades=report['selected_grades'], curve_pairs=len(identities), curve_rows=len(rows),
                 metrics_rows=len(metrics), calibration_fit=report['calibration_fit'], material_holdout=report['material_holdout'],
                 distinct_material_count=len(set(report['selected_grades'])),
