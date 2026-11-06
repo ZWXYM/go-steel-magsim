@@ -83,5 +83,44 @@ class LaunchConfigurationTests(unittest.TestCase):
                if p.is_file() and '__pycache__' not in p.parts}
         self.assertEqual(before,after)
 
+    @unittest.skipUnless(os.name=='nt','Windows compatibility entry')
+    def test_standalone_entry_defaults_to_local_com_and_preserves_explicit_transport(self):
+        original=self.env.copy();self.env.pop('MAGSIM_AEDT_TRANSPORT',None)
+        project=self.folder/'standalone COM choice'
+        for name in ('start_system.cmd','tools/start_workbench.py','modules/system_runtime.py'):
+            target=project/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(PROJECT/name,target)
+        result=self.batch(project/'start_system.cmd')
+        self.assertEqual(result['aedt_transport'],'com');self.assertFalse(result['cpu_only'])
+        self.env['MAGSIM_AEDT_TRANSPORT']='grpc'
+        result=self.batch(project/'start_system.cmd');self.assertEqual(result['aedt_transport'],'grpc')
+        self.env=original
+
+    @unittest.skipUnless(os.name=='nt','Windows workspace entry')
+    def test_workspace_workbench_entry_forwards_read_only_paths_and_flags(self):
+        workspace=PROJECT.parent;entry=workspace/'start_workbench.cmd'
+        if not (entry.is_file() and (workspace/'AGENTS.md').is_file()):self.skipTest('Private workspace wrapper not published')
+        result=self.batch(entry,'--root "'+str(self.folder/'资源 data')+'" --storage "'+str(self.folder/'保存 records')+'" --port 5434 --cpu-only')
+        self.assertEqual(result['page'],'workbench');self.assertEqual(result['requested_port'],5434)
+        self.assertEqual(Path(result['root_path']),self.folder/'资源 data');self.assertEqual(Path(result['storage_path']),self.folder/'保存 records')
+        self.assertTrue(result['cpu_only']);self.assertFalse(result['application_started']);self.assertEqual(list(self.folder.iterdir()),[])
+
+    @unittest.skipUnless(os.name=='nt','Windows PowerShell entry')
+    def test_powershell_entry_uses_the_same_workspace_and_saved_results(self):
+        workspace=PROJECT.parent;entry=workspace/'tools/start_workbench.ps1'
+        if not (entry.is_file() and (workspace/'AGENTS.md').is_file()):self.skipTest('Private workspace launcher not published')
+        result=self.config(['powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File',str(entry),'-CheckConfig'])
+        expected=self.batch(workspace/'start_system.cmd','--page workbench')
+        self.assertEqual(result,expected);self.assertFalse(result['cpu_only']);self.assertEqual(list(self.folder.iterdir()),[])
+
+    @unittest.skipUnless(os.name=='nt','Windows PowerShell entry')
+    def test_powershell_entry_forwards_explicit_paths_and_does_not_resume_without_request(self):
+        workspace=PROJECT.parent;entry=workspace/'tools/start_workbench.ps1'
+        if not (entry.is_file() and (workspace/'AGENTS.md').is_file()):self.skipTest('Private workspace launcher not published')
+        result=self.config(['powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File',str(entry),'-CheckConfig',
+            '-Root',str(self.folder/'other resources'),'-Storage',str(self.folder/'other records'),'-Port','5435','-Page','system','-CpuOnly'])
+        self.assertEqual(Path(result['root_path']),self.folder/'other resources');self.assertEqual(Path(result['storage_path']),self.folder/'other records')
+        self.assertEqual(result['requested_port'],5435);self.assertEqual(result['page'],'system');self.assertTrue(result['cpu_only'])
+        self.assertFalse(result['auto_resume_queue']);self.assertFalse(result['application_started']);self.assertEqual(list(self.folder.iterdir()),[])
+
 
 if __name__=='__main__':unittest.main()

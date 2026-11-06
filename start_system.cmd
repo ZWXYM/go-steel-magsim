@@ -1,5 +1,6 @@
 @echo off
 setlocal
+if not defined MAGSIM_AEDT_TRANSPORT set MAGSIM_AEDT_TRANSPORT=com
 cd /d "%~dp0"
 if exist "..\AGENTS.md" if exist "..\calibration\pilot_20261003_n8\manifest.json" if exist "..\start_system.cmd" goto workspace_entry
 if exist "..\.runtime\magsim\Scripts\python.exe" (

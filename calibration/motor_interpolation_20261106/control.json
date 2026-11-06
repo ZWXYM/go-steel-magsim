@@ -1,0 +1,37 @@
+{
+  "id": "RD_intrinsic_PCHIP_piecewise_linear_v1",
+  "material": "WB_B27R090_8fff23daed9e",
+  "direction": "RD",
+  "source_amat_sha256": "af52ce28c164f51498ff2d7e7b16e0778592b5e886ad17bac94130ddc4234ab5",
+  "source_nodes_preserved_exactly": true,
+  "source_points": 26,
+  "execution_points": 201,
+  "interpolation": "PCHIP of J=B-mu0*H on original H, then B=J+mu0*H; source H/B nodes restored exactly",
+  "intrinsic_roundoff_adjustment_max_T": 7.179812300250887e-12,
+  "min_differential_relative_mu": 0.9999999838246224,
+  "max_difference_from_source_linear_interpolation_T": 0.09981967255830604,
+  "interpolated_points_are_measurements": false,
+  "new_independent_materials": 0,
+  "solver_settings": {
+    "SmoothBHCurve": false,
+    "UseNonLinearIterNum": true,
+    "MinIterNum": 1,
+    "MaxIterNum": 100
+  },
+  "budget": {
+    "native_sessions": 1,
+    "new_motor_solves": 1,
+    "cores": 2,
+    "gpus": 0,
+    "wall_seconds": 1200
+  },
+  "stop_if_failed": true,
+  "comparison": "existing B27R090 RD stable-v1 read only; no old directory resubmission",
+  "gate_unchanged": {
+    "mean_positive": true,
+    "minimum_positive": true,
+    "maximum_below_Nm": 10,
+    "ripple_below_pct": 100
+  },
+  "scope": "Numerical representation control preserving 26 original nodes; not a new measurement, material calibration or loss model"
+}

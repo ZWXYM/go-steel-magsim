@@ -1,0 +1,63 @@
+{
+  "material": "B27R090",
+  "comparison_kind": "numerical_representation_control_not_material_improvement",
+  "original": {
+    "T_avg_Nm": 565.6943135733358,
+    "T_min_Nm": -971.460005728424,
+    "T_max_Nm": 18120.710876171,
+    "K_T_ripple_pct": 3374.9978431459595,
+    "torque_numerical_acceptance": false,
+    "n_samples": 31,
+    "nonpositive_samples": 4,
+    "CSV_sha256": "6b3546feeae30a60408aed1bef8163abac7041335562bf57d22669d717b81121"
+  },
+  "interpolation_control": {
+    "T_avg_Nm": 1.4585977213972823,
+    "T_min_Nm": -7.22151066786924,
+    "T_max_Nm": 2.13343987981789,
+    "K_T_ripple_pct": 641.3660470225769,
+    "torque_numerical_acceptance": false,
+    "n_samples": 31,
+    "nonpositive_samples": 1,
+    "CSV_sha256": "717f5cd6e0062f91fab1a446f8bbf8c7b2ee8e0dd974b207e5e92f25cd5936b0"
+  },
+  "source_nodes": 26,
+  "execution_nodes": 201,
+  "source_nodes_kept_exactly_in_CPU_contract": true,
+  "native_serialization_tolerance": {
+    "relative": 1e-10,
+    "absolute_T": 2e-07
+  },
+  "profiles": {
+    "original": {
+      "raw_min": 0.00887902,
+      "raw_max": 78.8587,
+      "steps": 31,
+      "raw_profile_sha256": "f752ae853bab149a12f94c2542fef3b7147fb1744a4eee970120449421afd2a4"
+    },
+    "interpolation_control": {
+      "raw_min": 0.000235362,
+      "raw_max": 1.69633,
+      "steps": 31,
+      "raw_profile_sha256": "cc5bdd8dfaace0dfe25f00d12d7b8891254122bf43e47aa1c333b1aa8cce3707"
+    }
+  },
+  "residual_units_not_equated_to_setup_residual": true,
+  "nonlinear_convergence_certified": false,
+  "native_completed": true,
+  "new_motor_solves": 1,
+  "new_MuMax_solves": 0,
+  "native_readback_sessions": 1,
+  "native_solve_sessions": 1,
+  "completed_Maxwell": 58,
+  "completed_motor": 23,
+  "completed_magnetostatic": 35,
+  "completed_MuMax": 682,
+  "adopted_by_production": false,
+  "old_acceptance_changed": false,
+  "old_bank_changed": false,
+  "new_independent_materials": 0,
+  "all_dedicated_sessions_released": true,
+  "old_native_case_files_SHA_unchanged": 747,
+  "additional_controls_not_scheduled": true
+}
