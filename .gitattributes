@@ -273,3 +273,5 @@ modules/calibration_regularized.py -text
 tests/test_calibration_regularized.py -text
 docs/regularized_bank_20261106.md -text
 calibration/regularized_bank_20261106/** -text
+docs/regularized_training_contract_20261106.md -text
+tests/test_native_quality_workbench.py -text

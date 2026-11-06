@@ -124,7 +124,12 @@ class NativeQualityWorkbench(unittest.TestCase):
                 export_calibrated_pair(rd,bare[1],'Mismatch',thickness_mm=.3,export_dir=tmp)
 
     def test_formal_dataset_rejects_missing_failed_unknown_and_diagnostic_quality(self):
-        base=dict(simulation_physics_version='cubic_sample_frame_v2',reference_correction_version=TRANSFER_VERSION,
+        for calibration_version in (TRANSFER_VERSION,'fixed_h_regularized_transfer_v3'):
+            with self.subTest(calibration_version=calibration_version):
+                self._check_formal_dataset_quality(calibration_version)
+
+    def _check_formal_dataset_quality(self,calibration_version):
+        base=dict(simulation_physics_version='cubic_sample_frame_v2',reference_correction_version=calibration_version,
             H_axis='physical_A_per_m',calibration_sha256='fixture',texture_sampling_version='legacy_multi_peak_importance_v1')
         with self.assertRaisesRegex(ValueError,'原生质量合同'):
             dataset_contract(pd.DataFrame([base]))

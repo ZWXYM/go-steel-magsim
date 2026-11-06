@@ -160,6 +160,22 @@ class CalibrationContracts(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, '诊断'):
             dataset_contract(pd.DataFrame({'dataset_role': ['calibration_fit_diagnostics']}))
 
+    def test_regularized_labels_use_existing_physical_axis_checks_in_both_trainers(self):
+        import pandas as pd
+        from modules.ml_trainer import BHPredictor
+        from modules.paper_surrogate_trainer import prepare_dataset
+        base={'f_Goss':.8,'B_0deg_H100':.6,'reference_correction_version':'fixed_h_regularized_transfer_v3',
+            'simulation_physics_version':PHYSICS_VERSION,'H_axis':'physical_A_per_m','calibration_sha256':'fixture'}
+        for changed in ({'H_axis':'legacy_scaled_H'},{'simulation_physics_version':'legacy_unspecified'},
+                        {'calibration_sha256':'legacy_unspecified'}):
+            with self.subTest(changed=changed),tempfile.TemporaryDirectory() as folder:
+                path=Path(folder)/'invalid_regularized.csv'
+                pd.DataFrame([{**base,**changed}]).to_csv(path,index=False)
+                for operation in (lambda:BHPredictor(model_dir=str(Path(folder)/'models')).train(str(path)),
+                                  lambda:prepare_dataset(str(path))):
+                    with self.assertRaisesRegex(ValueError,'物理版本、H 轴或校准哈希'):
+                        operation()
+
     def test_branch_midpoint_T_to_H_and_projection(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 'table.txt'
