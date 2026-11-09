@@ -1,0 +1,45 @@
+{
+  "recipe": {
+    "aedt_transport": "com",
+    "analysis_id": "opt_f531db7a119d",
+    "application_id": "sapply_3bfa8f32eafb4547",
+    "application_sha256": "dc9c6366c433c1a150095d4d7ecd82934b5e53e91416b748bd9b07285adb9e9c",
+    "candidates": [
+      {
+        "case_id": "nippon_steel_23zdkh75",
+        "material": "Nippon Steel - 23ZDKH75"
+      }
+    ],
+    "config": {
+      "efficiency_weight": 10.0,
+      "iron_loss_weight": 0.3,
+      "max_iron_loss_increase_pct": 0.0,
+      "min_ripple_reduction_pct": 30.0,
+      "min_torque_change_pct": -0.5,
+      "ripple_weight": 0.6
+    },
+    "configuration_id": "c30",
+    "mapping_kind": "original_library_manifest",
+    "mapping_source_sha256": "13af2eb08e9a3c5bb7b4e00ec91461fab6bcd49bdffe09fcc524c7252f5a1ede",
+    "measurement_protocol": "v8_2_cycle1",
+    "producer_sha256": "3a875ef71cccf5e59441c5aba6277bac361d2fbcfa0b19eb245274632fb791d3",
+    "reference": {
+      "case_id": "ak_steel_m_6_carlite",
+      "material": "AK Steel - M-6 Carlite"
+    },
+    "schema": "study_to_original_scan_plan_v1",
+    "source_dataset": "v8_2_bound_archive",
+    "source_model_version": "V8_2_bound_report_CSV_v1",
+    "study_id": "csens_268d02dfbf39",
+    "template": "V8_2 23ZH90 object-CS 诊断模板",
+    "template_sha256": "e88490aaf9f1578834f16afbdd1229093cc38503aa6d2ed7afd7f87aafca951a",
+    "worker_source_sha256": {
+      "modules/material_calibration.py": "f08cec15c1832003bf3a0b2bd596b1ddb773c47283489325c6839bdacbfaf334",
+      "modules/motor_model_audit.py": "f106bf390736815c8ac8298a6ffbe0f5cf793622eb4cd1b329732300ad1c7ee6",
+      "modules/motor_queue.py": "fa5b5bf075857883f05ca82e8a51f379c50589ee746f4cd9e0f0d9dd6808a913",
+      "modules/motor_workbench.py": "2b78c9439cd130213e678a4decd8b694e92b00718f48e7c7923de36186748062",
+      "tools/motor_scan_worker.py": "f7df38933bd8270c682f29384a024e6e0a67dff8299ecc0ab7e2257a0f9bba62"
+    }
+  },
+  "source_binding_sha256": "78ed165797e57d33d9aa6508ae8d977fc44338af64586e828888f7cd7eafaca9"
+}

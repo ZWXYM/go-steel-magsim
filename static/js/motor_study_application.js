@@ -26,11 +26,13 @@
   const source=view,configuration=$('studyConfiguration').value,token=generation;
   if(!source.configurations.some(row=>row.id===configuration))return;
   pending=true;controls();$('studyApplicationResult').replaceChildren();$('studyApplicationStatus').textContent='正在用所选条件保存原程序筛选…';
+  if(typeof root.CustomEvent==='function')root.dispatchEvent(new root.CustomEvent('go-steel-study-application-selected',{detail:{id:null}}));
   try{const record=await api('sensitivity/'+source.study_id+'/applications',{configuration_id:configuration,source_binding_sha256:source.source_binding_sha256});if(token!==generation)return;
    if(record.study_id!==source.study_id||record.configuration_id!==configuration||record.source_binding_sha256!==source.source_binding_sha256||!/^sapply_[a-f0-9]{16}$/.test(record.id)||!/^opt_[a-f0-9]{12}$/.test(record.analysis_id))throw Error('返回筛选与所选研究配置不符');
    $('studyApplicationStatus').textContent=(record.created?'已保存 ':'已重开已有记录 ')+record.analysis_id+' · 配置'+configuration+' · '+record.meets_limits_count+'案满足 · 首选'+(record.best_case||'无')+'；原默认仍为'+record.original_default_candidate_count+'候选。未启动扫描。';
    const path=base+'study-applications/'+record.id+'/files/';
    $('studyApplicationResult').append(link('查看原优化结果','/motor-optimization?analysis='+record.analysis_id),link('完整配置筛选包',path+'application_bundle.zip'),link('排序 CSV',path+'ranking.csv'),link('来源 JSON',path+'application.json'));
+   if(typeof root.CustomEvent==='function')root.dispatchEvent(new root.CustomEvent('go-steel-study-application-selected',{detail:{id:record.id}}));
   }catch(error){if(token===generation)$('studyApplicationStatus').textContent='未确认保存：'+error.message+'。可查看原优化历史，不自动重发。'}
   finally{pending=false;controls()}
  }

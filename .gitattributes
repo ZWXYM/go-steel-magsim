@@ -284,3 +284,9 @@ static/js/motor_study_application.js -text
 tests/test_motor_study_application_ui.js -text
 docs/study_application_20261109.md -text
 calibration/study_application_20261109/** -text
+calibration/study_scan_plan_20261110/** -text
+modules/motor_study_plans.py -text
+tests/test_motor_study_plans.py -text
+static/js/motor_study_plans.js -text
+tests/test_motor_study_plans_ui.js -text
+docs/study_scan_plan_20261110.md -text
