@@ -1,0 +1,145 @@
+{
+  "schema": "saved_motor_case_coverage_v1",
+  "counts": {
+    "complete": true,
+    "dataset_count": 8,
+    "distinct_csv_content_sets": 12,
+    "independent_measured_samples": null,
+    "native_csv_accepted_rows": 14,
+    "original_accepted_rows": 28,
+    "repeated_csv_content_rows": 5,
+    "rows_with_csv_sources": 17,
+    "saved_rows": 35
+  },
+  "csv_content_groups": [
+    {
+      "id": "csv_0818d4c325dac37fd2e1eaab52e235819223c04a6ed11d93f8e355293fd05861",
+      "records": [
+        {
+          "case": "ak_steel_m_6_carlite",
+          "dataset": "v8_2_archive"
+        },
+        {
+          "case": "ak_steel_m_6_carlite",
+          "dataset": "v8_2_bound_archive"
+        }
+      ]
+    },
+    {
+      "id": "csv_15fcedeea2e2ed21320f096f50a15840e0d15fece991b095b033722fbd4a45bc",
+      "records": [
+        {
+          "case": "case_01",
+          "dataset": "scan_663138d5d52a"
+        }
+      ]
+    },
+    {
+      "id": "csv_35a2d7c0ee94ef4c2287e3feaa1640443af80215b2874e39a3de90c614c3cd4d",
+      "records": [
+        {
+          "case": "case_01",
+          "dataset": "scan_fd1f6e8b9d87"
+        }
+      ]
+    },
+    {
+      "id": "csv_40c66cdcd4f41810a10a0acf431756db41c8d3c81d31949bbcabb451438ff165",
+      "records": [
+        {
+          "case": "nippon_steel_23zdkh75",
+          "dataset": "v8_2_bound_archive"
+        }
+      ]
+    },
+    {
+      "id": "csv_5f9cecd13685025315ce45ff63f735c41b9a384ba5f73f8610bb3e0b30bfc0e2",
+      "records": [
+        {
+          "case": "case_01",
+          "dataset": "scan_8605c25b1635"
+        }
+      ]
+    },
+    {
+      "id": "csv_7ce20162fe709f2b1a2c90bde767b7936fb8e1e3a166a1235d0037a1b36d5701",
+      "records": [
+        {
+          "case": "case_01",
+          "dataset": "scan_bd3b82a53ef6"
+        }
+      ]
+    },
+    {
+      "id": "csv_7e6d31930d7210c955f196dfb022eae3502e81e217cf48698403258458fd7ca6",
+      "records": [
+        {
+          "case": "nippon_steel_27zdkh85",
+          "dataset": "v8_2_archive"
+        },
+        {
+          "case": "nippon_steel_27zdkh85",
+          "dataset": "v8_2_bound_archive"
+        }
+      ]
+    },
+    {
+      "id": "csv_9d6680b9eeb4191bc83a776336cd846191fc5c340ccb5a0e7f76195461fa1db5",
+      "records": [
+        {
+          "case": "case_02",
+          "dataset": "scan_fd1f6e8b9d87"
+        }
+      ]
+    },
+    {
+      "id": "csv_9e390041c280be2fc75a8567b8739e70c451f35e03a04a5a53b40f90d94d6fb1",
+      "records": [
+        {
+          "case": "case_01",
+          "dataset": "scan_a300ab06268f"
+        }
+      ]
+    },
+    {
+      "id": "csv_e2de964dd1dac054727d6c750bd27e4b5ef64b9c1958fd4ce3f84c73b6f01650",
+      "records": [
+        {
+          "case": "nippon_steel_27zdkh95",
+          "dataset": "v8_2_archive"
+        },
+        {
+          "case": "nippon_steel_27zdkh95",
+          "dataset": "v8_2_bound_archive"
+        }
+      ]
+    },
+    {
+      "id": "csv_f43a813bf69d8f000afa7d0fdc87a204308aa535faae2325036314dc7a090b7d",
+      "records": [
+        {
+          "case": "nippon_steel_23zdkh80",
+          "dataset": "v8_2_archive"
+        },
+        {
+          "case": "nippon_steel_23zdkh80",
+          "dataset": "v8_2_bound_archive"
+        }
+      ]
+    },
+    {
+      "id": "csv_fbca53366c3a361fc16c90496b4bab85c82058a7d3902b2d06479ad27106cf37",
+      "records": [
+        {
+          "case": "nippon_steel_23zh90",
+          "dataset": "v8_2_archive"
+        },
+        {
+          "case": "nippon_steel_23zh90",
+          "dataset": "v8_2_bound_archive"
+        }
+      ]
+    }
+  ],
+  "scope": "逐版本保存案例清点，不混拼排名。相同CSV内容组只表示完整源CSV哈希集合相同，不能推断独立试验/材料数；不同CSV也不自动算独立实测。历史处理、异常与原值保持。"
+}

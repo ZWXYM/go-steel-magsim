@@ -15,6 +15,8 @@ def install_cpu_policy(app):
                 or re.fullmatch(r'/api/workbench/calibrated-motor/analysis-plans/bhanalysis_[0-9a-f]{12}/prepare-model',path)
                 or re.fullmatch(r'/api/workbench/optimization/plans/plan_[0-9a-f]{12}/refresh',path)
                 or re.fullmatch(r'/api/workbench/optimization/plans/plan_[0-9a-f]{12}/result-package',path)
+                or re.fullmatch(r'/api/workbench/optimization/sensitivity/csens_[0-9a-f]{12}/applications',path)
+                or re.fullmatch(r'/api/workbench/optimization/study-applications/sapply_[0-9a-f]{16}/scan-plan',path)
                 or re.fullmatch(r'/api/workbench/calibrations/cal_[0-9a-f]{12}/predict(?:-excluded)?',path)
                 or re.fullmatch(r'/api/workbench/motor/jobs/scan_[0-9a-f]{12}/export',path))
             if not safe:

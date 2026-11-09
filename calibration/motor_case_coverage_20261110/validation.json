@@ -1,0 +1,19 @@
+{
+  "main_tests": 849,
+  "AST": 221,
+  "JS": 31,
+  "actual_HTTP_JSON_CSV": true,
+  "actual_browser_download": true,
+  "CSV_SHA256": "9526df49700db5355cbcdae0b44262337c5bdc54ed3c719828257f8641495006",
+  "CSV_metrics_equal_JSON": true,
+  "old_saved_files_unchanged": 6007,
+  "original_core_sources_unchanged": 3,
+  "actual_coverage_requests": 3,
+  "new_native_solves": 0,
+  "new_analyses": 0,
+  "new_plans": 0,
+  "new_predictions": 0,
+  "new_training": 0,
+  "new_registered_packages": 0,
+  "independent_measurement_claimed": false
+}

@@ -1,0 +1,149 @@
+﻿dataset,model_version,measurement_protocol,case,material,input_accepted,input_source,native_csv_verified,historical_processed_estimate,T_avg_Nm,K_T_ripple_pct,P_Fe_W,eta_estimate_pct,csv_source_file_count,csv_content_group,same_csv_content_records,dataset_source_hashes_sha256,input_error,csv_sources,scope
+v8_1,V8_1_original_saved,original_processed_metrics,ak_steel_m_6_carlite,AK Steel - M-6 Carlite,True,V8_1 original processed summary,False,True,1.9744,30.13,19.0,90.1,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,ak_steel_m_6_mill_anneal,AK Steel - M-6 Mill Anneal,True,V8_1 original processed summary,False,True,1.842,49.6,19.76,89.36,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zdkh75,Nippon Steel - 23ZDKH75,True,V8_1 original processed summary,False,True,1.8719,9.23,14.82,90.19,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zdkh80,Nippon Steel - 23ZDKH80,True,V8_1 original processed summary,False,True,1.854,16.03,15.58,89.99,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zdkh85,Nippon Steel - 23ZDKH85,True,V8_1 original processed summary,False,True,2.0187,63.18,16.34,90.64,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zdkh90,Nippon Steel - 23ZDKH90,True,V8_1 original processed summary,False,True,1.8952,19.89,17.29,89.96,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_27zdkh85,Nippon Steel - 27ZDKH85,True,V8_1 original processed summary,False,True,1.8505,15.87,17.1,89.77,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_27zdkh90,Nippon Steel - 27ZDKH90,True,V8_1 original processed summary,False,True,1.9019,24.64,18.05,89.89,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_27zdkh95,Nippon Steel - 27ZDKH95,True,V8_1 original processed summary,False,True,1.8947,10.37,19.0,89.72,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zdmh80,Nippon Steel - 23ZDMH80,True,V8_1 original processed summary,False,True,1.8038,58.27,15.96,89.69,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zdmh85,Nippon Steel - 23ZDMH85,True,V8_1 original processed summary,False,True,2.0129,51.79,16.72,90.56,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zdmh90,Nippon Steel - 23ZDMH90,True,V8_1 original processed summary,False,True,1.841,31.75,17.67,89.64,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zh85,Nippon Steel - 23ZH85,True,V8_1 original processed summary,False,True,1.8065,29.63,17.48,89.49,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zh90,Nippon Steel - 23ZH90,True,V8_1 original processed summary,False,True,1.871,8.12,18.43,89.68,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zh95,Nippon Steel - 23ZH95,False,V8_1 original processed summary,False,True,,,,,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_1,V8_1_original_saved,original_processed_metrics,nippon_steel_23zh100,Nippon Steel - 23ZH100,False,V8_1 original processed summary,False,True,,,,,0,,0,e599f3b8c1688fa420ee29f9f0218413a5da0fd0ee8a96fcdcf94c7d07a2fa16,,{},沿用原 V8_1 保存指标；其曲线处理与损耗估算保持原口径
+v8_2_archive,V8_2_final_resolved,v8_2_cycle1,ak_steel_m_6_carlite,ak_steel_m_6_carlite,True,official_CSV_verified,True,False,1.8702440945581822,32.49175393761659,17.459885258768256,89.81412061170955,6,csv_0818d4c325dac37fd2e1eaab52e235819223c04a6ed11d93f8e355293fd05861,2,8b379569ed1ecd5823daccb71f02a817e748891b5e9346dda1f5692de2426eb1,,"{
+  ""archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/CoreLoss.csv"": ""c1905441ffd4abaf72d57e17b3ccf9fd7729ddef694c7604f6f3fc9602744866"",
+  ""archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""archive/ak_steel_m_6_carlite/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""archive/ak_steel_m_6_carlite/final_resolved_reports/Torque Plots.csv"": ""d7b2ac5a7582c05611da8ac47b8b515a3f76f1c9679c6116c5dcf7796f625738""
+}",作者 V8_2 final 单周期库材料结果；缺CSV和异常行保留，独立展示状态
+v8_2_archive,V8_2_final_resolved,v8_2_cycle1,nippon_steel_23zdkh75,nippon_steel_23zdkh75,False,report_only,False,False,1.8673,18.78,17.041,89.86,0,,0,8b379569ed1ecd5823daccb71f02a817e748891b5e9346dda1f5692de2426eb1,该 final 版本官方 CSV 缺失；显示原保存摘要，未做 CSV 复核,{},作者 V8_2 final 单周期库材料结果；缺CSV和异常行保留，独立展示状态
+v8_2_archive,V8_2_final_resolved,v8_2_cycle1,nippon_steel_23zdkh80,nippon_steel_23zdkh80,True,official_CSV_verified,True,False,1.847104257199003,39.080830865153914,18.54797159095018,89.54904249455528,6,csv_f43a813bf69d8f000afa7d0fdc87a204308aa535faae2325036314dc7a090b7d,2,8b379569ed1ecd5823daccb71f02a817e748891b5e9346dda1f5692de2426eb1,,"{
+  ""archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/CoreLoss.csv"": ""5069c6b436fd898ce2b210aff644c75874a3b1382769ede933837d3c93195739"",
+  ""archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""archive/nippon_steel_23zdkh80/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""archive/nippon_steel_23zdkh80/final_resolved_reports/Torque Plots.csv"": ""4b2c670b64adc1a29f4fb343e963812bb17e9d29b3fa2bfc012d6eeceb3fad69""
+}",作者 V8_2 final 单周期库材料结果；缺CSV和异常行保留，独立展示状态
+v8_2_archive,V8_2_final_resolved,v8_2_cycle1,nippon_steel_23zh90,nippon_steel_23zh90,True,official_CSV_verified,True,False,1.8683845192375363,36.88786577533926,16.625501285415293,89.9198067662302,6,csv_fbca53366c3a361fc16c90496b4bab85c82058a7d3902b2d06479ad27106cf37,2,8b379569ed1ecd5823daccb71f02a817e748891b5e9346dda1f5692de2426eb1,,"{
+  ""archive/nippon_steel_23zh90/final_resolved_maxwell_reports/CoreLoss.csv"": ""d2ec1c385d143afafa63f8667eefa200e1f1547d5a18dfc45cf6a7df95a301f2"",
+  ""archive/nippon_steel_23zh90/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""archive/nippon_steel_23zh90/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""archive/nippon_steel_23zh90/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""archive/nippon_steel_23zh90/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""archive/nippon_steel_23zh90/final_resolved_reports/Torque Plots.csv"": ""b9e497629cdea6fd4072b89645f9e2998463f29b4ae7added4cc2cd703d11437""
+}",作者 V8_2 final 单周期库材料结果；缺CSV和异常行保留，独立展示状态
+v8_2_archive,V8_2_final_resolved,v8_2_cycle1,nippon_steel_27zdkh85,nippon_steel_27zdkh85,False,official_CSV_verified,True,False,1.2544655496228387,1418.7549752509267,81.59158979735467,75.08583165475638,6,csv_7e6d31930d7210c955f196dfb022eae3502e81e217cf48698403258458fd7ca6,2,8b379569ed1ecd5823daccb71f02a817e748891b5e9346dda1f5692de2426eb1,,"{
+  ""archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/CoreLoss.csv"": ""067ca05d6ae4452f9074128fde13682d5c008eddce03d32319ca24124badfabb"",
+  ""archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""archive/nippon_steel_27zdkh85/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""archive/nippon_steel_27zdkh85/final_resolved_reports/Torque Plots.csv"": ""5463e935a6a926308861f3067800e5f3bbeeddd7a488bcf3e32fb84b950eaa74""
+}",作者 V8_2 final 单周期库材料结果；缺CSV和异常行保留，独立展示状态
+v8_2_archive,V8_2_final_resolved,v8_2_cycle1,nippon_steel_27zdkh95,nippon_steel_27zdkh95,True,official_CSV_verified,True,False,1.820853366569654,73.81135474144048,38.23944995358843,86.74437991373594,6,csv_e2de964dd1dac054727d6c750bd27e4b5ef64b9c1958fd4ce3f84c73b6f01650,2,8b379569ed1ecd5823daccb71f02a817e748891b5e9346dda1f5692de2426eb1,,"{
+  ""archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/CoreLoss.csv"": ""f2fb173112c9afccee57622537d789b69f3567146c4102bb8ee80c2453870501"",
+  ""archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""archive/nippon_steel_27zdkh95/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""archive/nippon_steel_27zdkh95/final_resolved_reports/Torque Plots.csv"": ""84a2826b80dae065e2895e5302552cda5791d5cbeb9c39e806c7fd3c2bffb6a7""
+}",作者 V8_2 final 单周期库材料结果；缺CSV和异常行保留，独立展示状态
+v8_2_bound_archive,V8_2_bound_report_CSV_v1,v8_2_cycle1,ak_steel_m_6_carlite,ak_steel_m_6_carlite,True,official_CSV_verified,True,False,1.8702440945581822,32.49175393761659,17.459885258768256,89.81412061170955,6,csv_0818d4c325dac37fd2e1eaab52e235819223c04a6ed11d93f8e355293fd05861,2,5338259f4a79a493d50b871c5527b8bf9c4969973dc1a52cd20409fa4d2d759f,,"{
+  ""bound_archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/CoreLoss.csv"": ""c1905441ffd4abaf72d57e17b3ccf9fd7729ddef694c7604f6f3fc9602744866"",
+  ""bound_archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""bound_archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""bound_archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""bound_archive/ak_steel_m_6_carlite/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""bound_archive/ak_steel_m_6_carlite/final_resolved_reports/Torque Plots.csv"": ""d7b2ac5a7582c05611da8ac47b8b515a3f76f1c9679c6116c5dcf7796f625738""
+}",作者V8_2同报告绑定CSV补齐集合；23ZDKH75明确使用clean_resolved2，报告与final字节一致。保留原6案及异常，不新增独立样品，不认证48插片损耗/RD-TD或稳态最终排名。
+v8_2_bound_archive,V8_2_bound_report_CSV_v1,v8_2_cycle1,nippon_steel_23zdkh75,nippon_steel_23zdkh75,True,official_CSV_verified,True,False,1.8672732837940254,18.777938206631458,17.04117176356559,89.85716321732939,6,csv_40c66cdcd4f41810a10a0acf431756db41c8d3c81d31949bbcabb451438ff165,1,5338259f4a79a493d50b871c5527b8bf9c4969973dc1a52cd20409fa4d2d759f,,"{
+  ""bound_archive/nippon_steel_23zdkh75/clean_resolved2_maxwell_reports/CoreLoss.csv"": ""b47af465a232b54e2a1c646bbe520382a6706c30e213e6b461384958760faa67"",
+  ""bound_archive/nippon_steel_23zdkh75/clean_resolved2_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""bound_archive/nippon_steel_23zdkh75/clean_resolved2_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""bound_archive/nippon_steel_23zdkh75/clean_resolved2_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""bound_archive/nippon_steel_23zdkh75/clean_resolved2_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""bound_archive/nippon_steel_23zdkh75/clean_resolved2_reports/Torque Plots.csv"": ""6b09e5d4c9b5e30966156ad8a48e038bce939ad5934f729149171b51443833b5""
+}",作者V8_2同报告绑定CSV补齐集合；23ZDKH75明确使用clean_resolved2，报告与final字节一致。保留原6案及异常，不新增独立样品，不认证48插片损耗/RD-TD或稳态最终排名。
+v8_2_bound_archive,V8_2_bound_report_CSV_v1,v8_2_cycle1,nippon_steel_23zdkh80,nippon_steel_23zdkh80,True,official_CSV_verified,True,False,1.847104257199003,39.080830865153914,18.54797159095018,89.54904249455528,6,csv_f43a813bf69d8f000afa7d0fdc87a204308aa535faae2325036314dc7a090b7d,2,5338259f4a79a493d50b871c5527b8bf9c4969973dc1a52cd20409fa4d2d759f,,"{
+  ""bound_archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/CoreLoss.csv"": ""5069c6b436fd898ce2b210aff644c75874a3b1382769ede933837d3c93195739"",
+  ""bound_archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""bound_archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""bound_archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""bound_archive/nippon_steel_23zdkh80/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""bound_archive/nippon_steel_23zdkh80/final_resolved_reports/Torque Plots.csv"": ""4b2c670b64adc1a29f4fb343e963812bb17e9d29b3fa2bfc012d6eeceb3fad69""
+}",作者V8_2同报告绑定CSV补齐集合；23ZDKH75明确使用clean_resolved2，报告与final字节一致。保留原6案及异常，不新增独立样品，不认证48插片损耗/RD-TD或稳态最终排名。
+v8_2_bound_archive,V8_2_bound_report_CSV_v1,v8_2_cycle1,nippon_steel_23zh90,nippon_steel_23zh90,True,official_CSV_verified,True,False,1.8683845192375363,36.88786577533926,16.625501285415293,89.9198067662302,6,csv_fbca53366c3a361fc16c90496b4bab85c82058a7d3902b2d06479ad27106cf37,2,5338259f4a79a493d50b871c5527b8bf9c4969973dc1a52cd20409fa4d2d759f,,"{
+  ""bound_archive/nippon_steel_23zh90/final_resolved_maxwell_reports/CoreLoss.csv"": ""d2ec1c385d143afafa63f8667eefa200e1f1547d5a18dfc45cf6a7df95a301f2"",
+  ""bound_archive/nippon_steel_23zh90/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""bound_archive/nippon_steel_23zh90/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""bound_archive/nippon_steel_23zh90/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""bound_archive/nippon_steel_23zh90/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""bound_archive/nippon_steel_23zh90/final_resolved_reports/Torque Plots.csv"": ""b9e497629cdea6fd4072b89645f9e2998463f29b4ae7added4cc2cd703d11437""
+}",作者V8_2同报告绑定CSV补齐集合；23ZDKH75明确使用clean_resolved2，报告与final字节一致。保留原6案及异常，不新增独立样品，不认证48插片损耗/RD-TD或稳态最终排名。
+v8_2_bound_archive,V8_2_bound_report_CSV_v1,v8_2_cycle1,nippon_steel_27zdkh85,nippon_steel_27zdkh85,False,official_CSV_verified,True,False,1.2544655496228387,1418.7549752509267,81.59158979735467,75.08583165475638,6,csv_7e6d31930d7210c955f196dfb022eae3502e81e217cf48698403258458fd7ca6,2,5338259f4a79a493d50b871c5527b8bf9c4969973dc1a52cd20409fa4d2d759f,,"{
+  ""bound_archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/CoreLoss.csv"": ""067ca05d6ae4452f9074128fde13682d5c008eddce03d32319ca24124badfabb"",
+  ""bound_archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""bound_archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""bound_archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""bound_archive/nippon_steel_27zdkh85/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""bound_archive/nippon_steel_27zdkh85/final_resolved_reports/Torque Plots.csv"": ""5463e935a6a926308861f3067800e5f3bbeeddd7a488bcf3e32fb84b950eaa74""
+}",作者V8_2同报告绑定CSV补齐集合；23ZDKH75明确使用clean_resolved2，报告与final字节一致。保留原6案及异常，不新增独立样品，不认证48插片损耗/RD-TD或稳态最终排名。
+v8_2_bound_archive,V8_2_bound_report_CSV_v1,v8_2_cycle1,nippon_steel_27zdkh95,nippon_steel_27zdkh95,True,official_CSV_verified,True,False,1.820853366569654,73.81135474144048,38.23944995358843,86.74437991373594,6,csv_e2de964dd1dac054727d6c750bd27e4b5ef64b9c1958fd4ce3f84c73b6f01650,2,5338259f4a79a493d50b871c5527b8bf9c4969973dc1a52cd20409fa4d2d759f,,"{
+  ""bound_archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/CoreLoss.csv"": ""f2fb173112c9afccee57622537d789b69f3567146c4102bb8ee80c2453870501"",
+  ""bound_archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""bound_archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""bound_archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/input_voltage.csv"": ""e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d"",
+  ""bound_archive/nippon_steel_27zdkh95/final_resolved_reports/Drive Current Plots.csv"": ""5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8"",
+  ""bound_archive/nippon_steel_27zdkh95/final_resolved_reports/Torque Plots.csv"": ""84a2826b80dae065e2895e5302552cda5791d5cbeb9c39e806c7fd3c2bffb6a7""
+}",作者V8_2同报告绑定CSV补齐集合；23ZDKH75明确使用clean_resolved2，报告与final字节一致。保留原6案及异常，不新增独立样品，不认证48插片损耗/RD-TD或稳态最终排名。
+scan_663138d5d52a,V8_2_object_CS_loss_scope_v2,periodic_cycle3_v1,case_01,AK Steel - M-6 Carlite,False,official_CSV_verified,True,False,1.8314038779214497,53.73455292405354,32.12808200191126,87.6186023839013,5,csv_15fcedeea2e2ed21320f096f50a15840e0d15fece991b095b033722fbd4a45bc,1,c8d2f5e09003a53ef24da191465d6adf90353e1087b61c0dafe2eaa0503776af,,"{
+  ""case_01/maxwell_reports\\CoreLoss.csv"": ""3352ad0258c149712b0142329c7ceb129c7e57bcc40266709d4a6bc23d799944"",
+  ""case_01/maxwell_reports\\SolidLoss.csv"": ""d9e79d3fae0109bf58531cf3a5e0949d3d8daa1facc23efa1c9ab029b4c393de"",
+  ""case_01/maxwell_reports\\StrandedLoss.csv"": ""2b816e835726d1314dc6f7b48cadf391c5cc3c1d2a902b399219660ec7a5929d"",
+  ""case_01/reports\\Drive Current Plots.csv"": ""267e1ed47adcc4e115ef86f2e9a3780e80294d400d835ec08becda6d67e85b00"",
+  ""case_01/reports\\Torque Plots.csv"": ""065149c3d47006d0019d4890cba55a957742fa3666a7b1be5b3c652f95569871""
+}",本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界
+scan_fd1f6e8b9d87,V8_2_object_CS_loss_scope_v2,v8_2_cycle1,case_01,AK Steel - M-6 Carlite,True,official_CSV_verified,True,False,1.8626542269476667,21.708956378284423,21.573231522219945,89.21385680128847,5,csv_35a2d7c0ee94ef4c2287e3feaa1640443af80215b2874e39a3de90c614c3cd4d,1,3932ef9979be5b953bd4d03431ddd72fcd9d1b6edeba8a093cfd3f7e34946e60,,"{
+  ""case_01/maxwell_reports\\CoreLoss.csv"": ""e00968e5ce592d92ecccd77492ed00203f0714f4849be5c92158c4823e2274b9"",
+  ""case_01/maxwell_reports\\SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""case_01/maxwell_reports\\StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""case_01/reports\\Drive Current Plots.csv"": ""f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090"",
+  ""case_01/reports\\Torque Plots.csv"": ""267398ffb68d45f3c757c0be1f500b4422341bf7e38c5bc9517481bb9bb96f74""
+}",本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界
+scan_fd1f6e8b9d87,V8_2_object_CS_loss_scope_v2,v8_2_cycle1,case_02,Nippon Steel - 23ZDMH80,True,official_CSV_verified,True,False,1.8751805934066346,66.53421897187899,28.47537852505297,88.35399067896554,5,csv_9d6680b9eeb4191bc83a776336cd846191fc5c340ccb5a0e7f76195461fa1db5,1,3932ef9979be5b953bd4d03431ddd72fcd9d1b6edeba8a093cfd3f7e34946e60,,"{
+  ""case_02/maxwell_reports\\CoreLoss.csv"": ""37628ebba4898563682a6e6b5db2b4ece8e63bfb26e342bb4a99a12a34fcb5c7"",
+  ""case_02/maxwell_reports\\SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""case_02/maxwell_reports\\StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""case_02/reports\\Drive Current Plots.csv"": ""f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090"",
+  ""case_02/reports\\Torque Plots.csv"": ""341a83915f42f3a72636b1c087a5c6619503b54ab7f51afec2fb584682fd1cfc""
+}",本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界
+scan_8605c25b1635,V8_2_object_CS_loss_scope_v2,v8_2_cycle1,case_01,AK Steel - M-6 Carlite,True,official_CSV_verified,True,False,1.8735372403302675,19.51755054162734,18.002897007633013,89.75581927616274,5,csv_5f9cecd13685025315ce45ff63f735c41b9a384ba5f73f8610bb3e0b30bfc0e2,1,42c56a47f80a943bd18e731bdfca4cf85473da33352303a1b023f5331b6efaed,,"{
+  ""case_01/maxwell_reports\\CoreLoss.csv"": ""7268fb309971ed0bbaa2c522866a004c45f740c664da2b9ac1d589951c8faa88"",
+  ""case_01/maxwell_reports\\SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""case_01/maxwell_reports\\StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""case_01/reports\\Drive Current Plots.csv"": ""f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090"",
+  ""case_01/reports\\Torque Plots.csv"": ""26bafe204fe0dcea9d445fef54718347667895a200e5e25f5fed9264b12bb1a4""
+}",本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界
+scan_bd3b82a53ef6,V8_2_object_CS_loss_scope_v2,v8_2_cycle1,case_01,Nippon Steel - 23ZDKH75,True,official_CSV_verified,True,False,1.8767621490203603,29.22879548082728,18.761454569941538,89.66805833558215,5,csv_7ce20162fe709f2b1a2c90bde767b7936fb8e1e3a166a1235d0037a1b36d5701,1,1342f53fe0d536c208d688317955669b3d59a3bb24a0842e58e019bc25354031,,"{
+  ""case_01/maxwell_reports\\CoreLoss.csv"": ""8a265d020eadd2a3563ab4b970bcdaa7f2713f44db5748bbcbe8546756859b7c"",
+  ""case_01/maxwell_reports\\SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""case_01/maxwell_reports\\StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""case_01/reports\\Drive Current Plots.csv"": ""f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090"",
+  ""case_01/reports\\Torque Plots.csv"": ""d2a19d16834f1069ff9d36f959c0734d4e14144fdcc01f072b5719da438d975c""
+}",本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界
+scan_bd3b82a53ef6,V8_2_object_CS_loss_scope_v2,v8_2_cycle1,case_02,Nippon Steel - 23ZH90,False,saved_summary,False,False,,,,,0,,0,1342f53fe0d536c208d688317955669b3d59a3bb24a0842e58e019bc25354031,Maxwell矩阵分解失败；保留当前工程/网格和原生消息，需按错误位置检查该案,{},本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界
+scan_a300ab06268f,V8_2_object_CS_loss_scope_v2,v8_2_cycle1,case_01,AK Steel - M-6 Carlite,True,official_CSV_verified,True,False,1.8858847047904357,18.773465479209264,18.73937404694166,89.71589514350151,5,csv_9e390041c280be2fc75a8567b8739e70c451f35e03a04a5a53b40f90d94d6fb1,1,573c190d2f4d60e64a491ec97cc0d88cd16ab80a14c266f9031107912de2a156,,"{
+  ""case_01/maxwell_reports\\CoreLoss.csv"": ""8e44ceedac5475b6deae53e131b11a10678f01e74edcf35bc83b6157bfa2b2a8"",
+  ""case_01/maxwell_reports\\SolidLoss.csv"": ""cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86"",
+  ""case_01/maxwell_reports\\StrandedLoss.csv"": ""35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3"",
+  ""case_01/reports\\Drive Current Plots.csv"": ""f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090"",
+  ""case_01/reports\\Torque Plots.csv"": ""a1766bede06e4c3667adc8afa54e7cd689eda697520ec4f7ed6133f94e60b7d1""
+}",本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界

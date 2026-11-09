@@ -129,5 +129,18 @@ class MotorStudyPlanTests(unittest.TestCase):
             value=client.get(saved).json;self.assertEqual(value['current_plan_status'],'unavailable');self.assertIn('temporarily',value['current_plan_error'])
         self.assertEqual(len(self.manager.packages.records()),1);self.assertEqual(client.post(base,json={}).status_code,400)
 
+    def test_explicit_preview_allows_saved_study_application_and_plan_preparation_not_submit(self):
+        from modules.motor_study_applications import create_study_application_routes
+        from modules.workbench_cpu_policy import install_cpu_policy
+        app=Flask('safe preparation in preview');app.register_blueprint(create_study_application_routes(self.actions))
+        app.register_blueprint(create_study_plan_routes(self.manager));install_cpu_policy(app);client=app.test_client()
+        with patch.object(self.motor,'submit',side_effect=AssertionError('Never submit')):
+            applied=client.post('/api/workbench/optimization/sensitivity/'+self.study['id']+'/applications',json=self.selection)
+            self.assertEqual(applied.status_code,200)
+            prepared=client.post('/api/workbench/optimization/study-applications/'+self.application['id']+'/scan-plan',json=self.request)
+            self.assertEqual(prepared.status_code,201);self.assertEqual(prepared.json['current_plan_status'],'prepared')
+            blocked=client.post('/api/workbench/optimization/plans/'+prepared.json['plan_id']+'/submit',json={})
+            self.assertEqual(blocked.status_code,423)
+
 
 if __name__=='__main__':unittest.main()

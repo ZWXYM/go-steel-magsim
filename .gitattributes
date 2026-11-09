@@ -296,3 +296,7 @@ tests/test_motor_plan_results.py -text
 static/js/motor_plan_results.js -text
 tests/test_motor_plan_results_ui.js -text
 docs/plan_results_20261110.md -text
+calibration/motor_case_coverage_20261110/** -text
+modules/motor_data_coverage.py -text
+tests/test_motor_data_coverage.py -text
+docs/motor_case_coverage_20261110.md -text
