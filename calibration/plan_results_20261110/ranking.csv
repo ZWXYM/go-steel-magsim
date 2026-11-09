@@ -1,0 +1,3 @@
+﻿case,material,input_source,input_accepted,meets_limits,score,T_avg_Nm,K_T_ripple_pct,P_Fe_W,eta_estimate_pct,ripple_reduction_pct,iron_loss_reduction_pct,torque_change_pct,efficiency_change_pctpt,reasons
+case_01,AK Steel - M-6 Carlite,official_CSV_verified,True,False,0.0,1.8626542269476667,21.708956378284423,21.573231522219945,89.21385680128847,0.0,0.0,0.0,0.0,脉动降幅未达要求
+case_02,Nippon Steel - 23ZDMH80,official_CSV_verified,True,False,-142.0865558459542,1.8751805934066346,66.53421897187899,28.47537852505297,88.35399067896554,-206.48280742981035,-31.994033882795765,0.6725009010123604,-0.8598661223229271,脉动降幅未达要求; 铁损增幅超过限值

@@ -1,0 +1,51 @@
+{
+  "analysis_id": "opt_02445f20cd8c",
+  "best_case": null,
+  "binding": {
+    "analysis_binding_sha256": "7ffe6046a22efaa5be07cf63dc0dfbcd43e9defd9f4b22f0b6bbd056e2d8104c",
+    "analysis_id": "opt_02445f20cd8c",
+    "dataset_id": "scan_fd1f6e8b9d87",
+    "dataset_source_hashes_sha256": "3932ef9979be5b953bd4d03431ddd72fcd9d1b6edeba8a093cfd3f7e34946e60",
+    "plan_id": "plan_7f60d4b58a03",
+    "plan_sha256": "4b62542c4a4a1a690bee348521166cc2b4cdbef7ab34e878911122b9f4d1f17b",
+    "producer_sha256": "32c03253f62b885ca88f9fb9e6c1ebb70b6d9491ededf3df068c029679493659",
+    "state_sha256": "b7c175bb65dfb5c98f3e8df2f8905e97451d4abb4ec6ebbae42ed01597ce339b",
+    "version": "original_plan_result_workpack_v1"
+  },
+  "config": {
+    "efficiency_weight": 10.0,
+    "iron_loss_weight": 0.3,
+    "max_iron_loss_increase_pct": 0.0,
+    "min_ripple_reduction_pct": 30.0,
+    "min_torque_change_pct": 0.0,
+    "ripple_weight": 0.6
+  },
+  "data_usage": {
+    "final_physical_optimization_certified": false,
+    "independently_measured": false,
+    "kind": "per_row_official_source",
+    "native_csv_accepted_count": 2,
+    "note": "原生CSV来源与原数值判据逐行核对；报告估算、周期范围及损耗边界保持，不视为独立实测认证。",
+    "saved_accepted_is_not_native_verification": true,
+    "version": "motor_dataset_usage_v1"
+  },
+  "dataset": "scan_fd1f6e8b9d87",
+  "materials": [
+    "AK Steel - M-6 Carlite",
+    "Nippon Steel - 23ZDMH80"
+  ],
+  "measurement_protocol": "v8_2_cycle1",
+  "meets_limits_count": 0,
+  "model_version": "V8_2_object_CS_loss_scope_v2",
+  "new_analyses": 0,
+  "new_native_solves": 0,
+  "new_predictions": 0,
+  "new_training": 0,
+  "plan_id": "plan_7f60d4b58a03",
+  "reference_case": "case_01",
+  "reference_material": "AK Steel - M-6 Carlite",
+  "row_count": 2,
+  "saved_accepted_count": 2,
+  "schema": "original_plan_result_workpack_v1",
+  "scope": "本任务同一模板、材料范围和测量协议的工程筛选；保留原物理核验与损耗估算边界"
+}

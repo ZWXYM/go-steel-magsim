@@ -79,6 +79,8 @@ def create_workbench(project,storage=None,root=None,script_history=None):
     bp.register_blueprint(create_study_application_routes(study_applications))
     from modules.motor_study_plans import MotorStudyPlans,create_study_plan_routes
     bp.register_blueprint(create_study_plan_routes(MotorStudyPlans(study_applications,plans,storage)))
+    from modules.motor_plan_results import MotorPlanResults,create_plan_result_routes
+    bp.register_blueprint(create_plan_result_routes(MotorPlanResults(plans,storage)))
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
         bp.record_once(lambda state:install_cpu_policy(state.app))
     bp.record_once(lambda state:install_source_guard(state.app,identity))
