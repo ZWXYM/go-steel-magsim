@@ -72,7 +72,10 @@ def create_workbench(project,storage=None,root=None,script_history=None):
     bp.register_blueprint(create_system_report_routes(SystemReport(storage,lambda:runtime_view(identity),license_status,script_history)))
     data_builder=SystemDataBuilder(storage,calibration,optimization,materials,material_batches,plans)
     bp.register_blueprint(create_system_data_routes(SystemData(storage,optimization,material_batches,data_builder)))
-    bp.register_blueprint(create_constraint_study_routes(MotorConstraintStudies(optimization,storage/'optimization_sensitivity')))
+    studies=MotorConstraintStudies(optimization,storage/'optimization_sensitivity')
+    bp.register_blueprint(create_constraint_study_routes(studies))
+    from modules.motor_study_applications import MotorStudyApplications,create_study_application_routes
+    bp.register_blueprint(create_study_application_routes(MotorStudyApplications(studies,storage/'optimization_study_applications')))
     if os.environ.get('MAGSIM_CPU_ONLY')=='1':
         bp.record_once(lambda state:install_cpu_policy(state.app))
     bp.record_once(lambda state:install_source_guard(state.app,identity))

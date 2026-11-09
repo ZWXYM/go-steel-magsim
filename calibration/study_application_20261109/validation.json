@@ -1,0 +1,34 @@
+{
+  "schema": "motor_study_application_v1",
+  "dataset": "v8_2_bound_archive",
+  "source_study": "csens_268d02dfbf39",
+  "configurations": [
+    "c33",
+    "c30"
+  ],
+  "original_default_candidates": 0,
+  "selected_candidates": 1,
+  "original_scorer_sha256": "523be9a24601a921d0585abfa12d2ff7af392496d3e2c7c031c9c818c9efaa98",
+  "source_binding_sha256": "520de41f96b733ea629f2a9492facd745839204b6c7490bce814c95021dcfc64",
+  "original_scorer_files_unchanged": 9,
+  "old_analysis_files_unchanged": 24,
+  "actual_HTTP_create_reopen_download": true,
+  "repeated_request_new_analysis": false,
+  "browser_flow_verified": false,
+  "tests": {
+    "backend_tests": 820,
+    "backend_passed": 820,
+    "backend_skipped": 0,
+    "JS": 29,
+    "AST": 215,
+    "full_backend_rerun": true,
+    "wall_seconds": 181.18799999999987,
+    "browser_visual_validation_completed": false
+  },
+  "new_original_analyses": 2,
+  "new_native_solves": 0,
+  "new_training": 0,
+  "new_predictions": 0,
+  "new_independent_materials": 0,
+  "final_physical_optimization_certified": false
+}

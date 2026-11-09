@@ -1,0 +1,255 @@
+{
+  "data_usage": {
+    "derived_from_dataset": "v8_2_archive",
+    "final_physical_optimization_certified": false,
+    "independently_measured": false,
+    "kind": "per_row_official_source",
+    "native_csv_accepted_count": 5,
+    "note": "原生CSV来源与原数值判据逐行核对；报告估算、周期范围及损耗边界保持，不视为独立实测认证。 补齐版包含原归档的重复案例，23ZDKH75按同报告合同读取clean_resolved2，原final归档不变。",
+    "same_cases_not_new_independent_samples": true,
+    "saved_accepted_is_not_native_verification": true,
+    "version": "motor_dataset_usage_v1"
+  },
+  "default_reference": "ak_steel_m_6_carlite",
+  "id": "v8_2_bound_archive",
+  "measurement_protocol": "v8_2_cycle1",
+  "references": [
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "ak_steel_m_6_carlite",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "ak_steel_m_6_carlite",
+      "metrics": {
+        "K_T_ripple_pct": 32.49175393761659,
+        "P_Fe_W": 17.459885258768256,
+        "T_avg_Nm": 1.8702440945581822,
+        "eta_estimate_pct": 89.81412061170955
+      },
+      "source_report_binding": null
+    },
+    {
+      "actual_csv_prefix": "clean_resolved2",
+      "case": "nippon_steel_23zdkh75",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_23zdkh75",
+      "metrics": {
+        "K_T_ripple_pct": 18.777938206631458,
+        "P_Fe_W": 17.04117176356559,
+        "T_avg_Nm": 1.8672732837940254,
+        "eta_estimate_pct": 89.85716321732939
+      },
+      "source_report_binding": {
+        "actual_source_version": "V8_2/clean_resolved2",
+        "case": "nippon_steel_23zdkh75",
+        "contract_sha256": "e33b47e46cf54b865a3e87452e48b9234b32f4b8e178b2cc9d6b5e989e9cb098",
+        "final_report_sha256": "36f5d6665f3946cf94e1224e8f9e83e1a528bfd05bd92a794f1afb18474c99a5",
+        "new_native_solves": 0,
+        "original_final_dataset_unchanged": true,
+        "reports_byte_identical": true,
+        "scope": "Same saved report identity and CSV arithmetic; not new physical or steady-state certification",
+        "source_report_sha256": "36f5d6665f3946cf94e1224e8f9e83e1a528bfd05bd92a794f1afb18474c99a5",
+        "version": "V8_2_bound_report_CSV_v1"
+      }
+    },
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "nippon_steel_23zdkh80",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_23zdkh80",
+      "metrics": {
+        "K_T_ripple_pct": 39.080830865153914,
+        "P_Fe_W": 18.54797159095018,
+        "T_avg_Nm": 1.847104257199003,
+        "eta_estimate_pct": 89.54904249455528
+      },
+      "source_report_binding": null
+    },
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "nippon_steel_23zh90",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_23zh90",
+      "metrics": {
+        "K_T_ripple_pct": 36.88786577533926,
+        "P_Fe_W": 16.625501285415293,
+        "T_avg_Nm": 1.8683845192375363,
+        "eta_estimate_pct": 89.9198067662302
+      },
+      "source_report_binding": null
+    },
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "nippon_steel_27zdkh95",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_27zdkh95",
+      "metrics": {
+        "K_T_ripple_pct": 73.81135474144048,
+        "P_Fe_W": 38.23944995358843,
+        "T_avg_Nm": 1.820853366569654,
+        "eta_estimate_pct": 86.74437991373594
+      },
+      "source_report_binding": null
+    }
+  ],
+  "rows": [
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "ak_steel_m_6_carlite",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "ak_steel_m_6_carlite",
+      "metrics": {
+        "K_T_ripple_pct": 32.49175393761659,
+        "P_Fe_W": 17.459885258768256,
+        "T_avg_Nm": 1.8702440945581822,
+        "eta_estimate_pct": 89.81412061170955
+      },
+      "source_report_binding": null
+    },
+    {
+      "actual_csv_prefix": "clean_resolved2",
+      "case": "nippon_steel_23zdkh75",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_23zdkh75",
+      "metrics": {
+        "K_T_ripple_pct": 18.777938206631458,
+        "P_Fe_W": 17.04117176356559,
+        "T_avg_Nm": 1.8672732837940254,
+        "eta_estimate_pct": 89.85716321732939
+      },
+      "source_report_binding": {
+        "actual_source_version": "V8_2/clean_resolved2",
+        "case": "nippon_steel_23zdkh75",
+        "contract_sha256": "e33b47e46cf54b865a3e87452e48b9234b32f4b8e178b2cc9d6b5e989e9cb098",
+        "final_report_sha256": "36f5d6665f3946cf94e1224e8f9e83e1a528bfd05bd92a794f1afb18474c99a5",
+        "new_native_solves": 0,
+        "original_final_dataset_unchanged": true,
+        "reports_byte_identical": true,
+        "scope": "Same saved report identity and CSV arithmetic; not new physical or steady-state certification",
+        "source_report_sha256": "36f5d6665f3946cf94e1224e8f9e83e1a528bfd05bd92a794f1afb18474c99a5",
+        "version": "V8_2_bound_report_CSV_v1"
+      }
+    },
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "nippon_steel_23zdkh80",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_23zdkh80",
+      "metrics": {
+        "K_T_ripple_pct": 39.080830865153914,
+        "P_Fe_W": 18.54797159095018,
+        "T_avg_Nm": 1.847104257199003,
+        "eta_estimate_pct": 89.54904249455528
+      },
+      "source_report_binding": null
+    },
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "nippon_steel_23zh90",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_23zh90",
+      "metrics": {
+        "K_T_ripple_pct": 36.88786577533926,
+        "P_Fe_W": 16.625501285415293,
+        "T_avg_Nm": 1.8683845192375363,
+        "eta_estimate_pct": 89.9198067662302
+      },
+      "source_report_binding": null
+    },
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "nippon_steel_27zdkh85",
+      "input_accepted": false,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_27zdkh85",
+      "metrics": {
+        "K_T_ripple_pct": 1418.7549752509267,
+        "P_Fe_W": 81.59158979735467,
+        "T_avg_Nm": 1.2544655496228387,
+        "eta_estimate_pct": 75.08583165475638
+      },
+      "source_report_binding": null
+    },
+    {
+      "actual_csv_prefix": "final_resolved",
+      "case": "nippon_steel_27zdkh95",
+      "input_accepted": true,
+      "input_error": null,
+      "input_source": "official_CSV_verified",
+      "material": "nippon_steel_27zdkh95",
+      "metrics": {
+        "K_T_ripple_pct": 73.81135474144048,
+        "P_Fe_W": 38.23944995358843,
+        "T_avg_Nm": 1.820853366569654,
+        "eta_estimate_pct": 86.74437991373594
+      },
+      "source_report_binding": null
+    }
+  ],
+  "scope": "作者V8_2同报告绑定CSV补齐集合；23ZDKH75明确使用clean_resolved2，报告与final字节一致。保留原6案及异常，不新增独立样品，不认证48插片损耗/RD-TD或稳态最终排名。",
+  "source_hashes": {
+    "bound_archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/CoreLoss.csv": "c1905441ffd4abaf72d57e17b3ccf9fd7729ddef694c7604f6f3fc9602744866",
+    "bound_archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+    "bound_archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "bound_archive/ak_steel_m_6_carlite/final_resolved_maxwell_reports/input_voltage.csv": "e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d",
+    "bound_archive/ak_steel_m_6_carlite/final_resolved_official_report.json": "b766e07d324096d382213dfc216a74047c03872e4090233480ec795c68be94ea",
+    "bound_archive/ak_steel_m_6_carlite/final_resolved_reports/Drive Current Plots.csv": "5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8",
+    "bound_archive/ak_steel_m_6_carlite/final_resolved_reports/Torque Plots.csv": "d7b2ac5a7582c05611da8ac47b8b515a3f76f1c9679c6116c5dcf7796f625738",
+    "bound_archive/nippon_steel_23zdkh75/_binding_contract.json": "e33b47e46cf54b865a3e87452e48b9234b32f4b8e178b2cc9d6b5e989e9cb098",
+    "bound_archive/nippon_steel_23zdkh75/clean_resolved2_maxwell_reports/CoreLoss.csv": "b47af465a232b54e2a1c646bbe520382a6706c30e213e6b461384958760faa67",
+    "bound_archive/nippon_steel_23zdkh75/clean_resolved2_maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+    "bound_archive/nippon_steel_23zdkh75/clean_resolved2_maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "bound_archive/nippon_steel_23zdkh75/clean_resolved2_maxwell_reports/input_voltage.csv": "e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d",
+    "bound_archive/nippon_steel_23zdkh75/clean_resolved2_official_report.json": "36f5d6665f3946cf94e1224e8f9e83e1a528bfd05bd92a794f1afb18474c99a5",
+    "bound_archive/nippon_steel_23zdkh75/clean_resolved2_reports/Drive Current Plots.csv": "5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8",
+    "bound_archive/nippon_steel_23zdkh75/clean_resolved2_reports/Torque Plots.csv": "6b09e5d4c9b5e30966156ad8a48e038bce939ad5934f729149171b51443833b5",
+    "bound_archive/nippon_steel_23zdkh75/final_resolved_official_report.json": "36f5d6665f3946cf94e1224e8f9e83e1a528bfd05bd92a794f1afb18474c99a5",
+    "bound_archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/CoreLoss.csv": "5069c6b436fd898ce2b210aff644c75874a3b1382769ede933837d3c93195739",
+    "bound_archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+    "bound_archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "bound_archive/nippon_steel_23zdkh80/final_resolved_maxwell_reports/input_voltage.csv": "e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d",
+    "bound_archive/nippon_steel_23zdkh80/final_resolved_official_report.json": "4c3a7c78d6117c6b3399866ffe0d729449e094c07e3d81e639dfcc414a2e110d",
+    "bound_archive/nippon_steel_23zdkh80/final_resolved_reports/Drive Current Plots.csv": "5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8",
+    "bound_archive/nippon_steel_23zdkh80/final_resolved_reports/Torque Plots.csv": "4b2c670b64adc1a29f4fb343e963812bb17e9d29b3fa2bfc012d6eeceb3fad69",
+    "bound_archive/nippon_steel_23zh90/final_resolved_maxwell_reports/CoreLoss.csv": "d2ec1c385d143afafa63f8667eefa200e1f1547d5a18dfc45cf6a7df95a301f2",
+    "bound_archive/nippon_steel_23zh90/final_resolved_maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+    "bound_archive/nippon_steel_23zh90/final_resolved_maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "bound_archive/nippon_steel_23zh90/final_resolved_maxwell_reports/input_voltage.csv": "e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d",
+    "bound_archive/nippon_steel_23zh90/final_resolved_official_report.json": "8c7e8bc90161f1ade62a5f3e08eaa619fca9265d2a552aab1d5b48610b42e3a8",
+    "bound_archive/nippon_steel_23zh90/final_resolved_reports/Drive Current Plots.csv": "5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8",
+    "bound_archive/nippon_steel_23zh90/final_resolved_reports/Torque Plots.csv": "b9e497629cdea6fd4072b89645f9e2998463f29b4ae7added4cc2cd703d11437",
+    "bound_archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/CoreLoss.csv": "067ca05d6ae4452f9074128fde13682d5c008eddce03d32319ca24124badfabb",
+    "bound_archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+    "bound_archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "bound_archive/nippon_steel_27zdkh85/final_resolved_maxwell_reports/input_voltage.csv": "e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d",
+    "bound_archive/nippon_steel_27zdkh85/final_resolved_official_report.json": "f881d9dd4aeac437fccd5ae7c333d3535e5ee06dbd02c1c54351881f3d11437e",
+    "bound_archive/nippon_steel_27zdkh85/final_resolved_reports/Drive Current Plots.csv": "5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8",
+    "bound_archive/nippon_steel_27zdkh85/final_resolved_reports/Torque Plots.csv": "5463e935a6a926308861f3067800e5f3bbeeddd7a488bcf3e32fb84b950eaa74",
+    "bound_archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/CoreLoss.csv": "f2fb173112c9afccee57622537d789b69f3567146c4102bb8ee80c2453870501",
+    "bound_archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+    "bound_archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+    "bound_archive/nippon_steel_27zdkh95/final_resolved_maxwell_reports/input_voltage.csv": "e86bac3e697cc41da51b711b9b66498c1934f5c9074ef81e3694adf01c12395d",
+    "bound_archive/nippon_steel_27zdkh95/final_resolved_official_report.json": "37b53e932cfe5dbc994f63ca9965b778ca9af03ea662fccc438a14092c8c83d5",
+    "bound_archive/nippon_steel_27zdkh95/final_resolved_reports/Drive Current Plots.csv": "5a8035baf01229c422a70b5c9471b91c8baed6202d96d9f2d18a968612dfe6a8",
+    "bound_archive/nippon_steel_27zdkh95/final_resolved_reports/Torque Plots.csv": "84a2826b80dae065e2895e5302552cda5791d5cbeb9c39e806c7fd3c2bffb6a7"
+  },
+  "version": "V8_2_bound_report_CSV_v1"
+}

@@ -91,7 +91,8 @@ async function submitPlan(id){
  try{await api('plans/'+id+'/submit',{});await planRecords()}catch(e){error(e)}finally{pendingPlanIds.delete(id);updatePlanButtons()}
 }
 async function pollPlans(){try{await planRecords()}catch(e){$('plans').textContent='计划读取暂时失败：'+e.message}finally{setTimeout(pollPlans,5000)}}
+async function openInitialSavedScreen(){if(typeof location!=='object')return;const id=new URL(location.href).searchParams.get('analysis');if(id)await loadSavedScreen(id)}
 if(typeof document!=='undefined'){
 Promise.allSettled([planCatalog(),planRecords()]).then(results=>{results.forEach(r=>{if(r.status==='rejected')error(r.reason)});setTimeout(pollPlans,5000)});
-Promise.allSettled([workflow(),refreshDatasets(),history()]).then(results=>results.forEach((r,i)=>{if(r.status==='rejected'){ $(['workflow','datasetScope','history'][i]).textContent='暂时不可读取：'+r.reason.message;error(r.reason)}}));
+Promise.allSettled([workflow(),refreshDatasets(),history()]).then(async results=>{results.forEach((r,i)=>{if(r.status==='rejected'){ $(['workflow','datasetScope','history'][i]).textContent='暂时不可读取：'+r.reason.message;error(r.reason)}});await openInitialSavedScreen()});
 }

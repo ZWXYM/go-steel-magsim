@@ -10,6 +10,8 @@
 
 已补充[同报告CSV绑定集合](docs/bound_motor_archive_20261106.md)及[原优化约束敏感性](docs/motor_constraint_studies_20261106.md)。原final归档保持；固定48组条件只调用原评分、保存来源和全部案例，不增加独立材料或原生计算。
 
+约束研究可[应用所选条件保存原程序筛选](docs/study_application_20261109.md)，并直接重开原优化结果及沿用配置；来源和基准绑定，重复应用重开同一记录，原默认零候选保持，不自动启动扫描。
+
 双击 `start_system.cmd` 打开统一首页，使用实际显示的端口；首页可在线阅读和下载操作说明。完整用法见[系统使用说明](docs/system_user_guide.md)，功能交付核对见[系统交付检查](docs/system_delivery_acceptance_20261020.md)。
 
 - 已接通四样品校准和整牌号留出、新参数原生RD/TD、保存预测与材料库、校准材料批量分析、官方CSV/原始波形/来源汇总。

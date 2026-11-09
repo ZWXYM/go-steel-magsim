@@ -21,6 +21,7 @@
   $('sensitivityRows').replaceChildren();
   for(const row of report.configurations){const tr=node('tr');for(const text of [row.id+(row.is_original_default?' · 原默认':''),row.config.min_ripple_reduction_pct,row.config.min_torque_change_pct,row.config.max_iron_loss_increase_pct,row.meets_limits_count,row.best_case||'无'])tr.append(node('td',text));$('sensitivityRows').append(tr)}
   const url=new URL(root.location.href);url.searchParams.set('study',report.id);root.history.replaceState(null,'',url.pathname+url.search);
+  if(typeof root.CustomEvent==='function')root.dispatchEvent(new root.CustomEvent('go-steel-study-selected',{detail:{id:report.id}}));
  }
  async function history(){
   const rows=await api('sensitivity');$('sensitivityHistory').replaceChildren();

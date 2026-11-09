@@ -278,3 +278,9 @@ tests/test_native_quality_workbench.py -text
 modules/system_data_predictions.py -text
 tests/test_system_data_predictions.py -text
 docs/prediction_workpack_20261106.md -text
+modules/motor_study_applications.py -text
+tests/test_motor_study_applications.py -text
+static/js/motor_study_application.js -text
+tests/test_motor_study_application_ui.js -text
+docs/study_application_20261109.md -text
+calibration/study_application_20261109/** -text
