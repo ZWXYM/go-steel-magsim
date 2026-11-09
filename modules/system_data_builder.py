@@ -13,7 +13,7 @@ from modules.material_batch_reports import report_bundle
 from modules.motor_dataset_export import dataset_bundle,DATASET_ID_PATTERN
 from modules.system_data import WorkpackStore, MAX_CONTENT_BYTES, json_bytes, sha256
 
-VERSION = 'system_data_workpack_v3'
+VERSION = 'system_data_workpack_v4'
 PRODUCER_SHA256 = sha256(Path(__file__).read_bytes())
 
 
@@ -38,17 +38,22 @@ class SystemDataBuilder:
         self.optimization_exports=SavedOptimizationExports(optimization,plans)
         from modules.system_data_studies import SavedConstraintExports
         self.constraint_exports=SavedConstraintExports(optimization,Path(storage)/'optimization_sensitivity')
+        from modules.system_data_predictions import SavedPredictionExports
+        self.prediction_exports=SavedPredictionExports(materials)
 
     def build(self, selection):
         if (not isinstance(selection, dict) or not {'calibration', 'datasets', 'batch'} <= set(selection)
-                or set(selection)-{'calibration', 'datasets', 'batch', 'optimization', 'constraint_study'}
+                or set(selection)-{'calibration', 'datasets', 'batch', 'optimization', 'constraint_study','predictions'}
                 or not isinstance(selection['datasets'], list) or len(selection['datasets']) > 16):
             raise ValueError('请明确选择校准、至多16份电机数据集及可选批量')
-        if not selection['calibration'] and not selection['datasets'] and not selection['batch'] and not selection.get('optimization') and not selection.get('constraint_study'):
+        predictions=selection.get('predictions',[])
+        if not isinstance(predictions,list) or len(predictions)>16:
+            raise ValueError('每包至多16份保存预测')
+        if not selection['calibration'] and not selection['datasets'] and not selection['batch'] and not selection.get('optimization') and not selection.get('constraint_study') and not predictions:
             raise ValueError('请至少选择一项已有数据')
         files, source_files = {}, {}
         index = dict(version=VERSION, created_utc=datetime.now(timezone.utc).isoformat(),
-                     calibration=None, datasets=[], calibrated_batch=None, optimization=None, constraint_study=None, producer_sha256=PRODUCER_SHA256,
+                     calibration=None, datasets=[], calibrated_batch=None, optimization=None, constraint_study=None,saved_predictions=[], producer_sha256=PRODUCER_SHA256,
                      private_only=True, new_native_solves=0, new_predictions=0, new_analyses=0)
 
         def put(name, blob):
@@ -114,6 +119,17 @@ class SystemDataBuilder:
                 distinct_material_count=len(set(report['selected_grades'])),
                 evidence_status=report['evidence_status'], H_axis=report['H_axis'])
 
+        seen_predictions=set()
+        for selected in predictions:
+            if not isinstance(selected,dict) or not isinstance(selected.get('id'),str) or not isinstance(selected.get('calibration_id'),str):
+                raise ValueError('保存预测选择不符')
+            identity=(selected['calibration_id'],selected['id'])
+            if identity in seen_predictions:raise ValueError('保存预测选择重复')
+            seen_predictions.add(identity)
+            saved,blob=self.prediction_exports.collect(selected)
+            put('predictions/'+saved['calibration_id']+'/'+saved['id']+'.zip',blob)
+            index['saved_predictions'].append(saved)
+
         seen=set()
         for selected in selection['datasets']:
             if (not isinstance(selected, dict) or set(selected) != {'id','source_hashes_sha256'}
@@ -178,6 +194,8 @@ class SystemDataBuilder:
 
 calibration/保存所选校准原报告、bank、曲线/误差CSV及既有标定/留出材料包。拟合和整材料留出分别报告；原成分、织构与参考状态保留在bank和材料来源中，未知项不补为实测。
 
+predictions/仅含明确勾选的已有材料预测包，保留原输入、父bank、有效子bank、修正曲线及材料出口；不重新预测。整材料排除与训练成员分别保留，不与同材料拟合混称独立验证。零损耗出口不能用于效率排名。
+
 motor_datasets/每包仅含一个原模型/协议的数据集、原文件及哈希。原判据通过与官方CSV来源且通过原判据分别列出；V8_1历史处理/估算保留，不能替代当前原生损耗或稳态改善证据。重复材料、工况及曲线节点不增加独立样品数。不同版本不得混拼排名。
 
 calibrated_motor/仅在选择批量时包含；保留实际材料、官方转矩CSV、原接受标记和异常。标量方向等效不视为局部RD/TD验证；零损耗B-H分支不输出效率或最终优化排名。
@@ -198,4 +216,5 @@ manifest.json核对文件完整性；本包是私有冻结快照，不随新任�
         return self.store.register_bytes(out.getvalue(),'所选系统数据 '+index['created_utc'],
             '网页冻结快照：'+str(len(index['datasets']))+'份版本独立电机数据集；校准'+('已包含' if cal else '未选择')+
             '，校准电机批量'+('已包含' if batch else '未选择')+'，已有原筛选'+('已包含' if index['optimization'] else '未选择')+
-            '，已有约束研究'+('已包含' if index['constraint_study'] else '未选择')+'。原始异常和使用范围保持。')
+            '，已有约束研究'+('已包含' if index['constraint_study'] else '未选择')+
+            '，保存预测'+str(len(index['saved_predictions']))+'份。原始异常和使用范围保持。')

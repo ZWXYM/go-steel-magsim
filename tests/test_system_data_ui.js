@@ -7,6 +7,7 @@ const fixture={schema:'go_steel_system_data_v1',created_utc:'2026-11-06',scope:'
  counts:{complete:true,dataset_count:2,row_count:4,original_accepted_count:2,native_csv_accepted_count:1},package_build_available:true,
  packages:[{id:'pack_0123456789abcdef',readable:true,title:'<script>原包</script>',created_utc:'2026-11-06',member_count:54,bytes:1000,sha256:'a'.repeat(64),description:'private snapshot'}],
  calibrations:[{id:'cal_bbbbbbbbbbbb',readable:true,report_sha256:'c'.repeat(64),selected_grades:['B23R075'],calibration_version:'fit_v2',H_axis:'physical_A_per_m',calibration_fit:{mean_rmse_T:.01},material_holdout:{mean_rmse_T:.04},bank_sha256:'b'.repeat(64)}],
+ saved_predictions:[{id:'pred_123456abcdef',calibration_id:'cal_bbbbbbbbbbbb',readable:true,source_binding_sha256:'9'.repeat(64),material_name:'B30 heldout',excluded_grades:['B30P105']}],
  constraint_studies:[{id:'csens_ffffffffffff',readable:true,source_binding_sha256:'b'.repeat(64),dataset:'scan_aaaaaaaaaaaa',configuration_count:48,original_default_candidate_count:0}],
  calibrated_batches:[{id:'bhbatch_dddddddddddd',available:true,source_binding_sha256:'d'.repeat(64),result_count:1,item_count:2,measurement_protocol:'v8_2_cycle1'}],
  optimizations:[{id:'opt_eeeeeeeeeeee',readable:true,source_binding_sha256:'a'.repeat(64),dataset:'scan_aaaaaaaaaaaa',meets_limits_count:0,reference:'case_01'}],
@@ -40,6 +41,11 @@ async function flush(){for(let i=0;i<12;i++)await Promise.resolve()}
  assert.deepEqual(JSON.parse(write.options.body),{calibration:{id:'cal_bbbbbbbbbbbb',report_sha256:'c'.repeat(64)},batch:{id:'bhbatch_dddddddddddd',source_binding_sha256:'d'.repeat(64)},datasets:[{id:'scan_aaaaaaaaaaaa',source_hashes_sha256:'f'.repeat(64)}],optimization:{id:'opt_eeeeeeeeeeee',source_binding_sha256:'a'.repeat(64)},constraint_study:{id:'csens_ffffffffffff',source_binding_sha256:'b'.repeat(64)}});
  assert.match(nodes.get('optimizationRecordStatus').textContent,/1\/1.*无改善候选/);
  assert(links().includes('/api/workbench/system-data/packages/pack_1111111111111111/download'));assert.match(nodes.get('packageBuildStatus').textContent,/已保存 pack_1111111111111111/);
+ assert.equal(nodes.get('packagePredictions').querySelectorAll('input')[0].checked,false);
+ nodes.get('packagePredictions').querySelectorAll('input')[0].checked=true;
+ await nodes.get('dataRefresh').listeners.click();assert.equal(nodes.get('packagePredictions').querySelectorAll('input')[0].checked,true);
+ await nodes.get('packageBuild').listeners.click();const withPredictions=JSON.parse(calls.filter(call=>call.options.method==='POST').at(-1).options.body);
+ assert.deepEqual(withPredictions.predictions,[{id:'pred_123456abcdef',calibration_id:'cal_bbbbbbbbbbbb',source_binding_sha256:'9'.repeat(64)}]);
  let completeBuild;buildHandler=()=>new Promise(resolve=>completeBuild=resolve);const building=nodes.get('packageBuild').listeners.click();await flush();const beforePending=calls.length;await nodes.get('packageBuild').listeners.click();await nodes.get('dataRefresh').listeners.click();assert.equal(calls.length,beforePending);assert.equal(nodes.get('dataRefresh').disabled,true);completeBuild({id:'pack_2222222222222222',title:'second',member_count:2,sha256:'2'.repeat(64)});await building;
  buildHandler=()=>{throw Error('response lost')};await nodes.get('packageBuild').listeners.click();assert.match(nodes.get('packageBuildStatus').textContent,/response lost.*不自动重复生成/);assert.equal(nodes.get('packageBuildResult').children.length,0);
  handler=()=>({...structuredClone(fixture),packages:[{id:'pack_0123456789abcdef',readable:false,error:'changed bytes'}],datasets:[{id:'scan_aaaaaaaaaaaa',readable:false,error:'broken source'}],counts:{...fixture.counts,complete:false,dataset_count:0,row_count:0,original_accepted_count:0,native_csv_accepted_count:0}});

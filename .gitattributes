@@ -275,3 +275,6 @@ docs/regularized_bank_20261106.md -text
 calibration/regularized_bank_20261106/** -text
 docs/regularized_training_contract_20261106.md -text
 tests/test_native_quality_workbench.py -text
+modules/system_data_predictions.py -text
+tests/test_system_data_predictions.py -text
+docs/prediction_workpack_20261106.md -text

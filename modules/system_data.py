@@ -49,7 +49,7 @@ def verify_package(blob):
                     raise ValueError('数据包成员路径无效或重复')
                 names.add(name.casefold())
             manifest = json.loads(archive.read('manifest.json'))
-            if (not isinstance(manifest, dict) or manifest.get('version') not in ('system_data_workpack_v2', 'system_data_workpack_v3')
+            if (not isinstance(manifest, dict) or manifest.get('version') not in ('system_data_workpack_v2', 'system_data_workpack_v3','system_data_workpack_v4')
                     or manifest.get('private_only') is not True or not isinstance(manifest.get('files'), dict)):
                 raise ValueError('数据包清单版本或私有标记不符')
             files = manifest['files']
@@ -204,6 +204,7 @@ class SystemData:
             datasets=datasets, calibrations=calibrations, calibrated_batches=batches, packages=self.packages.records(),
             optimizations=self.builder.optimization_exports.catalog() if self.builder is not None else [],
             constraint_studies=self.builder.constraint_exports.catalog() if self.builder is not None else [],
+            saved_predictions=self.builder.prediction_exports.catalog() if self.builder is not None else [],
             package_build_available=self.builder is not None,
             counts=dict(dataset_count=len(readable), row_count=sum(row['row_count'] for row in readable),
                 original_accepted_count=sum(row['original_accepted_count'] for row in readable),
