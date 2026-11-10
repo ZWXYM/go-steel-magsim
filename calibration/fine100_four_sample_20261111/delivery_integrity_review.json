@@ -1,0 +1,16 @@
+{
+  "four_package": "pack_188f1861f55a90fb",
+  "four_package_SHA256": "188f1861f55a90fbbae47f79f1448ed8e60b9c40081d4e7300635afbfca35fdf",
+  "outer_members": 6,
+  "underlying_members": 36,
+  "underlying_overview_rows": 10,
+  "actual_fine_original_points": 404,
+  "matched_formal_comparison": "bhbatch_a92dc71ba89d",
+  "comparison_reused_cases": 3,
+  "new_native_work_for_comparison": 0,
+  "all_four_original_torque_acceptance": true,
+  "windows_descriptive_rows": 16,
+  "independent_new_measurements": 0,
+  "cumulative_completed_Maxwell": 70,
+  "cumulative_MuMax": 690
+}

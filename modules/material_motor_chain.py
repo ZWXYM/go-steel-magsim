@@ -1,5 +1,5 @@
 """Prepare missing CPU stages or reopen an exact saved chain; never dispatch."""
-from modules.calibrated_motor_analysis import protocol
+from modules.calibrated_motor_analysis import protocol,DEFAULT_PROTOCOL
 from modules.material_library import sha
 from modules.material_motor_workflow import LINEAGE, same_source, material_url
 from modules.motor_queue import QueueLease
@@ -37,7 +37,7 @@ class MaterialMotorChain:
         cores = data.get('cores', 2)
         if type(cores) is not int or not 1 <= cores <= 2:
             raise ValueError('本入口核数需为1–2整数')
-        measurement = data.get('measurement_protocol', 'v8_2_cycle1')
+        measurement = data.get('measurement_protocol', DEFAULT_PROTOCOL)
         protocol(measurement)
         lease = QueueLease(self.lock)
         if not lease.acquire():

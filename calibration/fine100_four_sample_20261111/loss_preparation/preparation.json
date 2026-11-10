@@ -1,0 +1,27 @@
+{
+  "reference_snapshot_sha256": "1a80dc811e663be64a02aa27a3874da16ea8efc4efc682ca2aab483606383436",
+  "primary_points": 14,
+  "saved_RMSE_reproduced": true,
+  "mass_to_volumetric_unit_check_passed": true,
+  "B23_single_frequency_split_weak": true,
+  "alternate_catalog_points_not_pooled": true,
+  "values_at_100Hz": "engineering_extrapolations_not_measurements",
+  "no_coefficients_refitted": true,
+  "no_materials_modified": true,
+  "no_native_assignments": true,
+  "no_efficiency_computed": true,
+  "authoritative_sources": [
+    {
+      "url": "https://ansyshelp.ansys.com/public/Views/Secured/Electronics/v242/en/Subsystems/Maxwell/Content/CoreLossModelforaMaxwellMaterial.htm",
+      "supports": "Electrical Steel hysteresis exponent Y since 2024R1"
+    },
+    {
+      "url": "https://ansyshelp.ansys.com/public/Views/Secured/Electronics/v252/en/Subsystems/Maxwell/Content/Maxwell/CalculatingPropertiesforCoreLossBPCurve.htm",
+      "supports": "SI volumetric coefficient convention"
+    },
+    {
+      "url": "https://aedt.docs.pyansys.com/version/stable/API/_autosummary/ansys.aedt.core.modules.material.Material.set_electrical_steel_coreloss.html",
+      "supports": "Equivalent cut depth is a manufacturing-effect parameter"
+    }
+  ]
+}

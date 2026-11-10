@@ -1,0 +1,13 @@
+{
+  "first_execution": "bhexec_40c0f943a17f",
+  "second_execution": "bhexec_f6fb0fc40ef6",
+  "first_closed": true,
+  "first_finished_utc": "2026-11-10T19:14:29.768375+00:00",
+  "second_session_created_utc": "2026-11-10T19:14:54.507943+00:00",
+  "nonoverlap_seconds": 24.73956799507141,
+  "second_started_by_same_serial_controller": true,
+  "manual_second_native_start": false,
+  "material_imports_reused": true,
+  "cumulative_completed_Maxwell_now": 69,
+  "cumulative_MuMax": 690
+}

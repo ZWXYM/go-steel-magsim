@@ -16,7 +16,7 @@ from modules.motor_queue import DispatchWindow, QueueLease, process_identity, id
 from modules.motor_workbench import write_json
 from modules.calibrated_motor_native import SUPPORT as IMPORT_SUPPORT
 from modules.calibrated_motor_execution import SUPPORT as EXEC_SUPPORT,execution_budget
-from modules.calibrated_motor_analysis import protocol
+from modules.calibrated_motor_analysis import protocol,DEFAULT_PROTOCOL
 
 VERSION = 'calibrated_material_batch_v1'
 TERMINAL = ('completed', 'completed_with_failures', 'failed', 'needs_attention', 'paused')
@@ -88,7 +88,7 @@ class MaterialMotorBatches:
             items = []
             for index, selection in enumerate(materials, 1):
                 response = self.chain.ensure(dict(selection, cores=data.get('cores',2),
-                    measurement_protocol=data.get('measurement_protocol','v8_2_cycle1')))
+                    measurement_protocol=data.get('measurement_protocol',DEFAULT_PROTOCOL)))
                 prep = self.chain.preparation.get(response['records']['preparation']['id'])
                 items.append(dict(id=f'item_{index:02d}', selection=selection,
                     source={**{k:response[k] for k in LINEAGE},

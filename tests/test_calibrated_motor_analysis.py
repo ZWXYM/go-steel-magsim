@@ -20,6 +20,11 @@ from test_workbench import csv_fixture
 
 
 class BHAnalysisTests(unittest.TestCase):
+    def test_new_plan_defaults_to_verified_fine_protocol_and_explicit_legacy_still_works(self):
+        current=self.analysis.prepare(dict(native_import=self.imported['id']))
+        self.assertEqual(current['measurement_protocol'],'v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1');self.assertEqual(current['requested_protocol']['source_samples'],101)
+        legacy=self.prepare('v8_2_cycle1');self.assertEqual(legacy['requested_protocol']['source_samples'],31)
+
     def test_fine100_is_a_distinct_101_point_protocol_and_does_not_change_coarse(self):
         coarse=protocol('v8_2_cycle1_RD_equivalent_intrinsic_v1');fine=protocol('v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1')
         self.assertEqual((coarse['points_per_cycle'],coarse['source_samples'],coarse['requested_time_step_s']),(30,31,1/3000))

@@ -1,6 +1,6 @@
 # 101点电机协议与专用预算停止
 
-材料库和校准材料批量页新增 `v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1`，使用 RD 等效 Intrinsic 材料、0.1 ms 时间步、100步/101个官方点、10 ms 窗口、3000 r/min。平滑及非线性迭代设置与原 Intrinsic 平滑协议相同，材料仍采用原26个物理 B-H 节点。默认协议和已保存的31点结果不变。
+材料库和校准材料批量页新增 `v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1`，使用 RD 等效 Intrinsic 材料、0.1 ms 时间步、100步/101个官方点、10 ms 窗口、3000 r/min。平滑及非线性迭代设置与原 Intrinsic 平滑协议相同，材料仍采用原26个物理 B-H 节点。旧协议和已保存的31点结果不变。四牌号基线完成后，新校准材料任务默认推荐101点；见[四样品基线](four_sample_baseline_20261111.md)。
 
 新协议具有独立模型版本 `V8_2_scalar_RD_equivalent_BH_only_intrinsic_fine100_v1`。解析器要求官方CSV确有101点且时间网格完整；不能把31点插值成101点。支持官方纳秒时间列。批量计划、执行、页面预算及材料导出均使用该协议自己的采样信息。
 

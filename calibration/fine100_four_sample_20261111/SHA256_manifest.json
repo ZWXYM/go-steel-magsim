@@ -1,0 +1,24 @@
+{
+  "files": {
+    "B27R090_actual_material.amat": "ce273ce04b9c3160a77d61e803ad1b1aa9a14fdee8d8c8b2414c41b245dcd872",
+    "B27R090_actual_material.metadata.json": "0949cfd3c7e566939e61d31df7cd64171b2a3bc879017553deaf6389daeb6b67",
+    "B27R090_actual_material_BH.csv": "36acdc7721b749f967f6c00fadeaa51f38632173b127f3a4d0b77ae346fc557e",
+    "B27R090_fine101_official_torque.csv": "1356ab610f7affaf0c7aa7e5ea9d86433f55002614008624c9e069699512b98f",
+    "B30P105_actual_material.amat": "e937b7c1bb182b5143154db6e240dc7c26d7315ebf1df91d0e5730ef9dc599bd",
+    "B30P105_actual_material.metadata.json": "0443cd5010f6d4433cc5e64156923e40c0f294d881eb3012089ebc703730b607",
+    "B30P105_actual_material_BH.csv": "63ed1d5a052d078f4c144cf866729839594a2f43dd6a71e492e42e7fe789eea9",
+    "B30P105_fine101_official_torque.csv": "3e79dc369c4eb2504fd160bf291fe4674a790ebc1b5a6b0da8e20ea550f00098",
+    "delivery_integrity_review.json": "db535c6a75b62771305dab4314af008e4b71fe9a2ba3246fe8dcce77190fc24b",
+    "four_grade_fine101.csv": "61ac9a89850befd196977417b742a49b9d9a00f5af8d6e705503ef3cf44abd82",
+    "four_grade_source_index.json": "02bbf82d5a10c5c31bdaf049504a8a83a693120d2f482c06eda4e766d71f2095",
+    "README.md": "bca9e61a130a144847f94889728e9fb702dc95021fa3102e2ea300b8ea9d243a",
+    "serial_dispatch_evidence.json": "09176294dc3b51ee3c8b70a6d77abc76453dda78fbe86564e6f46a662d7bf533",
+    "software_validation.json": "adfc75dcee55ea24ff7cf1f3b2bc5b10ccc910a7326335dc601f9b289dff46e1",
+    "terminal_review.json": "2988247727d0fdc1cefc5aa1428851a71ea9eb02bcebbb13043632e7faec11fe",
+    "loss_preparation/100Hz_specific_loss_estimates.csv": "e9af6b80c732a9cb25c21b86a6fbf91b95859cd1724cd83a9e511640c279edc8",
+    "loss_preparation/additional_native_notes.md": "8d7cdc57eec401b27bf0edd8f2f9393409a2cb7506d5c3ebf7a5d55041de264d",
+    "loss_preparation/preparation.json": "263b6b5a7b371f2c0112c3ddb9b9de0e2c0cd988a7f89b4efa706c56e91bd788",
+    "loss_preparation/primary_point_replay.csv": "91c58d9fe6714d5ce6bca494b1498c4e7a41814afe7812815a1128f752c7428f",
+    "loss_preparation/units_and_next_step.md": "d4c780c17f78d9e89868e03f493b2c7df4453fc4890ef11d874219c7cf059cb0"
+  }
+}

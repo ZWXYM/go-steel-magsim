@@ -16,6 +16,7 @@ from modules.motor_model_audit import audit_project,one,value
 from modules.motor_workbench import numeric_csv, unit, write_json
 
 VERSION='BH_only_torque_output_v1'
+DEFAULT_PROTOCOL='v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1'
 PROTOCOLS={
     'v8_2_cycle1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10]),
     'periodic_cycle3_v1':dict(cycles=3,source_samples=91,stop_s=.03,selected_window_ms=[20,30]),
@@ -114,7 +115,7 @@ class CalibratedMotorAnalysis:
         source=self.native.get(data['native_import'])
         if source['status'] not in ('ready','imported_not_solved'):
             raise ValueError('请选择当前程序绑定的ready或已成功导入记录')
-        measurement=data.get('measurement_protocol','v8_2_cycle1');p=protocol(measurement)
+        measurement=data.get('measurement_protocol',DEFAULT_PROTOCOL);p=protocol(measurement)
         cores=data.get('cores',source['cores'])
         if type(cores) is not int or not 1<=cores<=32: raise ValueError('核数需为1–32整数')
         origin=self.native.path(source['id']);artifact='bhanalysis_'+uuid.uuid4().hex[:12]

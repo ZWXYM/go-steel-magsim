@@ -110,6 +110,13 @@ class MaterialChainTests(unittest.TestCase):
         self.assertEqual(result['records']['native_import']['status'], 'ready_source_changed')
         self.assertEqual(self.files(), before)
 
+    def test_omitted_protocol_defaults_to_fine_without_replacing_old_explicit_chain(self):
+        legacy=self.initial();request=dict(self.data);request.pop('measurement_protocol')
+        with patch('subprocess.Popen',side_effect=AssertionError('preparation cannot solve')):current=self.chain.ensure(request)
+        self.assertEqual(current['measurement_protocol'],'v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1')
+        for stage in ('preparation','native_import'):self.assertEqual(current['records'][stage]['id'],legacy['records'][stage]['id'])
+        self.assertNotEqual(current['records']['analysis_plan']['id'],legacy['records']['analysis_plan']['id'])
+
     def test_new_protocol_reuses_material_and_import_but_creates_own_plan(self):
         first = self.initial(); data = dict(self.data,measurement_protocol='periodic_cycle3_v1')
         result = self.chain.ensure(data)

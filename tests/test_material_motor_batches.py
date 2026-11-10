@@ -44,6 +44,10 @@ class MaterialBatchTests(unittest.TestCase):
         self.assertFalse(batch['efficiency_enabled'])
         self.assertEqual(self.motor.jobs(),[])
 
+    def test_new_batch_defaults_to_fine_when_protocol_is_omitted(self):
+        self.request.pop('measurement_protocol');batch=self.prepare()
+        self.assertEqual(batch['measurement_protocol'],'v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1');self.assertEqual(batch['budget']['per_motor_seconds'],1800)
+
     def test_fine100_batch_freezes_its_30_minute_case_budget_and_reopens(self):
         self.request['measurement_protocol']='v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1'
         batch=self.prepare();self.assertEqual(batch['budget']['per_motor_seconds'],1800)

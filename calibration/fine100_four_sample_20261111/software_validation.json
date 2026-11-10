@@ -1,0 +1,20 @@
+{
+  "main_backend_tests": 888,
+  "public_backend_tests": 888,
+  "public_private_source_skips": 4,
+  "javascript_suites_main": 32,
+  "javascript_suites_public": 32,
+  "all_four_original_torque_acceptance": true,
+  "new_complete_motor_solves_this_turn": 3,
+  "new_field_solves": 0,
+  "new_MuMax_solves": 0,
+  "cumulative_Maxwell": 70,
+  "cumulative_MuMax": 690,
+  "default_new_calibrated_protocol": "v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1",
+  "default_changed_after_four_grade_results": true,
+  "legacy_protocols_and_records_unchanged": true,
+  "old_public_trees_unchanged": 71,
+  "native_sessions_released": true,
+  "all_original_files_preserved": true,
+  "private_archives_not_published": true
+}
