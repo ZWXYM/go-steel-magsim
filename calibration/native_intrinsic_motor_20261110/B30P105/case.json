@@ -1,0 +1,43 @@
+{
+  "K_T_ripple_pct": 3250.388620419272,
+  "T_avg_Nm": 0.6235824032399183,
+  "T_max_Nm": 2.38763859612352,
+  "T_min_Nm": -17.8812128777238,
+  "actual_material_name": "WB_B30P105_8fff23daed9e_RD_INTRINSIC_EQ_v1",
+  "cores": 2,
+  "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "efficiency_enabled": false,
+  "excluded_grades": [],
+  "final_physical_optimization_certified": false,
+  "grade": "B30P105",
+  "measurement_protocol": "v8_2_cycle1_RD_equivalent_intrinsic_v1",
+  "model_version": "V8_2_scalar_RD_equivalent_BH_only_intrinsic_v1",
+  "native_B_type": "Intrinsic",
+  "official_torque_points": 31,
+  "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "physical_B_reconstruction_max_error_T": 7.179368211041037e-12,
+  "solver_settings": {
+    "MaxIterNum": 100,
+    "MinIterNum": 1,
+    "SmoothBHCurve": true,
+    "UseNonLinearIterNum": true
+  },
+  "source_execution": "bhexec_20a7f5a119c7",
+  "source_material_name": "WB_B30P105_8fff23daed9e",
+  "source_normal_project_sha256": "f0533a249d0e70c3a3fa1cab14aa00b9327a26b4dbdb1b2749aacb164c36c88e",
+  "source_points": 26,
+  "source_role": "same-grade calibration output, integrated batch execution",
+  "source_solved_project_sha256": "898d847848d34bf00eb9042a0f61d809c27f8739bbd24af7263070d03f582142",
+  "time_window_ms": [
+    0,
+    10
+  ],
+  "torque_csv_sha256": "8b7d364d18240cf02fc5197cf90bd1251eb2e5ca4878607cc2d6723cfac39283",
+  "torque_numerical_acceptance": false,
+  "training_grades": [
+    "B23R075",
+    "B27R090",
+    "B27R095",
+    "B30P105"
+  ]
+}

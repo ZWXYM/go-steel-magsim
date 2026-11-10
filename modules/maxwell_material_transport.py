@@ -178,46 +178,75 @@ def verify_saved_material(saved_text, contract):
         loss_calibration_verified=False, motor_ranking_eligible=False)
 
 
-def equivalent_material_name(contract,direction):
+def equivalent_material_name(contract,direction,curve_representation='Normal'):
     if direction not in ('RD','TD'):raise ValueError('方向等效材料必须选择RD或TD')
-    return contract['material_name']+'_'+direction+'_EQ_v1'
+    if curve_representation not in ('Normal','Intrinsic'):raise ValueError('未知方向等效曲线表示')
+    return contract['material_name']+'_'+direction+('_INTRINSIC' if curve_representation=='Intrinsic' else '')+'_EQ_v1'
 
 
-def equivalent_native_arguments(contract,direction):
+def equivalent_curve(contract,direction,curve_representation='Normal'):
+    """Keep physical H/B nodes; Intrinsic stores Bi=B-mu0H, never normal B."""
+    equivalent_material_name(contract,direction,curve_representation)
+    source=contract['curves'][direction];h=np.asarray(source['H'],dtype=float);b=np.asarray(source['B'],dtype=float)
+    if curve_representation=='Normal':return h,b
+    if h.ndim!=1 or b.shape!=h.shape or len(h)<2 or not np.all(np.isfinite(h)) or not np.all(np.isfinite(b)) or h[0]!=0 or b[0]!=0 or np.any(np.diff(h)<=0):
+        raise ValueError('Intrinsic需要从原点开始的完整物理H/B节点')
+    bi=np.maximum.accumulate(b-4*np.pi*1e-7*h)
+    if np.max(abs(bi+4*np.pi*1e-7*h-b))>1e-10:
+        raise ValueError('原曲线不能在1e-10T舍入范围内转换为单调Intrinsic；不修改物理曲线')
+    return h,bi
+
+
+def equivalent_native_arguments(contract,direction,curve_representation='Normal'):
     """Use one unchanged directional curve as an explicitly isotropic BH law."""
-    name=equivalent_material_name(contract,direction)
+    name=equivalent_material_name(contract,direction,curve_representation)
     args=native_arguments(contract);args[0]='NAME:'+name
     axis=1 if direction=='RD' else 2
     for index,item in enumerate(args):
         if isinstance(item,list) and item[0]=='NAME:permeability':
             component=next(p for p in item if isinstance(p,list) and p[0]=='NAME:component'+str(axis))
+            if curve_representation=='Intrinsic':
+                h,bi=equivalent_curve(contract,direction,curve_representation)
+                component[component.index('BTypeForSingleCurve:=')+1]='Intrinsic'
+                coords=next(v for v in component if isinstance(v,list) and v[0]=='NAME:BHCoordinates')
+                coords[:]=['NAME:BHCoordinates',['NAME:DimUnits','',''],*(['NAME:Point',float(x),float(y)] for x,y in zip(h,bi))]
             component[0]='NAME:permeability';args[index]=component
             return args
     raise ValueError('原材料缺少方向B-H曲线')
 
 
-def verify_saved_equivalent_material(saved_text,contract,direction):
+def verify_saved_equivalent_material(saved_text,contract,direction,curve_representation='Normal'):
     """Keep the original tensor and check the scalar copy against its source nodes."""
     verify_saved_material(saved_text,contract)
-    name=equivalent_material_name(contract,direction);body=one(saved_text,name);mu=one(body,'permeability')
-    if (value(mu,'property_type')!='nonlinear' or (value(mu,'BTypeForSingleCurve') or '').casefold()!='normal'
+    name=equivalent_material_name(contract,direction,curve_representation);body=one(saved_text,name);mu=one(body,'permeability')
+    if (value(mu,'property_type')!='nonlinear' or (value(mu,'BTypeForSingleCurve') or '').casefold()!=curve_representation.casefold()
             or value(mu,'HUnit')!='A_per_meter' or value(mu,'BUnit')!='tesla'
             or value(mu,'IsTemperatureDependent')!='false'):
         raise ValueError('方向等效材料不是显式物理H/正常B的标量曲线')
     match=re.search(r'Points\[(\d+):\s*([^\]]+)\]',one(mu,'BHCoordinates'))
     if not match:raise ValueError('方向等效材料未保存B-H节点')
     raw=[float(x.strip()) for x in match[2].split(',')];source=contract['curves'][direction]
-    expected=np.column_stack([source['H'],source['B']])
+    expected=np.column_stack(equivalent_curve(contract,direction,curve_representation))
     if (int(match[1])!=len(raw) or len(raw)!=expected.size
             or not np.allclose(np.asarray(raw).reshape(-1,2),expected,rtol=1e-10,atol=2e-7)):
         raise ValueError('方向等效材料改变了原H/B节点')
+    physical_error=None
+    if curve_representation=='Intrinsic':
+        points=np.asarray(raw).reshape(-1,2);physical_error=float(np.max(abs(points[:,1]+4*np.pi*1e-7*points[:,0]-np.asarray(source['B']))))
+        if np.any(np.diff(points[:,1])<0) or not np.allclose(points[:,0],source['H'],rtol=1e-10,atol=1e-12) or physical_error>1e-9:
+            raise ValueError('实际Intrinsic节点不能重建原物理B曲线')
     for field in ('core_loss_kh','core_loss_kc','core_loss_ke','core_loss_kdc'):
         if float(value(body,field))!=0:raise ValueError('方向等效B-H材料不得填造损耗系数')
     for field,key in (('conductivity','conductivity_S_per_m'),('mass_density','mass_density_kg_per_m3')):
         if float(value(body,field))!=contract['curves'][key]:raise ValueError('方向等效材料改变了'+field)
     if cut_depth_meters(value(body,'core_loss_equiv_cut_depth'))!=contract['curves']['core_loss_equiv_cut_depth_m']:
         raise ValueError('方向等效材料改变了等效切边深度')
-    return dict(material_name=name,source_material_name=contract['material_name'],equivalent_direction=direction,
+    result=dict(material_name=name,source_material_name=contract['material_name'],equivalent_direction=direction,
         constitutive_model='scalar_direction_equivalent_v1',curve_points=len(source['H']),source_points_unchanged=True,
         serialized_transport_verified=True,directional_field_verified=False,loss_calibration_verified=False,
         scope='One directional normal B-H curve used isotropically for engineering comparison; no local RD/TD response or efficiency')
+    if curve_representation=='Intrinsic':
+        result.update(curve_representation='Intrinsic',native_B_definition='Bi=B-mu0H',source_points_unchanged=False,
+            source_physical_B_preserved_at_nodes=True,physical_B_reconstruction_max_error_T=physical_error,
+            physical_B_reconstruction_tolerance_T=1e-9,scope='One directional curve stored as native Intrinsic Bi-H and used isotropically; physical B is preserved at source H nodes within 1e-9T. Interpolation, local anisotropy and losses are not certified.')
+    return result

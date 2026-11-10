@@ -1,0 +1,5 @@
+﻿grade,source_role,measurement_protocol,official_torque_points,T_avg_Nm,T_min_Nm,T_max_Nm,K_T_ripple_pct,torque_numerical_acceptance,physical_B_reconstruction_max_error_T,efficiency_enabled
+B27R090,"same-grade calibration output, private bounded engineering control",v8_2_cycle1_RD_equivalent_intrinsic_v1,31,1.909328030716814,0.745060161541226,2.63763573347917,99.12259923337632,True,7.179812300250887e-12,False
+B23R075,"same-grade calibration output, integrated batch execution",v8_2_cycle1_RD_equivalent_intrinsic_v1,31,-1.555193341068993,-110.314312538305,13.6962647557699,-7973.965295455405,False,7.179368211041037e-12,False
+B27R095,"same-grade calibration output, integrated batch execution",v8_2_cycle1_RD_equivalent_intrinsic_v1,31,4.291141712642846,-8.89740088313188,56.1853784979251,1516.6774657967085,False,7.179368211041037e-12,False
+B30P105,"same-grade calibration output, integrated batch execution",v8_2_cycle1_RD_equivalent_intrinsic_v1,31,0.6235824032399183,-17.8812128777238,2.38763859612352,3250.388620419272,False,7.179368211041037e-12,False

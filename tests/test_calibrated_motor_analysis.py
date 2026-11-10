@@ -20,6 +20,13 @@ from test_workbench import csv_fixture
 
 
 class BHAnalysisTests(unittest.TestCase):
+    def test_true_intrinsic_has_a_distinct_optional_protocol_and_keeps_time_and_original_gates(self):
+        old=protocol('v8_2_cycle1_RD_equivalent_stable_v1');new=protocol('v8_2_cycle1_RD_equivalent_intrinsic_v1')
+        self.assertNotIn('curve_representation',old);self.assertEqual(new['curve_representation'],'Intrinsic')
+        for key in ('cycles','source_samples','stop_s','requested_time_step_s','selected_window_ms','solver_settings'):
+            self.assertEqual(new[key],old[key])
+        self.assertNotEqual(execution_model_version(new['id']),execution_model_version(old['id']))
+
     def test_stable_equivalent_has_a_new_identity_and_unchanged_time_and_curve_role(self):
         original=protocol('v8_2_cycle1_RD_equivalent_v1');stable=protocol('v8_2_cycle1_RD_equivalent_stable_v1')
         for key in ('equivalent_direction','cycles','source_samples','stop_s','requested_time_step_s'):

@@ -42,6 +42,22 @@ class ActualMaterialExports(unittest.TestCase):
                 model_version='V8_2_scalar_RD_equivalent_BH_only_v1',
                 metrics=dict(torque_csv_sha256='a'*64,torque_numerical_acceptance=False)))
 
+    def test_intrinsic_export_labels_native_Bi_separately_and_keeps_CSV_physical_B(self):
+        import math
+        c=self.contract['curves']['RD'];bi=[b-4*math.pi*1e-7*h for h,b in zip(c['H'],c['B'])]
+        self.project.write_text(fixtures.MaterialTransport().scalar_fixture(self.source_text,self.contract,'RD','Intrinsic',bi),encoding='utf8')
+        self.record['requested_protocol']['curve_representation']='Intrinsic'
+        self.record['result'].update(actual_material_name=equivalent_material_name(self.contract,'RD','Intrinsic'),curve_representation='Intrinsic',solved_project_sha256=digest(self.project.read_bytes()))
+        before={p:p.read_bytes() for p in self.folder.rglob('*') if p.is_file()};files=execution_material_exports(self.record,self.folder)
+        rows=list(csv.DictReader(io.StringIO(files['actual_material_BH.csv'].decode('utf-8-sig'))));meta=json.loads(files['actual_material.metadata.json'])
+        self.assertEqual(set(rows[0]),{'H_A_per_m','B_T','Bi_T'})
+        for row,h,b,j in zip(rows,c['H'],c['B'],bi):
+            self.assertEqual(float(row['H_A_per_m']),h);self.assertEqual(float(row['Bi_T']),j);self.assertAlmostEqual(float(row['B_T']),b,places=12)
+        self.assertIn(b"BTypeForSingleCurve='Intrinsic'",files['actual_material.amat']);self.assertEqual(meta['native_AMAT_ordinate'],'Bi_T');self.assertEqual(meta['B_definition'],'normal_B');self.assertFalse(meta['source_points_unchanged']);self.assertTrue(meta['source_physical_B_preserved_at_nodes']);self.assertFalse(meta['efficiency_enabled'])
+        self.assertEqual(before,{p:p.read_bytes() for p in before})
+        del self.record['result']['curve_representation']
+        with self.assertRaisesRegex(ValueError,'未绑定实际Intrinsic'):execution_material_exports(self.record,self.folder)
+
     def test_actual_rd_and_td_nodes_units_metadata_and_source_files_are_preserved(self):
         for direction in ('RD','TD'):
             settings="\n$begin 'Setup1'\nSmoothBHCurve='true'\nMaxIterNum='100'\n$end 'Setup1'\n"

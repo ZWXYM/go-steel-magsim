@@ -3,6 +3,7 @@ import csv
 import hashlib
 import io
 import json
+import math
 import re
 from pathlib import Path
 
@@ -40,15 +41,18 @@ def execution_material_exports(record, folder):
         raise ValueError('本次原材料metadata已改变，未导出材料')
     # AEDT/AMAT may use Windows CRLF; the native field reader expects logical lines.
     text = blob.decode('utf-8-sig').replace('\r\n', '\n').replace('\r', '\n')
-    transport = verify_saved_equivalent_material(text, contract, direction)
-    name = equivalent_material_name(contract, direction)
+    representation=record['requested_protocol'].get('curve_representation','Normal')
+    transport = verify_saved_equivalent_material(text, contract, direction,representation)
+    name = equivalent_material_name(contract, direction,representation)
     if (saved.get('actual_material_name') != name or
             saved.get('constitutive_model') != 'scalar_direction_equivalent_v1'):
         raise ValueError('结果的实际材料或模型不符')
+    if representation=='Intrinsic' and saved.get('curve_representation')!='Intrinsic':
+        raise ValueError('结果未绑定实际Intrinsic表示')
     body = one(text, name)
     amat = (f'# Actual saved direction-equivalent motor material: {name}\n'
             f'# Source execution: {record["id"]}; source direction: {direction}\n'
-            '# Isotropic normal B-H engineering model. Uncalibrated zero loss placeholders.\n'
+            f'# Isotropic {"normal B-H" if representation=="Normal" else "Intrinsic Bi-H"} engineering model. Uncalibrated zero loss placeholders.\n'
             f"$begin '{name}'" + body + f"$end '{name}'\n").encode('utf8')
     points = re.search(r'Points\[(\d+):\s*([^\]]+)\]', one(one(body, 'permeability'), 'BHCoordinates'))
     flat = [float(v.strip()) for v in points[2].split(',')]
@@ -57,8 +61,12 @@ def execution_material_exports(record, folder):
         raise ValueError('实际导出节点数与保存材料核对不符')
     stream = io.StringIO(newline='')
     writer = csv.writer(stream)
-    writer.writerow(['H_A_per_m', 'B_T'])
-    writer.writerows(pairs)
+    if representation=='Intrinsic':
+        writer.writerow(['H_A_per_m','B_T','Bi_T'])
+        writer.writerows((h,bi+4*math.pi*1e-7*h,bi) for h,bi in pairs)
+    else:
+        writer.writerow(['H_A_per_m', 'B_T'])
+        writer.writerows(pairs)
     curve = stream.getvalue().encode('utf-8-sig')
     source_metadata = json.loads(metadata_blob)
     metadata = dict(
@@ -86,4 +94,10 @@ def execution_material_exports(record, folder):
         directional_field_verified=False, reader_sha256=READER_SHA256,
         files_sha256={'actual_material.amat': digest(amat), 'actual_material_BH.csv': digest(curve)},
         scope='Material actually assigned in this saved direction-equivalent execution; a single directional source curve is used isotropically. No measured anisotropy or calibrated loss claim.')
+    if representation=='Intrinsic':
+        metadata.update(curve_representation='Intrinsic',applied_material_law='isotropic_intrinsic_BiH',
+            native_AMAT_ordinate='Bi_T',CSV_B_definition='Bi+mu0H',Bi_definition='B-mu0H',source_points_unchanged=False,
+            source_physical_B_preserved_at_nodes=True,
+            physical_B_reconstruction_max_error_T=transport['physical_B_reconstruction_max_error_T'],
+            physical_B_reconstruction_tolerance_T=transport['physical_B_reconstruction_tolerance_T'])
     return dict(zip(FILES, (amat, (json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False)+'\n').encode('utf8'), curve)))

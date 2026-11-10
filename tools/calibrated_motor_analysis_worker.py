@@ -128,15 +128,15 @@ def seconds(value):
 
 def configure(app,project,m,folder):
     before=verify_model(project,m);p=m['requested_protocol']
-    direction=p.get('equivalent_direction')
+    direction=p.get('equivalent_direction');representation=p.get('curve_representation','Normal')
     if direction:
-        name=equivalent_material_name(m['material_contract'],direction)
+        name=equivalent_material_name(m['material_contract'],direction,representation)
         if name.casefold() in {n.casefold() for n in app.materials.odefinition_manager.GetProjectMaterialNames()}:
             raise ValueError('新执行副本已有同名方向等效材料；不覆盖')
-        app.materials.odefinition_manager.AddMaterial(equivalent_native_arguments(m['material_contract'],direction))
+        app.materials.odefinition_manager.AddMaterial(equivalent_native_arguments(m['material_contract'],direction,representation))
         for row in before['inserts']:app.modeler[row['name']].material_name=name
         app.save_project(str(project))
-        transported=verify_saved_equivalent_material(project.read_text(encoding='utf-8-sig'),m['material_contract'],direction)
+        transported=verify_saved_equivalent_material(project.read_text(encoding='utf-8-sig'),m['material_contract'],direction,representation)
         write_json(folder/'equivalent_material.json',transported)
     app['NumTorqueCycles']=str(p['cycles']);app['NumTorquePointsPerCycle']='30'
     if (abs(float(app.get_evaluated_value('NumTorqueCycles'))-p['cycles'])>1e-8 or
@@ -190,9 +190,10 @@ def execute(app,project,m,folder,deadline,phase):
         result['solver_settings']=m['requested_protocol']['solver_settings']
     if m['requested_protocol'].get('equivalent_direction'):
         result.update(constitutive_model='scalar_direction_equivalent_v1',equivalent_direction=m['requested_protocol']['equivalent_direction'],
-            actual_material_name=equivalent_material_name(m['material_contract'],m['requested_protocol']['equivalent_direction']),
+            actual_material_name=equivalent_material_name(m['material_contract'],m['requested_protocol']['equivalent_direction'],m['requested_protocol'].get('curve_representation','Normal')),
             model_scope='Direction-equivalent scalar B-H engineering comparison; not local RD/TD anisotropy',
             equivalent_material_verification=read(folder/'equivalent_material.json'))
+        if m['requested_protocol'].get('curve_representation')=='Intrinsic':result['curve_representation']='Intrinsic'
     write_json(folder/'result.json',result)
     names=['execution_id','material_name','measurement_protocol','T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_csv_sha256']
     with (folder/'summary.csv').open('w',encoding='utf-8-sig',newline='') as stream:

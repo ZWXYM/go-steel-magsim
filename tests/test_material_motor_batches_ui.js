@@ -35,6 +35,10 @@ function harness(api){
  const exact=harness(async()=>linked);exact.c.mbRender(linked,true);
  assert.ok(exact.nodes.get('batchRows').querySelectorAll('a').some(a=>a.href==='/calibrated-motor/analysis/bhanalysis_aaaaaaaaaaaa?execution=bhexec_bbbbbbbbbbbb'));
  assert.equal(exact.calls.length,0);
+ const protocolView=harness(async()=>{throw Error('saved protocol display must not fetch')});protocolView.nodes.get('batchProtocol').value='v8_2_cycle1_RD_equivalent_intrinsic_v1';
+ protocolView.c.mbRender({...record,measurement_protocol:'v8_2_cycle1_RD_equivalent_stable_v1'},true);assert.match(protocolView.nodes.get('batchStatus').textContent,/本批保存协议：RD等效\/Normal/);assert.doesNotMatch(protocolView.nodes.get('batchStatus').textContent,/Intrinsic/);assert.equal(protocolView.nodes.get('batchProtocol').value,'v8_2_cycle1_RD_equivalent_intrinsic_v1');
+ protocolView.c.mbRender({...record,measurement_protocol:'v8_2_cycle1_RD_equivalent_intrinsic_v1'},true);assert.match(protocolView.nodes.get('batchStatus').textContent,/本批保存协议：RD等效\/Intrinsic/);
+ protocolView.c.mbRender({...record,measurement_protocol:null},true);assert.match(protocolView.nodes.get('batchStatus').textContent,/本批保存协议：未记录/);assert.equal(protocolView.calls.length,0);
  const cpu=harness(async url=>url.endsWith('/resources')?{cpu_only:true}:record);await cpu.c.mbLoad();assert.equal(cpu.nodes.get('batchStart').disabled,true);assert.equal(cpu.nodes.get('batchPause').disabled,false);
  const unavailable=harness(async url=>{if(url.endsWith('/resources'))throw Error('offline');return record});await unavailable.c.mbLoad();assert.equal(unavailable.nodes.get('batchStart').disabled,true);assert.match(unavailable.nodes.get('batchError').textContent,/资源状态不可读/);
  const running=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:{...record,status:'running'});await running.c.mbLoad();assert.ok(running.timers.includes(3000));assert.ok(running.calls.every(c=>c.method==='GET'));
@@ -45,6 +49,11 @@ function harness(api){
  const posts=prepare.calls.filter(c=>c.method==='POST');assert.equal(posts.length,1);assert.equal(posts[0].url,'/api/workbench/calibrated-motor/batches');
  assert.deepEqual(JSON.parse(posts[0].body),{materials:[{calibration:'cal_a',key:'prediction:pred_a'}],cores:2,measurement_protocol:'v8_2_cycle1'});
  assert.ok(!prepare.calls.some(c=>c.url.endsWith('/start')||c.url.endsWith('/resume')));
+ for(const status of ['running','completed']){
+  const saved={...record,status};const reopen=harness(async(url,options)=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')&&options.method!=='POST'?[saved]:saved);
+  vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',reopen.c);await reopen.c.mbPrepare();
+  assert.match(reopen.nodes.get('batchPrepareStatus').text(),/已重开保存批量.*本次操作未启动求解/);assert.doesNotMatch(reopen.nodes.get('batchPrepareStatus').text(),/尚未开始/);assert.equal(reopen.calls.filter(c=>c.method==='POST').length,1);assert.ok(!reopen.calls.some(c=>c.url.endsWith('/start')||c.url.endsWith('/resume')));
+ }
  const empty=harness(async()=>{throw Error('must not fetch')});await empty.c.mbPrepare();assert.match(empty.nodes.get('batchPrepareError').textContent,/请选择/);assert.equal(empty.calls.length,0);
  const paused=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:{...record,status:'paused',pause_requested:true});await paused.c.mbLoad();assert.equal(paused.nodes.get('batchResume').disabled,false);assert.equal(paused.nodes.get('batchStart').disabled,true);assert.ok(paused.calls.every(c=>c.method==='GET'));
  assert.match(paused.nodes.get('batchTotals').textContent,/已暂停，可显式接续/);
@@ -153,6 +162,7 @@ function harness(api){
  const delayedPrepare=harness(async(url,options)=>options.method==='POST'?prepareWait:url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')?[record,{...record,id:next}]:url.endsWith('/'+next)?{...record,id:next}:record);
  vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',delayedPrepare.c);
  await delayedPrepare.c.mbLoad();const preparing=delayedPrepare.c.mbPrepare();
+ assert.match(delayedPrepare.nodes.get('batchPrepareStatus').text(),/正在核对已提交的 1 种材料.*下方仍显示此前查看的批量.*不会启动求解/);
  delayedPrepare.nodes.get('batchHistory').value=next;await delayedPrepare.c.mbLoad();
  prepareReady(record);await preparing;
  assert.equal(delayedPrepare.nodes.get('batchHistory').value,next,'late preparation must retain the newly viewed batch');

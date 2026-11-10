@@ -32,8 +32,9 @@ def read(path):return json.loads(Path(path).read_text(encoding='utf8'))
 def verify_model(path,manifest,*,execution_material=False):
     verify_saved_material(Path(path).read_text(encoding='utf-8-sig'),manifest['material_contract'])
     direction=manifest.get('requested_protocol',{}).get('equivalent_direction') if execution_material else None
-    expected_name=equivalent_material_name(manifest['material_contract'],direction) if direction else manifest['material_name']
-    if direction:verify_saved_equivalent_material(Path(path).read_text(encoding='utf-8-sig'),manifest['material_contract'],direction)
+    representation=manifest.get('requested_protocol',{}).get('curve_representation','Normal')
+    expected_name=equivalent_material_name(manifest['material_contract'],direction,representation) if direction else manifest['material_name']
+    if direction:verify_saved_equivalent_material(Path(path).read_text(encoding='utf-8-sig'),manifest['material_contract'],direction,representation)
     audit=audit_project(path)
     if (not audit['local_CS_verified'] or audit['moving_insert_count']!=48 or
         not audit['core_loss']['complete_insert_coverage'] or
@@ -134,7 +135,8 @@ class CalibratedMotorExecution:
                 verify_model(folder/'case/motor.aedt',m,execution_material=True)
                 if (saved.get('model_version')!=execution_model_version(m['measurement_protocol'])
                         or saved.get('constitutive_model')!='scalar_direction_equivalent_v1'
-                        or saved.get('actual_material_name')!=equivalent_material_name(m['material_contract'],m['requested_protocol']['equivalent_direction'])):
+                        or saved.get('actual_material_name')!=equivalent_material_name(m['material_contract'],m['requested_protocol']['equivalent_direction'],m['requested_protocol'].get('curve_representation','Normal'))
+                        or (m['requested_protocol'].get('curve_representation')=='Intrinsic' and saved.get('curve_representation')!='Intrinsic')):
                     raise ValueError('方向等效结果的模型身份不符')
             if m['requested_protocol'].get('solver_settings'):
                 verify_solver_settings((folder/'case/motor.aedt').read_text(encoding='utf-8-sig'),m['requested_protocol']['solver_settings'])

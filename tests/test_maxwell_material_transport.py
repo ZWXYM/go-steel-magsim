@@ -1,4 +1,6 @@
 import json
+import copy
+import math
 import sys
 import tempfile
 import unittest
@@ -9,7 +11,7 @@ sys.path.insert(0, str(PROJECT))
 sys.path.insert(0, str(PROJECT/'modules'))
 from modules.maxwell_exporter import generate_amat_content
 from modules.maxwell_material_transport import (compatible_import_copy, directional_curves, load_contract, native_arguments, verify_saved_material,
-    equivalent_material_name,equivalent_native_arguments,verify_saved_equivalent_material)
+    equivalent_material_name,equivalent_native_arguments,verify_saved_equivalent_material,equivalent_curve)
 
 
 def fixture(directory, legacy=False):
@@ -29,10 +31,10 @@ def fixture(directory, legacy=False):
 
 
 class MaterialTransport(unittest.TestCase):
-    def scalar_fixture(self,source,contract,direction):
-        c=contract['curves'];curve=c[direction];values=', '.join(str(x) for pair in zip(curve['H'],curve['B']) for x in pair)
+    def scalar_fixture(self,source,contract,direction,representation='Normal',ordinates=None):
+        c=contract['curves'];curve=c[direction];values=', '.join(str(x) for pair in zip(curve['H'],curve['B'] if ordinates is None else ordinates) for x in pair)
         return source+f"""
-$begin '{equivalent_material_name(contract,direction)}'
+$begin '{equivalent_material_name(contract,direction,representation)}'
 conductivity='{c['conductivity_S_per_m']}'
 mass_density='{c['mass_density_kg_per_m3']}'
 core_loss_equiv_cut_depth='{c['core_loss_equiv_cut_depth']}'
@@ -42,7 +44,7 @@ core_loss_ke='0'
 core_loss_kdc='0'
 $begin 'permeability'
 property_type='nonlinear'
-BTypeForSingleCurve='Normal'
+BTypeForSingleCurve='{representation}'
 HUnit='A_per_meter'
 BUnit='tesla'
 IsTemperatureDependent='false'
@@ -50,8 +52,41 @@ $begin 'BHCoordinates'
 Points[{2*len(curve['H'])}: {values}]
 $end 'BHCoordinates'
 $end 'permeability'
-$end '{equivalent_material_name(contract,direction)}'
+$end '{equivalent_material_name(contract,direction,representation)}'
 """
+
+    def test_intrinsic_payload_stores_polarization_and_preserves_physical_H_B_and_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path);before=copy.deepcopy(c)
+            for d in ('RD','TD'):
+                args=equivalent_native_arguments(c,d,'Intrinsic');mu=next(x for x in args if isinstance(x,list) and x[0]=='NAME:permeability')
+                self.assertEqual(args[0],'NAME:TransportFixture_'+d+'_INTRINSIC_EQ_v1');self.assertEqual(mu[mu.index('BTypeForSingleCurve:=')+1],'Intrinsic')
+                coordinates=next(x for x in mu if isinstance(x,list) and x[0]=='NAME:BHCoordinates');points=[x[1:] for x in coordinates if isinstance(x,list) and x[0]=='NAME:Point']
+                self.assertEqual([x[0] for x in points],c['curves'][d]['H'])
+                for (h,bi),b in zip(points,c['curves'][d]['B']):self.assertAlmostEqual(bi+4*math.pi*1e-7*h,b,places=12)
+            self.assertEqual(c,before)
+
+    def test_intrinsic_saved_readback_accepts_native_enum_case_and_rejects_normal_B_as_Bi(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path);d=c['curves']['RD'];bi=[b-4*math.pi*1e-7*h for h,b in zip(d['H'],d['B'])]
+            s=self.scalar_fixture(path.read_text(),c,'RD','Intrinsic',bi).replace("BTypeForSingleCurve='Intrinsic'","BTypeForSingleCurve='intrinsic'")
+            review=verify_saved_equivalent_material(s,c,'RD','Intrinsic');self.assertTrue(review['source_physical_B_preserved_at_nodes']);self.assertFalse(review['source_points_unchanged'])
+            self.assertLess(review['physical_B_reconstruction_max_error_T'],1e-12)
+            for wrong in (self.scalar_fixture(path.read_text(),c,'RD','Intrinsic'),s.replace("HUnit='A_per_meter'","HUnit='Oe'"),s.replace("BTypeForSingleCurve='intrinsic'","BTypeForSingleCurve='normal'")):
+                with self.assertRaises(ValueError):verify_saved_equivalent_material(wrong,c,'RD','Intrinsic')
+
+    def test_intrinsic_saved_point_drift_cannot_hide_in_normal_export_serialization_tolerance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=fixture(tmp);c=load_contract(path);d=c['curves']['RD'];bi=[b-4*math.pi*1e-7*h for h,b in zip(d['H'],d['B'])];bi[1]+=2e-8
+            wrong=self.scalar_fixture(path.read_text(),c,'RD','Intrinsic',bi)
+            with self.assertRaisesRegex(ValueError,'重建原物理B'):verify_saved_equivalent_material(wrong,c,'RD','Intrinsic')
+
+    def test_intrinsic_conversion_only_repairs_tiny_tail_roundoff_not_physical_curve_shape(self):
+        c={'material_name':'tail','curves':{'RD':{'H':[0.,10.,100.],'B':[0.,1.+4*math.pi*1e-7*10,1.+4*math.pi*1e-7*100-1e-12]}}}
+        h,bi=equivalent_curve(c,'RD','Intrinsic');self.assertEqual(bi[1],bi[2]);self.assertAlmostEqual(bi[2]+4*math.pi*1e-7*100,c['curves']['RD']['B'][2],places=10)
+        c['curves']['RD']['B'][2]-=1e-6
+        with self.assertRaisesRegex(ValueError,'不修改物理曲线'):equivalent_curve(c,'RD','Intrinsic')
+        with self.assertRaises(ValueError):equivalent_native_arguments(c,'RD','intrinsic_unknown')
 
     def test_equivalent_payload_uses_unchanged_source_direction_and_no_tensor(self):
         with tempfile.TemporaryDirectory() as tmp:

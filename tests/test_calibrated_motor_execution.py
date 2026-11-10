@@ -114,6 +114,14 @@ class ExecutionTests(unittest.TestCase):
     def test_TD_equivalent_configuration_uses_the_TD_source(self):
         self.equivalent_configuration('TD')
 
+    def test_intrinsic_worker_passes_the_explicit_representation_and_verifies_saved_definition(self):
+        record=self.ready('v8_2_cycle1_RD_equivalent_intrinsic_v1');folder=self.exe.path(record['id']);app=self.mock_app();app.materials.odefinition_manager.GetProjectMaterialNames.return_value=[]
+        with patch.object(worker,'verify_model',return_value=self.audit()),patch.object(worker,'verify_solver_settings',return_value={}),patch.object(worker,'verify_saved_equivalent_material',return_value={'curve_representation':'Intrinsic'}) as verified:
+            worker.configure(app,folder/'inputs/motor.aedt',record,folder)
+        verified.assert_called_once_with((folder/'inputs/motor.aedt').read_text(encoding='utf-8-sig'),record['material_contract'],'RD','Intrinsic')
+        args=app.materials.odefinition_manager.AddMaterial.call_args.args[0];self.assertTrue(args[0].endswith('_RD_INTRINSIC_EQ_v1'))
+        mu=next(x for x in args if isinstance(x,list) and x[0]=='NAME:permeability');self.assertEqual(mu[mu.index('BTypeForSingleCurve:=')+1],'Intrinsic');app.analyze_setup.assert_not_called()
+
     def test_smooth_diagnostic_preserves_legacy_protocol_and_uses_distinct_model_version(self):
         from modules.calibrated_motor_analysis import protocol,execution_model_version
         old=protocol('v8_2_cycle1')

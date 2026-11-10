@@ -5,6 +5,7 @@ const mbComparison={batch:null,signature:null,generation:0,pending:false,data:nu
 const mb$=id=>document.getElementById(id),mbText=(tag,text)=>{const n=document.createElement(tag);n.textContent=text;return n};
 const mbLabels={prepared:'计划已准备，尚未开始',prepared_source_changed:'准备后程序已更新，请保留旧计划',starting:'正在启动串行控制',running:'正在串行推进',completed:'批量已完成',completed_with_failures:'批量结束，包含失败或跳过项',needs_attention:'需要检查后显式接续',failed:'失败，现场保留',paused:'已暂停，阶段与结果保留'};
 const mbItemLabels={pending:'待执行',importing:'导入与预检',preparing_model:'准备分析工程',analyzing:'转矩分析',completed:'新增结果已完成',reused_result:'复用已有结果',failed:'失败，现场保留',blocked:'原记录需检查'};
+const mbProtocolLabels={v8_2_cycle1:'RD/TD张量 · 1周期',periodic_cycle3_v1:'RD/TD张量 · 3周期',v8_2_cycle1_smooth_bh_v1:'RD/TD张量 · 1周期平滑对照',v8_2_cycle1_RD_equivalent_v1:'RD等效/Normal · 1周期',v8_2_cycle1_TD_equivalent_v1:'TD等效/Normal · 1周期',v8_2_cycle1_RD_equivalent_stable_v1:'RD等效/Normal · 1周期平滑与迭代对照',v8_2_cycle1_RD_equivalent_intrinsic_v1:'RD等效/Intrinsic · 1周期平滑与迭代对照'};
 async function mbAPI(url,body){const response=await fetch(url,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw Error(data.error||'请求失败');return data}
 function mbEntries(options={}){
  const calibration=mb$('batchCalibration').value,previous=options.preserve===true&&MBB.selectionCalibration===calibration?new Set(MBB.selected):new Set();
@@ -29,11 +30,12 @@ async function mbPrepare(){
  const recipe=mbRecipe(),view=mb$('batchHistory').value,revision=MBB.viewRevision;
  const current=()=>revision===MBB.viewRevision&&view===mb$('batchHistory').value&&JSON.stringify(recipe)===JSON.stringify(mbRecipe());
  try{if(!recipe.materials.length||recipe.materials.length>8)throw Error('请选择1–8种材料');
+ mbPrepareNotice('正在核对已提交的 '+recipe.materials.length+' 种材料并准备或查找保存计划，请稍候。下方仍显示此前查看的批量；本次准备操作不会启动求解。');
  const data=await mbAPI('/api/workbench/calibrated-motor/batches',recipe);
  if(!mbPreparedMatches(data,recipe))throw Error('准备响应与提交的材料或协议不一致，请检查保存清单；不会自动重试。');
  if(!current()){mbPrepareNotice('先前提交的计划已保存，当前选择和结果视图保持。 ',data.id);return}
  const opened=await mbHistory(data.id,current);
- mbPrepareNotice(opened?'计划已准备，尚未开始原生分析。 ':'先前提交的计划已保存，可按需重开。 ',data.id);
+ mbPrepareNotice(opened?(MBB.record?.status==='prepared'?'计划已准备，尚未开始原生分析。 ':'已重开保存批量，当前状态见结果区；本次操作未启动求解。 '):'先前提交的计划已保存，可按需重开。 ',data.id);
  }catch(error){if(current())mb$('batchPrepareError').textContent=error.message;else mbPrepareNotice('先前请求未确认：'+error.message+'；当前选择保持，请先检查保存清单。')}
  finally{MBB.preparePending=false;button.disabled=false}
 }
@@ -78,7 +80,7 @@ function mbReset(message){
 function mbRender(record,canStart){
  const powerGeneration=++mbPowerGeneration;
  MBB.canStart=canStart;
- const counts=mbCounts(record);MBB.record=record;mb$('batchStatus').textContent=record.id+' · '+(mbLabels[record.status]||record.status)+(counts.bad?' · 含数值异常':'');
+ const counts=mbCounts(record);MBB.record=record;mb$('batchStatus').textContent=record.id+' · '+(mbLabels[record.status]||record.status)+(counts.bad?' · 含数值异常':'')+' · 本批保存协议：'+(mbProtocolLabels[record.measurement_protocol]||record.measurement_protocol||'未记录')+'。上方选项用于准备新计划。';
  const b=record.budget;mb$('batchBudget').textContent=`最多新增 ${b.max_new_imports} 次材料导入、${b.max_new_motor_solves} 次电机分析；${b.cores}核 / ${b.gpus} GPU。每次导入240秒、每次电机1200秒；已有结果直接复用。`;
  mb$('batchError').textContent=record.error||'';mbButtons();
  mb$('batchBundle').hidden=false;mb$('batchBundle').href='/api/workbench/calibrated-motor/batches/'+record.id+'/bundle';

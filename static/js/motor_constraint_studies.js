@@ -4,6 +4,18 @@
  const filenames=['study_bundle.zip','configurations.csv','case_details.csv','study.json','source_dataset.json','manifest.json'];
  let input=null,loading=false,busy=false,generation=0;
  function node(tag,text){const value=root.document.createElement(tag);if(text!==undefined)value.textContent=String(text);return value}
+ function number(value){return typeof value==='number'&&Number.isFinite(value)?value.toFixed(3):'—'}
+ function explainDefault(report){
+  if(!$('sensitivityDefaultRows')||!$('sensitivityDefaultTable')||!$('sensitivityDefaultExplanation'))return;
+  const row=report.configurations.find(item=>item.id===report.original_default_configuration)||report.configurations.find(item=>item.is_original_default);
+  const cases=Array.isArray(row?.ranked)?row.ranked:[];$('sensitivityDefaultRows').replaceChildren();$('sensitivityDefaultTable').hidden=!cases.length;
+  if(!cases.length){$('sensitivityDefaultExplanation').textContent='本记录未含原默认逐案明细，请查看保存的 case_details.csv；没有重新评分。';return}
+  const c=row.config;$('sensitivityDefaultExplanation').textContent=row.id+' · 脉动至少降低 '+number(c.min_ripple_reduction_pct)+'%，转矩变化至少 '+number(c.min_torque_change_pct)+'%，铁损最多增加 '+number(c.max_iron_loss_increase_pct)+'%。下表读取本研究已保存的原默认筛选，不重新计算或修改条件。';
+  for(const item of cases){const m=item.metrics||{},tr=node('tr'),status=item.input_accepted===false?'原输入未通过':item.meets_limits===true?'满足原默认配置':'未满足原默认配置';
+   for(const text of [String(item.material||item.case)+' · '+String(item.case),number(m.T_avg_Nm),number(item.torque_change_pct),number(m.K_T_ripple_pct),number(item.ripple_reduction_pct),number(m.P_Fe_W),number(item.iron_loss_reduction_pct),status,Array.isArray(item.reasons)?item.reasons.join('；'):'未保存说明'])tr.append(node('td',text));
+   $('sensitivityDefaultRows').append(tr)
+  }
+ }
  function actions(){
   $('sensitivityDataset').disabled=busy;$('sensitivityReference').disabled=busy||loading||!input;
   $('sensitivityRun').disabled=busy||loading||!input||!$('sensitivityReference').value;$('sensitivityRefresh').disabled=busy;
@@ -15,6 +27,7 @@
   $('sensitivityResult').hidden=false;$('sensitivityResultTitle').textContent=report.id+' · '+report.dataset;
   $('sensitivityResultScope').textContent=report.model_version+' / '+report.measurement_protocol+' · 比较基准 '+report.reference+' · 转矩基准 '+report.torque_reference+'。'+report.scope+' '+report.data_usage.note;
   $('sensitivitySummary').textContent=report.configuration_count+' 组配置 × '+report.source_case_count+' 条原案例，'+report.configurations_with_feasible_case+' 组有可行案；原默认约束下 '+report.original_default_candidate_count+' 案满足。没有新增独立材料或原生求解。';
+  explainDefault(report);
   $('sensitivitySource').textContent='源数据哈希：'+report.source_hashes_sha256;
   $('sensitivityDownloads').replaceChildren();
   for(const name of filenames){const link=node('a',name);link.className='download';link.href=base+'sensitivity/'+report.id+'/files/'+name;$('sensitivityDownloads').append(link)}

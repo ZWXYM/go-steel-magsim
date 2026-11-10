@@ -1,0 +1,33 @@
+{
+  "actual_torque_points": 124,
+  "cases": 4,
+  "default_changed": false,
+  "files": {
+    ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+    "B23R075/Torque Plots.csv": "c3ad45b100217b7b91baf30601f9ae43aa9bccf314f3537e8f48c2fce986493c",
+    "B23R075/actual_material.amat": "8ab48e35d3cfa6262d8088d5e7e3369879ce6a92060386ad7a1dcb39c6a815e3",
+    "B23R075/actual_material.metadata.json": "2f466b621fb6912f062740ec6da4685f4613a593f82da3c08f3aff222da4208d",
+    "B23R075/actual_material_BH.csv": "379a6b4f8b598d8baec5120ffdc2ecc860452ea46b5f833915e249f167317294",
+    "B23R075/case.json": "9b71f08884ef3fc8005e67338ac443aa7b8cd975eeaebba51c5c96da43f921fc",
+    "B27R090_control/Torque Plots.csv": "2172ccad4d034aa1956d9176bfdc3a0f9b55eecaf8eda990133c669b2d1ffb64",
+    "B27R090_control/case.json": "47dbda9739bbc04edd159b71ec9184c40a777338f0d9fc9c697ccf94c6b29a55",
+    "B27R090_control/source_and_native_nodes.csv": "961e3bfba43efdafc86730e15287e0beed74ae3b1fb5cf48041aee5b8dcb890d",
+    "B27R095/Torque Plots.csv": "c3b69c1ea1e00da27f827fe3cc9e9ebedf9b0f05d604d2f5763f27aa43097844",
+    "B27R095/actual_material.amat": "997e6b6b9c925e7044095175a39e78d1052bf50154db72c7877ed73e49540d2b",
+    "B27R095/actual_material.metadata.json": "74e178eb5b84fb4a7af87f2be21221cd751d792e33d152013a586be501d50fff",
+    "B27R095/actual_material_BH.csv": "de8d775ea05c3ca7a173933e062c80a06ad428294ad0d5f8432ed8096ad44c4f",
+    "B27R095/case.json": "21e1e44ca45e1368cb7baba78a55036f72ebfb71d26a934f21f1a28eec62560b",
+    "B30P105/Torque Plots.csv": "8b7d364d18240cf02fc5197cf90bd1251eb2e5ca4878607cc2d6723cfac39283",
+    "B30P105/actual_material.amat": "8ac05ab53ab0cefa6af193a091d56d689fed328972a64a3d1fec3944bc1dd4fa",
+    "B30P105/actual_material.metadata.json": "5ab2bce40d59c33c88c89996c31f7e702d7dde6daab6ec125579cb07b8fa92c6",
+    "B30P105/actual_material_BH.csv": "63ed1d5a052d078f4c144cf866729839594a2f43dd6a71e492e42e7fe789eea9",
+    "B30P105/case.json": "15ebe99ed87b7bfaf36c5a29fe7e02cf1592984f136aff304d57675520d7d0b0",
+    "README.md": "8f437c3b7ea4542f2cbc2d11de34e5f028bdc503bb91350d6c16980c3dbde049",
+    "summary.csv": "3c14c402c4f409bfd8defa59cc823525712a32ba7c746b299889ebe4257f8222"
+  },
+  "native_completed": 4,
+  "new_independent_measured_samples": 0,
+  "schema": "native_intrinsic_engineering_evidence_v1",
+  "source_points_per_case": 26,
+  "torque_gate_passed": 1
+}
