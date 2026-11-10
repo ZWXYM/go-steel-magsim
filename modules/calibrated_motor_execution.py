@@ -142,7 +142,7 @@ class CalibratedMotorExecution:
                 verify_solver_settings((folder/'case/motor.aedt').read_text(encoding='utf-8-sig'),m['requested_protocol']['solver_settings'])
                 if (saved.get('solver_settings')!=m['requested_protocol']['solver_settings'] or
                     saved.get('model_version')!=execution_model_version(m['measurement_protocol']) or
-                    audit_project(folder/'case/motor.aedt')['setup'].get('SmoothBHCurve')!='true'):
+                    audit_project(folder/'case/motor.aedt')['setup'].get('SmoothBHCurve')!=str(m['requested_protocol']['solver_settings']['SmoothBHCurve']).lower()):
                     raise ValueError('平滑诊断的结果版本或实际保存设置不符')
             result.update(result=saved,result_available=True,new_Maxwell_solves=1)
         stop_path=folder/'budget_stop.json'

@@ -20,6 +20,12 @@ from test_workbench import csv_fixture
 
 
 class BHAnalysisTests(unittest.TestCase):
+    def test_intrinsic_unsmoothed_control_is_explicit_and_does_not_relabel_saved_smoothed_records(self):
+        smooth=protocol('v8_2_cycle1_RD_equivalent_intrinsic_v1');raw=protocol('v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1')
+        self.assertTrue(smooth['solver_settings']['SmoothBHCurve']);self.assertFalse(raw['solver_settings']['SmoothBHCurve'])
+        for k in ('source_samples','stop_s','points_per_cycle','requested_time_step_s','equivalent_direction','curve_representation'):self.assertEqual(raw[k],smooth[k])
+        self.assertNotEqual(execution_model_version(raw['id']),execution_model_version(smooth['id']))
+
     def test_true_intrinsic_has_a_distinct_optional_protocol_and_keeps_time_and_original_gates(self):
         old=protocol('v8_2_cycle1_RD_equivalent_stable_v1');new=protocol('v8_2_cycle1_RD_equivalent_intrinsic_v1')
         self.assertNotIn('curve_representation',old);self.assertEqual(new['curve_representation'],'Intrinsic')

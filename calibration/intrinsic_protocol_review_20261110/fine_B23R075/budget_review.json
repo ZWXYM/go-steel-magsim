@@ -1,0 +1,12 @@
+{
+  "requested_wall_seconds": 1200,
+  "actual_wall_seconds": 1549.0469999999914,
+  "budget_exceeded": true,
+  "intended_clean_stop_did_not_reach_target": true,
+  "watchdog_error": "Required PID12720; SDK attached PID29124, so identity guard rejected all stop actions.",
+  "manual_termination_attempted": false,
+  "native_task_finished_naturally": true,
+  "only_dedicated_session_closed_by_original_worker": true,
+  "all_raw_files_preserved": true,
+  "followup": "Repair and verify exact-session timeout handling before expanding native work."
+}

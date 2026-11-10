@@ -37,7 +37,7 @@ class ExecutionTests(unittest.TestCase):
             operating_point=dict(speed_rpm=3000,poles=4,cycles=str(cycles),points_per_cycle='30'),
             setup=dict(StopTime='.03s' if cycles==3 else '.01s',TimeStep='.000333333333333s',UseAdaptiveTimeStep='false',
                 AutoDetectSteadyState='false',FastReachSteadyState='false',
-                SmoothBHCurve='true' if self.plan.get('requested_protocol',{}).get('solver_settings') else 'false'))
+                SmoothBHCurve=str(self.plan.get('requested_protocol',{}).get('solver_settings',{}).get('SmoothBHCurve',False)).lower()))
 
     def ready(self,measurement='v8_2_cycle1'):
         self.plan=self.analysis.prepare(dict(native_import=self.imported['id'],measurement_protocol=measurement))
@@ -121,6 +121,17 @@ class ExecutionTests(unittest.TestCase):
         verified.assert_called_once_with((folder/'inputs/motor.aedt').read_text(encoding='utf-8-sig'),record['material_contract'],'RD','Intrinsic')
         args=app.materials.odefinition_manager.AddMaterial.call_args.args[0];self.assertTrue(args[0].endswith('_RD_INTRINSIC_EQ_v1'))
         mu=next(x for x in args if isinstance(x,list) and x[0]=='NAME:permeability');self.assertEqual(mu[mu.index('BTypeForSingleCurve:=')+1],'Intrinsic');app.analyze_setup.assert_not_called()
+
+    def test_unsmoothed_intrinsic_result_reopens_only_with_the_requested_saved_false_flag(self):
+        record=self.ready('v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1')
+        with patch.object(worker,'verify_saved_equivalent_material',return_value={'curve_representation':'Intrinsic'}):folder,state,app,desktop=self.fake_run(record)
+        self.assertEqual(state['status'],'completed');self.assertFalse(app.get_setup.return_value.props['SmoothBHCurve'])
+        self.assertEqual(read(folder/'result.json')['model_version'],'V8_2_scalar_RD_equivalent_BH_only_intrinsic_nosmooth_v1')
+        with patch('modules.calibrated_motor_execution.verify_model',return_value=self.audit()),patch('modules.calibrated_motor_execution.verify_solver_settings',return_value={'SmoothBHCurve':'false'}),patch('modules.calibrated_motor_execution.audit_project',return_value=self.audit()):
+            self.assertTrue(self.exe.get(record['id'])['result_available'])
+        wrong=self.audit();wrong['setup']['SmoothBHCurve']='true'
+        with patch('modules.calibrated_motor_execution.verify_model',return_value=self.audit()),patch('modules.calibrated_motor_execution.verify_solver_settings',return_value={'SmoothBHCurve':'false'}),patch('modules.calibrated_motor_execution.audit_project',return_value=wrong):
+            with self.assertRaisesRegex(ValueError,'平滑诊断'):self.exe.get(record['id'])
 
     def test_smooth_diagnostic_preserves_legacy_protocol_and_uses_distinct_model_version(self):
         from modules.calibrated_motor_analysis import protocol,execution_model_version

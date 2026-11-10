@@ -1,0 +1,16 @@
+{
+  "files": {
+    ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+    "coarse_mode_comparison.csv": "4a879d272760e5779207d3873243eef10245ad5c4cb18f34d98005d85c8e5151",
+    "corrected_case_index.json": "90aefb4cd22ef0d15a2f56a8fc8caeee96791345f7cd5588fcc4fa0096ae6f11",
+    "README.md": "475cfb4cd1b36a3a8f51f29008ebb4c1f7fb3f1920354ffd46aba921aee30a2e",
+    "source_comparison.json": "08f16dd6311a577bf04362a69eaac009e10853c27185cb1a52a5366c43580465",
+    "fine_B23R075/budget_review.json": "1fd513e7812572c4870264870c4371141132185bf38dd72bc99118ff7da82316",
+    "fine_B23R075/case.json": "f59d8a8cc124fa1662f4a9d4f55dbc0f3daba6a5e18f13a20cc6a36cd18840fa",
+    "fine_B23R075/Torque Plots.csv": "66b7bea24e6ff3b674c0bff767d25ef2e5e2a2f4fc574bc7e6115e3023fd515e"
+  },
+  "new_native_solves_from_protocol_correction": 0,
+  "new_native_solves_from_separate_fine_step_control": 1,
+  "new_independent_measured_samples": 0,
+  "budget_control_issue_recorded": true
+}

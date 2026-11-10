@@ -25,7 +25,9 @@ PROTOCOLS={
     'v8_2_cycle1_RD_equivalent_stable_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1',
         solver_settings={'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100}),
     'v8_2_cycle1_RD_equivalent_intrinsic_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1',curve_representation='Intrinsic',
-        solver_settings={'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100})}
+        solver_settings={'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100}),
+    'v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1',curve_representation='Intrinsic',
+        solver_settings={'SmoothBHCurve':False,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100})}
 
 
 def protocol(name):
@@ -38,7 +40,8 @@ def protocol(name):
 def execution_model_version(measurement):
     p=protocol(measurement)
     if p.get('equivalent_direction'):
-        if p.get('curve_representation')=='Intrinsic':return 'V8_2_scalar_RD_equivalent_BH_only_intrinsic_v1'
+        if p.get('curve_representation')=='Intrinsic':
+            return 'V8_2_scalar_RD_equivalent_BH_only_intrinsic'+('_nosmooth' if p['solver_settings']['SmoothBHCurve'] is False else '')+'_v1'
         return 'V8_2_scalar_'+p['equivalent_direction']+'_equivalent_BH_only'+('_stable' if p.get('solver_settings') else '')+'_v1'
     return 'V8_2_object_CS_BH_only_torque_smoothBH_v1' if measurement=='v8_2_cycle1_smooth_bh_v1' else 'V8_2_object_CS_BH_only_torque_v1'
 

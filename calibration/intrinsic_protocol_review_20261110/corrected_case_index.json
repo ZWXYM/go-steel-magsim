@@ -1,0 +1,63 @@
+{
+  "actual_first_saved_fields": {
+    "MaxIterNum": "100",
+    "MinIterNum": "1",
+    "SmoothBHCurve": "false",
+    "UseNonLinearIterNum": "true"
+  },
+  "cases": [
+    {
+      "actual_SmoothBHCurve": false,
+      "actual_execution_kind": "private bounded control",
+      "actual_original_protocol": "native_intrinsic_26_control_v1",
+      "grade": "B27R090",
+      "original_evidence_case": "calibration/native_intrinsic_motor_20261110/B27R090_control/case.json",
+      "protocol_equivalent_settings": "v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1",
+      "standalone_control_is_not_relabelled_as_formal_execution": true,
+      "torque_CSV_SHA256": "2172ccad4d034aa1956d9176bfdc3a0f9b55eecaf8eda990133c669b2d1ffb64",
+      "torque_numerical_acceptance": true
+    },
+    {
+      "actual_SmoothBHCurve": true,
+      "actual_execution_kind": "integrated batch execution",
+      "actual_original_protocol": "v8_2_cycle1_RD_equivalent_intrinsic_v1",
+      "grade": "B23R075",
+      "original_evidence_case": "calibration/native_intrinsic_motor_20261110/B23R075/case.json",
+      "protocol_equivalent_settings": "v8_2_cycle1_RD_equivalent_intrinsic_v1",
+      "standalone_control_is_not_relabelled_as_formal_execution": false,
+      "torque_CSV_SHA256": "c3ad45b100217b7b91baf30601f9ae43aa9bccf314f3537e8f48c2fce986493c",
+      "torque_numerical_acceptance": false
+    },
+    {
+      "actual_SmoothBHCurve": true,
+      "actual_execution_kind": "integrated batch execution",
+      "actual_original_protocol": "v8_2_cycle1_RD_equivalent_intrinsic_v1",
+      "grade": "B27R095",
+      "original_evidence_case": "calibration/native_intrinsic_motor_20261110/B27R095/case.json",
+      "protocol_equivalent_settings": "v8_2_cycle1_RD_equivalent_intrinsic_v1",
+      "standalone_control_is_not_relabelled_as_formal_execution": false,
+      "torque_CSV_SHA256": "c3b69c1ea1e00da27f827fe3cc9e9ebedf9b0f05d604d2f5763f27aa43097844",
+      "torque_numerical_acceptance": false
+    },
+    {
+      "actual_SmoothBHCurve": true,
+      "actual_execution_kind": "integrated batch execution",
+      "actual_original_protocol": "v8_2_cycle1_RD_equivalent_intrinsic_v1",
+      "grade": "B30P105",
+      "original_evidence_case": "calibration/native_intrinsic_motor_20261110/B30P105/case.json",
+      "protocol_equivalent_settings": "v8_2_cycle1_RD_equivalent_intrinsic_v1",
+      "standalone_control_is_not_relabelled_as_formal_execution": false,
+      "torque_CSV_SHA256": "8b7d364d18240cf02fc5197cf90bd1251eb2e5ca4878607cc2d6723cfac39283",
+      "torque_numerical_acceptance": false
+    }
+  ],
+  "causal_claim": "The first control cannot isolate the effect of Intrinsic from the effect of disabling smoothing relative to the old smoothed Normal baseline. Do not treat the four outcomes as a uniform-protocol material ranking.",
+  "corrects": [
+    "calibration/native_intrinsic_motor_20261110/B27R090_control/case.json:measurement_protocol",
+    "calibration/native_intrinsic_motor_20261110/README.md:common smoothing implication"
+  ],
+  "new_native_solves": 0,
+  "old_raw_data_and_published_tree_preserved": true,
+  "reason": "The B27R090 private control saved SmoothBHCurve=false; the three integrated cases saved true. The original common smoothed protocol label for the first case was incorrect.",
+  "schema": "intrinsic_protocol_review_v1"
+}

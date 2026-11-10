@@ -210,3 +210,6 @@ python tools/run_calibration_pilot.py --run-dir calibration/convergence_20261004
 模型加载/删除已限定到准确模型目录；当前选择与列表刷新保持一致，见[模型管理说明](docs/model_paths_20261022.md)。
 
 校准材料批量新增[自选时间区间的转矩查看、统计与完整原数据下载](docs/torque_windows_20261022.md)，可直接从批量结果重开同一批量；不重求解或更改原指标/判据。
+
+
+2026-11-10：原生Intrinsic先行控制的平滑设置与三材料批量不同，原数据保留，具体[协议标签更正](calibration/intrinsic_protocol_review_20261110/README.md)。系统分别保留平滑/不平滑对照选项，不把这些结果当作统一配置的材料排名。
