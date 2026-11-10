@@ -1,0 +1,25 @@
+{
+  "id": "plan_83246a98eacc",
+  "created_utc": "2026-11-09T17:11:57.400841+00:00",
+  "job_id": "scan_c15b48c7fcde",
+  "materials": [
+    "AK Steel - M-6 Carlite",
+    "Nippon Steel - 23ZDKH75"
+  ],
+  "reference_material": "AK Steel - M-6 Carlite",
+  "reference_case_id": "case_01",
+  "config": {
+    "min_ripple_reduction_pct": 30.0,
+    "max_iron_loss_increase_pct": 0.0,
+    "min_torque_change_pct": -0.5,
+    "ripple_weight": 0.6,
+    "iron_loss_weight": 0.3,
+    "efficiency_weight": 10.0
+  },
+  "job_manifest_sha256": "b2d09e7b903ce9de9d8a9fdbf2e18aa81ea56a529301bc9f30f6db6db55a7847",
+  "measurement_protocol": "v8_2_cycle1",
+  "cores": 2,
+  "scope": "One frozen scan, same-job engineering score; original results unchanged",
+  "automatic_native_retry": false,
+  "producer_sha256": "672f16febf3cc6fc13b9cf6614d9f06978f96ac401276b6f141ac488f541f5ab"
+}

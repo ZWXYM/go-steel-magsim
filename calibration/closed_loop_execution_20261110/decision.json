@@ -1,0 +1,35 @@
+{
+  "plan_id": "plan_83246a98eacc",
+  "scan_id": "scan_c15b48c7fcde",
+  "automatic_analysis_id": "opt_22b20aa5f61f",
+  "model_version": "V8_2_object_CS_loss_scope_v2",
+  "measurement_protocol": "v8_2_cycle1",
+  "reference_case": "case_01",
+  "config": {
+    "min_ripple_reduction_pct": 30.0,
+    "max_iron_loss_increase_pct": 0.0,
+    "min_torque_change_pct": -0.5,
+    "ripple_weight": 0.6,
+    "iron_loss_weight": 0.3,
+    "efficiency_weight": 10.0
+  },
+  "meets_limits_count": 0,
+  "best_case": null,
+  "candidate_case": "case_02",
+  "actual_candidate_changes": {
+    "torque_change_pct": 1.4447554710177002,
+    "ripple_reduction_pct": 3.4728866757210985,
+    "iron_loss_reduction_pct": 23.784203259191493,
+    "efficiency_change_pctpt": 0.8488402868079135
+  },
+  "score": 17.70739585126924,
+  "reasons": [
+    "脉动降幅未达要求"
+  ],
+  "declared_before_solve": true,
+  "posthoc_relaxation": false,
+  "original_optimizer_functions_unchanged": true,
+  "scope": "Same-job one-cycle scalar-library engineering comparison. Native loss models are estimates; no measured efficiency, local RD/TD or steady-state certification claim.",
+  "source_plan_sha256": "9a9d025af8013b4d51a574ba9daf284031b0a57704dbfc433fde1a055177fe0c",
+  "source_analysis_sha256": "f97a54e121d5a06dac343f02648f6c0d00845d1f76d2c5d7b1e38127d5989a61"
+}

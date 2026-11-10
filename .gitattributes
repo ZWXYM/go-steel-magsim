@@ -304,3 +304,6 @@ calibration/workpack_sources_20261110/** -text
 modules/system_data_relations.py -text
 tests/test_system_data_relations.py -text
 docs/workpack_sources_20261110.md -text
+
+tests/test_motor_plan_config_ui.js -text
+docs/system_closed_loop_20261110.md -text

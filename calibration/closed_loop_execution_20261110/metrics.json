@@ -1,0 +1,71 @@
+{
+  "version": "closed_loop_native_csv_evidence_v1",
+  "rows": [
+    {
+      "case": "case_01",
+      "material": "AK Steel - M-6 Carlite",
+      "T_avg_Nm": 1.854030894833201,
+      "T_min_Nm": 1.6618865992299,
+      "T_max_Nm": 2.0876605230005,
+      "K_T_ripple_pct": 22.96476962477505,
+      "P_Fe_W": 21.982170048864997,
+      "P_Cu_W": 49.17506412530503,
+      "P_out_W": 582.4609838736494,
+      "eta_estimate_pct": 89.11333371540691,
+      "accepted": true,
+      "n_samples": 31,
+      "operating_speed_rpm": 3000,
+      "CSV_sha256": {
+        "maxwell_reports/CoreLoss.csv": "d5419276304c9f4a6c39fa2740551389d0b5d0bf80cb6ff7d1bd1b6db4f154e0",
+        "maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+        "maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+        "reports/Drive Current Plots.csv": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+        "reports/Torque Plots.csv": "07887bad756f22d3fe169fd12983f1d9584cee7e151894516180bac1cd06d509"
+      },
+      "initial_project_sha256": "88d1b8b6c731473ab7198cc2e1590ea7d6bc491a259230718f474180b493c2b9",
+      "solved_project_sha256": "ffb28bbeb4ec61bae22ed4ec8bb1355c8abb9e320ba2ca3f99cc0ab40e44ed49"
+    },
+    {
+      "case": "case_02",
+      "material": "Nippon Steel - 23ZDKH75",
+      "T_avg_Nm": 1.8808171076206621,
+      "T_min_Nm": 1.68028476022004,
+      "T_max_Nm": 2.09720979930601,
+      "K_T_ripple_pct": 22.167229200366194,
+      "P_Fe_W": 16.753886043661833,
+      "P_Cu_W": 49.17506412530503,
+      "P_out_W": 590.8761208047075,
+      "eta_estimate_pct": 89.96217400221482,
+      "accepted": true,
+      "n_samples": 31,
+      "operating_speed_rpm": 3000,
+      "CSV_sha256": {
+        "maxwell_reports/CoreLoss.csv": "f445b1dcfb8eb1e548bdadac8083cb24c322c3cbf9d176bd6cad55a0f57d08f3",
+        "maxwell_reports/SolidLoss.csv": "cfe6b068c8a9ecba1cee3869154a36c4e39f3b6aa6d029b76d249856a89ccd86",
+        "maxwell_reports/StrandedLoss.csv": "35dafb0be9740da29403cc9c89459466fac5a2ae2599d556bf7949baff01ccf3",
+        "reports/Drive Current Plots.csv": "f6030314b435a6859c784744c9303d0cd916144c125960fb2c7a65d370fa4090",
+        "reports/Torque Plots.csv": "ad4108baa2cdbfa0a9c1427b398db1c191f081d151fcf39809a35a5311662334"
+      },
+      "initial_project_sha256": "fbba50ae4ef4f218edfe97263c8304dd8f6fcd6c688c0cb9a1e4bf70f3051a49",
+      "solved_project_sha256": "297efbf6b0888d920ece783351715b13e873103d0c22a43ec2d5f8181ee64bee"
+    }
+  ],
+  "physics_summary": [
+    {
+      "case": "case_01",
+      "insert_loss_coverage": 48,
+      "total_core_loss_objects": 50,
+      "original_stator_rotor_loss_preserved": true,
+      "dedicated_PID": 29744,
+      "dedicated_PID_exited": true
+    },
+    {
+      "case": "case_02",
+      "insert_loss_coverage": 48,
+      "total_core_loss_objects": 50,
+      "original_stator_rotor_loss_preserved": true,
+      "dedicated_PID": 14632,
+      "dedicated_PID_exited": true
+    }
+  ]
+}
