@@ -38,7 +38,9 @@ from modules.system_data_builder import SystemDataBuilder
 from modules.motor_constraint_studies import MotorConstraintStudies,create_constraint_study_routes
 from modules.calibration_regularized import default_eligible
 
-SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md'))
+SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md',
+    'actual_motor_material_exports_20261106.md','engineering_motor_mode_20261105.md','motor_dataset_export_20261106.md',
+    'plan_results_20261110.md','torque_windows_20261022.md'))
 
 
 def create_workbench(project,storage=None,root=None,script_history=None):
