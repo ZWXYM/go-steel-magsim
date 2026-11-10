@@ -190,10 +190,12 @@ class SystemData:
                 calibrations.append(dict(id=path.parent.name, readable=False, error=str(error)))
         if self.batches:
             from modules.system_data_builder import batch_binding
+            from modules.system_data_relations import batch_calibration_relation
             for row in self.batches.records():
                 try:
                     available = row['status'] in ('completed', 'completed_with_failures') and any(item.get('result_available') for item in row['items'])
                     batches.append(dict(id=row['id'], status=row['status'], available=available,
+                        source_calibration_ids=batch_calibration_relation(row)['source_calibration_ids'],
                         source_binding_sha256=batch_binding(self.batches, row['id']),
                         result_count=sum(item.get('result_available') is True for item in row['items']),
                         item_count=len(row['items']), measurement_protocol=row['measurement_protocol']))

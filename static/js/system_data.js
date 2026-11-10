@@ -53,7 +53,7 @@
   for(const row of data.calibrations.filter(row=>row.readable&&validCal(row.id))){const option=element('option',row.id+' · '+(row.display_label?row.display_label+' · ':'')+row.selected_grades.join('、'));option.value=row.id;$('packageCalibration').append(option)}
   $('packageCalibration').value=data.calibrations.some(row=>row.readable&&row.id===previousCal)?previousCal:'';
   $('packageBatch').replaceChildren(element('option','不包含批量'));$('packageBatch').children[0].value='';
-  for(const row of (data.calibrated_batches||[]).filter(row=>row.available&&/^bhbatch_[a-f0-9]{12}$/.test(row.id))){const option=element('option',row.id+' · '+row.measurement_protocol+' · '+row.result_count+'/'+row.item_count+'结果');option.value=row.id;$('packageBatch').append(option)}
+  for(const row of (data.calibrated_batches||[]).filter(row=>row.available&&/^bhbatch_[a-f0-9]{12}$/.test(row.id))){const option=element('option',row.id+' · '+row.measurement_protocol+' · '+row.result_count+'/'+row.item_count+'结果 · 校准'+(row.source_calibration_ids?.join('、')||'未记录'));option.value=row.id;$('packageBatch').append(option)}
   $('packageBatch').value=(data.calibrated_batches||[]).some(row=>row.available&&row.id===previousBatch)?previousBatch:'';
   const optimizations=(data.optimizations||[]),readable=optimizations.filter(row=>row.readable&&/^opt_[a-f0-9]{12}$/.test(row.id));
   $('packageOptimization').replaceChildren(element('option','不包含原筛选'));$('packageOptimization').children[0].value='';

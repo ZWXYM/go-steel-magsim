@@ -1,0 +1,20 @@
+{
+  "main_tests": 855,
+  "AST": 223,
+  "JS": 31,
+  "actual_browser_build_download": true,
+  "HTTP_download_identical": true,
+  "package_sha256": "ba2257b121e8a706ea8798b5c01b329e49404e14983b5af4d0e21c454945d146",
+  "package_members": 38,
+  "source_calibration_relation_verified": true,
+  "source_calibration_batch_not_changed": true,
+  "old_saved_files_unchanged": 6007,
+  "original_core_sources_unchanged": 3,
+  "actual_registered_workpacks": 1,
+  "new_native_solves": 0,
+  "new_analyses": 0,
+  "new_predictions": 0,
+  "new_training": 0,
+  "private_package_not_published": true,
+  "screenshot_available": false
+}

@@ -12,6 +12,7 @@ from modules.calibration_transfer import load_bank
 from modules.material_batch_reports import report_bundle
 from modules.motor_dataset_export import dataset_bundle,DATASET_ID_PATTERN
 from modules.system_data import WorkpackStore, MAX_CONTENT_BYTES, json_bytes, sha256
+from modules.system_data_relations import batch_calibration_relation
 
 VERSION = 'system_data_workpack_v4'
 PRODUCER_SHA256 = sha256(Path(__file__).read_bytes())
@@ -167,6 +168,7 @@ class SystemDataBuilder:
             put('calibrated_motor/'+batch['id']+'.zip',blob)
             index['calibrated_batch']=dict(id=batch['id'], source_binding_sha256=before, bundle_sha256=sha256(blob),
                 result_count=sum(item.get('result_available') is True for item in record['items']), item_count=len(record['items']),
+                calibration_relation=batch_calibration_relation(record,index['calibration']),
                 efficiency_enabled=False, optimization_ranking_enabled=False)
 
         if selection.get('optimization') is not None:
@@ -199,6 +201,7 @@ predictions/仅含明确勾选的已有材料预测包，保留原输入、父ba
 motor_datasets/每包仅含一个原模型/协议的数据集、原文件及哈希。原判据通过与官方CSV来源且通过原判据分别列出；V8_1历史处理/估算保留，不能替代当前原生损耗或稳态改善证据。重复材料、工况及曲线节点不增加独立样品数。不同版本不得混拼排名。
 
 calibrated_motor/仅在选择批量时包含；保留实际材料、官方转矩CSV、原接受标记和异常。标量方向等效不视为局部RD/TD验证；零损耗B-H分支不输出效率或最终优化排名。
+所选校准与既有电机批量可能来自不同版本；实际记录、父/有效子库和逐条关系见data_index.json的calibrated_batch.calibration_relation。分别归档不表示已用所选校准重算该批量。
 
 optimization/仅在明确选择已有筛选时包含；原analysis/ranking/说明/ZIP逐字节保留，附其关联原计划（如有）与当前使用范围说明。不重新评分、不改基准、权重、约束或“无改善候选”的结果；历史估算不改称原生损耗改善。
 
@@ -213,8 +216,10 @@ manifest.json核对文件完整性；本包是私有冻结快照，不随新任�
         out=io.BytesIO()
         with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:
             for name,blob in files.items(): archive.writestr(name,blob)
+        relation=(index['calibrated_batch'] or {}).get('calibration_relation') or {}
         return self.store.register_bytes(out.getvalue(),'所选系统数据 '+index['created_utc'],
             '网页冻结快照：'+str(len(index['datasets']))+'份版本独立电机数据集；校准'+('已包含' if cal else '未选择')+
             '，校准电机批量'+('已包含' if batch else '未选择')+'，已有原筛选'+('已包含' if index['optimization'] else '未选择')+
             '，已有约束研究'+('已包含' if index['constraint_study'] else '未选择')+
-            '，保存预测'+str(len(index['saved_predictions']))+'份。原始异常和使用范围保持。')
+            '，保存预测'+str(len(index['saved_predictions']))+'份。原始异常和使用范围保持。'+
+            (' '+relation['note'] if relation.get('relationship') in ('unknown','different_or_mixed_sources') else ''))

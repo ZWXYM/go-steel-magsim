@@ -300,3 +300,7 @@ calibration/motor_case_coverage_20261110/** -text
 modules/motor_data_coverage.py -text
 tests/test_motor_data_coverage.py -text
 docs/motor_case_coverage_20261110.md -text
+calibration/workpack_sources_20261110/** -text
+modules/system_data_relations.py -text
+tests/test_system_data_relations.py -text
+docs/workpack_sources_20261110.md -text

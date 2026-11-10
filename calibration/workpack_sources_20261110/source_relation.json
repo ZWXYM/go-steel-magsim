@@ -1,0 +1,63 @@
+{
+  "all_effective_banks_match_selected": false,
+  "items": [
+    {
+      "calibration_id": "cal_8fff23daed9e",
+      "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded_grades": [],
+      "item": "item_01",
+      "material_key": "fit:B23R075",
+      "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "selected_effective_bank_matches": false,
+      "selected_parent_bank_matches": false,
+      "selected_record_matches": false,
+      "source_known": true
+    },
+    {
+      "calibration_id": "cal_8fff23daed9e",
+      "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded_grades": [],
+      "item": "item_02",
+      "material_key": "fit:B27R090",
+      "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "selected_effective_bank_matches": false,
+      "selected_parent_bank_matches": false,
+      "selected_record_matches": false,
+      "source_known": true
+    },
+    {
+      "calibration_id": "cal_8fff23daed9e",
+      "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded_grades": [],
+      "item": "item_03",
+      "material_key": "fit:B27R095",
+      "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "selected_effective_bank_matches": false,
+      "selected_parent_bank_matches": false,
+      "selected_record_matches": false,
+      "source_known": true
+    },
+    {
+      "calibration_id": "cal_8fff23daed9e",
+      "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "excluded_grades": [],
+      "item": "item_04",
+      "material_key": "fit:B30P105",
+      "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "selected_effective_bank_matches": false,
+      "selected_parent_bank_matches": false,
+      "selected_record_matches": false,
+      "source_known": true
+    }
+  ],
+  "new_native_solves": 0,
+  "note": "所选校准与电机批量来自不同或混合记录，分别归档；本批量不是按所选校准重新求解的结果。",
+  "relationship": "different_or_mixed_sources",
+  "schema": "saved_calibration_batch_relation_v1",
+  "selected_bank_sha256": "1ccd070a3dbba851d7a5ba11010abd8981a47c8900fcd6bf8e6a9fca0b8bfaf2",
+  "selected_calibration_id": "cal_ff02c5f685a0",
+  "source_calibration_ids": [
+    "cal_8fff23daed9e"
+  ],
+  "source_fields_complete": true
+}

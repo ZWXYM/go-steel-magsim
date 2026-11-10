@@ -120,6 +120,21 @@ class SystemDataBuilderTests(unittest.TestCase):
             with zipfile.ZipFile(io.BytesIO(archive.read('calibrated_motor/'+self.batch.name+'.zip'))) as nested:
                 self.assertFalse(json.loads(nested.read('batch.json'))['items'][0]['metrics']['torque_numerical_acceptance'])
 
+    def test_selected_new_calibration_and_old_batch_are_preserved_with_explicit_relation(self):
+        selection=dict(self.selection,batch=dict(id=self.batch.name,source_binding_sha256=batch_binding(self.batches,self.batch.name)))
+        source=dict(parent_bank_sha256='b'*64,effective_bank_sha256='b'*64,excluded_grades=[])
+        batch_record=dict(id=self.batch.name,status='completed',items=[dict(id='item_01',selection=dict(calibration='cal_cccccccccccc',key='fit:SYNTHETIC'),source=source,result_available=True,metrics={'torque_numerical_acceptance':False})])
+        original=zipped({'batch.json':json_bytes(batch_record)}).getvalue()
+        with patch('modules.system_data_builder.report_bundle',return_value=io.BytesIO(original)):
+            record=self.builder.build(selection)
+        _,blob=self.builder.store.read(record['id'])
+        with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+            index=json.loads(archive.read('data_index.json'));relation=index['calibrated_batch']['calibration_relation']
+            self.assertEqual(relation['relationship'],'different_or_mixed_sources')
+            self.assertEqual(relation['selected_calibration_id'],self.calid);self.assertEqual(relation['source_calibration_ids'],['cal_cccccccccccc'])
+            self.assertEqual(archive.read('calibrated_motor/'+self.batch.name+'.zip'),original)
+            self.assertIn('不是按所选校准重新求解',record['description']);self.assertEqual(index['new_native_solves'],0)
+
     def test_active_batch_or_state_change_is_not_frozen_as_completed_data(self):
         selection=dict(calibration=None,datasets=[],batch=dict(id=self.batch.name,source_binding_sha256=batch_binding(self.batches,self.batch.name)))
         with patch('modules.system_data_builder.report_bundle',return_value=zipped({'batch.json':json_bytes(dict(id=self.batch.name,status='running',items=[]))})):
