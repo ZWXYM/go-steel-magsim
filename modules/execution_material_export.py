@@ -100,4 +100,9 @@ def execution_material_exports(record, folder):
             source_physical_B_preserved_at_nodes=True,
             physical_B_reconstruction_max_error_T=transport['physical_B_reconstruction_max_error_T'],
             physical_B_reconstruction_tolerance_T=transport['physical_B_reconstruction_tolerance_T'])
+    p=record['requested_protocol']
+    if p.get('points_per_cycle')==100:
+        metadata['execution_sampling']=dict(points_per_cycle=100,official_samples=p['source_samples'],
+            time_step_s=p['requested_time_step_s'],stop_s=p['stop_s'],
+            selected_window_ms=p['selected_window_ms'],wall_budget_seconds=record['budget']['wall_seconds'])
     return dict(zip(FILES, (amat, (json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False)+'\n').encode('utf8'), curve)))

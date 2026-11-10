@@ -13,6 +13,7 @@ from unittest.mock import patch
 
 import test_maxwell_material_transport as fixtures
 from modules.calibrated_motor_execution import CalibratedMotorExecution
+from modules.calibrated_motor_analysis import protocol,execution_model_version
 from modules.execution_material_export import execution_material_exports, digest, FILES
 from modules.material_motor_batches import MaterialMotorBatches
 from modules.maxwell_material_transport import load_contract, equivalent_material_name
@@ -86,6 +87,21 @@ class ActualMaterialExports(unittest.TestCase):
             reordered=json.loads(json.dumps(self.record,sort_keys=True))
             self.assertEqual(files,execution_material_exports(reordered,self.folder))
             self.assertEqual(before,{p:p.read_bytes() for p in self.folder.rglob('*') if p.is_file()})
+
+    def test_fine100_export_preserves_sampling_protocol_separately_from_material_nodes(self):
+        import math
+        p=protocol('v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1');c=self.contract['curves']['RD']
+        bi=[b-4*math.pi*1e-7*h for h,b in zip(c['H'],c['B'])]
+        text=fixtures.MaterialTransport().scalar_fixture(self.source_text,self.contract,'RD','Intrinsic',bi)
+        text+="\n$begin 'Setup1'\nSmoothBHCurve=true\nUseNonLinearIterNum=true\nMinIterNum=1\nMaxIterNum=100\n$end 'Setup1'\n"
+        self.project.write_text(text,encoding='utf8')
+        self.record.update(requested_protocol=p,measurement_protocol=p['id'],budget={'wall_seconds':1800})
+        self.record['result'].update(actual_material_name=equivalent_material_name(self.contract,'RD','Intrinsic'),
+            curve_representation='Intrinsic',model_version=execution_model_version(p['id']),solved_project_sha256=digest(self.project.read_bytes()))
+        files=execution_material_exports(self.record,self.folder);metadata=json.loads(files['actual_material.metadata.json'])
+        self.assertEqual(metadata['execution_sampling'],dict(points_per_cycle=100,official_samples=101,time_step_s=.0001,
+            stop_s=.01,selected_window_ms=[0,10],wall_budget_seconds=1800))
+        self.assertEqual(metadata['curve_points'],len(c['H']));self.assertFalse(metadata['efficiency_enabled'])
 
     def test_identity_or_missing_result_never_exports_another_cases_material(self):
         for key,value in (('id','bhexec_aaaaaaaaaaaa'),('result_available',False),('requested_protocol',{})):

@@ -1,0 +1,17 @@
+{
+  "files": {
+    "B27R095_actual_material.amat": "34570064e1c5026bacecf34897ebc9815a8a3f6639478ef42216204c5d2365d9",
+    "B27R095_actual_material.metadata.json": "9e562f156fa22655d26a0281d7908fe579fe152814411aa6eb1ffa3d3603ec5b",
+    "B27R095_actual_material_BH.csv": "de8d775ea05c3ca7a173933e062c80a06ad428294ad0d5f8432ed8096ad44c4f",
+    "B27R095_fine101_official_torque.csv": "3bd15470aabc2fa3cb93b104db42693907c391e83534a3eaf7198f3f0919d31e",
+    "browser_multibatch_package_review.json": "3a5407b4665e52898c4a7b4c2298f99d6a374c61bd25f41fd1168e79d0dc6e55",
+    "budget_stop_integration.json": "fcfdf320719a180aef53c399f776e933f3815ac5094d1f101353e2e73fb83fd1",
+    "existing_fine_readback.json": "9dc9cbbe6d5ea14a16b6a627aeb62d5e0c6a2e46cf0a1487bdde409b9c368e9b",
+    "formal_B27R095_review.json": "1ed6c4998ff12e12794d7b359f729104a72c75bfd1506364805eaf3b6989a50c",
+    "README.md": "bdb26523a8b94388272eb067d387477fa7655f3881ec80b16e91980705720728",
+    "saved_sampling_readback.json": "7f4aa92905b44f34e7e22f2b7e45c3b8dd175d4870929964d4593e12d4258184",
+    "saved_sampling_subsets.csv": "e8fe56ac06984b289a827b251822ae1d8f47a39f177c33a3b1eb1410ebd828cb",
+    "software_validation.json": "2a38d0d3b0f4af77ea5c497e2e9c775905a4b125ecabfa9368d42a4bb599f120"
+  },
+  "scope": "thin_public_evidence_only"
+}

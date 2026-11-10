@@ -12,9 +12,55 @@ from unittest.mock import patch,Mock
 
 PROJECT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(PROJECT))
-from modules.motor_queue import QueueLease,process_identity,identity_status,require_native_pid,native_transport_setting,configure_native_transport,bind_new_native_session
+from modules.motor_queue import QueueLease,process_identity,identity_status,require_native_pid,native_transport_setting,configure_native_transport,bind_new_native_session,owned_rot_moniker_matches,OwnedNativeStopClient,connect_owned_stop_client
 from modules.motor_workbench import MotorWorkbench,write_json,collect_metrics,acceptance_reason
 from test_workbench import csv_fixture
+
+
+class ExactStopAttachment(unittest.TestCase):
+    def test_exact_moniker_version_and_pid_are_not_prefix_or_global_matches(self):
+        for n in ['ElectronicsDesktop.2025.1.0:123','!Ansoft.ElectronicsDesktop.2025.1.0:123']:
+            self.assertTrue(owned_rot_moniker_matches(n,'2025.1',123))
+        for n in ['ElectronicsDesktop.2025.1.0:1234','ElectronicsDesktop.2024.1.0:123','other.ElectronicsDesktop.2025.1.0:123','ElectronicsDesktop.2025.1.0:999']:
+            self.assertFalse(owned_rot_moniker_matches(n,'2025.1',123))
+        for pid in [True,0,-1,'123']:
+            with self.assertRaises(ValueError):owned_rot_moniker_matches('','2025.1',pid)
+
+    def test_stop_only_adapter_rechecks_native_pid_and_create_time_without_closing(self):
+        api=Mock();api.GetProcessID.return_value=123;api.StopSimulations.return_value='stopped';identity={'pid':123,'create_time':456.}
+        adapter=OwnedNativeStopClient(api,identity,'exact')
+        with patch('modules.motor_queue.identity_status',return_value='alive'):
+            self.assertEqual(adapter.stop_simulations(),'stopped');api.StopSimulations.assert_called_once_with(True)
+            api.GetProcessID.return_value=999
+            with self.assertRaises(ValueError):adapter.stop_simulations()
+        api.GetProcessID.return_value=123
+        with patch('modules.motor_queue.identity_status',return_value='dead'):
+            with self.assertRaises(ValueError):adapter.stop_simulations()
+        self.assertEqual(api.StopSimulations.call_count,1);api.QuitApplication.assert_not_called()
+
+    def test_dead_identity_never_attempts_a_native_connection(self):
+        with patch('modules.motor_queue.identity_status',return_value='dead'):
+            with self.assertRaisesRegex(ValueError,'身份不可确认'):connect_owned_stop_client({'pid':123,'create_time':456.},'2025.1')
+
+    def test_connection_selects_only_exact_moniker_and_never_global_dispatch(self):
+        api=Mock();api.GetProcessID.return_value=123;selected=Mock();selected.GetDisplayName.return_value='ElectronicsDesktop.2025.1.0:123'
+        other=Mock();other.GetDisplayName.return_value='ElectronicsDesktop.2025.1.0:999';table=Mock();table.EnumRunning.return_value=[other,selected]
+        com=SimpleNamespace(CoInitialize=Mock(),CreateBindCtx=Mock(return_value='ctx'),GetRunningObjectTable=Mock(return_value=table),IID_IDispatch='dispatch',com_error=RuntimeError)
+        client=SimpleNamespace(Dispatch=Mock(return_value=api));shim=SimpleNamespace(win32_client=client)
+        with patch('modules.motor_queue.identity_status',return_value='alive'),patch('modules.motor_queue.os.name','nt'),patch.dict(sys.modules,{'pythoncom':com,'ansys.aedt.core.internal.clr_module':shim}):
+            result=connect_owned_stop_client({'pid':123,'create_time':456.},'2025.1')
+        table.GetObject.assert_called_once_with(selected);self.assertEqual(result.aedt_process_id,123);api.StopSimulations.assert_not_called()
+        self.assertNotEqual(client.Dispatch.call_args.args[0],'Ansoft.ElectronicsDesktop')
+
+    def test_missing_or_ambiguous_target_never_binds_an_unrelated_object(self):
+        matching=Mock();matching.GetDisplayName.return_value='ElectronicsDesktop.2025.1.0:123';table=Mock()
+        com=SimpleNamespace(CoInitialize=Mock(),CreateBindCtx=Mock(),GetRunningObjectTable=Mock(return_value=table),com_error=RuntimeError)
+        shim=SimpleNamespace(win32_client=Mock())
+        with patch('modules.motor_queue.identity_status',return_value='alive'),patch('modules.motor_queue.os.name','nt'),patch.dict(sys.modules,{'pythoncom':com,'ansys.aedt.core.internal.clr_module':shim}):
+            for entries in [[],[matching,matching]]:
+                table.EnumRunning.return_value=entries
+                with self.assertRaisesRegex(ValueError,'缺失或不唯一'):connect_owned_stop_client({'pid':123,'create_time':456.},'2025.1')
+        table.GetObject.assert_not_called();shim.win32_client.Dispatch.assert_not_called()
 
 
 class QueueRecovery(unittest.TestCase):

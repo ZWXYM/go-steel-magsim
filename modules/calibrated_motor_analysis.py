@@ -26,14 +26,17 @@ PROTOCOLS={
         solver_settings={'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100}),
     'v8_2_cycle1_RD_equivalent_intrinsic_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1',curve_representation='Intrinsic',
         solver_settings={'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100}),
+    'v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1':dict(cycles=1,source_samples=101,points_per_cycle=100,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1',curve_representation='Intrinsic',
+        solver_settings={'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100}),
     'v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1',curve_representation='Intrinsic',
         solver_settings={'SmoothBHCurve':False,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100})}
 
 
 def protocol(name):
     if not isinstance(name,str) or name not in PROTOCOLS: raise ValueError('未知转矩测量协议')
-    return dict(PROTOCOLS[name],id=name,speed_rpm=3000,poles=4,points_per_cycle=30,
-                requested_time_step_s=1/3000,time_column_units=['s','ms','us','ns'],
+    selected=dict(PROTOCOLS[name]);points=selected.pop('points_per_cycle',30)
+    return dict(selected,id=name,speed_rpm=3000,poles=4,points_per_cycle=points,
+                requested_time_step_s=1/(100*points),time_column_units=['s','ms','us','ns'],
                 torque_expression='-Moving1.Torque',torque_unit='Nm',native_settings_applied=False)
 
 
@@ -41,7 +44,7 @@ def execution_model_version(measurement):
     p=protocol(measurement)
     if p.get('equivalent_direction'):
         if p.get('curve_representation')=='Intrinsic':
-            return 'V8_2_scalar_RD_equivalent_BH_only_intrinsic'+('_nosmooth' if p['solver_settings']['SmoothBHCurve'] is False else '')+'_v1'
+            return 'V8_2_scalar_RD_equivalent_BH_only_intrinsic'+('_nosmooth' if p['solver_settings']['SmoothBHCurve'] is False else '')+('_fine100' if p['points_per_cycle']==100 else '')+'_v1'
         return 'V8_2_scalar_'+p['equivalent_direction']+'_equivalent_BH_only'+('_stable' if p.get('solver_settings') else '')+'_v1'
     return 'V8_2_object_CS_BH_only_torque_smoothBH_v1' if measurement=='v8_2_cycle1_smooth_bh_v1' else 'V8_2_object_CS_BH_only_torque_v1'
 
@@ -71,13 +74,13 @@ def collect_torque(path,measurement='v8_2_cycle1'):
     raw=values(yc)*unit(yc,{'NewtonMeter':1,'Nm':1,'mNewtonMeter':1e-3})
     if len(time)!=p['source_samples'] or not np.allclose(time,np.linspace(0,p['stop_s'],p['source_samples']),atol=1e-10,rtol=1e-8):
         raise ValueError('转矩CSV时间网格不完整或与所选协议不符')
-    start=60 if p['cycles']==3 else 0
+    start=2*p['points_per_cycle'] if p['cycles']==3 else 0
     selected=raw[start:];mean=float(selected.mean())
     ripple=float((selected.max()-selected.min())/mean*100) if mean!=0 else None
     accepted=bool(mean>0 and selected.min()>0 and selected.max()<10 and ripple is not None and ripple<100)
     stability=None
     if start:
-        previous=raw[30:61]
+        previous=raw[p['points_per_cycle']:start+1]
         peak=float(np.max(np.abs(selected-previous)))
         change=abs(mean-float(previous.mean()))/max(abs(mean),1e-12)
         stability=dict(cycles_compared=[2,3],max_phase_torque_delta_Nm=peak,

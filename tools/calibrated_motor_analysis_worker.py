@@ -15,9 +15,9 @@ from pathlib import Path
 PROJECT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(PROJECT))
 from modules.calibrated_motor_analysis import collect_torque,execution_model_version,verify_solver_settings
-from modules.calibrated_motor_execution import read,verify_inputs,verify_model,BUDGET,BUDGET_STOP_POLICY
+from modules.calibrated_motor_execution import read,verify_inputs,verify_model,execution_budget,BUDGET,BUDGET_STOP_POLICY
 from modules.material_library import sha
-from modules.motor_queue import QueueLease,process_identity,identity_status,require_native_pid,configure_native_transport,bind_new_native_session
+from modules.motor_queue import QueueLease,process_identity,identity_status,require_native_pid,configure_native_transport,bind_new_native_session,connect_owned_stop_client
 from modules.motor_workbench import write_json,license_config
 from modules.maxwell_native_readiness import require_configured_license_connection
 from modules.maxwell_material_transport import equivalent_material_name,equivalent_native_arguments,verify_saved_equivalent_material
@@ -25,9 +25,9 @@ from tools.motor_scan_worker import export_report
 
 def launch_budget_watch(folder,deadline):
     """Independent CPU watcher remains alive if the web server exits."""
-    state=read(folder/'state.json')
+    state=read(folder/'state.json');budget=read(folder/'manifest.json')['budget']
     record=dict(execution_id=state['id'],queue_token=state['queue_token'],policy=BUDGET_STOP_POLICY,
-        deadline_monotonic=deadline,start_monotonic=deadline-BUDGET['wall_seconds'],worker_identity=process_identity())
+        deadline_monotonic=deadline,start_monotonic=deadline-budget['wall_seconds'],worker_identity=process_identity())
     if (folder/'budget_watch.json').exists():raise ValueError('预算观察记录已经存在，不重复启动')
     write_json(folder/'budget_watch.json',record)
     python=Path(sys.prefix)/'Scripts/python.exe'
@@ -41,6 +41,7 @@ def launch_budget_watch(folder,deadline):
         if (folder/'budget_watch_ready.json').exists():
             ready=read(folder/'budget_watch_ready.json')
             if (ready.get('execution_id')==state['id'] and ready.get('queue_token')==state['queue_token'] and
+                ready.get('target_identity')==read(folder/'desktop_session.json')['identity'] and ready.get('target_verified') is True and
                 identity_status(ready.get('identity',{}))=='alive'):
                 return
             raise ValueError('预算守护身份未确认，未开始求解')
@@ -50,15 +51,16 @@ def launch_budget_watch(folder,deadline):
 
 
 
-def stop_owned_at_budget(folder,desktop_factory=None):
+def stop_owned_at_budget(folder,desktop_factory=None,*,prepare_only=False):
     """Stop one verified, dedicated Desktop; never close or kill a process."""
     folder=Path(folder).resolve();m=read(folder/'manifest.json');watch=read(folder/'budget_watch.json');state=read(folder/'state.json')
     if (folder.parent.name!='calibrated_motor_execution' or m['id']!=folder.name or
         m.get('budget_stop_policy')!=BUDGET_STOP_POLICY or watch['policy']!=BUDGET_STOP_POLICY or
         watch['execution_id']!=m['id'] or watch['queue_token']!=state.get('queue_token') or
-        not math.isclose(watch['deadline_monotonic']-watch['start_monotonic'],BUDGET['wall_seconds'],abs_tol=1e-5)):
+        m.get('budget')!=execution_budget(m['measurement_protocol']) or
+        not math.isclose(watch['deadline_monotonic']-watch['start_monotonic'],m['budget']['wall_seconds'],abs_tol=1e-5)):
         raise ValueError('预算观察身份/范围不符')
-    if time.monotonic()<watch['deadline_monotonic']:raise ValueError('预算尚未到达，不停止求解')
+    if not prepare_only and time.monotonic()<watch['deadline_monotonic']:raise ValueError('预算尚未到达，不停止求解')
     if state.get('phase')!='solving' or (folder/'result.json').exists():return dict(status='already_finished',stop_attempted=False)
     session=read(folder/'desktop_session.json');identity=session['identity']
     if session.get('closed') is True or identity_status(identity)=='dead':return dict(status='already_closed',stop_attempted=False)
@@ -73,11 +75,10 @@ def stop_owned_at_budget(folder,desktop_factory=None):
         reason='budget',policy=BUDGET_STOP_POLICY,stop_attempted=False,close_or_kill_requested=False,
         utc=datetime.now(timezone.utc).isoformat())
     if desktop_factory is None:
-        from ansys.aedt.core import Desktop
-        desktop_factory=Desktop
-    configure_native_transport(m.get('aedt_transport','auto'))
-    desktop=desktop_factory(version=m['aedt_version'],non_graphical=True,new_desktop=False,
-        aedt_process_id=identity['pid'],close_on_exit=False)
+        desktop=connect_owned_stop_client(identity,m['aedt_version'])
+    else:
+        desktop=desktop_factory(version=m['aedt_version'],non_graphical=True,new_desktop=False,
+            aedt_process_id=identity['pid'],close_on_exit=False)
     if desktop.aedt_process_id!=identity['pid'] or identity_status(identity)!='alive':raise ValueError('连接的会话不是原专用会话，未停止')
     require_native_pid(desktop.odesktop,identity['pid'])
     projects=list(desktop.odesktop.GetProjectList())
@@ -87,6 +88,7 @@ def stop_owned_at_budget(folder,desktop_factory=None):
     if path!=(folder/'case').resolve():raise ValueError('活动工程路径不是本次副本，未停止')
     if read(folder/'state.json').get('phase')!='solving' or (folder/'result.json').exists():return dict(status='already_finished',stop_attempted=False)
     if identity_status(identity)!='alive':raise ValueError('停止前专用会话身份变化，未停止')
+    if prepare_only:return desktop
     record.update(status='requesting_clean_stop',stop_attempted=True)
     write_json(folder/'budget_stop.json',record)
     answer=desktop.stop_simulations(clean_stop=True)
@@ -102,15 +104,23 @@ def watch_budget(folder):
     folder=Path(folder).resolve();lease=QueueLease(folder/'budget_watch.lease')
     if not lease.acquire():return 0
     try:
-        verify_inputs(folder,PROJECT,dispatch=True);watch=read(folder/'budget_watch.json')
-        write_json(folder/'budget_watch_ready.json',dict(execution_id=folder.name,queue_token=watch['queue_token'],identity=process_identity()))
+        m=verify_inputs(folder,PROJECT,dispatch=True);watch=read(folder/'budget_watch.json')
+        if read(folder/'state.json').get('phase')!='solving' or (folder/'result.json').exists():return 0
+        if (folder/'budget_stop.json').exists():return 0
+        target=stop_owned_at_budget(folder,prepare_only=True)
+        if isinstance(target,dict):return 0
+        target_identity=read(folder/'desktop_session.json')['identity']
+        attachment=getattr(target,'attachment',{})
+        if not isinstance(attachment,dict):attachment={}
+        write_json(folder/'budget_watch_ready.json',dict(execution_id=folder.name,queue_token=watch['queue_token'],identity=process_identity(),
+            target_identity=target_identity,target_verified=True,attachment=attachment))
         while time.monotonic()<watch['deadline_monotonic']:
             state=read(folder/'state.json')
             if state.get('phase')!='solving' or (folder/'result.json').exists():return 0
             time.sleep(min(2,max(0,watch['deadline_monotonic']-time.monotonic())))
         if (folder/'budget_stop.json').exists():return 0
-        write_json(folder/'attention.json',dict(error='达到1200秒预算，正在核对专用会话并请求停止；现场保留，不重试'))
-        record=stop_owned_at_budget(folder);write_json(folder/'budget_watch_result.json',record)
+        write_json(folder/'attention.json',dict(error=f'达到{m["budget"]["wall_seconds"]}秒预算，正在核对专用会话并请求停止；现场保留，不重试'))
+        record=stop_owned_at_budget(folder,desktop_factory=lambda **_:target);write_json(folder/'budget_watch_result.json',record)
         return 0
     except Exception as exc:
         write_json(folder/'budget_watch_failure.json',dict(error=str(exc),traceback=traceback.format_exc(),stop_not_confirmed=True))
@@ -138,9 +148,9 @@ def configure(app,project,m,folder):
         app.save_project(str(project))
         transported=verify_saved_equivalent_material(project.read_text(encoding='utf-8-sig'),m['material_contract'],direction,representation)
         write_json(folder/'equivalent_material.json',transported)
-    app['NumTorqueCycles']=str(p['cycles']);app['NumTorquePointsPerCycle']='30'
+    app['NumTorqueCycles']=str(p['cycles']);app['NumTorquePointsPerCycle']=str(p['points_per_cycle'])
     if (abs(float(app.get_evaluated_value('NumTorqueCycles'))-p['cycles'])>1e-8 or
-        abs(float(app.get_evaluated_value('NumTorquePointsPerCycle'))-30)>1e-8):raise ValueError('周期/采样变量未实际应用')
+        abs(float(app.get_evaluated_value('NumTorquePointsPerCycle'))-p['points_per_cycle'])>1e-8):raise ValueError('周期/采样变量未实际应用')
     setup=app.get_setup(m['setup'])
     setup.props.update(StopTime=format(p['stop_s'],'.12g')+'s',TimeStep=format(p['requested_time_step_s'],'.12g')+'s',
         UseAdaptiveTimeStep=False,AutoDetectSteadyState=False,FastReachSteadyState=False,
@@ -148,7 +158,7 @@ def configure(app,project,m,folder):
     if p.get('solver_settings'):setup.props.update(p['solver_settings'])
     if setup.update() is not True:raise ValueError('原生时间设置更新失败')
     app.save_project(str(project));after=verify_model(project,m,execution_material=True)
-    if (after['operating_point']['cycles']!=str(p['cycles']) or after['operating_point']['points_per_cycle']!='30' or
+    if (after['operating_point']['cycles']!=str(p['cycles']) or after['operating_point']['points_per_cycle']!=str(p['points_per_cycle']) or
         not math.isclose(seconds(after['setup']['StopTime']),p['stop_s'],rel_tol=1e-10,abs_tol=1e-12) or
         not math.isclose(seconds(after['setup']['TimeStep']),p['requested_time_step_s'],rel_tol=1e-10,abs_tol=1e-12) or
         after['setup']['UseAdaptiveTimeStep']!='false' or after['setup']['AutoDetectSteadyState']!='false' or
@@ -172,7 +182,7 @@ def execute(app,project,m,folder,deadline,phase):
     if app.analyze_setup(m['setup'],cores=m['cores'],gpus=0,use_auto_settings=False,revert_to_initial_mesh=False) is not True:
         raise RuntimeError('Maxwell转矩分析失败；不自动重试')
     if (folder/'budget_stop.json').exists():
-        raise TimeoutError('达到1200秒预算并已请求停止，保留现场，不将停止后的数据当完整结果')
+        raise TimeoutError(f'达到{m["budget"]["wall_seconds"]}秒预算并已请求停止，保留现场，不将停止后的数据当完整结果')
     # Collect a late solve as late, never silently turn an over-budget run into normal completion.
     phase('collecting');report=folder/'case/reports/Torque Plots.csv'
     export_report(app,'WB_BH_Torque',['-Moving1.Torque'],report)
@@ -251,7 +261,7 @@ def run(folder,motor_storage,native_storage):
         native_storage!=folder.parent.parent/'calibrated_motor_native'):raise ValueError('执行/扫描/导入目录不是同一存储的隔离子目录')
     state=read(folder/'state.json')
     if state['status']!='starting' or (folder/'case').exists():raise ValueError('仅允许尚未执行的starting任务，禁止重提原目录')
-    locks=[];desktop=None;identity=None;result=None;owned_queue=False;deadline=time.monotonic()+BUDGET['wall_seconds']
+    locks=[];desktop=None;identity=None;result=None;owned_queue=False;started=time.monotonic();deadline=None
     def phase(name):
         state.update(status='running',phase=name);write_json(folder/'state.json',state)
     try:
@@ -268,6 +278,7 @@ def run(folder,motor_storage,native_storage):
             if time.monotonic()>handoff_deadline:raise ValueError('扫描/导入仍占用执行锁，不启动AEDT')
             time.sleep(.1)
         m=verify_inputs(folder,PROJECT,dispatch=True)
+        deadline=started+m['budget']['wall_seconds']
         claim_queue(folder,motor_storage,state)
         owned_queue=True;require_configured_license_connection()
         check_budget(folder,deadline);phase('opening');case=folder/'case';case.mkdir();project=case/'motor.aedt'

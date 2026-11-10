@@ -44,6 +44,14 @@ class MaterialBatchTests(unittest.TestCase):
         self.assertFalse(batch['efficiency_enabled'])
         self.assertEqual(self.motor.jobs(),[])
 
+    def test_fine100_batch_freezes_its_30_minute_case_budget_and_reopens(self):
+        self.request['measurement_protocol']='v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1'
+        batch=self.prepare();self.assertEqual(batch['budget']['per_motor_seconds'],1800)
+        self.assertEqual(batch['budget']['wall_seconds'],260+1820+120)
+        self.assertEqual(self.batches.get(batch['id'])['measurement_protocol'],self.request['measurement_protocol'])
+        manifest=self.batches.path(batch['id'])/'manifest.json';m=read(manifest);m['budget']['per_motor_seconds']=1200;write_json(manifest,m)
+        with self.assertRaisesRegex(ValueError,'范围'):self.batches.get(batch['id'])
+
     def test_repeat_batch_reopens_same_identity_and_does_not_duplicate_children(self):
         first=self.prepare();before=fixtures.MaterialChainTests.files(self)
         second=self.prepare()

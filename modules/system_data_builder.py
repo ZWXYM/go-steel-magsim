@@ -14,7 +14,7 @@ from modules.motor_dataset_export import dataset_bundle,DATASET_ID_PATTERN
 from modules.system_data import WorkpackStore, MAX_CONTENT_BYTES, json_bytes, sha256
 from modules.system_data_relations import batch_calibration_relation
 
-VERSION = 'system_data_workpack_v4'
+VERSION = 'system_data_workpack_v5'
 PRODUCER_SHA256 = sha256(Path(__file__).read_bytes())
 
 
@@ -44,17 +44,28 @@ class SystemDataBuilder:
 
     def build(self, selection):
         if (not isinstance(selection, dict) or not {'calibration', 'datasets', 'batch'} <= set(selection)
-                or set(selection)-{'calibration', 'datasets', 'batch', 'optimization', 'constraint_study','predictions'}
+                or set(selection)-{'calibration', 'datasets', 'batch', 'optimization', 'constraint_study','predictions','additional_batches'}
                 or not isinstance(selection['datasets'], list) or len(selection['datasets']) > 16):
             raise ValueError('请明确选择校准、至多16份电机数据集及可选批量')
         predictions=selection.get('predictions',[])
         if not isinstance(predictions,list) or len(predictions)>16:
             raise ValueError('每包至多16份保存预测')
-        if not selection['calibration'] and not selection['datasets'] and not selection['batch'] and not selection.get('optimization') and not selection.get('constraint_study') and not predictions:
+        additional=selection.get('additional_batches',[])
+        if not isinstance(additional,list) or len(additional)>3:
+            raise ValueError('每包至多另选3份已完成电机批量')
+        selected_batches=([selection['batch']] if selection['batch'] is not None else [])+additional
+        for selected_batch in selected_batches:
+            if (not isinstance(selected_batch,dict) or set(selected_batch)!={'id','source_binding_sha256'}
+                    or not isinstance(selected_batch['id'],str) or not re.fullmatch(r'bhbatch_[a-f0-9]{12}',selected_batch['id'])
+                    or not isinstance(selected_batch['source_binding_sha256'],str) or not re.fullmatch(r'[a-f0-9]{64}',selected_batch['source_binding_sha256'])):
+                raise ValueError('校准电机批量选择不符')
+        if len({row['id'] for row in selected_batches})!=len(selected_batches):
+            raise ValueError('同一电机批量不能重复选择；请取消主批量或其他批量中的重复项')
+        if not selection['calibration'] and not selection['datasets'] and not selected_batches and not selection.get('optimization') and not selection.get('constraint_study') and not predictions:
             raise ValueError('请至少选择一项已有数据')
         files, source_files = {}, {}
         index = dict(version=VERSION, created_utc=datetime.now(timezone.utc).isoformat(),
-                     calibration=None, datasets=[], calibrated_batch=None, optimization=None, constraint_study=None,saved_predictions=[], producer_sha256=PRODUCER_SHA256,
+                     calibration=None, datasets=[], calibrated_batch=None, calibrated_batches=[],optimization=None, constraint_study=None,saved_predictions=[], producer_sha256=PRODUCER_SHA256,
                      private_only=True, new_native_solves=0, new_predictions=0, new_analyses=0)
 
         def put(name, blob):
@@ -150,11 +161,8 @@ class SystemDataBuilder:
                 original_accepted_count=snapshot['saved_accepted_count'], native_csv_accepted_count=snapshot['native_csv_accepted_count'],
                 data_usage=snapshot['data_usage'], source_hashes=dataset['source_hashes'], bundle_sha256=sha256(blob)))
 
-        batch=selection['batch']
-        if batch is not None:
-            if (not isinstance(batch,dict) or set(batch)!={'id','source_binding_sha256'}
-                    or not isinstance(batch['id'],str) or not re.fullmatch(r'bhbatch_[a-f0-9]{12}',batch['id'])):
-                raise ValueError('校准电机批量选择不符')
+        batch_sources=[];batch_overview=[]
+        for batch in selected_batches:
             before=batch_binding(self.batches,batch['id'])
             if before!=batch['source_binding_sha256']:
                 raise ValueError('所选批量状态已变化，请刷新后重新选择')
@@ -166,10 +174,33 @@ class SystemDataBuilder:
             if batch_binding(self.batches,batch['id'])!=before:
                 raise ValueError('批量在打包期间发生变化，请刷新后重新选择')
             put('calibrated_motor/'+batch['id']+'.zip',blob)
-            index['calibrated_batch']=dict(id=batch['id'], source_binding_sha256=before, bundle_sha256=sha256(blob),
+            entry=dict(id=batch['id'], source_binding_sha256=before, bundle_sha256=sha256(blob),
                 result_count=sum(item.get('result_available') is True for item in record['items']), item_count=len(record['items']),
+                measurement_protocol=record.get('measurement_protocol'),
                 calibration_relation=batch_calibration_relation(record,index['calibration']),
                 efficiency_enabled=False, optimization_ranking_enabled=False)
+            index['calibrated_batches'].append(entry);batch_sources.append((batch['id'],before))
+            if selection['batch'] is not None and batch['id']==selection['batch']['id']:index['calibrated_batch']=entry
+            for item in record['items']:
+                source=item.get('source') or {};metrics=item.get('metrics') or {};selection_row=item.get('selection') or {}
+                row=dict(batch_id=batch['id'],item_id=item.get('id'),execution_id=item.get('execution_id'),
+                    material_name=source.get('material_name'),material_key=selection_row.get('key'),
+                    measurement_protocol=item.get('measurement_protocol') or record.get('measurement_protocol'),
+                    model_version=item.get('model_version'),status=item.get('status'),result_available=item.get('result_available') is True,
+                    error=item.get('error'),parent_bank_sha256=source.get('parent_bank_sha256'),effective_bank_sha256=source.get('effective_bank_sha256'),
+                    training_grades_json=json.dumps(source.get('training_grades'),ensure_ascii=False),
+                    excluded_grades_json=json.dumps(source.get('excluded_grades'),ensure_ascii=False),
+                    efficiency_enabled=False,optimization_ranking_enabled=False)
+                row.update({key:metrics.get(key) if row['result_available'] else None for key in
+                    ('source_n_samples','n_samples','T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_numerical_acceptance','torque_csv_sha256')})
+                batch_overview.append(row)
+        if selected_batches:
+            fields=['batch_id','item_id','execution_id','material_name','material_key','measurement_protocol','model_version','status','result_available',
+                'source_n_samples','n_samples','T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_numerical_acceptance','torque_csv_sha256',
+                'parent_bank_sha256','effective_bank_sha256','training_grades_json','excluded_grades_json','error','efficiency_enabled','optimization_ranking_enabled']
+            put('calibrated_motor/overview.csv',csv_bytes(batch_overview,fields))
+            index['calibrated_batch_overview']=dict(path='calibrated_motor/overview.csv',rows=len(batch_overview),
+                interpretation='Original metrics and protocol identities only; no pooled ranking or new independent samples')
 
         if selection.get('optimization') is not None:
             optimization,content=self.optimization_exports.collect(selection['optimization'])
@@ -188,6 +219,8 @@ class SystemDataBuilder:
             index['constraint_study']=study
         if any(sha256(path.read_bytes())!=checksum for path,checksum in source_files.items()):
             raise ValueError('校准来源在打包期间变化，未登记新包')
+        if any(batch_binding(self.batches,artifact)!=binding for artifact,binding in batch_sources):
+            raise ValueError('所选批量在打包期间发生变化，请刷新后重新选择')
         put('selection.json',json_bytes(selection))
         put('data_index.json',json_bytes(index))
         put('README.md',('''# 所选系统数据工作包
@@ -200,8 +233,8 @@ predictions/仅含明确勾选的已有材料预测包，保留原输入、父ba
 
 motor_datasets/每包仅含一个原模型/协议的数据集、原文件及哈希。原判据通过与官方CSV来源且通过原判据分别列出；V8_1历史处理/估算保留，不能替代当前原生损耗或稳态改善证据。重复材料、工况及曲线节点不增加独立样品数。不同版本不得混拼排名。
 
-calibrated_motor/仅在选择批量时包含；保留实际材料、官方转矩CSV、原接受标记和异常。标量方向等效不视为局部RD/TD验证；零损耗B-H分支不输出效率或最终优化排名。
-所选校准与既有电机批量可能来自不同版本；实际记录、父/有效子库和逐条关系见data_index.json的calibrated_batch.calibration_relation。分别归档不表示已用所选校准重算该批量。
+calibrated_motor/仅在选择批量时包含；可选择1份主批量并另选至多3份，每批保留独立ZIP、实际材料、协议、官方转矩CSV、原接受标记和异常。不同时间步或材料本构分别归档，不合并排名，不插值增造点数。标量方向等效不视为局部RD/TD验证；零损耗B-H分支不输出效率或最终优化排名。
+所选校准与既有电机批量可能来自不同版本；实际记录、父/有效子库和逐条关系见data_index.json的calibrated_batches各项calibration_relation；calibrated_batch兼容保留主批量（如有）。分别归档不表示已用所选校准重算任一批量。
 
 optimization/仅在明确选择已有筛选时包含；原analysis/ranking/说明/ZIP逐字节保留，附其关联原计划（如有）与当前使用范围说明。不重新评分、不改基准、权重、约束或“无改善候选”的结果；历史估算不改称原生损耗改善。
 
@@ -216,10 +249,11 @@ manifest.json核对文件完整性；本包是私有冻结快照，不随新任�
         out=io.BytesIO()
         with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:
             for name,blob in files.items(): archive.writestr(name,blob)
-        relation=(index['calibrated_batch'] or {}).get('calibration_relation') or {}
+        relation_notes=list(dict.fromkeys(row['calibration_relation']['note'] for row in index['calibrated_batches']
+            if row['calibration_relation'].get('relationship') in ('unknown','different_or_mixed_sources')))
         return self.store.register_bytes(out.getvalue(),'所选系统数据 '+index['created_utc'],
             '网页冻结快照：'+str(len(index['datasets']))+'份版本独立电机数据集；校准'+('已包含' if cal else '未选择')+
-            '，校准电机批量'+('已包含' if batch else '未选择')+'，已有原筛选'+('已包含' if index['optimization'] else '未选择')+
+            '，校准电机批量'+str(len(index['calibrated_batches']))+'份，已有原筛选'+('已包含' if index['optimization'] else '未选择')+
             '，已有约束研究'+('已包含' if index['constraint_study'] else '未选择')+
             '，保存预测'+str(len(index['saved_predictions']))+'份。原始异常和使用范围保持。'+
-            (' '+relation['note'] if relation.get('relationship') in ('unknown','different_or_mixed_sources') else ''))
+            (' '+' '.join(relation_notes) if relation_notes else ''))

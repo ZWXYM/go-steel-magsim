@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 from pathlib import Path
 
 import psutil
@@ -47,6 +48,46 @@ def require_native_pid(native_desktop, expected_pid):
     if type(actual) is not int or actual!=expected_pid:
         raise ValueError(f'AEDT实际会话PID与已核对会话不符：期望{expected_pid}，实际{actual}；未继续操作')
     return actual
+
+
+def owned_rot_moniker_matches(name,version,pid):
+    """Match one PID/version, never the global active Desktop or a PID prefix."""
+    if type(pid) is not int or pid<=0 or not isinstance(version,str) or not re.fullmatch(r'\d{4}\.\d+',version):
+        raise ValueError('停止目标PID或版本无效')
+    return isinstance(name,str) and bool(re.search(r'(?:^|!)(?:Ansoft\.)?ElectronicsDesktop\.'+re.escape(version)+r'\.\d+:'+str(pid)+r'$',name))
+
+
+class OwnedNativeStopClient:
+    """A stop-only client; it does not save, close, kill or adopt a Desktop."""
+    def __init__(self,native,identity,moniker):
+        self.odesktop=native;self.identity=dict(identity);self.aedt_process_id=identity['pid']
+        self.attachment=dict(method='Windows_ROT_exact_PID',moniker=moniker)
+        require_native_pid(native,self.aedt_process_id)
+
+    def stop_simulations(self,clean_stop=True):
+        if clean_stop is not True:raise ValueError('预算停止仅允许clean_stop=True')
+        if identity_status(self.identity)!='alive':raise ValueError('停止目标PID/创建时间已改变，未停止')
+        require_native_pid(self.odesktop,self.aedt_process_id)
+        return self.odesktop.StopSimulations(True)
+
+
+def connect_owned_stop_client(identity,version):
+    """Bind an exact Windows ROT moniker without SDK global-session fallback."""
+    owned_rot_moniker_matches('',version,identity.get('pid'))
+    if identity_status(identity)!='alive':raise ValueError('专用停止目标身份不可确认，未连接')
+    if os.name!='nt':raise ValueError('当前环境不支持Windows确切会话停止连接')
+    import pythoncom
+    from ansys.aedt.core.internal.clr_module import win32_client
+    pythoncom.CoInitialize();context=pythoncom.CreateBindCtx(0);table=pythoncom.GetRunningObjectTable();selected=[]
+    for moniker in table.EnumRunning():
+        try:name=moniker.GetDisplayName(context,moniker)
+        except pythoncom.com_error:continue
+        if owned_rot_moniker_matches(name,version,identity['pid']):selected.append((moniker,name))
+    if len(selected)!=1:raise ValueError('确切PID停止目标缺失或不唯一，未回退到其他会话')
+    native=win32_client.Dispatch(table.GetObject(selected[0][0]).QueryInterface(pythoncom.IID_IDispatch))
+    client=OwnedNativeStopClient(native,identity,selected[0][1])
+    if identity_status(identity)!='alive':raise ValueError('停止连接期间专用进程身份改变')
+    return client
 
 
 def native_transport_setting():

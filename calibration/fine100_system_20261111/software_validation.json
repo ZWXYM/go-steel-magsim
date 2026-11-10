@@ -1,0 +1,19 @@
+{
+  "main_backend_tests": 885,
+  "public_backend_tests": 885,
+  "public_private_source_skips": 4,
+  "javascript_suites_main": 32,
+  "javascript_suites_public": 32,
+  "tracked_Python_AST": 234,
+  "source_sha_matches": true,
+  "main_tests_sha256": "0a12a945f6024590d395a24aef27a1cdeac74ceb45277f4738232f7b41ce6833",
+  "public_tests_sha256": "5e82c06143c528399276c65c898c2856213ab462cc1e08c202c80d0aff55c2b3",
+  "new_completed_motor_solves": 1,
+  "new_field_solves": 0,
+  "new_MuMax_solves": 0,
+  "completed_Maxwell_at_checkpoint": 68,
+  "completed_MuMax_at_checkpoint": 690,
+  "original_default_calibration_unchanged": true,
+  "old_public_data_trees": 70,
+  "private_packages_not_published": true
+}

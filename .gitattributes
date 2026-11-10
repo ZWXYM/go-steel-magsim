@@ -307,3 +307,4 @@ docs/workpack_sources_20261110.md -text
 
 tests/test_motor_plan_config_ui.js -text
 docs/system_closed_loop_20261110.md -text
+/calibration/fine100_system_20261111/** -text

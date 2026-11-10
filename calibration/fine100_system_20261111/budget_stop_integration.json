@@ -1,0 +1,20 @@
+{
+  "study": "owned_budget_interrupt_integration_v1",
+  "integration_source_commit": "d0cd0474",
+  "accelerated_clock_seconds": 45,
+  "declared_production_budget_seconds": 1200,
+  "timing_scope": "Integration-only accelerated clock: start=deadline-1200. Not a claim that 1200 real seconds elapsed.",
+  "outcome": "interrupted",
+  "solve_attempted": true,
+  "native_return": "stopped",
+  "target_matches_owned_desktop": true,
+  "attachment_method": "Windows_ROT_exact_PID",
+  "no_formal_result": true,
+  "dedicated_session_closed": true,
+  "native_identity_status": "dead",
+  "wall_seconds_including_cleanup": 78.43799999999464,
+  "sources_unchanged": true,
+  "new_completed_Maxwell_solves": 0,
+  "new_MuMax_solves": 0,
+  "process_close_or_kill_requested_by_watcher": false
+}

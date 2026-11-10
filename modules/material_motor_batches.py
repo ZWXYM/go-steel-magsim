@@ -15,7 +15,7 @@ from modules.material_motor_workflow import LINEAGE, same_source
 from modules.motor_queue import DispatchWindow, QueueLease, process_identity, identity_status
 from modules.motor_workbench import write_json
 from modules.calibrated_motor_native import SUPPORT as IMPORT_SUPPORT
-from modules.calibrated_motor_execution import SUPPORT as EXEC_SUPPORT
+from modules.calibrated_motor_execution import SUPPORT as EXEC_SUPPORT,execution_budget
 from modules.calibrated_motor_analysis import protocol
 
 VERSION = 'calibrated_material_batch_v1'
@@ -29,13 +29,14 @@ SUPPORT = tuple(sorted(set(IMPORT_SUPPORT + EXEC_SUPPORT + (
 def read(path): return json.loads(Path(path).read_text(encoding='utf8'))
 
 
-def expected_budget(items, cores):
+def expected_budget(items, cores, measurement='v8_2_cycle1'):
     pending=[r for r in items if r['initial_status'] not in ('result_available','needs_review')]
     imports=sum(r['records']['native_import']['status']=='ready' for r in pending)
     solves=sum('execution' not in r['records'] or r['records']['execution']['status']=='prepared' for r in pending)
+    motor_seconds=execution_budget(measurement)['wall_seconds']
     return dict(max_new_imports=imports,max_new_motor_solves=solves,
         max_new_native_sessions=imports+solves,cores=cores,gpus=0,
-        per_import_seconds=240,per_motor_seconds=1200,wall_seconds=imports*260+solves*1220+120)
+        per_import_seconds=240,per_motor_seconds=motor_seconds,wall_seconds=imports*260+solves*(motor_seconds+20)+120)
 
 
 def workspace_chain(project, root, storage):
@@ -106,7 +107,7 @@ class MaterialMotorBatches:
             manifest = dict(id=artifact,version=VERSION,created_utc=datetime.now(timezone.utc).isoformat(),
                 idempotency_sha256=digest,items=items,cores=response['cores'],
                 measurement_protocol=response['measurement_protocol'],producer_hashes=producers,
-                budget=expected_budget(items,response['cores']),
+                budget=expected_budget(items,response['cores'],response['measurement_protocol']),
                 efficiency_enabled=False,optimization_ranking_enabled=False)
             write_json(folder/'manifest.json',manifest)
             write_json(folder/'state.json',dict(id=artifact,status='prepared',
@@ -155,7 +156,7 @@ class MaterialMotorBatches:
                 or manifest.get('efficiency_enabled') is not False or manifest.get('optimization_ranking_enabled') is not False
                 or type(manifest['cores']) is not int or not 1<=manifest['cores']<=2
                 or not 1<=len(manifest['items'])<=8 or len(state['items'])!=len(manifest['items'])
-                or manifest['budget']!=expected_budget(manifest['items'],manifest['cores'])
+                or manifest['budget']!=expected_budget(manifest['items'],manifest['cores'],manifest['measurement_protocol'])
                 or state['status'] not in ('prepared','starting','running',*TERMINAL)):
             raise ValueError('批量计划身份或范围不符')
         protocol(manifest['measurement_protocol'])

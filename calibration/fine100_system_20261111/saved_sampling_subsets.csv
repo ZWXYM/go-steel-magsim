@@ -1,0 +1,5 @@
+﻿source,stride,selected_points,arithmetic_mean_Nm,trapezoid_mean_Nm,relative_to_original101_mean_pct,new_native_solves
+subset_of_existing_official_101_points,1,101,1.8635594560504465,1.86370892356626,0.0,0
+subset_of_existing_official_101_points,2,51,1.8568760783242584,1.857041345801362,-0.3586350682018291,0
+subset_of_existing_official_101_points,5,21,1.8470882080295208,1.8470119832075422,-0.8838595391978621,0
+subset_of_existing_official_101_points,10,11,1.842144568796481,1.8414977552292189,-1.1491389332622282,0

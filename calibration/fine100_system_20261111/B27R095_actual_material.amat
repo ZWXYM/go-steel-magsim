@@ -1,0 +1,40 @@
+# Actual saved direction-equivalent motor material: WB_B27R095_8fff23daed9e_RD_INTRINSIC_EQ_v1
+# Source execution: bhexec_09d5b52d199a; source direction: RD
+# Isotropic Intrinsic Bi-H engineering model. Uncalibrated zero loss placeholders.
+$begin 'WB_B27R095_8fff23daed9e_RD_INTRINSIC_EQ_v1'
+				CoordinateSystemType='Cartesian'
+				BulkOrSurfaceType=1
+				$begin 'PhysicsTypes'
+					set('Electromagnetic')
+				$end 'PhysicsTypes'
+				permittivity='1'
+				$begin 'permeability'
+					property_type='nonlinear'
+					BTypeForSingleCurve='intrinsic'
+					HUnit='A_per_meter'
+					BUnit='tesla'
+					IsTemperatureDependent=false
+					$begin 'BHCoordinates'
+						DimUnits[2: '', '']
+						Points[52: 0, 0, 0.1, 5.48743362938564e-05, 0.2, 0.000219806730172713, 0.5, 0.00135311047070928, 1, 0.00525876675756856, 2, 0.0197722109235771, 5, 0.100098805533693, 10, 0.520630852269386, 20, 1.43413701829877, 50, 1.77622397241693, 100, 1.88947657893386, 200, 1.91176527224771, 500, 1.91936451009928, 800, 1.92437278385085, 1000, 1.93864300288856, 1500, 1.95099730581785, 2000, 1.95747845386713, 3000, 1.96035381583569, 5000, 1.96035381584282, 7500, 1.96035381584282, 10000, 1.96035381584282, 15000, 1.96035381584282, 20000, 1.96035381584282, 30000, 1.96035381584282, 40000, 1.96035381584282, 50000, 1.96035381584282]
+					$end 'BHCoordinates'
+					$begin 'Temperatures'
+					$end 'Temperatures'
+					RecoilPermeability='1'
+				$end 'permeability'
+				conductivity='2000000'
+				$begin 'core_loss_type'
+					property_type='ChoiceProperty'
+					Choice='Electrical Steel'
+				$end 'core_loss_type'
+				core_loss_kh='0'
+				core_loss_kc='0'
+				core_loss_ke='0'
+				core_loss_kdc='0'
+				mass_density='7650'
+				core_loss_equiv_cut_depth='0.00027meter'
+				ModTime=1794334237
+				Library=''
+				LibLocation='Project'
+				ModSinceLib=false
+$end 'WB_B27R095_8fff23daed9e_RD_INTRINSIC_EQ_v1'

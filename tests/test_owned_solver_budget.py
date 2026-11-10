@@ -10,7 +10,7 @@ from unittest.mock import MagicMock,patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from tools import calibrated_motor_analysis_worker as worker
-from modules.calibrated_motor_execution import BUDGET_STOP_POLICY
+from modules.calibrated_motor_execution import BUDGET_STOP_POLICY,execution_budget
 from modules.motor_workbench import write_json
 
 
@@ -19,7 +19,8 @@ class OwnedBudgetTests(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)
         self.folder=self.root/'calibrated_motor_execution/bhexec_aaaaaaaaaaaa';self.folder.mkdir(parents=True)
         (self.folder/'case').mkdir();(self.root/'motor').mkdir();self.identity=dict(pid=123,create_time=456.0)
-        self.manifest=dict(id=self.folder.name,aedt_version='2025.1',budget_stop_policy=BUDGET_STOP_POLICY)
+        self.manifest=dict(id=self.folder.name,aedt_version='2025.1',budget_stop_policy=BUDGET_STOP_POLICY,
+            measurement_protocol='v8_2_cycle1',budget=execution_budget('v8_2_cycle1'))
         self.state=dict(id=self.folder.name,phase='solving',queue_token='fixture-token')
         self.deadline=time.monotonic()-1
         self.watch=dict(execution_id=self.folder.name,queue_token='fixture-token',policy=BUDGET_STOP_POLICY,
@@ -43,6 +44,20 @@ class OwnedBudgetTests(unittest.TestCase):
         self.desktop.release_desktop.assert_not_called();self.desktop.close_desktop.assert_not_called()
         self.assertFalse(self.factory.call_args.kwargs['new_desktop']);self.assertFalse(self.factory.call_args.kwargs['close_on_exit'])
         self.call();self.desktop.stop_simulations.assert_called_once();self.factory.assert_called_once()
+
+    def test_fine100_watch_accepts_only_the_frozen_1800_second_duration(self):
+        self.manifest.update(measurement_protocol='v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1',
+            budget=execution_budget('v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1'))
+        write_json(self.folder/'manifest.json',self.manifest)
+        with self.assertRaisesRegex(ValueError,'范围不符'):self.call()
+        self.watch['start_monotonic']=self.watch['deadline_monotonic']-1800;write_json(self.folder/'budget_watch.json',self.watch)
+        self.assertEqual(self.call()['status'],'clean_stop_requested')
+
+    def test_prepare_binds_the_exact_target_before_deadline_without_stopping(self):
+        self.watch.update(deadline_monotonic=time.monotonic()+100);self.watch['start_monotonic']=self.watch['deadline_monotonic']-1200;write_json(self.folder/'budget_watch.json',self.watch)
+        with patch.object(worker,'identity_status',return_value='alive'),patch.object(worker,'connect_owned_stop_client',return_value=self.desktop) as connect:
+            target=worker.stop_owned_at_budget(self.folder,prepare_only=True)
+        self.assertIs(target,self.desktop);connect.assert_called_once_with(self.identity,'2025.1');self.desktop.stop_simulations.assert_not_called();self.assertFalse((self.folder/'budget_stop.json').exists())
 
     def test_native_false_return_is_not_recorded_as_confirmed_stop(self):
         self.desktop.stop_simulations.return_value=False
@@ -95,13 +110,16 @@ class OwnedBudgetTests(unittest.TestCase):
         self.assertEqual(self.call()['status'],'already_closed');self.factory.assert_not_called()
 
     def test_expired_watcher_requests_once_and_preserves_an_existing_stop_intent(self):
-        def stopped(folder):
+        def stopped(folder,desktop_factory=None,prepare_only=False):
+            if prepare_only:return self.desktop
+            self.assertIs(desktop_factory(),self.desktop)
             record=dict(execution_id=self.folder.name,identity=self.identity,stop_attempted=True,status='clean_stop_requested')
             write_json(folder/'budget_stop.json',record);return record
         with patch.object(worker,'verify_inputs',return_value=self.manifest),\
              patch.object(worker,'stop_owned_at_budget',side_effect=stopped) as stop:
             self.assertEqual(worker.watch_budget(self.folder),0);self.assertEqual(worker.watch_budget(self.folder),0)
-            stop.assert_called_once();self.assertTrue((self.folder/'attention.json').exists())
+            self.assertEqual(stop.call_count,2);self.assertTrue(stop.call_args_list[0].kwargs['prepare_only']);self.assertTrue((self.folder/'attention.json').exists())
+        ready=json.loads((self.folder/'budget_watch_ready.json').read_text());self.assertTrue(ready['target_verified']);self.assertEqual(ready['target_identity'],self.identity)
 
     def test_finished_watcher_exits_without_stop_or_attention(self):
         self.watch['deadline_monotonic']=time.monotonic()+100;write_json(self.folder/'budget_watch.json',self.watch)
@@ -117,12 +135,13 @@ class OwnedBudgetTests(unittest.TestCase):
         failure=json.loads((self.folder/'budget_watch_failure.json').read_text())
         self.assertTrue(failure['stop_not_confirmed']);self.assertIn('RPC unavailable',failure['error'])
         self.assertFalse((self.folder/'budget_stop.json').exists())
+        self.assertFalse((self.folder/'budget_watch_ready.json').exists())
 
     def test_watcher_launch_is_an_independent_hidden_cpu_child(self):
         (self.folder/'budget_watch.json').rename(self.folder/'initial_watch.kept')
         def started(*args,**kwargs):
             write_json(self.folder/'budget_watch_ready.json',dict(execution_id=self.folder.name,
-                queue_token='fixture-token',identity=self.identity))
+                queue_token='fixture-token',identity=self.identity,target_identity=self.identity,target_verified=True))
             return SimpleNamespace(pid=999,poll=lambda:None)
         with patch.object(worker.subprocess,'Popen',side_effect=started) as launch,\
              patch.object(worker,'process_identity',return_value=self.identity),patch.object(worker,'identity_status',return_value='alive'):
@@ -131,6 +150,14 @@ class OwnedBudgetTests(unittest.TestCase):
         self.assertEqual(launch.call_args.kwargs['cwd'],self.folder)
         data=json.loads((self.folder/'budget_watch.json').read_text());self.assertEqual(data['policy'],BUDGET_STOP_POLICY)
         self.assertAlmostEqual(data['deadline_monotonic']-data['start_monotonic'],1200)
+
+    def test_launch_rejects_a_live_watcher_that_has_not_verified_the_target(self):
+        (self.folder/'budget_watch.json').rename(self.folder/'initial_watch.kept')
+        def started(*args,**kwargs):
+            write_json(self.folder/'budget_watch_ready.json',dict(execution_id=self.folder.name,queue_token='fixture-token',identity=self.identity))
+            return SimpleNamespace(pid=999,poll=lambda:None)
+        with patch.object(worker.subprocess,'Popen',side_effect=started),patch.object(worker,'process_identity',return_value=self.identity),patch.object(worker,'identity_status',return_value='alive'):
+            with self.assertRaisesRegex(ValueError,'身份未确认'):worker.launch_budget_watch(self.folder,time.monotonic()+100)
 
 
 if __name__=='__main__':unittest.main()

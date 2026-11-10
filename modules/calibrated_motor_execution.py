@@ -27,6 +27,10 @@ SUPPORT=('modules/calibrated_motor_execution.py','modules/calibrated_motor_analy
     'modules/motor_queue.py','modules/motor_workbench.py','tools/motor_scan_worker.py','tools/calibrated_motor_analysis_worker.py')
 TERMINAL=('completed','completed_after_budget','failed','needs_attention')
 
+def execution_budget(measurement):
+    points=protocol(measurement)['points_per_cycle']
+    return dict(BUDGET,wall_seconds=1800 if points==100 else BUDGET['wall_seconds'])
+
 def read(path):return json.loads(Path(path).read_text(encoding='utf8'))
 
 def verify_model(path,manifest,*,execution_material=False):
@@ -48,7 +52,7 @@ def verify_model(path,manifest,*,execution_material=False):
 def verify_inputs(folder,project,*,dispatch=False):
     folder,project=Path(folder).resolve(),Path(project).resolve();m=read(folder/'manifest.json')
     if (not re.fullmatch(r'bhexec_[0-9a-f]{12}',folder.name) or m['id']!=folder.name or m['version']!=VERSION or
-        m['budget']!=BUDGET or m.get('budget_stop_policy') not in (None,BUDGET_STOP_POLICY) or m.get('aedt_transport','auto') not in ('auto','grpc','com') or type(m['cores']) is not int or not 1<=m['cores']<=2 or
+        m['budget']!=execution_budget(m['measurement_protocol']) or m.get('budget_stop_policy') not in (None,BUDGET_STOP_POLICY) or m.get('aedt_transport','auto') not in ('auto','grpc','com') or type(m['cores']) is not int or not 1<=m['cores']<=2 or
         m['efficiency_enabled'] is not False or m['optimization_ranking_enabled'] is not False or
         m['requested_protocol']!=protocol(m['measurement_protocol']) or m['H_axis']!='physical_A_per_m' or m['H_scale']!=1 or
         set(m['input_hashes'])!={'inputs/motor.aedt','inputs/source_bundle.zip','inputs/material.amat','inputs/material.metadata.json'} or
@@ -101,7 +105,7 @@ class CalibratedMotorExecution:
             parent_bank_sha256=plan['parent_bank_sha256'],effective_bank_sha256=plan['effective_bank_sha256'],
             training_grades=plan['training_grades'],excluded_grades=plan['excluded_grades'],H_axis='physical_A_per_m',H_scale=1,
             measurement_protocol=plan['measurement_protocol'],requested_protocol=plan['requested_protocol'],cores=min(plan['cores'],2),
-            budget=BUDGET,budget_stop_policy=BUDGET_STOP_POLICY,design='Motor-CAD 2',setup='Setup1',aedt_version='2025.1',aedt_transport=transport,
+            budget=execution_budget(plan['measurement_protocol']),budget_stop_policy=BUDGET_STOP_POLICY,design='Motor-CAD 2',setup='Setup1',aedt_version='2025.1',aedt_transport=transport,
             efficiency_enabled=False,optimization_ranking_enabled=False,
             input_hashes={p.relative_to(folder).as_posix():sha(p.read_bytes()) for p in inputs.iterdir()},
             producer_hashes={name:sha((self.project/name).read_bytes()) for name in SUPPORT})
@@ -154,7 +158,7 @@ class CalibratedMotorExecution:
                 raise ValueError('预算停止记录与本次专用会话不符')
             result['budget_stop']=stop
             if s['status']=='failed':
-                result.update(raw_error=result.get('error'),error='达到1200秒预算，已请求停止本次求解；现场保留，未重试。')
+                result.update(raw_error=result.get('error'),error=f'达到{m["budget"]["wall_seconds"]}秒预算，已请求停止本次求解；现场保留，未重试。')
         return result
 
     def records(self):
@@ -228,10 +232,11 @@ class CalibratedMotorExecution:
 
     @staticmethod
     def _watch(proc,folder):
-        try:code=proc.wait(timeout=BUDGET['wall_seconds'])
+        seconds=read(folder/'manifest.json')['budget']['wall_seconds']
+        try:code=proc.wait(timeout=seconds)
         except subprocess.TimeoutExpired:code=None
         if read(folder/'state.json')['status'] not in TERMINAL:
-            write_json(folder/'attention.json',dict(error='超过1200秒预算，保留进程/现场，不自动重试' if code is None else '执行进程退出 '+str(code)+'，请查看日志'))
+            write_json(folder/'attention.json',dict(error=f'超过{seconds}秒预算，保留进程/现场，不自动重试' if code is None else '执行进程退出 '+str(code)+'，请查看日志'))
 
     def download(self,artifact,name):
         record=self.get(artifact)

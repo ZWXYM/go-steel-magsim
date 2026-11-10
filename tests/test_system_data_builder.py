@@ -154,4 +154,79 @@ class SystemDataBuilderTests(unittest.TestCase):
         self.assertFalse((self.storage/'system_data').exists())
 
 
+    def multi_batch_fixture(self):
+        folders={self.batch.name:self.batch}
+        for i in range(1,4):
+            folder=self.root/('bhbatch_'+format(i,'012x'));folder.mkdir();folders[folder.name]=folder
+            (folder/'manifest.json').write_bytes(json_bytes({'synthetic_batch':i}))
+            (folder/'state.json').write_bytes(json_bytes({'status':'completed'}))
+        self.batches.path=lambda artifact:folders[artifact]
+        bindings=[dict(id=key,source_binding_sha256=batch_binding(self.batches,key)) for key in folders]
+        records={key:dict(id=key,status='completed',measurement_protocol='fixture_protocol_'+str(i),
+            items=[dict(id='item_01',result_available=True,metrics=dict(T_avg_Nm=i-1,n_samples=101 if i==1 else 31,
+                source_n_samples=101 if i==1 else 31,torque_numerical_acceptance=i%2==0))]) for i,key in enumerate(folders)}
+        blobs={key:zipped({'batch.json':json_bytes(record),'raw/official.csv':('synthetic,'+key).encode()}).getvalue() for key,record in records.items()}
+        return folders,bindings,records,blobs
+
+    def test_four_completed_batches_keep_separate_protocols_raw_bytes_and_primary_compatibility(self):
+        folders,bindings,records,blobs=self.multi_batch_fixture()
+        selection=dict(calibration=None,datasets=[],batch=bindings[0],additional_batches=bindings[1:])
+        old={p:p.read_bytes() for folder in folders.values() for p in folder.iterdir()}
+        with patch('modules.system_data_builder.report_bundle',side_effect=lambda service,key:io.BytesIO(blobs[key])):
+            saved=self.builder.build(selection)
+        _,blob=self.builder.store.read(saved['id'])
+        with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+            index=json.loads(archive.read('data_index.json'));entries=index['calibrated_batches']
+            self.assertEqual([r['id'] for r in entries],list(folders));self.assertEqual(index['calibrated_batch'],entries[0])
+            self.assertEqual([r['measurement_protocol'] for r in entries],[r['measurement_protocol'] for r in records.values()])
+            for entry in entries:
+                self.assertEqual(archive.read('calibrated_motor/'+entry['id']+'.zip'),blobs[entry['id']])
+                self.assertEqual(entry['bundle_sha256'],sha256(blobs[entry['id']]))
+                self.assertFalse(entry['efficiency_enabled']);self.assertFalse(entry['optimization_ranking_enabled'])
+            self.assertEqual(json.loads(archive.read('selection.json')),selection)
+            overview=list(csv.DictReader(io.StringIO(archive.read('calibrated_motor/overview.csv').decode('utf-8-sig'))))
+            self.assertEqual([row['batch_id'] for row in overview],list(folders))
+            self.assertEqual([row['T_avg_Nm'] for row in overview],['-1','0','1','2'])
+            self.assertEqual([row['n_samples'] for row in overview],['31','101','31','31'])
+            self.assertEqual([row['torque_numerical_acceptance'] for row in overview],['True','False','True','False'])
+            self.assertEqual(index['calibrated_batch_overview']['rows'],4)
+        self.assertEqual(old,{p:p.read_bytes() for p in old});self.assertIn('批量4份',saved['description'])
+
+    def test_additional_batch_can_be_selected_without_primary_calibration_or_dataset(self):
+        _,bindings,_,blobs=self.multi_batch_fixture();selection=dict(calibration=None,datasets=[],batch=None,additional_batches=[bindings[1]])
+        with patch('modules.system_data_builder.report_bundle',side_effect=lambda service,key:io.BytesIO(blobs[key])):
+            saved=self.builder.build(selection)
+        with zipfile.ZipFile(io.BytesIO(self.builder.store.read(saved['id'])[1])) as archive:
+            index=json.loads(archive.read('data_index.json'));self.assertIsNone(index['calibrated_batch'])
+            self.assertEqual([row['id'] for row in index['calibrated_batches']],[bindings[1]['id']])
+
+    def test_duplicate_invalid_or_over_limit_batch_choices_do_not_register_partial_packages(self):
+        _,bindings,_,_=self.multi_batch_fixture();base=dict(calibration=None,datasets=[],batch=bindings[0])
+        invalid=[None,'bad',bindings,[bindings[0]],[bindings[1],bindings[1]],
+            [dict(id='../private',source_binding_sha256='a'*64)],[dict(bindings[1],source_binding_sha256='bad')],[{}]]
+        with patch('modules.system_data_builder.report_bundle',side_effect=AssertionError('invalid selection must fail before reading batches')):
+            for extra in invalid:
+                with self.subTest(extra=extra),self.assertRaises(ValueError):self.builder.build(dict(base,additional_batches=extra))
+        self.assertEqual(self.builder.store.records(),[])
+
+    def test_change_to_earlier_batch_while_collecting_later_batch_is_rejected(self):
+        folders,bindings,_,blobs=self.multi_batch_fixture();selection=dict(calibration=None,datasets=[],batch=bindings[0],additional_batches=[bindings[1]])
+        def collect(service,key):
+            if key==bindings[1]['id']:(folders[bindings[0]['id']]/'state.json').write_bytes(b'{"changed":true}')
+            return io.BytesIO(blobs[key])
+        with patch('modules.system_data_builder.report_bundle',side_effect=collect):
+            with self.assertRaisesRegex(ValueError,'打包期间发生变化'):self.builder.build(selection)
+        self.assertEqual(self.builder.store.records(),[])
+
+    def test_active_or_stale_additional_batch_cannot_be_archived_as_complete(self):
+        folders,bindings,records,blobs=self.multi_batch_fixture();selection=dict(calibration=None,datasets=[],batch=None,additional_batches=[bindings[1]])
+        records[bindings[1]['id']]['status']='running'
+        with patch('modules.system_data_builder.report_bundle',return_value=zipped({'batch.json':json_bytes(records[bindings[1]['id']])})):
+            with self.assertRaisesRegex(ValueError,'结束后'):self.builder.build(selection)
+        (folders[bindings[1]['id']]/'state.json').write_bytes(b'{"changed":true}')
+        with patch('modules.system_data_builder.report_bundle',side_effect=AssertionError('stale binding should be rejected first')):
+            with self.assertRaisesRegex(ValueError,'状态已变化'):self.builder.build(selection)
+        self.assertEqual(self.builder.store.records(),[])
+
+
 if __name__=='__main__':unittest.main()

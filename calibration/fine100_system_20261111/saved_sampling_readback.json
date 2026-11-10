@@ -1,0 +1,50 @@
+{
+  "study": "B23R075_saved_time_sampling_readback_v1",
+  "source_fine_csv_sha256": "66b7bea24e6ff3b674c0bff767d25ef2e5e2a2f4fc574bc7e6115e3023fd515e",
+  "source_coarse_csv_sha256": "c3ad45b100217b7b91baf30601f9ae43aa9bccf314f3537e8f48c2fce986493c",
+  "actual_coarse31_mean_Nm": -1.555193341068993,
+  "actual_fine101_mean_Nm": 1.8635594560504465,
+  "subsets": [
+    {
+      "source": "subset_of_existing_official_101_points",
+      "stride": 1,
+      "selected_points": 101,
+      "arithmetic_mean_Nm": 1.8635594560504465,
+      "trapezoid_mean_Nm": 1.86370892356626,
+      "relative_to_original101_mean_pct": 0.0,
+      "new_native_solves": 0
+    },
+    {
+      "source": "subset_of_existing_official_101_points",
+      "stride": 2,
+      "selected_points": 51,
+      "arithmetic_mean_Nm": 1.8568760783242584,
+      "trapezoid_mean_Nm": 1.857041345801362,
+      "relative_to_original101_mean_pct": -0.3586350682018291,
+      "new_native_solves": 0
+    },
+    {
+      "source": "subset_of_existing_official_101_points",
+      "stride": 5,
+      "selected_points": 21,
+      "arithmetic_mean_Nm": 1.8470882080295208,
+      "trapezoid_mean_Nm": 1.8470119832075422,
+      "relative_to_original101_mean_pct": -0.8838595391978621,
+      "new_native_solves": 0
+    },
+    {
+      "source": "subset_of_existing_official_101_points",
+      "stride": 10,
+      "selected_points": 11,
+      "arithmetic_mean_Nm": 1.842144568796481,
+      "trapezoid_mean_Nm": 1.8414977552292189,
+      "relative_to_original101_mean_pct": -1.1491389332622282,
+      "new_native_solves": 0
+    }
+  ],
+  "maximum_subset_arithmetic_change_pct": 1.1491389332622282,
+  "no_interpolated_points": true,
+  "no_new_trajectories": true,
+  "new_native_solves": 0,
+  "interpretation": "Subsets describe post-processing of one saved fine trajectory. They do not replace the actual 31-step solve or establish time-step convergence. The actual coarse and fine trajectories differ; this distinction is not resolved by relabeling the raw point count."
+}

@@ -49,7 +49,7 @@ def verify_package(blob):
                     raise ValueError('数据包成员路径无效或重复')
                 names.add(name.casefold())
             manifest = json.loads(archive.read('manifest.json'))
-            if (not isinstance(manifest, dict) or manifest.get('version') not in ('system_data_workpack_v2', 'system_data_workpack_v3','system_data_workpack_v4')
+            if (not isinstance(manifest, dict) or manifest.get('version') not in ('system_data_workpack_v2', 'system_data_workpack_v3','system_data_workpack_v4','system_data_workpack_v5')
                     or manifest.get('private_only') is not True or not isinstance(manifest.get('files'), dict)):
                 raise ValueError('数据包清单版本或私有标记不符')
             files = manifest['files']

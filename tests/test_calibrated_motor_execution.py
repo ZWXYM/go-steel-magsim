@@ -14,7 +14,7 @@ from unittest.mock import MagicMock,patch
 
 from flask import Flask
 import test_calibrated_motor_analysis as fixtures
-from modules.calibrated_motor_execution import CalibratedMotorExecution,BUDGET,read,verify_inputs
+from modules.calibrated_motor_execution import CalibratedMotorExecution,BUDGET,execution_budget,read,verify_inputs
 from modules.material_library import sha
 from modules.motor_queue import QueueLease,process_identity,identity_status
 from modules.motor_workbench import write_json
@@ -31,11 +31,12 @@ class ExecutionTests(unittest.TestCase):
         self.exe=CalibratedMotorExecution(self.analysis,self.motor,self.store/'calibrated_motor_execution')
 
     def audit(self,cycles=1):
+        points=self.plan.get('requested_protocol',{}).get('points_per_cycle',30)
         return dict(local_CS_verified=True,moving_insert_count=48,
             inserts=[dict(name='GOES_'+str(i),material=self.plan['material_name']) for i in range(48)],
             core_loss=dict(complete_insert_coverage=True,enabled_object_names=['Rotor','Stator']+['GOES_'+str(i) for i in range(48)]),
-            operating_point=dict(speed_rpm=3000,poles=4,cycles=str(cycles),points_per_cycle='30'),
-            setup=dict(StopTime='.03s' if cycles==3 else '.01s',TimeStep='.000333333333333s',UseAdaptiveTimeStep='false',
+            operating_point=dict(speed_rpm=3000,poles=4,cycles=str(cycles),points_per_cycle=str(points)),
+            setup=dict(StopTime='.03s' if cycles==3 else '.01s',TimeStep=format(1/(100*points),'.12g')+'s',UseAdaptiveTimeStep='false',
                 AutoDetectSteadyState='false',FastReachSteadyState='false',
                 SmoothBHCurve=str(self.plan.get('requested_protocol',{}).get('solver_settings',{}).get('SmoothBHCurve',False)).lower()))
 
@@ -121,6 +122,34 @@ class ExecutionTests(unittest.TestCase):
         verified.assert_called_once_with((folder/'inputs/motor.aedt').read_text(encoding='utf-8-sig'),record['material_contract'],'RD','Intrinsic')
         args=app.materials.odefinition_manager.AddMaterial.call_args.args[0];self.assertTrue(args[0].endswith('_RD_INTRINSIC_EQ_v1'))
         mu=next(x for x in args if isinstance(x,list) and x[0]=='NAME:permeability');self.assertEqual(mu[mu.index('BTypeForSingleCurve:=')+1],'Intrinsic');app.analyze_setup.assert_not_called()
+
+    def test_fine100_executes_and_collects_101_samples_with_its_own_budget(self):
+        record=self.ready('v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1')
+        self.assertEqual(record['budget']['wall_seconds'],1800);self.assertEqual(BUDGET['wall_seconds'],1200)
+        with patch.object(worker,'verify_saved_equivalent_material',return_value={'curve_representation':'Intrinsic'}):folder,state,app,desktop=self.fake_run(record)
+        self.assertEqual(state['status'],'completed')
+        self.assertIn(unittest.mock.call('NumTorquePointsPerCycle','100'),app.__setitem__.call_args_list)
+        self.assertEqual(app.get_setup.return_value.props['TimeStep'],'0.0001s')
+        result=read(folder/'result.json');self.assertEqual(result['metrics']['source_n_samples'],101)
+        self.assertEqual(result['model_version'],'V8_2_scalar_RD_equivalent_BH_only_intrinsic_fine100_v1')
+        self.assertTrue(result['metrics']['torque_numerical_acceptance']);self.assertFalse(result['efficiency_enabled'])
+        self.assertEqual(execution_budget('v8_2_cycle1_RD_equivalent_intrinsic_v1'),BUDGET)
+
+    def test_fine100_saved_sampling_and_fixed_budget_are_verified(self):
+        record=self.ready('v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1');folder=self.exe.path(record['id']);app=self.mock_app()
+        app.materials.odefinition_manager.GetProjectMaterialNames.return_value=[]
+        wrong=self.audit();wrong['operating_point']['points_per_cycle']='30'
+        with patch.object(worker,'verify_model',side_effect=[self.audit(),wrong]),patch.object(worker,'verify_solver_settings',return_value={}),patch.object(worker,'verify_saved_equivalent_material',return_value={}):
+            with self.assertRaisesRegex(ValueError,'实际保存周期'):worker.configure(app,folder/'inputs/motor.aedt',record,folder)
+        m=read(folder/'manifest.json');m['budget']['wall_seconds']=1200;write_json(folder/'manifest.json',m)
+        with self.assertRaisesRegex(ValueError,'固定预算'):verify_inputs(folder,self.exe.project)
+
+    def test_malformed_budget_is_saved_as_failure_before_creating_a_native_session(self):
+        record=self.ready();folder=self.simulated_start(record);m=read(folder/'manifest.json');m['budget']=None;write_json(folder/'manifest.json',m)
+        with patch.object(worker,'create_session',side_effect=AssertionError('bad input cannot create a Desktop')) as create:
+            state=worker.run(folder,self.motor.storage,self.native.storage)
+        self.assertEqual(state['status'],'failed');self.assertTrue((folder/'failure.json').exists())
+        self.assertFalse(read(folder/'failure.json')['solve_attempted']);self.assertFalse((folder/'case').exists());create.assert_not_called()
 
     def test_unsmoothed_intrinsic_result_reopens_only_with_the_requested_saved_false_flag(self):
         record=self.ready('v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1')

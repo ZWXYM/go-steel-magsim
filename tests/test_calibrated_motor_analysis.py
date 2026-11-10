@@ -20,6 +20,27 @@ from test_workbench import csv_fixture
 
 
 class BHAnalysisTests(unittest.TestCase):
+    def test_fine100_is_a_distinct_101_point_protocol_and_does_not_change_coarse(self):
+        coarse=protocol('v8_2_cycle1_RD_equivalent_intrinsic_v1');fine=protocol('v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1')
+        self.assertEqual((coarse['points_per_cycle'],coarse['source_samples'],coarse['requested_time_step_s']),(30,31,1/3000))
+        self.assertEqual((fine['points_per_cycle'],fine['source_samples'],fine['requested_time_step_s']),(100,101,.0001))
+        for key in ('stop_s','cycles','equivalent_direction','curve_representation','selected_window_ms','solver_settings'):
+            self.assertEqual(coarse[key],fine[key])
+        self.assertNotEqual(execution_model_version(coarse['id']),execution_model_version(fine['id']))
+
+    def test_fine100_requires_real_101_point_grid_and_accepts_official_nanoseconds(self):
+        name='v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1';path=self.fixture_csv(name)
+        before=path.read_bytes();result=collect_torque(path,name)
+        self.assertEqual(result['source_n_samples'],101);self.assertEqual(result['n_samples'],101)
+        self.assertTrue(result['torque_numerical_acceptance']);self.assertEqual(path.read_bytes(),before)
+        with self.assertRaisesRegex(ValueError,'时间网格'):collect_torque(path,'v8_2_cycle1_RD_equivalent_intrinsic_v1')
+        coarse=self.fixture_csv();
+        with self.assertRaisesRegex(ValueError,'时间网格'):collect_torque(coarse,name)
+        with path.open('w',newline='') as stream:
+            writer=csv.writer(stream);writer.writerow(['Time [ns]','-Moving1.Torque [NewtonMeter]'])
+            for t in np.linspace(0,.01,101):writer.writerow([t*1e9,2])
+        self.assertAlmostEqual(collect_torque(path,name)['T_avg_Nm'],2)
+
     def test_intrinsic_unsmoothed_control_is_explicit_and_does_not_relabel_saved_smoothed_records(self):
         smooth=protocol('v8_2_cycle1_RD_equivalent_intrinsic_v1');raw=protocol('v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1')
         self.assertTrue(smooth['solver_settings']['SmoothBHCurve']);self.assertFalse(raw['solver_settings']['SmoothBHCurve'])
@@ -67,10 +88,10 @@ class BHAnalysisTests(unittest.TestCase):
 
     def fixture_csv(self,measurement='v8_2_cycle1',zero=False):
         folder=self.root/'official_fixture';folder.mkdir(exist_ok=True);path=folder/'torque.csv'
-        count=91 if measurement=='periodic_cycle3_v1' else 31;stop=.03 if count==91 else .01
+        p=protocol(measurement);count=p['source_samples'];stop=p['stop_s']
         with path.open('w',newline='') as stream:
             writer=csv.writer(stream);writer.writerow(['Time [us]','-Moving1.Torque [mNewtonMeter]'])
-            for i,t in enumerate(np.linspace(0,stop,count)):writer.writerow([t*1e6,0 if zero else (2+.02*np.cos(i*2*np.pi/30))*1000])
+            for i,t in enumerate(np.linspace(0,stop,count)):writer.writerow([t*1e6,0 if zero else (2+.02*np.cos(i*2*np.pi/p['points_per_cycle']))*1000])
         return path
 
     def simulated_import(self):

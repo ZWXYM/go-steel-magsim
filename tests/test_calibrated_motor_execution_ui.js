@@ -26,6 +26,10 @@ const metrics={time_ms:[0,10],torque_Nm:[1,2],selected_window_ms:[0,10],T_avg_Nm
 const current={id:'bhexec_aaaaaaaaaaaa',analysis_plan_id:'bhanalysis_aaaaaaaaaaaa',status:'completed',phase:'finished',result_available:true,
  result:{material_name:'WB_current',model_version:'V8_2_BH_only',measurement_protocol:'v8_2_cycle1',metrics}};
 (async()=>{
+ const fine=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:[{...current,requested_protocol:{source_samples:101},budget:{wall_seconds:1800}}]);
+ await fine.context.bhaLoadExecutions();assert.match(fine.nodes.get('executions').text(),/单案预算 1800 秒 · 101个官方点/);assert.doesNotMatch(fine.nodes.get('executions').text(),/1200/);
+ fine.context.bhaRenderPlan({id:current.analysis_plan_id,status:'model_snapshot_ready_not_submitted',material_name:'WB_current',native_import_id:'calimport_test',training_grades:[],excluded_grades:[],requested_protocol:{speed_rpm:3000,cycles:1,source_samples:101,requested_time_step_s:.0001,selected_window_ms:[0,10]}});
+ assert.match(fine.nodes.get('protocol').textContent,/101点 · 时间步 0.1000 ms/);
  // Power comes from this execution's verified operating point, never a page default.
  const p=harness(async()=>[]),verified={...current,requested_protocol:{speed_rpm:3000},result:{...current.result,native_configuration_verified:true,native_analyze_succeeded:true}};
  const expected=1.5*2*Math.PI*3000/60;assert.equal(p.context.bhaPower(verified).power_W,expected);p.context.bhaActual(verified);assert.match(p.nodes.get('actualMetrics').text(),/电磁机械功率.*471\.239.*3000/);

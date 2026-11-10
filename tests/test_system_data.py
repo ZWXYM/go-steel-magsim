@@ -16,9 +16,9 @@ from modules.system_data import WorkpackStore, SystemData, create_system_data_ro
 PROJECT = Path(__file__).resolve().parents[1]
 
 
-def package(files=None, extra=None):
+def package(files=None, extra=None, version='system_data_workpack_v2'):
     files = files or {'README.md': '原材料和失败数据保留。'.encode('utf8'), 'curves.csv': b'H_A_per_m,B_T\r\n20,1.5\r\n'}
-    manifest = dict(version='system_data_workpack_v2', private_only=True, files={key:sha256(value) for key,value in files.items()})
+    manifest = dict(version=version, private_only=True, files={key:sha256(value) for key,value in files.items()})
     out = io.BytesIO()
     with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as archive:
         for key,value in files.items(): archive.writestr(key,value)
@@ -28,6 +28,13 @@ def package(files=None, extra=None):
 
 
 class SystemDataTests(unittest.TestCase):
+    def test_v5_workpacks_and_preceding_versions_still_register_and_reopen(self):
+        for version in ('system_data_workpack_v2','system_data_workpack_v3','system_data_workpack_v4','system_data_workpack_v5'):
+            blob=package(version=version);record=self.store.register_bytes(blob,version)
+            self.assertEqual(self.store.read(record['id'])[1],blob)
+            self.assertEqual(verify_package(blob)['package_version'],version)
+        with self.assertRaisesRegex(ValueError,'版本'):verify_package(package(version='system_data_workpack_v999'))
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='system data ')
         self.addCleanup(self.temp.cleanup)

@@ -1,0 +1,32 @@
+{
+  "package_sha256": "0dfc2099df53cb3db5f9205b1a12c6e0ae475c2b336574920306c58025fbd0d4",
+  "bytes": 817424,
+  "outer_files": 34,
+  "schema": "system_data_workpack_v5",
+  "batches": [
+    {
+      "batch": "bhbatch_83cdebbaf98c",
+      "members": 22,
+      "official_torque_csvs": 3,
+      "official_torque_points": 93
+    },
+    {
+      "batch": "bhbatch_71f143ac9644",
+      "members": 26,
+      "official_torque_csvs": 4,
+      "official_torque_points": 124
+    }
+  ],
+  "overview_rows": 7,
+  "protocols": [
+    "v8_2_cycle1_RD_equivalent_intrinsic_v1",
+    "v8_2_cycle1_RD_equivalent_stable_v1"
+  ],
+  "all_outer_hashes_verified": true,
+  "per_batch_hashes_verified": true,
+  "original_metrics_preserved": true,
+  "new_native_solves": 0,
+  "calibration_id": "cal_8fff23daed9e",
+  "optimization_id": "opt_22b20aa5f61f",
+  "study_id": "csens_9f20911f1632"
+}

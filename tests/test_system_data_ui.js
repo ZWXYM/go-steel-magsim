@@ -9,7 +9,10 @@ const fixture={schema:'go_steel_system_data_v1',created_utc:'2026-11-06',scope:'
  calibrations:[{id:'cal_bbbbbbbbbbbb',readable:true,report_sha256:'c'.repeat(64),selected_grades:['B23R075'],calibration_version:'fit_v2',H_axis:'physical_A_per_m',calibration_fit:{mean_rmse_T:.01},material_holdout:{mean_rmse_T:.04},bank_sha256:'b'.repeat(64)}],
  saved_predictions:[{id:'pred_123456abcdef',calibration_id:'cal_bbbbbbbbbbbb',readable:true,source_binding_sha256:'9'.repeat(64),material_name:'B30 heldout',excluded_grades:['B30P105']}],
  constraint_studies:[{id:'csens_ffffffffffff',readable:true,source_binding_sha256:'b'.repeat(64),dataset:'scan_aaaaaaaaaaaa',configuration_count:48,original_default_candidate_count:0}],
- calibrated_batches:[{id:'bhbatch_dddddddddddd',available:true,source_binding_sha256:'d'.repeat(64),result_count:1,item_count:2,measurement_protocol:'v8_2_cycle1'}],
+ calibrated_batches:[{id:'bhbatch_dddddddddddd',available:true,source_binding_sha256:'d'.repeat(64),result_count:1,item_count:2,measurement_protocol:'v8_2_cycle1'},
+ {id:'bhbatch_111111111111',available:true,source_binding_sha256:'1'.repeat(64),result_count:1,item_count:1,measurement_protocol:'fine101'},
+ {id:'bhbatch_222222222222',available:true,source_binding_sha256:'2'.repeat(64),result_count:1,item_count:1,measurement_protocol:'other'},
+ {id:'bhbatch_333333333333',available:true,source_binding_sha256:'3'.repeat(64),result_count:1,item_count:1,measurement_protocol:'other'}],
  optimizations:[{id:'opt_eeeeeeeeeeee',readable:true,source_binding_sha256:'a'.repeat(64),dataset:'scan_aaaaaaaaaaaa',meets_limits_count:0,reference:'case_01'}],
  datasets:[{id:'v8_1',title:'original',version:'V8_1_original_saved',readable:true,source_hashes_sha256:'e'.repeat(64),measurement_protocol:'original_processed_metrics',row_count:2,original_accepted_count:1,data_usage:{kind:'historical_processed_estimate',native_csv_accepted_count:0,note:'historical estimated loss'}},
  {id:'scan_aaaaaaaaaaaa',title:'scan',readable:true,source_hashes_sha256:'f'.repeat(64),version:'V8_2_object_CS_loss_scope_v2',measurement_protocol:'v8_2_cycle1',row_count:2,original_accepted_count:1,data_usage:{kind:'per_row_official_source',native_csv_accepted_count:1,note:'official CSV'}}]};
@@ -46,6 +49,16 @@ async function flush(){for(let i=0;i<12;i++)await Promise.resolve()}
  await nodes.get('dataRefresh').listeners.click();assert.equal(nodes.get('packagePredictions').querySelectorAll('input')[0].checked,true);
  await nodes.get('packageBuild').listeners.click();const withPredictions=JSON.parse(calls.filter(call=>call.options.method==='POST').at(-1).options.body);
  assert.deepEqual(withPredictions.predictions,[{id:'pred_123456abcdef',calibration_id:'cal_bbbbbbbbbbbb',source_binding_sha256:'9'.repeat(64)}]);
+ const extra=()=>nodes.get('packageMoreBatches').querySelectorAll('input');extra()[0].checked=true;
+ const writesBeforeDuplicate=calls.filter(call=>call.options.method==='POST').length;await nodes.get('packageBuild').listeners.click();assert.match(nodes.get('packageBuildStatus').textContent,/不能重复选择/);assert.equal(calls.filter(call=>call.options.method==='POST').length,writesBeforeDuplicate);
+ extra().forEach(input=>input.checked=true);await nodes.get('packageBuild').listeners.click();assert.match(nodes.get('packageBuildStatus').textContent,/超过3份/);assert.equal(calls.filter(call=>call.options.method==='POST').length,writesBeforeDuplicate);
+ extra().forEach(input=>input.checked=false);extra()[1].checked=true;
+ await nodes.get('dataRefresh').listeners.click();assert.equal(extra()[1].checked,true);
+ await nodes.get('packageBuild').listeners.click();const multi=JSON.parse(calls.filter(call=>call.options.method==='POST').at(-1).options.body);
+ assert.deepEqual(multi.additional_batches,[{id:'bhbatch_111111111111',source_binding_sha256:'1'.repeat(64)}]);assert.equal(multi.batch.id,'bhbatch_dddddddddddd');
+ for(const id of ['packageCalibration','packageBatch','packageOptimization','packageStudy'])nodes.get(id).value='';
+ for(const id of ['packagePredictions','packageDatasets'])nodes.get(id).querySelectorAll('input').forEach(input=>input.checked=false);
+ await nodes.get('packageBuild').listeners.click();const onlyExtra=JSON.parse(calls.filter(call=>call.options.method==='POST').at(-1).options.body);assert.equal(onlyExtra.batch,null);assert.equal(onlyExtra.additional_batches.length,1);assert.equal(onlyExtra.calibration,null);
  let completeBuild;buildHandler=()=>new Promise(resolve=>completeBuild=resolve);const building=nodes.get('packageBuild').listeners.click();await flush();const beforePending=calls.length;await nodes.get('packageBuild').listeners.click();await nodes.get('dataRefresh').listeners.click();assert.equal(calls.length,beforePending);assert.equal(nodes.get('dataRefresh').disabled,true);completeBuild({id:'pack_2222222222222222',title:'second',member_count:2,sha256:'2'.repeat(64)});await building;
  buildHandler=()=>{throw Error('response lost')};await nodes.get('packageBuild').listeners.click();assert.match(nodes.get('packageBuildStatus').textContent,/response lost.*不自动重复生成/);assert.equal(nodes.get('packageBuildResult').children.length,0);
  handler=()=>({...structuredClone(fixture),packages:[{id:'pack_0123456789abcdef',readable:false,error:'changed bytes'}],datasets:[{id:'scan_aaaaaaaaaaaa',readable:false,error:'broken source'}],counts:{...fixture.counts,complete:false,dataset_count:0,row_count:0,original_accepted_count:0,native_csv_accepted_count:0}});
