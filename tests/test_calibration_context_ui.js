@@ -74,9 +74,19 @@ async function loaded(h,id=A){await h.c.loadCalibration(id)}
  await loaded(recovered,B);assert.equal(value(recovered,'current.id'),B);assert.equal(recovered.node('error').style.display,'none');assert.equal(recovered.node('error').textContent,'');
  recovered.c.error(Error('motor unavailable'));await loaded(recovered,B);assert.match(recovered.node('error').textContent,/motor unavailable/);assert.equal(recovered.node('error').style.display,'block');
  const corrected=harness(async url=>url.endsWith('/predict')?prediction:calibration(A));await loaded(corrected);corrected.node('rawPair').value='{';await corrected.c.predict();
- assert.equal(posts(corrected).length,0);assert.equal(corrected.node('error').style.display,'block');
+ assert.equal(posts(corrected).length,0);assert.equal(corrected.node('error').style.display,'block');assert.match(corrected.node('error').textContent,/JSON 格式有误.*重新载入/);
  corrected.c.setPredictionInput(JSON.stringify(raw));assert.equal(corrected.node('error').style.display,'none');await corrected.c.predict();assert.equal(posts(corrected).length,1);assert.equal(corrected.node('error').textContent,'');
  corrected.c.error(Error('separate motor error'));corrected.c.predictionInputChanged();await corrected.c.predict();assert.match(corrected.node('error').textContent,/separate motor error/);
+ // Empty input must explain the actual load step, preserve the selected scope,
+ // and create no prediction until the user explicitly supplies and applies it.
+ assert.match(html,/aria-describedby="predictionInputHelp"/);assert.match(html,/id="predictionInputHelp"/);
+ for(const blank of ['', ' \n\t ']){
+  const empty=harness(async url=>url.endsWith('/predict-excluded')?{...prediction,prediction_scope:{excluded_grades:['S0']}}:calibration(A));await loaded(empty);
+  empty.node('predictionMode').value='excluded';empty.c.predictionScopeChanged();empty.node('rawPair').value=blank;await empty.c.predict();
+  assert.equal(posts(empty).length,0);assert.match(empty.node('error').textContent,/输入为空.*载入预测输入/);assert.match(empty.node('predStatus').textContent,/输入为空.*载入预测输入/);assert.equal(empty.node('rawPair').value,blank);assert.equal(value(empty,'current.id'),A);assert.equal(value(empty,'predictionPending'),false);assert.equal(empty.node('excludeGrade').value,'S0');
+  empty.c.setPredictionInput(JSON.stringify(raw));assert.equal(empty.node('error').style.display,'none');assert.equal(posts(empty).length,0);await empty.c.predict();
+  assert.equal(posts(empty).length,1);assert.deepEqual(JSON.parse(posts(empty)[0].body),{raw_pair:raw,exclude_grades:['S0']});
+ }
  const noBank=harness(async()=>calibration(A));await noBank.c.predict();assert.match(noBank.node('error').textContent,/先建立或加载校准/);await loaded(noBank);assert.equal(noBank.node('error').style.display,'none');
  const fileError=harness(async()=>raw);await fileError.c.readRaw({files:[{text:async()=>{throw Error('file read failure')}}]});assert.equal(fileError.node('error').style.display,'block');
  await fileError.c.readRaw({files:[{text:async()=>JSON.stringify(raw)}]});assert.equal(fileError.node('error').style.display,'none');assert.equal(JSON.parse(fileError.node('rawPair').value).material_id,raw.material_id);

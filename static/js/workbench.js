@@ -72,15 +72,20 @@ async function example(){clearActionError('prediction');const token=++rawInputGe
 async function readRaw(input){const file=input.files[0],token=++rawInputGeneration;if(!file)return;clearActionError('prediction');try{const text=await file.text();if(token===rawInputGeneration)setPredictionInput(text)}catch(e){if(token===rawInputGeneration)error(e,'prediction')}}
 function parameterSupportSummary(s){if(!s||!s.joint_support_evaluated)return '参数组合覆盖范围未核验';if(s.matched_anchor_grades.length)return '与已知样品参数相同（标定条件）';return s.inside_joint_parameter_support?'参数组合位于样品覆盖范围内，独立准确性待验证':'参数组合超出样品覆盖范围，属于未标定组合'}
 function predictionScopeChanged(){$('excludeChoice').hidden=$('predictionMode').value!=='excluded';predictionInputChanged()}
+function readPredictionInput(){
+ const text=$('rawPair').value.trim();
+ if(!text)throw Error('预测输入为空。请先点击上方“载入预测输入”，或上传、粘贴原生对 JSON，再应用所选范围。');
+ try{return JSON.parse(text)}catch(e){throw Error('原生对 JSON 格式有误。请检查括号和引号，或重新载入原生对，再应用所选范围。')}
+}
 function renderPrediction(v,calibrationID){const base=`/api/workbench/files/calibration/${encodeURIComponent(calibrationID)}/${encodeURIComponent(v.id)}/`;$('predResult').innerHTML=`<p>${esc(v.material_id)} · 校准 ${esc(calibrationID)} · ${esc(v.id)}${v.prediction_scope?.excluded_grades.length?' · 完整排除 '+esc(v.prediction_scope.excluded_grades.join(', '))+(v.prediction_scope.selection_rerun_after_exclusion?'，仅使用剩余材料重新选参':'，仅使用剩余材料预测'):''} · ${esc(parameterSupportSummary(v.parameter_support))}${v.RD.transfer_candidate?(v.RD.prediction_mode==='known_anchor_calibration'?' · 参数命中已知样品，属于标定输出':' · 跨材料试验版，新增批次未验证'):''} · 铁损尚未校准</p><p class="notice">${esc(qualitySummary(v.native_quality))}。数值筛查不认证材料性能；此输出尚不能作正式代理标签。</p><div class="row"><a class="download" href="/material-library?calibration=${encodeURIComponent(calibrationID)}&amp;key=${encodeURIComponent('prediction:'+v.id)}">在材料库打开此预测</a><a class="download" href="${base}curves.csv">修正曲线 CSV</a><a class="download" href="${base}prediction.json">来源与结果 JSON</a><a class="download" href="${base}effective_bank.json">实际使用的校准库</a><a class="download" href="${base}${esc(encodeURIComponent(v.AMAT_file))}">B-H 材料 .amat</a><a class="download" href="${base}${esc(encodeURIComponent(v.AMAT_file.replace(/\.amat$/,'.metadata.json')))}">材料来源与质量记录</a></div>`}
 async function predict(){
  if(predictionPending)return;clearActionError('prediction');if(!current){error(Error('请先建立或加载校准'),'calibration');return}
  const calibrationID=current.id,context=predictionContext();predictionPending=true;updatePredictionButton();$('predResult').innerHTML='';$('predStatus').textContent='正在校准 '+calibrationID+' 下保存当前输入的预测…';
- try{const raw=JSON.parse($('rawPair').value),excluded=$('predictionMode').value==='excluded',v=await api(`calibrations/${calibrationID}/${excluded?'predict-excluded':'predict'}`,excluded?{raw_pair:raw,exclude_grades:[$('excludeGrade').value]}:raw);
+ try{const raw=readPredictionInput(),excluded=$('predictionMode').value==='excluded',v=await api(`calibrations/${calibrationID}/${excluded?'predict-excluded':'predict'}`,excluded?{raw_pair:raw,exclude_grades:[$('excludeGrade').value]}:raw);
   if(v.calibration_id!==calibrationID||v.material_id!==raw.material_id||!/^pred_[0-9a-f]{12}$/.test(v.id))throw Error('预测来源与请求的校准或材料身份不符，未展示');
   if(context===predictionContext()){renderPrediction(v,calibrationID);$('predStatus').textContent='预测 '+v.id+' 已保存在校准 '+calibrationID+' 下。'}
   else{const href='/material-library?calibration='+encodeURIComponent(calibrationID)+'&key='+encodeURIComponent('prediction:'+v.id);$('predStatus').innerHTML=`较早输入的预测 ${esc(v.id)} 已保存到校准 ${esc(calibrationID)}；当前选择已变更，<a href="${href}">从原材料记录重开</a>。`}
- }catch(e){if(context===predictionContext()){error(e,'prediction');$('predStatus').textContent='预测未完成或未通过来源核对；已有记录保留。'}else $('predStatus').textContent='较早校准 '+calibrationID+' 的预测未完成：'+e.message+'；当前选择未改变。'}
+ }catch(e){if(context===predictionContext()){error(e,'prediction');$('predStatus').textContent='本次预测未展示：'+(e.message||'请检查输入或已保存记录')+'；已有记录保留。'}else $('predStatus').textContent='较早校准 '+calibrationID+' 的预测未完成：'+e.message+'；当前选择未改变。'}
  finally{predictionPending=false;updatePredictionButton()}
 }
 function selectMaterials(value){document.querySelectorAll('.material').forEach(x=>x.checked=value)}
