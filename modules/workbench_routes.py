@@ -36,12 +36,13 @@ from modules.torque_windows import TorqueWindows,create_torque_window_routes
 from modules.system_report import SystemReport,create_system_report_routes
 from modules.system_data import SystemData,create_system_data_routes
 from modules.system_data_builder import SystemDataBuilder
+from modules.external_bh_intake import ExternalBHIntake, create_external_bh_routes
 from modules.motor_constraint_studies import MotorConstraintStudies,create_constraint_study_routes
 from modules.calibration_regularized import default_eligible
 
 SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md',
     'actual_motor_material_exports_20261106.md','engineering_motor_mode_20261105.md','motor_dataset_export_20261106.md',
-    'plan_results_20261110.md','torque_windows_20261022.md'))
+    'plan_results_20261110.md','torque_windows_20261022.md','external_bh_validation.md'))
 
 
 def create_workbench(project,storage=None,root=None,script_history=None):
@@ -74,7 +75,9 @@ def create_workbench(project,storage=None,root=None,script_history=None):
     from modules.motor_workbench import license_status
     bp.register_blueprint(create_system_report_routes(SystemReport(storage,lambda:runtime_view(identity),license_status,script_history)))
     data_builder=SystemDataBuilder(storage,calibration,optimization,materials,material_batches,plans)
-    bp.register_blueprint(create_system_data_routes(SystemData(storage,optimization,material_batches,data_builder)))
+    data_manager=SystemData(storage,optimization,material_batches,data_builder)
+    bp.register_blueprint(create_system_data_routes(data_manager))
+    bp.register_blueprint(create_external_bh_routes(ExternalBHIntake(materials, data_manager.packages)))
     studies=MotorConstraintStudies(optimization,storage/'optimization_sensitivity')
     bp.register_blueprint(create_constraint_study_routes(studies))
     from modules.motor_study_applications import MotorStudyApplications,create_study_application_routes

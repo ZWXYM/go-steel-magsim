@@ -18,6 +18,8 @@
    item.append(element('strong',row.title),element('small',row.created_utc+' · '+row.member_count+' 文件 · '+row.bytes+' 字节 · 冻结快照'));
    item.append(element('p',row.description),element('span','SHA-256：'+row.sha256,'sha'));
    item.append(link('下载完整工作包','/api/workbench/system-data/packages/'+row.id+'/download'));
+   if(row.source_filename==='external_bh_validation.zip')
+    item.append(link('查看原表核对','/external-bh-validation/'+row.id));
   }
  }
  function calibrations(rows){

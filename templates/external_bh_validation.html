@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RD/TD 原表核对</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #1e293b; background: #f3f6fa; font: 15px system-ui, "Microsoft YaHei", sans-serif; }
+    header { background: #162b43; color: white; padding: 22px max(16px, calc((100vw - 1100px)/2)); }
+    h1 { font-size: 24px; margin: 0 0 12px; }
+    header a { color: #dbeafe; margin-right: 18px; }
+    main { max-width: 1132px; margin: auto; padding: 20px 16px; }
+    section { border: 1px solid #dce5ef; border-radius: 9px; background: white; padding: 22px; margin-bottom: 16px; }
+    h2 { font-size: 19px; margin: 0 0 12px; }
+    h3 { font-size: 16px; margin: 20px 0 8px; }
+    p { line-height: 1.7; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 14px 0; }
+    label { display: grid; gap: 5px; }
+    label.check { display: flex; align-items: baseline; margin: 14px 0; }
+    input, select, textarea { font: inherit; min-width: 0; border: 1px solid #cbd5e1; border-radius: 5px; padding: 8px; }
+    textarea { min-height: 72px; resize: vertical; }
+    button, .button { display: inline-block; background: #2466ad; color: white; border: 1px solid #2466ad; border-radius: 5px; padding: 9px 14px; cursor: pointer; text-decoration: none; font: inherit; }
+    .secondary { color: #244668; background: white; border-color: #cbd5e1; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    a { color: #2364ad; }
+    .muted { color: #51637c; font-size: 14px; }
+    .error { color: #942c37; background: #fff0f1; padding: 10px; border-radius: 5px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+    dl { display: grid; grid-template-columns: 130px 1fr; gap: 8px; }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    summary { cursor: pointer; margin-top: 16px; }
+    @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } section { padding: 15px; } dl { grid-template-columns: 98px 1fr; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>RD/TD 原表核对</h1>
+  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/material-library">材料库</a><a href="/system-data">系统数据与下载</a></nav>
+</header>
+<main>
+{% macro number(value) %}{{ '%.6g' | format(value) if value is not none else '—' }}{% endmacro %}
+{% if report is defined %}
+  <section>
+    <h2>{{ report.model.grade ~ ' · 原表比较' if report.model else '原表归档' }}</h2>
+    <p>{{ source_labels[report.source.source_kind] }} · {{ curve_labels[report.source.curve_kind] }} · {{ record.id }}</p>
+    {% if report.model %}
+    <p class="muted">两种曲线使用同一组原采样点。误差为保存的 B 减去上传表的 B，单位 T。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>方向</th><th>原表点数</th><th>共同 H 范围（A/m）</th><th>比较点数</th><th>拟合 RMSE</th><th>留出 RMSE</th><th>拟合 MAE</th><th>留出 MAE</th></tr></thead>
+        <tbody>
+          {% for direction in ('RD', 'TD') %}
+          {% set row = report.comparison[direction] %}
+          <tr>
+            <th scope="row">{{ direction }}</th><td>{{ row.measurement_points }}</td>
+            <td>{% if row.overlap_H_range_A_per_m %}{{ number(row.overlap_H_range_A_per_m[0]) }} 至 {{ number(row.overlap_H_range_A_per_m[1]) }}{% else %}无共同范围{% endif %}</td>
+            <td>{{ row.compared_points }}</td>
+            {% for metric in ('rmse_T', 'mae_T') %}
+              {% for model in ('fit', 'holdout') %}<td>{{ number(row.metrics[model][metric] if row.metrics[model] else none) }}</td>{% endfor %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <h3>B800 对照（T）</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>方向</th><th>原表 B800</th><th>取值方式</th><th>拟合 B800</th><th>留出 B800</th><th>拟合误差</th><th>留出误差</th></tr></thead>
+        <tbody>
+          {% for direction in ('RD', 'TD') %}
+          {% set point = report.comparison[direction].B800 %}
+          <tr><th scope="row">{{ direction }}</th>
+            {% if point %}
+            <td>{{ number(point.input_B_T) }}</td><td>{{ '原表有 800 A/m 点' if point.at_original_point else '原表线性插值' }}</td>
+            <td>{{ number(point.fit_B_T) }}</td><td>{{ number(point.holdout_B_T) }}</td><td>{{ number(point.fit_error_T) }}</td><td>{{ number(point.holdout_error_T) }}</td>
+            {% else %}
+            <td colspan="6">共同范围未覆盖 800 A/m</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <details>
+      <summary>校准记录与训练牌号</summary>
+      <dl>
+        <dt>校准记录</dt><dd>{{ report.model.calibration_id }} · {{ report.model.calibration_version }}</dd>
+        <dt>报告 SHA-256</dt><dd>{{ report.model.source_report_sha256 }}</dd>
+        <dt>拟合训练牌号</dt><dd>{{ report.model.models.fit.training_grades | join('、') }}</dd>
+        <dt>留出训练牌号</dt><dd>{{ report.model.models.holdout.training_grades | join('、') }}</dd>
+        <dt>留出牌号</dt><dd>{{ report.model.models.holdout.excluded_grades | join('、') }}</dd>
+      </dl>
+    </details>
+    {% endif %}
+    <details open>
+      <summary>上传来源与原文件</summary>
+      <dl>
+        <dt>来源</dt><dd>{{ report.source.source_reference }}</dd>
+        <dt>原表标注牌号</dt><dd>{{ report.source.reported_grade or '未记录' }}</dd>
+        <dt>厂家</dt><dd>{{ report.source.manufacturer or '未记录' }}</dd>
+        <dt>试样或卷号</dt><dd>{{ report.source.specimen_id or '未记录' }}</dd>
+        <dt>片厚（mm）</dt><dd>{{ number(report.source.thickness_mm) }}</dd>
+        <dt>测量方法</dt><dd>{{ report.source.method or '未记录' }}</dd>
+        <dt>激励</dt><dd>{{ excitation_labels[report.source.excitation] }}{% if report.source.frequency_hz is not none %} · {{ number(report.source.frequency_hz) }} Hz{% endif %}</dd>
+        <dt>温度（℃）</dt><dd>{{ number(report.source.temperature_C) }}</dd>
+        <dt>其他条件</dt><dd>{{ report.source.conditions or '未记录' }}</dd>
+        <dt>方向与配对</dt><dd>{{ '上传者声明可比' if report.source.direction_and_pairing_declared else '待核对' }}</dd>
+        <dt>试样独立性</dt><dd>待根据原始测量记录核验</dd>
+        {% for direction, file in report.inputs.items() %}
+        <dt>{{ direction }} 上传文件</dt><dd>{{ file.original_filename }} · {{ file.bytes }} 字节<br>SHA-256 {{ file.sha256 }}</dd>
+        {% endfor %}
+      </dl>
+    </details>
+    <div class="actions">
+      <a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载原表和核对记录</a>
+      <a href="{{ url_for('.page') }}">核对另一组原表</a>
+    </div>
+  </section>
+{% else %}
+  <section>
+    <h2>添加原表</h2>
+    <p class="muted">RD 为轧向，TD 为横向。比较使用两份 UTF-8 CSV。列名需标注单位，例如 <code>H_A_per_m,B_T</code> 或 <code>H_kA_per_m,J_mT</code>。可对来源或条件待查的文件仅归档。</p>
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    {% if not groups %}<p class="muted">暂无同时具有拟合和整牌号留出的校准记录。可<a href="/workbench#cal">建立校准</a>，也可归档原表。</p>{% endif %}
+    <form method="post" action="{{ url_for('.save') }}" enctype="multipart/form-data">
+      <label>比较使用的校准记录与牌号
+        <select name="selection">
+          <option value="">选择校准记录与牌号</option>
+          {% for group in groups %}
+          <optgroup label="{{ group.label }} · {{ group.id }}">
+            {% for option in group.options %}<option value="{{ option.value }}"{% if form.get('selection') == option.value %} selected{% endif %}>{{ option.grade }} · {{ group.label }} · {{ group.id }}</option>{% endfor %}
+          </optgroup>
+          {% endfor %}
+        </select>
+      </label>
+      <div class="grid">
+        <label>RD 原表<input type="file" name="RD" accept=".csv,text/csv"></label>
+        <label>TD 原表<input type="file" name="TD" accept=".csv,text/csv"></label>
+        <label>来源类别<select name="source_kind">{% for value, label in source_labels.items() %}<option value="{{ value }}"{% if form.get('source_kind', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+        <label>曲线种类<select name="curve_kind">{% for value, label in curve_labels.items() %}<option value="{{ value }}"{% if form.get('curve_kind', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+      </div>
+      <label>原表来源或测量记录编号<textarea name="source_reference" required maxlength="1200">{{ form.get('source_reference', '') }}</textarea></label>
+      <div class="grid">
+        <label>原表标注牌号<input name="reported_grade" maxlength="1200" value="{{ form.get('reported_grade', '') }}"></label>
+        <label>厂家<input name="manufacturer" maxlength="1200" value="{{ form.get('manufacturer', '') }}"></label>
+        <label>试样或卷号<input name="specimen_id" maxlength="1200" value="{{ form.get('specimen_id', '') }}"></label>
+        <label>片厚（mm）<input type="number" step="any" name="thickness_mm" value="{{ form.get('thickness_mm', '') }}"></label>
+        <label>测量方法<input name="method" maxlength="1200" value="{{ form.get('method', '') }}"></label>
+        <label>激励<select name="excitation">{% for value, label in excitation_labels.items() %}<option value="{{ value }}"{% if form.get('excitation', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+        <label>频率（Hz）<input type="number" step="any" name="frequency_hz" value="{{ form.get('frequency_hz', '') }}"></label>
+        <label>温度（℃）<input type="number" step="any" name="temperature_C" value="{{ form.get('temperature_C', '') }}"></label>
+      </div>
+      <label>应力、退火和其他测量条件<textarea name="conditions" maxlength="1200">{{ form.get('conditions', '') }}</textarea></label>
+      <label class="check"><input type="checkbox" name="paired" value="yes"{% if form.get('paired') == 'yes' %} checked{% endif %}>确认方向、牌号及两份原表的可比条件</label>
+      <div class="actions">
+        <button name="mode" value="compare"{% if not groups %} disabled{% endif %}>比较并保存</button>
+        <button class="secondary" name="mode" value="archive">仅归档原表</button>
+      </div>
+    </form>
+  </section>
+{% endif %}
+</main>
+</body>
+</html>

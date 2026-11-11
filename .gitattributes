@@ -308,3 +308,9 @@ docs/workpack_sources_20261110.md -text
 tests/test_motor_plan_config_ui.js -text
 docs/system_closed_loop_20261110.md -text
 /calibration/fine100_system_20261111/** -text
+docs/external_bh_validation.md -text
+modules/external_bh_intake.py -text
+modules/external_bh_validation.py -text
+templates/external_bh_validation.html -text
+tests/test_external_bh_intake.py -text
+tests/test_external_bh_validation.py -text
