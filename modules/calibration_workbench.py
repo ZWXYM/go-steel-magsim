@@ -18,7 +18,7 @@ from modules.material_calibration import (CalibrationBank, PHYSICS_VERSION, VERS
     file_hash, features, validated_curve)
 from modules.calibration_transfer import (VERSION as TRANSFER_VERSION, TransferBank,
     load_bank, nested_validation, protocol, digest, select_candidate)
-from modules.calibration_regularized import VERSION as REGULARIZED_VERSION,RegularizedTransferBank
+from modules.calibration_regularized import OPTIONAL_BANK_TYPES
 from modules.maxwell_exporter import export_calibrated_pair
 from modules.native_quality import audit_pilot, unassessed_quality
 from modules.calibration_domain import bank_parameter_support
@@ -27,6 +27,7 @@ from tools.analyze_sampling_convergence import read_ensemble
 from tools.run_calibration_pilot import H_GRID, metrics,write_json,write_csv
 
 GRADES=('B23R075','B27R090','B27R095','B30P105')
+TRANSFER_BANK_TYPES={TRANSFER_VERSION:TransferBank,**OPTIONAL_BANK_TYPES}
 
 
 class CalibrationWorkbench:
@@ -93,11 +94,11 @@ class CalibrationWorkbench:
             curve['calibration_native_quality_sha256']=report['native_quality_sha256']
 
     def calibrate(self,grades,calibration_version=VERSION):
-        if calibration_version not in (VERSION,TRANSFER_VERSION,REGULARIZED_VERSION):
+        if not isinstance(calibration_version,str) or calibration_version not in (VERSION,*TRANSFER_BANK_TYPES):
             raise ValueError('未知校准协议')
         if not isinstance(grades,list) or len(grades)<2 or len(set(grades))!=len(grades) or not set(grades)<=set(GRADES):
             raise ValueError('请至少选择两个不同的已知材料')
-        if calibration_version in (TRANSFER_VERSION,REGULARIZED_VERSION) and len(grades)<4:
+        if calibration_version in TRANSFER_BANK_TYPES and len(grades)<4:
             raise ValueError('嵌套材料留出至少需要四个材料；少材料请使用原协议')
         payload,manifest=self.source()
         samples={s['grade']:s for s in self.samples(include_quality=True)['samples']}
@@ -109,9 +110,8 @@ class CalibrationWorkbench:
                 raw=np.asarray(samples[grade]['curves'][d]['raw_B'])
                 np.testing.assert_allclose(raw,values.mean(axis=0),atol=1e-12)
                 sources[grade+'_'+d]=source
-        if calibration_version in (TRANSFER_VERSION,REGULARIZED_VERSION):
-            bank_type=RegularizedTransferBank if calibration_version==REGULARIZED_VERSION else TransferBank
-            return self._generalize(grades,samples,sources,payload,bank_type)
+        if calibration_version in TRANSFER_BANK_TYPES:
+            return self._generalize(grades,samples,sources,payload,TRANSFER_BANK_TYPES[calibration_version])
         payload=copy.deepcopy(payload)
         payload['anchors']=[a for a in payload['anchors'] if a['grade'] in grades]
         bank=CalibrationBank(payload)
@@ -171,7 +171,7 @@ class CalibrationWorkbench:
         validation=nested_validation(selected,source_payload.get('texture_sampling_version','legacy_multi_peak_importance_v1'),bank_type)
         bank=bank_type.fit(selected,source_payload.get('texture_sampling_version','legacy_multi_peak_importance_v1'))
         baseline_validation=None
-        if bank_type is RegularizedTransferBank:
+        if bank_type.BANK_VERSION in OPTIONAL_BANK_TYPES:
             baseline_validation=nested_validation(selected,bank.texture_sampling_version)
         artifact='cal_'+uuid.uuid4().hex[:12]
         directory=self.storage/artifact
@@ -218,10 +218,10 @@ class CalibrationWorkbench:
             producer_sha256={p:file_hash(Path(__file__).parent.parent/p) for p in
                 ('modules/calibration_transfer.py','modules/calibration_workbench.py','modules/maxwell_exporter.py')},
             new_native_solves=0,known_material_exports={},holdout_material_exports={})
-        if bank_type is RegularizedTransferBank:
-            report.update(default_eligible=False,display_label='低微磁权重开发候选',
-                development_status='explicit_optional_regularized_candidate',automatic_deployment=False,
-                frozen_development_trial='native_residual_beta_quarter_trial_v1',
+        if baseline_validation is not None:
+            report.update(default_eligible=False,display_label=bank_type.DISPLAY_LABEL,
+                development_status=bank_type.DEVELOPMENT_STATUS,automatic_deployment=False,
+                frozen_development_trial=bank_type.DEVELOPMENT_TRIAL,
                 development_acceptance_target_met=report['material_holdout']['B800_0_05T_pass_all'])
             report['original_nested_material_holdout']=baseline_validation['summaries']['nested_material_holdout']
             report['original_nested_protocol_sha256']=baseline_validation['protocol_sha256']

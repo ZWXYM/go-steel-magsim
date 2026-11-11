@@ -12,6 +12,7 @@ from flask import Flask
 
 from modules.calibration_transfer import TransferBank,CANDIDATES,protocol,digest,load_bank,nested_validation
 from modules.calibration_regularized import RegularizedTransferBank,VERSION,REGULARIZED_CANDIDATES,default_eligible
+from modules.calibration_regularized import ReferenceDominantTransferBank,REFERENCE_DOMINANT_VERSION
 from modules.calibration_prediction import predict_pair,resolve_prediction_bank
 from modules.calibration_workbench import CalibrationWorkbench,GRADES
 from modules.material_calibration import PHYSICS_VERSION
@@ -155,6 +156,36 @@ class RegularizedWorkbenchTests(unittest.TestCase):
         before=set(self.manager.storage.iterdir())
         with self.assertRaisesRegex(ValueError,'至少需要四个'):self.manager.calibrate(list(GRADES)[:3],VERSION)
         self.assertEqual(before,set(self.manager.storage.iterdir()))
+
+    def test_reference_dominant_build_reproduces_nested_trial_and_exports_heldout_child(self):
+        with patch('subprocess.Popen',side_effect=AssertionError('No native work for this calibration')):
+            report=self.manager.calibrate(list(GRADES),REFERENCE_DOMINANT_VERSION)
+        self.assertAlmostEqual(report['material_holdout']['mean_rmse_T'],.013845490494187509,places=12)
+        self.assertAlmostEqual(report['material_holdout']['max_abs_B800_error_T'],.0198829049838547,places=12)
+        self.assertEqual(report['calibration_fit'],self.trial['calibration_fit'])
+        self.assertTrue(report['development_acceptance_target_met'])
+        self.assertFalse(default_eligible(dict(report,default_eligible=True)))
+        directory=self.manager.get(report['id'])
+        bank=load_bank(directory/'bank.json')
+        self.assertIsInstance(bank,ReferenceDominantTransferBank)
+        self.assertEqual(len(bank.protocol_definition()['candidates']),14)
+        for fold in report['nested_validation']['outer_folds']:
+            self.assertEqual(set(fold['selection']['training_grades']),set(GRADES)-{fold['heldout']})
+            self.assertTrue(fold['selection']['candidate'].endswith('_beta_0'))
+        target='B30P105'
+        raw=json.loads((self.manager.pilot/target/'raw_pair.json').read_bytes())
+        pred=self.manager.predict(report['id'],raw,[target])
+        prediction=directory/pred['id']
+        self.assertEqual(pred['prediction_scope']['effective_training_grades'],list(GRADES[:3]))
+        self.assertEqual(pred['RD']['effective_native_beta'],0.)
+        self.assertEqual(pred['RD']['H'],raw['RD']['H'])
+        self.assertEqual(load_bank(prediction/'effective_bank.json').bank_sha256,
+                         load_bank(directory/'holdout_banks'/f'{target}.json').bank_sha256)
+        material=Path(pred['AMAT_file']).with_suffix('.metadata.json')
+        metadata=json.loads((prediction/material).read_bytes())
+        self.assertEqual(metadata['reference_correction_version'],REFERENCE_DOMINANT_VERSION)
+        self.assertEqual(metadata['core_loss_status'],'uncalibrated_zero_placeholders')
+        self.assertFalse(metadata['strict_training_eligible'])
 
 
 if __name__=='__main__':unittest.main()

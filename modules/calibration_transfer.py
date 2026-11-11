@@ -231,9 +231,12 @@ class TransferBank:
 
 def load_bank(path):
     payload=json.loads(Path(path).read_text(encoding='utf-8'))
-    from modules.calibration_regularized import VERSION as REGULARIZED_VERSION,RegularizedTransferBank
-    if payload.get('calibration_version')==REGULARIZED_VERSION:return RegularizedTransferBank(payload)
-    return TransferBank(payload) if payload.get('calibration_version')==VERSION else CalibrationBank(payload)
+    from modules.calibration_regularized import OPTIONAL_BANK_TYPES
+    version=payload.get('calibration_version')
+    if not isinstance(version,str):
+        raise ValueError('Invalid calibration bank version')
+    bank_type={VERSION:TransferBank,**OPTIONAL_BANK_TYPES}.get(version,CalibrationBank)
+    return bank_type(payload)
 
 def legacy_bank(samples,sampling):
     anchors=[]
