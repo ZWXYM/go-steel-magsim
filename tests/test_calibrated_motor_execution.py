@@ -64,8 +64,9 @@ class ExecutionTests(unittest.TestCase):
         write_json(folder/'state.json',state);write_json(self.motor.storage/'queue.lock',dict(process_identity(),token='test-token',torque_execution_id=record['id']))
         return folder
 
-    def fake_run(self,record,app=None):
-        self.measurement=record['measurement_protocol'];folder=self.simulated_start(record);desktop=MagicMock();desktop.release_desktop.return_value=True
+    def fake_run(self,record,app=None,desktop=None):
+        self.measurement=record['measurement_protocol'];folder=self.simulated_start(record)
+        desktop=desktop or MagicMock();desktop.release_desktop.return_value=True
         desktop.odesktop.GetProcessID.return_value=os.getpid()
         app=app or self.mock_app();cycles=record['requested_protocol']['cycles']
         with patch.object(worker,'require_configured_license_connection',return_value={'TCP':True}),\
@@ -325,11 +326,38 @@ class ExecutionTests(unittest.TestCase):
 
     def test_failed_solve_keeps_failure_and_never_collects_result(self):
         record=self.ready();app=self.mock_app();app.analyze_setup.return_value=False
-        folder,state,app,desktop=self.fake_run(record,app)
-        self.assertEqual(state['status'],'failed');self.assertTrue(read(folder/'failure.json')['solve_attempted'])
+        desktop=MagicMock();desktop.odesktop.GetMessages.return_value=['Fixture mesh failure']
+        folder,state,app,desktop=self.fake_run(record,app,desktop)
+        failure=read(folder/'failure.json')
+        self.assertEqual(state['status'],'failed');self.assertTrue(failure['solve_attempted'])
+        self.assertEqual(failure['phase'],'solving')
+        self.assertEqual(failure['native_messages']['messages'],['Fixture mesh failure'])
+        desktop.odesktop.GetMessages.assert_called_once_with('motor',record['design'],0)
         self.assertFalse((folder/'result.json').exists());self.assertFalse(self.exe.get(record['id'])['result_available'])
         desktop.release_desktop.assert_called_once()
         with self.assertRaisesRegex(ValueError,'禁止重提'):worker.run(folder,self.motor.storage,self.native.storage)
+
+    def test_failed_solve_does_not_query_native_messages_after_budget_stop(self):
+        record=self.ready();folder=self.exe.path(record['id']);app=self.mock_app()
+        def stopped(*args,**kwargs):
+            write_json(folder/'budget_stop.json',dict(status='fixture stopped'))
+            return False
+        app.analyze_setup.side_effect=stopped
+        folder,state,_,desktop=self.fake_run(record,app)
+        self.assertEqual(state['status'],'failed')
+        self.assertEqual(read(folder/'failure.json')['native_messages']['status'],'skipped_at_budget')
+        desktop.odesktop.GetMessages.assert_not_called()
+        desktop.release_desktop.assert_called_once()
+
+    def test_message_query_failure_keeps_the_solve_failure_and_session_cleanup(self):
+        record=self.ready();app=self.mock_app();app.analyze_setup.return_value=False
+        desktop=MagicMock();desktop.odesktop.GetMessages.side_effect=RuntimeError('fixture message service unavailable')
+        folder,state,_,desktop=self.fake_run(record,app,desktop)
+        failure=read(folder/'failure.json')
+        self.assertEqual(state['status'],'failed')
+        self.assertIn('Maxwell转矩分析失败',failure['error'])
+        self.assertEqual(failure['native_messages']['status'],'query_failed')
+        desktop.release_desktop.assert_called_once()
 
     def test_late_solve_is_explicit_and_does_not_hide_budget_attention(self):
         record=self.ready();folder=self.exe.path(record['id']);app=self.mock_app()

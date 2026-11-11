@@ -1,0 +1,17 @@
+{
+  "files": {
+    "B27R090_official_losses.csv": "267ccafdd6468544f5867c2c303e6628205a0f1ec6259226744d8f915d159699",
+    "B27R090_official_torque.csv": "5c62ea732268d14ae848e459364c1fcbf7d868ad28ab2c33166b4467d916838c",
+    "B27R090_verified_core_loss_groups.csv": "e23dfc1b55b074937070a81285bb05cff27274419f8d6fbbdb6dc3f8e4b1020f",
+    "B27R095_official_losses.csv": "d648808a837d0ef2571a172317892823b35c07f46acf5f53e256f5dadff9ea6c",
+    "B27R095_official_torque.csv": "90d3679bd56c7e6ca522316581029691589cfb36ca2504da205d2cb514a85d5e",
+    "B27R095_verified_core_loss_groups.csv": "5bf6f9a01c3fa1a0fced431c6adfb0ba35c9e0a9ceb6c477a0ede6d17f229e98",
+    "B30P105_official_losses.csv": "087f8b71ddbe86945c3ce47960e202d1b9405bea6850eb962b1e16ccb1d25b69",
+    "B30P105_official_torque.csv": "3daf78d4a2f5d28b969b8c2eb2689d89aaf22d7cca54633592b77bba02b8ac41",
+    "B30P105_verified_core_loss_groups.csv": "046c8d460730b291120da19b83957ce39cb71babc6ebb7a5e9ec4ef4cc55f8d5",
+    "README.md": "90f6fc6e655de88771ae0ed76171d0d645e7365945d86d847ef0e6c6a5c36be5",
+    "case_results.json": "b4a059c883a1523e484ac858e9d173f987c68c7828b7783ee70a997d0a244d66",
+    "comparison.csv": "dd5d3d3cbf6fea0da25288a10631eed2b275edddb26915200802593a417ffcc5",
+    "four_grade_summary.csv": "aa7b611dc0e4b16d7b42f3f03e12d22dd64fe55ae916a4bfab7eff286b559a5a"
+  }
+}

@@ -135,6 +135,21 @@ def watch_budget(folder):
 def check_budget(folder,deadline):
     if (folder/'attention.json').exists() or time.monotonic()>deadline:raise TimeoutError('预算已超时，停止下发后续步骤，现场保留')
 
+def collect_solve_messages(desktop, identity, project, design):
+    """Read messages for the failed design while its owned session is available."""
+    if desktop is None or identity is None or identity_status(identity) != 'alive':
+        return dict(status='session_unavailable')
+    try:
+        native=desktop.odesktop
+        require_native_pid(native,identity['pid'])
+        messages=native.GetMessages(project,design,0)
+        if isinstance(messages,str):
+            messages=[messages]
+        return dict(status='captured',project=project,design=design,
+                    messages=[str(message) for message in (messages or ())])
+    except Exception as error:
+        return dict(status='query_failed',error=str(error))
+
 def seconds(value):
     match=re.fullmatch(r'([0-9.eE+-]+)\s*(s|ms|us|ns)',str(value))
     if not match:raise ValueError('保存时间参数不是可核对的显式SI时间：'+str(value))
@@ -338,11 +353,17 @@ def run(folder,motor_storage,native_storage):
         else:
             state.update(status='completed_after_budget' if result['budget_exceeded'] else 'completed',phase='finished',new_Maxwell_solves=1)
     except Exception as exc:
-        state.update(status='failed',phase='failed',error=str(exc))
         completed = int(bool(result) or (folder/'solve_completed.json').exists())
+        failure=dict(error=str(exc),traceback=traceback.format_exc(),phase=state.get('phase'),
+                     solve_attempted=(folder/'solve_attempt.json').exists(),new_completed_Maxwell_solves=completed)
+        if failure['phase']=='solving' and failure['solve_attempted']:
+            if (time.monotonic()>=deadline or (folder/'budget_stop.json').exists() or (folder/'attention.json').exists()):
+                failure['native_messages']=dict(status='skipped_at_budget')
+            else:
+                failure['native_messages']=collect_solve_messages(desktop,identity,project.stem,m['design'])
+        state.update(status='failed',phase='failed',error=str(exc))
         state['new_Maxwell_solves'] = completed
-        write_json(folder/'failure.json',dict(error=str(exc),traceback=traceback.format_exc(),
-            solve_attempted=(folder/'solve_attempt.json').exists(),new_completed_Maxwell_solves=completed))
+        write_json(folder/'failure.json',failure)
     finally:
         cleanup_error=None
         if desktop is not None and identity is not None:
