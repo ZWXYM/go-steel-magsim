@@ -267,6 +267,10 @@ def create_workbench(project,storage=None,root=None,script_history=None):
     def material_batch_pause(artifact):
         return jsonify(material_batches.pause(artifact))
 
+    @bp.post('/api/workbench/calibrated-motor/batches/<artifact>/settle-interruption')
+    def material_batch_settle_interruption(artifact):
+        return jsonify(material_batches.settle_interruption(artifact))
+
     @bp.get('/api/workbench/calibrated-motor/batches/<artifact>/bundle')
     def material_batch_bundle(artifact):
         return send_file(material_batch_report_bundle(material_batches,artifact),as_attachment=True,download_name=artifact+'.zip',mimetype='application/zip')
@@ -373,7 +377,7 @@ def create_workbench(project,storage=None,root=None,script_history=None):
 
     @bp.get('/api/workbench/calibrated-motor/executions')
     def bh_execution_records():
-        return jsonify(bh_execution.records())
+        return jsonify(bh_execution.records(request.args.get('analysis_plan')))
 
     @bp.post('/api/workbench/calibrated-motor/executions')
     def bh_execution_prepare():

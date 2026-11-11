@@ -3,6 +3,7 @@ const MWF={generation:0,snapshot:null,selected:null,timer:null};
 const mwf$=id=>document.getElementById(id);
 const mwfText=(tag,text,cls)=>{const node=document.createElement(tag);node.textContent=text;if(cls)node.className=cls;return node};
 const mwfLabels={awaiting_native_material_import:'已准备，等待实际导入',ready:'等待手动导入',ready_source_changed:'程序变化，保留旧副本',starting:'正在启动',running:'正在执行',imported_not_solved:'导入与预检通过',ready_for_model_preparation:'可复制分析工程',model_snapshot_ready_not_submitted:'分析工程已复制',prepared:'执行任务已冻结',prepared_source_changed:'执行程序变化',completed:'官方转矩已整理',completed_after_budget:'超预算完成，需检查',failed:'失败，现场保留',needs_attention:'需要检查',invalid:'文件核验失败'};
+mwfLabels.validated_not_solved='目录材料预检通过 · 0 次求解';
 function mwfLink(text,href){const a=mwfText('a',text);a.href=href;return a}
 function mwfKey(row){return row.calibration_id+' / '+row.material_key}
 function mwfDetail(row){
@@ -16,7 +17,9 @@ function mwfDetail(row){
  const next=branch.next_step,execution=branch.records.execution;let href=next.href;
  if(/^\/calibrated-motor\/analysis\/bhanalysis_[a-f0-9]{12}$/.test(href)&&/^bhexec_[a-f0-9]{12}$/.test(execution?.id))href+='?execution='+encodeURIComponent(execution.id);
  section.append(mwfLink(next.label,href));if(next.blocked_reason)section.append(mwfText('p',next.blocked_reason,'error'));
- if(branch.result_available){const metrics=mwfText('div','','metrics');for(const [label,key,unit] of [['平均转矩','T_avg_Nm','N·m'],['转矩脉动','K_T_ripple_pct','%']]){const cell=document.createElement('div'),v=branch.torque[key];cell.append(mwfText('span',label),mwfText('strong',v===null?'—':v.toFixed(6)+' '+unit));metrics.append(cell)}const acceptance=branch.torque.torque_numerical_acceptance;section.append(metrics,mwfText('p','原数值判据：'+(acceptance===true?'通过':acceptance===false?'未通过，原始结果保留':'未报告'),acceptance===false?'error':'muted'),mwfText('p','仅来自此链路执行记录的官方转矩；效率和最终排名禁用。','muted'))}out.append(section)}
+ if(branch.result_available){const metrics=mwfText('div','','metrics');for(const [label,key,unit] of [['平均转矩','T_avg_Nm','N·m'],['转矩脉动','K_T_ripple_pct','%']]){const cell=document.createElement('div'),v=branch.torque[key];cell.append(mwfText('span',label),mwfText('strong',v===null?'—':v.toFixed(6)+' '+unit));metrics.append(cell)}const acceptance=branch.torque.torque_numerical_acceptance;section.append(metrics,mwfText('p','原数值判据：'+(acceptance===true?'通过':acceptance===false?'未通过，原始结果保留':'未报告'),acceptance===false?'error':'muted'));
+ if(Number.isFinite(branch.catalog_CoreLoss_mean_W))section.append(mwfText('p',`目录总铁损均值 ${branch.catalog_CoreLoss_mean_W.toFixed(4)} W · 单周期工程估计`,'muted'));
+ else section.append(mwfText('p','此链路提供保存的官方转矩。','muted'))}out.append(section)}
  const details=document.createElement('details'),source=mwfText('pre',JSON.stringify({parent_bank_sha256:row.parent_bank_sha256,effective_bank_sha256:row.effective_bank_sha256,training_grades:row.training_grades,excluded_grades:row.excluded_grades,H_axis:row.H_axis,H_scale:row.H_scale},null,2));details.append(mwfText('summary','材料来源'),source);out.append(details);
 }
 function mwfRenderRows(){

@@ -8,6 +8,7 @@ import re
 from pathlib import Path
 
 from modules.calibrated_motor_analysis import verify_solver_settings
+from modules.catalog_motor_loss import catalog_material_name, verify_catalog_material
 from modules.maxwell_material_transport import equivalent_material_name, verify_saved_equivalent_material
 from modules.motor_model_audit import one, value
 
@@ -42,8 +43,15 @@ def execution_material_exports(record, folder):
     # AEDT/AMAT may use Windows CRLF; the native field reader expects logical lines.
     text = blob.decode('utf-8-sig').replace('\r\n', '\n').replace('\r', '\n')
     representation=record['requested_protocol'].get('curve_representation','Normal')
-    transport = verify_saved_equivalent_material(text, contract, direction,representation)
-    name = equivalent_material_name(contract, direction,representation)
+    catalog = record.get('catalog_loss')
+    if catalog:
+        transport = verify_catalog_material(text, contract, catalog)
+        name = catalog_material_name(contract)
+        loss_description = 'Manufacturer catalog engineering loss estimate.'
+    else:
+        transport = verify_saved_equivalent_material(text, contract, direction,representation)
+        name = equivalent_material_name(contract, direction,representation)
+        loss_description = 'Uncalibrated zero loss placeholders.'
     if (saved.get('actual_material_name') != name or
             saved.get('constitutive_model') != 'scalar_direction_equivalent_v1'):
         raise ValueError('结果的实际材料或模型不符')
@@ -52,7 +60,7 @@ def execution_material_exports(record, folder):
     body = one(text, name)
     amat = (f'# Actual saved direction-equivalent motor material: {name}\n'
             f'# Source execution: {record["id"]}; source direction: {direction}\n'
-            f'# Isotropic {"normal B-H" if representation=="Normal" else "Intrinsic Bi-H"} engineering model. Uncalibrated zero loss placeholders.\n'
+            f'# Isotropic {"normal B-H" if representation=="Normal" else "Intrinsic Bi-H"} engineering model. {loss_description}\n'
             f"$begin '{name}'" + body + f"$end '{name}'\n").encode('utf8')
     points = re.search(r'Points\[(\d+):\s*([^\]]+)\]', one(one(body, 'permeability'), 'BHCoordinates'))
     flat = [float(v.strip()) for v in points[2].split(',')]
@@ -105,4 +113,10 @@ def execution_material_exports(record, folder):
         metadata['execution_sampling']=dict(points_per_cycle=100,official_samples=p['source_samples'],
             time_step_s=p['requested_time_step_s'],stop_s=p['stop_s'],
             selected_window_ms=p['selected_window_ms'],wall_budget_seconds=record['budget']['wall_seconds'])
+    if catalog:
+        metadata.update(status='engineering_direction_equivalent_catalog_loss',
+                        core_loss_status='manufacturer_catalog_engineering_estimate',
+                        catalog_loss=catalog, coefficients_saved=transport['coefficients_saved'],
+                        native_loss_scope=saved['catalog_loss_native_scope'],
+                        scope='Saved scalar RD-equivalent material and engineering loss coefficients estimated from the manufacturer catalog.')
     return dict(zip(FILES, (amat, (json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False)+'\n').encode('utf8'), curve)))

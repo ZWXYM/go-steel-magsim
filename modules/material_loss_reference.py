@@ -21,10 +21,20 @@ class MaterialLossReference:
         self.path = self.project / 'go_steel_data/output/four_sample_loss_reference_v1.json'
 
     def read(self):
+        return self.snapshot()[1]
+
+    def snapshot(self):
+        if not self.path.resolve().is_relative_to(self.project):
+            raise ValueError('损耗参考文件位于程序目录之外')
         try:
-            if not self.path.resolve().is_relative_to(self.project):
-                raise ValueError('损耗参考文件位于程序目录之外')
             raw = self.path.read_bytes()
+        except OSError as error:
+            raise ValueError('损耗参考不可读取：' + str(error)) from error
+        return raw, self.decode(raw)
+
+    @staticmethod
+    def decode(raw):
+        try:
             data = json.loads(raw)
             if (data['version'] != VERSION or data['efficiency_enabled'] is not False or
                     data['motor_assignment_performed'] is not False or data['new_fits'] != 0 or
@@ -38,12 +48,12 @@ class MaterialLossReference:
                     raise ValueError('旧估计的来源身份不符')
                 for point in row['points'] + row['alternate_catalog_points']:
                     for key in ('B_T', 'f_Hz', 'P_W_kg'):
-                        self._number(point[key], positive=True)
+                        MaterialLossReference._number(point[key], positive=True)
                 for key in ('nominal_thickness_mm', 'assumed_density_kg_m3', 'assumed_conductivity_S_m'):
-                    self._number(row[key], positive=True)
+                    MaterialLossReference._number(row[key], positive=True)
                 for key in ('Kh_fit_mass', 'Kc_classical_mass', 'Ke_fit_mass', 'Kh_fit_volumetric',
                             'Kc_classical_volumetric', 'Ke_fit_volumetric', 'fit_rmse_w_kg', 'fit_max_abs_error_w_kg'):
-                    self._number(estimate[key])
+                    MaterialLossReference._number(estimate[key])
                 for key, name in [('Kh_fit_mass', 'Kh_fit_volumetric'), ('Kc_classical_mass', 'Kc_classical_volumetric'), ('Ke_fit_mass', 'Ke_fit_volumetric')]:
                     if not math.isclose(estimate[key] * row['assumed_density_kg_m3'], estimate[name], rel_tol=1e-12, abs_tol=1e-12):
                         raise ValueError('损耗质量/体积系数单位换算不符')

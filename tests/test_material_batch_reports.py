@@ -316,6 +316,27 @@ class BaselineComparisonTests(unittest.TestCase):
         self.assertEqual(result['qualified_alternative_count'],1);self.assertTrue(result['engineering_comparison_available'])
         self.assertEqual((record,runs),before)
 
+    def test_catalog_loss_delta_requires_same_reference_and_a_complete_budgeted_report(self):
+        from modules.catalog_motor_loss import PROTOCOL
+        record,runs,manager=self.comparison_fixture()
+        record['measurement_protocol']=PROTOCOL
+        for item,mean in zip(record['items'],(6.,4.)):
+            run=runs[item['execution_id']]
+            item['measurement_protocol']=run['measurement_protocol']=PROTOCOL
+            item['metrics']['torque_numerical_acceptance']=run['result']['metrics']['torque_numerical_acceptance']=True
+            item['source']['catalog_loss_reference_sha256']='1'*64
+            item['catalog_loss_summary']=dict(official_samples=101,budget_exceeded=False,minima_W={'CoreLoss':0.},
+                                             time_weighted_mean_W={'CoreLoss':mean})
+        other=record['items'][1]
+        self.assertEqual(baseline_comparison(manager,record,'item_01')['entries'][1]['qualified_delta_catalog_CoreLoss_W'],-2.)
+        other['source']['catalog_loss_reference_sha256']='2'*64
+        row=baseline_comparison(manager,record,'item_01')['entries'][1]
+        self.assertEqual(row['catalog_CoreLoss_mean_W'],4.)
+        self.assertIsNone(row['qualified_delta_catalog_CoreLoss_W'])
+        other['source']['catalog_loss_reference_sha256']='1'*64
+        other['catalog_loss_summary']['budget_exceeded']=True
+        self.assertIsNone(baseline_comparison(manager,record,'item_01')['entries'][1]['qualified_delta_catalog_CoreLoss_W'])
+
     def test_different_training_scope_or_nonpositive_base_keeps_qualified_fields_blank(self):
         for change in ('source','zero'):
             record,runs,manager=self.comparison_fixture();item=record['items'][1]

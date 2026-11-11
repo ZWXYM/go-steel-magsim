@@ -1,0 +1,13 @@
+{
+  "files": {
+    "B27R095_actual_material_BH.csv": "de8d775ea05c3ca7a173933e062c80a06ad428294ad0d5f8432ed8096ad44c4f",
+    "B27R095_case_result.json": "99331dcebf6631848cb56d3514330906705605674fadd4bdcfdb85714e4e78be",
+    "B27R095_loss_descriptive_windows.csv": "39f7c4ff91ab3f334d59e65fd97a6f876a7b814e31467615d1aa897bdf80d7c5",
+    "B27R095_official_losses.csv": "d648808a837d0ef2571a172317892823b35c07f46acf5f53e256f5dadff9ea6c",
+    "B27R095_official_torque.csv": "90d3679bd56c7e6ca522316581029691589cfb36ca2504da205d2cb514a85d5e",
+    "B27R095_preserved_stator_and_rotor.json": "d108c05a89b57f5aa6c2ae50892161c4cea11d9a7b0119e87e2da6a8de195f30",
+    "B27R095_verified_core_loss_groups.csv": "5bf6f9a01c3fa1a0fced431c6adfb0ba35c9e0a9ceb6c477a0ede6d17f229e98",
+    "B30P105_interruption.json": "fe5496ed8e70e818005e7bf509fae16ed90e7e7795cd7f235ef2f353324a704a",
+    "README.md": "d8188a07726aadaa673ffd235c59118946515c33c0bba5070474706b473c9009"
+  }
+}

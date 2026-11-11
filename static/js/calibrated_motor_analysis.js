@@ -1,4 +1,4 @@
-/* CPU-only plans and clearly identified existing official references. */
+/* Saved plans, native results and existing official references. */
 const BHA={generation:0,referenceGeneration:0,plan:null,references:[],selectedExecution:typeof location!=='undefined'?new URLSearchParams(location.search).get('execution'):null};
 const bha$=id=>document.getElementById(id);
 const bhaText=(tag,text,cls)=>{const node=document.createElement(tag);node.textContent=text;if(cls)node.className=cls;return node};
@@ -7,6 +7,7 @@ function bhaRenderPlan(plan){
  BHA.plan=plan;const labels={awaiting_native_material_import:'计划已保存，等待原生材料导入',ready_for_model_preparation:'原生导入通过，可准备分析工程',model_snapshot_ready_not_submitted:'分析工程已复制，执行状态见下方'};
  bha$('planStatus').textContent=plan.id+' · '+(labels[plan.status]||plan.status);const dl=bha$('identity');dl.replaceChildren();
  for(const [label,value] of [['材料',plan.material_name],['导入记录',plan.native_import_id],['训练样品',plan.training_grades.join('、')],['排除样品',plan.excluded_grades.join('、')||'无'],['磁场轴','物理 H / A·m⁻¹，H_scale=1'],['材料求解结果','见下方独立执行任务；既有参考单独显示']])dl.append(bhaText('dt',label),bhaText('dd',value));
+ if(plan.catalog_loss){const loss=plan.catalog_loss;dl.append(bhaText('dt','损耗来源'),bhaText('dd',`${loss.grade} 厂家典型值，${loss.source_frequencies_Hz.join('、')} Hz → ${loss.operating_electrical_frequency_Hz} Hz 工程估计`))}
  bha$('prepareModel').disabled=Boolean(BHA.modelPending)||plan.status!=='ready_for_model_preparation';bha$('planBundle').href='/api/workbench/calibrated-motor/analysis-plans/'+plan.id+'/bundle';
  const p=plan.requested_protocol;bha$('protocol').textContent=`计划：${p.speed_rpm} rpm · ${p.cycles}周期 · ${p.source_samples}点${Number.isFinite(p.requested_time_step_s)?' · 时间步 '+(p.requested_time_step_s*1000).toPrecision(4)+' ms':''} · 取${p.selected_window_ms.join('–')} ms。实际配置应用与求解状态见独立执行记录。${p.solver_settings?.SmoothBHCurve?' 本计划为独立B-H平滑诊断，原材料节点保留，内部插值不同。':''}`;
  bha$('provenance').textContent=JSON.stringify({parent_bank_sha256:plan.parent_bank_sha256,effective_bank_sha256:plan.effective_bank_sha256,measurement_protocol:plan.measurement_protocol,requested_protocol:plan.requested_protocol,result_available:plan.result_available,efficiency_enabled:plan.efficiency_enabled,optimization_ranking_enabled:plan.optimization_ranking_enabled,input_hashes:plan.input_hashes},null,2);
@@ -18,9 +19,9 @@ async function bhaPrepareModel(){
  catch(error){bha$('planError').textContent='工程准备结果未确认：'+error.message+'；请刷新原计划，不自动重试。'}
  finally{BHA.modelPending=false;bha$('prepareModel').disabled=BHA.plan?.status!=='ready_for_model_preparation'}
 }
-function bhaPlot(metrics,elementId='torque'){
+function bhaPlot(metrics,elementId='torque',valueKey='torque_Nm'){
  const svg=bha$(elementId);svg.replaceChildren();svg.setAttribute('viewBox','0 0 900 300');
- const t=metrics.time_ms,y=metrics.torque_Nm,x0=Math.min(...t),x1=Math.max(...t),lo=Math.min(0,...y),hi=Math.max(...y,lo+.01);
+ const t=metrics.time_ms,y=metrics[valueKey],x0=Math.min(...t),x1=Math.max(...t),lo=Math.min(0,...y),hi=Math.max(...y,lo+.01);
  const x=v=>60+810*(v-x0)/(x1-x0||1),yy=v=>250-215*(v-lo)/(hi-lo);
  const add=(tag,attrs,text)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,value));if(text!==undefined)node.textContent=text;svg.append(node)};
  add('rect',{x:x(metrics.selected_window_ms[0]),y:25,width:x(metrics.selected_window_ms[1])-x(metrics.selected_window_ms[0]),height:225,fill:'#edf2f7'});
@@ -61,6 +62,20 @@ function bhaRecordURL(id){
  const query=new URLSearchParams(typeof location!=='undefined'?location.search:'');query.set('execution',id);
  return '/calibrated-motor/analysis/'+plan+'?'+query+(typeof location!=='undefined'?location.hash||'':'');
 }
+function bhaRenderLosses(record){
+ const saved=record.result,loss=saved.loss_estimate_metrics,panel=bha$('lossPanel');
+ panel.hidden=!loss;if(!loss)return;
+ const source=saved.catalog_loss,stats=bha$('lossMetrics');stats.replaceChildren();
+ bha$('lossScope').textContent=`${source.grade} 厂家典型值 ${source.source_frequencies_Hz.join('、')} Hz，按 ${source.operating_electrical_frequency_Hz} Hz 工况估算。下列均值按 0–10 ms 原始点作时间积分。`;
+ const entries=[['总铁损',loss.time_weighted_mean_W.CoreLoss],['绞线铜损',loss.time_weighted_mean_W.StrandedLoss],['实体损耗',loss.time_weighted_mean_W.SolidLoss]];
+ const breakdown=loss.core_loss_breakdown;
+ if(breakdown?.closure_passed)entries.push(['48 插片铁损',breakdown.insert_mean_W]);
+ for(const [label,value] of entries){const cell=document.createElement('div');cell.append(bhaText('span',label),bhaText('strong',value.toFixed(4)),bhaText('small','W'));stats.append(cell)}
+ bha$('lossObjectStatus').textContent=breakdown?.closure_passed?'逐对象铁损与总铁损逐点核对通过。':breakdown?'逐对象合计与总铁损存在差异，原始 CSV 可下载。':'本案提供总损耗 CSV，逐对象数据见执行记录。';
+ bhaPlot({time_ms:loss.time_ms,core_loss_W:loss.traces_W.CoreLoss,selected_window_ms:[0,10]},'lossCurve','core_loss_W');
+ const links=bha$('lossLinks');links.replaceChildren();
+ for(const path of Object.keys(loss.csv_hashes)){const link=bhaText('a',path.includes('by Object')?'逐对象铁损原 CSV':'损耗原 CSV');link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
+}
 function bhaActual(record){
  const signature=JSON.stringify([record.id,record.result,record.requested_protocol]);BHA.selectedExecution=record.id;
  const fixedURL=bhaRecordURL(record.id);if(fixedURL&&typeof history!=='undefined')history.replaceState(null,'',fixedURL);
@@ -69,7 +84,7 @@ function bhaActual(record){
  const saved=record.result,m=saved.metrics;bha$('actualPanel').hidden=false;bha$('actualStatus').textContent=`${record.id} / ${saved.material_name} · ${saved.model_version} · ${saved.measurement_protocol}`+(m.torque_numerical_acceptance===false?' · 原数值判据未通过（原值保留）':'');
  const out=bha$('actualMetrics');out.replaceChildren();for(const [label,key,suffix] of [['平均转矩','T_avg_Nm','N·m'],['最低转矩','T_min_Nm','N·m'],['最高转矩','T_max_Nm','N·m'],['转矩脉动','K_T_ripple_pct','%']]){const cell=document.createElement('div');const value=m[key];cell.append(bhaText('span',label),bhaText('strong',value===null?'—':value.toFixed(6)),bhaText('small',suffix));out.append(cell)}
  const power=bhaPower(record),cell=document.createElement('div');cell.append(bhaText('span','电磁机械功率'),bhaText('strong',power?power.power_W.toFixed(3):'—'),bhaText('small',power?'W · '+power.speed_rpm+' r/min':'W · 保存工况待核对'));out.append(cell);
- bhaPlot(m,'actualTorque');const links=bha$('actualLinks');links.replaceChildren();
+ bhaPlot(m,'actualTorque');bhaRenderLosses(record);const links=bha$('actualLinks');links.replaceChildren();
  for(const [label,path] of [['原转矩CSV','case/reports/Torque Plots.csv'],['转矩汇总CSV','summary.csv'],['结果JSON','result.json']]){const link=bhaText('a',label);link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
  if(saved.constitutive_model==='scalar_direction_equivalent_v1')for(const [label,path] of [['实际求解材料AMAT','actual_material.amat'],['实际B-H节点CSV','actual_material_BH.csv'],['实际材料来源JSON','actual_material.metadata.json']]){const link=bhaText('a',label);link.href='/api/workbench/calibrated-motor/executions/'+record.id+'/files/'+path;links.append(link)}
  const review=bhaText('button','查看异常与求解记录');review.onclick=()=>bhaLoadReview(record.id);links.append(review);
@@ -91,7 +106,8 @@ async function bhaLoadReview(execution){
 async function bhaLoadExecutions(){
  const generation=BHA.executionGeneration=(BHA.executionGeneration||0)+1;if(BHA.executionTimer)clearTimeout(BHA.executionTimer);
  BHA.executionReadable=false;BHA.executionAllowed=false;bhaExecutionControls();bha$('executionError').textContent='';
- const results=await Promise.allSettled([bhaAPI('/api/workbench/calibrated-motor/executions'),bhaAPI('/api/workbench/resources')]);if(generation!==BHA.executionGeneration)return;
+ const url='/api/workbench/calibrated-motor/executions?analysis_plan='+encodeURIComponent(document.body.dataset.artifact);
+ const results=await Promise.allSettled([bhaAPI(url),bhaAPI('/api/workbench/resources')]);if(generation!==BHA.executionGeneration)return;
  const [rowsResult,resourceResult]=results;
  if(rowsResult.status!=='fulfilled'){bha$('executionError').textContent=rowsResult.reason.message;return}
  const canStart=resourceResult.status==='fulfilled'&&!resourceResult.value.cpu_only&&resourceResult.value.native_submission_allowed!==false;
@@ -99,15 +115,15 @@ async function bhaLoadExecutions(){
  if(resourceResult.status==='fulfilled'&&resourceResult.value.source_restart_required)bha$('executionError').textContent='源码已更新，请重新运行启动器打开匹配版本；现有结果仍可查看。';
  const rows=rowsResult.value.filter(r=>r.analysis_plan_id===document.body.dataset.artifact||r.status==='invalid'),out=bha$('executions');out.replaceChildren();BHA.executionRows=rows;BHA.executionReadable=true;BHA.executionAllowed=canStart;BHA.executionStartButtons=[];
  bhaExecutionControls();
- const labels={prepared:'已冻结，尚未执行',prepared_source_changed:'执行程序已更新，保留此记录',starting:'正在启动',running:'正在分析',completed:'官方转矩已整理',completed_after_budget:'超预算完成，需检查',failed:'失败，现场保留',needs_attention:'需检查现场，不自动重试',invalid:'文件核验失败'};
- for(const r of rows){const row=document.createElement('p');row.append(bhaText('span',r.id+' · '+(labels[r.status]||r.status)+(r.phase?' · '+r.phase:'')+' '));if(r.error)row.append(bhaText('span',r.error,'error'));if(Number.isInteger(r.budget?.wall_seconds)&&r.budget.wall_seconds>0)row.append(bhaText('span',` 单案预算 ${r.budget.wall_seconds} 秒${Number.isInteger(r.requested_protocol?.source_samples)?' · '+r.requested_protocol.source_samples+'个官方点':''} `,'muted'));
- if(r.status==='prepared'){const start=bhaText('button','执行一次转矩分析');start.disabled=!canStart||Boolean(BHA.executionBusy);BHA.executionStartButtons.push(start);start.onclick=()=>bhaExecutionAction('/api/workbench/calibrated-motor/executions/'+r.id+'/start',{});row.append(start)}
+ const labels={prepared:'已冻结，尚未执行',prepared_source_changed:'执行程序已更新，保留此记录',starting:'正在启动',running:'正在分析',completed:'官方结果已整理',completed_after_budget:'超预算完成，需检查',validated_not_solved:'原生预检通过 · 0 次求解',failed:'失败，现场保留',needs_attention:'需检查现场，不自动重试',invalid:'文件核验失败'};
+ for(const r of rows){const row=document.createElement('p');row.append(bhaText('span',r.id+' · '+(labels[r.status]||r.status)+(r.phase?' · '+r.phase:'')+' '));if(r.error)row.append(bhaText('span',r.error,'error'));if(Number.isInteger(r.budget?.wall_seconds)&&r.budget.wall_seconds>0)row.append(bhaText('span',` 单案预算 ${r.budget.wall_seconds} 秒${!r.preflight_only&&Number.isInteger(r.requested_protocol?.source_samples)?' · '+r.requested_protocol.source_samples+'个官方点':''} `,'muted'));
+ if(r.status==='prepared'){const start=bhaText('button',r.preflight_only?'运行原生预检':r.catalog_loss?'执行一次目录铁损估计':'执行一次转矩分析');start.disabled=!canStart||Boolean(BHA.executionBusy);BHA.executionStartButtons.push(start);start.onclick=()=>bhaExecutionAction('/api/workbench/calibrated-motor/executions/'+r.id+'/start',{});row.append(start)}
  if(r.status!=='invalid'){const pack=bhaText('a','下载执行包');pack.href='/api/workbench/calibrated-motor/executions/'+r.id+'/bundle';row.append(pack)}
  const recordURL=bhaRecordURL(r.id);if(recordURL){const fixed=bhaText('a','本条记录链接');fixed.href=recordURL;row.append(fixed)}
- if(r.result_available){const view=bhaText('button','查看本材料转矩');view.onclick=()=>bhaActual(r);row.append(view)}out.append(row)}
+ if(r.result_available){const view=bhaText('button',r.catalog_loss?'查看转矩与损耗':'查看本材料转矩');view.onclick=()=>bhaActual(r);row.append(view)}out.append(row)}
  if(!rows.length)out.append(bhaText('p','当前计划没有执行任务；需先完成原生材料导入与分析工程准备。','muted'));
  const completedRows=rows.filter(r=>r.result_available),available=BHA.selectedExecution?completedRows.find(r=>r.id===BHA.selectedExecution):completedRows[0];
- if(available){bha$('planNotice').textContent=available.result.metrics.torque_numerical_acceptance===false?'本材料任务已完成，但原转矩数值判据未通过。原曲线完整保留，效率和最终排名保持禁用。':'本材料已有独立执行任务的官方转矩结果。仅整理转矩，效率和最终优化排名保持禁用。';bhaActual(available)}
+ if(available){bha$('planNotice').textContent=available.result.metrics.torque_numerical_acceptance===false?'本材料任务已完成，但原转矩数值判据未通过。原曲线完整保留，效率和最终排名保持禁用。':available.catalog_loss?'本案已保存官方转矩和目录铁损工程估计。':'本材料已有独立执行任务的官方转矩结果。仅整理转矩，效率和最终优化排名保持禁用。';bhaActual(available)}
  else{BHA.actualExecution=null;BHA.actualSignature=null;BHA.reviewGeneration=(BHA.reviewGeneration||0)+1;bha$('savedReviewPanel').hidden=true;bha$('actualPanel').hidden=true;bha$('planNotice').textContent=BHA.selectedExecution?'所选执行 '+BHA.selectedExecution+' 暂无可读结果；保留选择，请刷新或从执行记录选择其他结果。':rows.some(r=>r.status==='starting'||r.status==='running')?'本材料的独立转矩任务正在执行，请查看下方状态；效率和最终排名保持禁用。':rows.some(r=>r.status==='prepared')?'本材料的转矩任务已准备，等待手动开始；当前尚无可用转矩结果。':rows.some(r=>r.status==='failed'||r.status==='needs_attention')?'本材料暂无可用转矩结果；请检查下方失败或待处理记录，现场保留，不自动重试。':'当前校准材料尚无可用电机转矩结果。完成原生导入和分析工程准备后，可手动执行；本页不自动启动求解。'}
  if(rows.some(r=>r.status==='starting'||r.status==='running'))BHA.executionTimer=setTimeout(bhaLoadExecutions,3000);
 }

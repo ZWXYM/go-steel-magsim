@@ -1,0 +1,15 @@
+{
+  "batch": "bhbatch_b982699bb208",
+  "complete_official_report": false,
+  "completed_B27_result_preserved": true,
+  "completed_Maxwell_solves": 0,
+  "failure_timestamp": "2026-11-11T07:54:41.666203+08:00",
+  "interrupted_execution": "bhexec_dc7327092baf",
+  "native_calls_for_recovery": 0,
+  "partial_case_files_preserved": 934,
+  "queue_released": true,
+  "reason": "Windows planned update restart",
+  "restart_timestamp": "2026-11-11T07:54:40.9982772+08:00",
+  "saved_owner_identities_verified_exited": 7,
+  "windows_event_id": 1074
+}

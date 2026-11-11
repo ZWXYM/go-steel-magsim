@@ -11,6 +11,10 @@ from datetime import datetime,timezone
 from pathlib import Path
 
 from modules.calibrated_motor_analysis import collect_torque,protocol,execution_model_version,verify_solver_settings
+from modules.catalog_motor_loss import (
+    PROTOCOL as LOSS_PROTOCOL, SNAPSHOT, catalog_material_name, collect_catalog_losses,
+    loss_contract, verify_catalog_material, verify_loss_scope,
+)
 from modules.execution_material_export import execution_material_exports, FILES as MATERIAL_EXPORT_FILES
 from modules.material_library import sha
 from modules.maxwell_material_transport import load_contract,verify_saved_material,equivalent_material_name,verify_saved_equivalent_material
@@ -25,20 +29,42 @@ BUDGET=dict(native_sessions=1,motor_solves=1,field_solves=0,max_cores=2,gpus=0,w
 SUPPORT=('modules/calibrated_motor_execution.py','modules/calibrated_motor_analysis.py',
     'modules/maxwell_material_transport.py','modules/maxwell_native_readiness.py','modules/motor_model_audit.py',
     'modules/motor_queue.py','modules/motor_workbench.py','tools/motor_scan_worker.py','tools/calibrated_motor_analysis_worker.py')
-TERMINAL=('completed','completed_after_budget','failed','needs_attention')
+TERMINAL=('completed','completed_after_budget','validated_not_solved','failed','needs_attention')
 
-def execution_budget(measurement):
+def execution_budget(measurement, preflight_only=False):
+    if preflight_only:
+        if measurement != LOSS_PROTOCOL:
+            raise ValueError('原生无求解预检适用于目录铁损协议')
+        return dict(BUDGET, motor_solves=0, wall_seconds=240)
     points=protocol(measurement)['points_per_cycle']
     return dict(BUDGET,wall_seconds=1800 if points==100 else BUDGET['wall_seconds'])
 
+def execution_support(measurement):
+    if measurement == LOSS_PROTOCOL:
+        return SUPPORT + ('modules/catalog_motor_loss.py', 'modules/material_loss_reference.py')
+    return SUPPORT
+
 def read(path):return json.loads(Path(path).read_text(encoding='utf8'))
 
+def execution_material_name(manifest):
+    contract, p = manifest['material_contract'], manifest['requested_protocol']
+    if manifest['measurement_protocol'] == LOSS_PROTOCOL:
+        return catalog_material_name(contract)
+    if p.get('equivalent_direction'):
+        return equivalent_material_name(contract, p['equivalent_direction'], p.get('curve_representation','Normal'))
+    return manifest['material_name']
+
 def verify_model(path,manifest,*,execution_material=False):
-    verify_saved_material(Path(path).read_text(encoding='utf-8-sig'),manifest['material_contract'])
+    text = Path(path).read_text(encoding='utf-8-sig')
+    verify_saved_material(text,manifest['material_contract'])
     direction=manifest.get('requested_protocol',{}).get('equivalent_direction') if execution_material else None
     representation=manifest.get('requested_protocol',{}).get('curve_representation','Normal')
-    expected_name=equivalent_material_name(manifest['material_contract'],direction,representation) if direction else manifest['material_name']
-    if direction:verify_saved_equivalent_material(Path(path).read_text(encoding='utf-8-sig'),manifest['material_contract'],direction,representation)
+    expected_name=execution_material_name(manifest) if direction else manifest['material_name']
+    if direction:
+        if manifest['measurement_protocol'] == LOSS_PROTOCOL:
+            verify_catalog_material(text, manifest['material_contract'], manifest['catalog_loss'])
+        else:
+            verify_saved_equivalent_material(text,manifest['material_contract'],direction,representation)
     audit=audit_project(path)
     if (not audit['local_CS_verified'] or audit['moving_insert_count']!=48 or
         not audit['core_loss']['complete_insert_coverage'] or
@@ -47,16 +73,19 @@ def verify_model(path,manifest,*,execution_material=False):
         audit['core_loss']['enabled_object_names'] is None or
         any(n.startswith('unknown_ID_') for n in audit['core_loss']['enabled_object_names'])):
         raise ValueError('实际保存工程的材料、48插片/CS、损耗选择或运行点不符')
+    if manifest['measurement_protocol'] == LOSS_PROTOCOL:
+        audit['catalog_loss_native_scope'] = verify_loss_scope(text, audit)
     return audit
 
 def verify_inputs(folder,project,*,dispatch=False):
     folder,project=Path(folder).resolve(),Path(project).resolve();m=read(folder/'manifest.json')
+    preflight = m.get('preflight_only', False)
     if (not re.fullmatch(r'bhexec_[0-9a-f]{12}',folder.name) or m['id']!=folder.name or m['version']!=VERSION or
-        m['budget']!=execution_budget(m['measurement_protocol']) or m.get('budget_stop_policy') not in (None,BUDGET_STOP_POLICY) or m.get('aedt_transport','auto') not in ('auto','grpc','com') or type(m['cores']) is not int or not 1<=m['cores']<=2 or
+        type(preflight) is not bool or m['budget']!=execution_budget(m['measurement_protocol'], preflight) or m.get('budget_stop_policy') not in (None,BUDGET_STOP_POLICY) or m.get('aedt_transport','auto') not in ('auto','grpc','com') or type(m['cores']) is not int or not 1<=m['cores']<=2 or
         m['efficiency_enabled'] is not False or m['optimization_ranking_enabled'] is not False or
         m['requested_protocol']!=protocol(m['measurement_protocol']) or m['H_axis']!='physical_A_per_m' or m['H_scale']!=1 or
         set(m['input_hashes'])!={'inputs/motor.aedt','inputs/source_bundle.zip','inputs/material.amat','inputs/material.metadata.json'} or
-        set(m['producer_hashes'])!=set(SUPPORT)):
+        set(m['producer_hashes'])!=set(execution_support(m['measurement_protocol']))):
         raise ValueError('转矩执行身份、固定预算或输入范围不符')
     for name,digest in m['input_hashes'].items():
         path=(folder/name).resolve()
@@ -74,6 +103,15 @@ def verify_inputs(folder,project,*,dispatch=False):
             archive.read('inputs/material.amat')!=(folder/'inputs/material.amat').read_bytes() or
             archive.read('inputs/material.metadata.json')!=(folder/'inputs/material.metadata.json').read_bytes()):
             raise ValueError('执行包与已导入工程/实际训练库不符')
+        if m['measurement_protocol'] == LOSS_PROTOCOL:
+            raw = archive.read(SNAPSHOT)
+            metadata = json.loads(archive.read('inputs/material.metadata.json'))
+            if (plan['input_hashes'].get(SNAPSHOT) != sha(raw)
+                    or m.get('catalog_loss') != loss_contract(raw, metadata, contract)
+                    or plan.get('catalog_loss') != m.get('catalog_loss')):
+                raise ValueError('执行任务未绑定同牌号的冻结目录铁损来源')
+        elif 'catalog_loss' in m or 'catalog_loss' in plan:
+            raise ValueError('原B-H执行协议不能附加目录铁损系数')
     if dispatch:
         for name,digest in m['producer_hashes'].items():
             if sha((project/name).read_bytes())!=digest:raise ValueError('执行冻结程序已改变：'+name)
@@ -91,10 +129,15 @@ class CalibratedMotorExecution:
         return path
 
     def prepare(self,data):
-        if not isinstance(data,dict) or set(data)!={'analysis_plan'}:raise ValueError('请选择已准备分析工程的计划')
+        if (not isinstance(data,dict) or 'analysis_plan' not in data or set(data)-{'analysis_plan','preflight_only'}
+                or type(data.get('preflight_only',False)) is not bool):
+            raise ValueError('请选择已准备分析工程的计划')
         transport=native_transport_setting()
         plan=self.analysis.get(data['analysis_plan'])
         if plan['status']!='model_snapshot_ready_not_submitted':raise ValueError('实际导入与分析工程复制通过后才能准备执行任务')
+        measurement = plan['measurement_protocol']
+        preflight = data.get('preflight_only', False)
+        budget = execution_budget(measurement, preflight)
         origin=self.analysis.path(plan['id']);artifact='bhexec_'+uuid.uuid4().hex[:12];folder=self.path(artifact)
         inputs=folder/'inputs';inputs.mkdir(parents=True)
         shutil.copy2(origin/'model/motor.aedt',inputs/'motor.aedt');shutil.copy2(origin/'inputs/material.amat',inputs/'material.amat')
@@ -105,10 +148,12 @@ class CalibratedMotorExecution:
             parent_bank_sha256=plan['parent_bank_sha256'],effective_bank_sha256=plan['effective_bank_sha256'],
             training_grades=plan['training_grades'],excluded_grades=plan['excluded_grades'],H_axis='physical_A_per_m',H_scale=1,
             measurement_protocol=plan['measurement_protocol'],requested_protocol=plan['requested_protocol'],cores=min(plan['cores'],2),
-            budget=execution_budget(plan['measurement_protocol']),budget_stop_policy=BUDGET_STOP_POLICY,design='Motor-CAD 2',setup='Setup1',aedt_version='2025.1',aedt_transport=transport,
+            budget=budget,budget_stop_policy=BUDGET_STOP_POLICY,design='Motor-CAD 2',setup='Setup1',aedt_version='2025.1',aedt_transport=transport,
             efficiency_enabled=False,optimization_ranking_enabled=False,
             input_hashes={p.relative_to(folder).as_posix():sha(p.read_bytes()) for p in inputs.iterdir()},
-            producer_hashes={name:sha((self.project/name).read_bytes()) for name in SUPPORT})
+            producer_hashes={name:sha((self.project/name).read_bytes()) for name in execution_support(measurement)})
+        if measurement == LOSS_PROTOCOL:
+            m.update(catalog_loss=plan['catalog_loss'], preflight_only=preflight)
         verify_model(inputs/'motor.aedt',m);write_json(folder/'manifest.json',m)
         write_json(folder/'state.json',dict(id=artifact,status='prepared',phase='not_started',new_Maxwell_solves=0))
         return self.get(artifact)
@@ -125,6 +170,17 @@ class CalibratedMotorExecution:
             if (folder/'attention.json').exists():result.update(status='needs_attention',error=read(folder/'attention.json')['error'])
             elif (folder/'dispatch.json').exists() and identity_status(read(folder/'dispatch.json')['identity'])=='dead':
                 result.update(status='needs_attention',error='执行进程已退出，现场保留，不自动重试')
+        if s['status'] == 'validated_not_solved':
+            configuration = read(folder/'configuration.json')
+            project = folder/'case/motor.aedt'
+            if (m.get('preflight_only') is not True or s['new_Maxwell_solves'] != 0
+                    or configuration['validation'] != 1 or (folder/'solve_attempt.json').exists()
+                    or sha(project.read_bytes()) != configuration['configured_project_sha256']):
+                raise ValueError('目录铁损预检的保存工程或执行范围不符')
+            audit = verify_model(project, m, execution_material=True)
+            if configuration['catalog_loss_native_scope'] != audit['catalog_loss_native_scope']:
+                raise ValueError('目录铁损预检的保存对象范围不符')
+            result['configuration'] = configuration
         if s['status'] in ('completed','completed_after_budget'):
             saved=read(folder/'result.json');report=folder/'case/reports/Torque Plots.csv'
             if sha(report.read_bytes())!=saved['metrics']['torque_csv_sha256']:raise ValueError('实际官方转矩CSV哈希改变')
@@ -133,15 +189,22 @@ class CalibratedMotorExecution:
                 saved['metrics']!=metrics or saved['native_analyze_succeeded'] is not True or saved['native_configuration_verified'] is not True or
                 saved['new_Maxwell_solves']!=1 or saved['efficiency_enabled'] is not False or saved['optimization_ranking_enabled'] is not False or
                 saved['effective_bank_sha256']!=m['effective_bank_sha256'] or saved['excluded_grades']!=m['excluded_grades'] or
+                m.get('preflight_only') is True or
                 sha((folder/'case/motor.aedt').read_bytes())!=saved['solved_project_sha256']):raise ValueError('实际转矩结果或保存工程绑定不符')
             verify_saved_material((folder/'case/motor.aedt').read_text(encoding='utf-8-sig'),m['material_contract'])
             if m['requested_protocol'].get('equivalent_direction'):
-                verify_model(folder/'case/motor.aedt',m,execution_material=True)
+                audit = verify_model(folder/'case/motor.aedt',m,execution_material=True)
                 if (saved.get('model_version')!=execution_model_version(m['measurement_protocol'])
                         or saved.get('constitutive_model')!='scalar_direction_equivalent_v1'
-                        or saved.get('actual_material_name')!=equivalent_material_name(m['material_contract'],m['requested_protocol']['equivalent_direction'],m['requested_protocol'].get('curve_representation','Normal'))
+                        or saved.get('actual_material_name')!=execution_material_name(m)
                         or (m['requested_protocol'].get('curve_representation')=='Intrinsic' and saved.get('curve_representation')!='Intrinsic')):
                     raise ValueError('方向等效结果的模型身份不符')
+            if m['measurement_protocol'] == LOSS_PROTOCOL:
+                scope = audit['catalog_loss_native_scope']
+                loss = collect_catalog_losses(folder, metrics['time_ms'], scope, read(folder/'loss_report_scope.json'))
+                if (saved.get('catalog_loss') != m['catalog_loss'] or saved.get('catalog_loss_native_scope') != scope
+                        or saved.get('loss_estimate_metrics') != loss):
+                    raise ValueError('保存的目录铁损结果、单位或CSV绑定不符')
             if m['requested_protocol'].get('solver_settings'):
                 verify_solver_settings((folder/'case/motor.aedt').read_text(encoding='utf-8-sig'),m['requested_protocol']['solver_settings'])
                 if (saved.get('solver_settings')!=m['requested_protocol']['solver_settings'] or
@@ -161,9 +224,17 @@ class CalibratedMotorExecution:
                 result.update(raw_error=result.get('error'),error=f'达到{m["budget"]["wall_seconds"]}秒预算，已请求停止本次求解；现场保留，未重试。')
         return result
 
-    def records(self):
+    def records(self, analysis_plan=None):
+        if analysis_plan is not None:
+            self.analysis.path(analysis_plan)
         rows=[]
         for folder in self.storage.glob('bhexec_*'):
+            if analysis_plan is not None:
+                try:
+                    if read(folder/'manifest.json').get('analysis_plan_id') != analysis_plan:
+                        continue
+                except (OSError, ValueError, AttributeError):
+                    continue  # Unidentified records remain visible in the complete inventory.
             try:rows.append(self.get(folder.name))
             except (OSError,KeyError,ValueError,TypeError) as exc:rows.append(dict(id=folder.name,status='invalid',error=str(exc)))
         return sorted(rows,key=lambda r:r.get('created_utc',''),reverse=True)
@@ -243,9 +314,13 @@ class CalibratedMotorExecution:
         if name in MATERIAL_EXPORT_FILES:
             return io.BytesIO(execution_material_exports(record,self.path(artifact))[name])
         allowed={'manifest.json','state.json'}
+        if record.get('status') == 'validated_not_solved':
+            allowed.update({'configuration.json','equivalent_material.json'})
         if record['result_available']:
             allowed.update({'result.json','summary.csv','case/reports/Torque Plots.csv'})
             if record['requested_protocol'].get('equivalent_direction'):allowed.add('equivalent_material.json')
+            if 'loss_estimate_metrics' in record['result']:
+                allowed.update(record['result']['loss_estimate_metrics']['csv_hashes'])
         if name not in allowed:raise ValueError('该任务当前没有可下载的官方结果')
         return self.path(artifact)/name
 
@@ -257,10 +332,11 @@ class CalibratedMotorExecution:
         with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:
             archive.writestr('execution.json',json.dumps(record,ensure_ascii=False,indent=2))
             for name in record['input_hashes']:archive.write(folder/name,name)
-            for name in ('failure.json','attention.json','configuration.json','budget_stop.json','budget_watch.json','equivalent_material.json'):
+            for name in ('failure.json','attention.json','configuration.json','budget_stop.json','budget_watch.json','equivalent_material.json','loss_report_scope.json','solve_completed.json'):
                 if (folder/name).is_file():archive.write(folder/name,name)
             if record['result_available']:
                 for name in ('result.json','summary.csv','case/reports/Torque Plots.csv'):archive.write(folder/name,name)
+                for name in record['result'].get('loss_estimate_metrics',{}).get('csv_hashes',{}):archive.write(folder/name,name)
                 if record['requested_protocol'].get('equivalent_direction'):
                     for name,blob in execution_material_exports(record,folder).items():archive.writestr(name,blob)
         out.seek(0);return out

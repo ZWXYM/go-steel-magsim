@@ -1,5 +1,6 @@
 """Prepare missing CPU stages or reopen an exact saved chain; never dispatch."""
 from modules.calibrated_motor_analysis import protocol,DEFAULT_PROTOCOL
+from modules.catalog_motor_loss import PROTOCOL as LOSS_PROTOCOL
 from modules.material_library import sha
 from modules.material_motor_workflow import LINEAGE, same_source, material_url
 from modules.motor_queue import QueueLease
@@ -49,6 +50,8 @@ class MaterialMotorChain:
 
     def _ensure(self, calibration, key, cores, measurement):
         source = self.library.detail(calibration, key)
+        if measurement == LOSS_PROTOCOL and source['kind'] != 'fit':
+            raise ValueError('目录铁损请选择同牌号的四个已标定样品；预测材料请使用B-H协议')
         # Read/verify every stage before the first mutation: unreadable records
         # cannot be treated as absent records after an interrupted request.
         saved = {name: self.records(component) for name, component in (
@@ -67,8 +70,9 @@ class MaterialMotorChain:
         def matching_plans(native):
             return [r for r in self.linked(saved['analysis_plan'], 'native_import_id', native)
                 if r['measurement_protocol'] == measurement and r['cores'] == cores]
+        analysis_runs = [r for r in saved['execution'] if not r.get('preflight_only')]
         def plan_priority(plan):
-            runs = self.linked(saved['execution'], 'analysis_plan_id', plan)
+            runs = self.linked(analysis_runs, 'analysis_plan_id', plan)
             rank = max([50] + [execution_priority.get(r['status'], 0) for r in runs]) if plan['status'] == 'model_snapshot_ready_not_submitted' else 30
             return (rank, plan.get('created_utc', ''))
         def native_rank(native):
@@ -125,7 +129,7 @@ class MaterialMotorChain:
             result['created'].append(dict(stage='model_snapshot', id=plan['id']))
         elif plan['status'] != 'model_snapshot_ready_not_submitted':
             return finish('needs_review', '分析工程状态与导入结果不符，请查看现有记录')
-        runs = self.linked(saved['execution'], 'analysis_plan_id', plan)
+        runs = self.linked(analysis_runs, 'analysis_plan_id', plan)
         run = self.pick(runs, execution_priority)
         if run:
             keep('execution', run)

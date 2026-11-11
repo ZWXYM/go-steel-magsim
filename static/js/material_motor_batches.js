@@ -2,15 +2,19 @@
 const MBB={catalog:[],selected:new Set(),record:null,loading:false,actionPending:false,preparePending:false,viewRevision:0,observedView:null,selectionCalibration:null,catalogGeneration:0,generation:0,historyGeneration:0,timer:null,plotBatch:null,plotMode:'all',plotSelected:new Set()};
 let mbPowerGeneration=0;const mbPowerCache=new Map();
 const mbComparison={batch:null,signature:null,generation:0,pending:false,data:null};
+const mbCatalogLossProtocol='v8_2_cycle1_RD_equivalent_intrinsic_fine100_catalog_loss_v1';
 const mb$=id=>document.getElementById(id),mbText=(tag,text)=>{const n=document.createElement(tag);n.textContent=text;return n};
 const mbLabels={prepared:'计划已准备，尚未开始',prepared_source_changed:'准备后程序已更新，请保留旧计划',starting:'正在启动串行控制',running:'正在串行推进',completed:'批量已完成',completed_with_failures:'批量结束，包含失败或跳过项',needs_attention:'需要检查后显式接续',failed:'失败，现场保留',paused:'已暂停，阶段与结果保留'};
 const mbItemLabels={pending:'待执行',importing:'导入与预检',preparing_model:'准备分析工程',analyzing:'转矩分析',completed:'新增结果已完成',reused_result:'复用已有结果',failed:'失败，现场保留',blocked:'原记录需检查'};
 const mbProtocolLabels={v8_2_cycle1:'RD/TD张量 · 1周期',periodic_cycle3_v1:'RD/TD张量 · 3周期',v8_2_cycle1_smooth_bh_v1:'RD/TD张量 · 1周期平滑对照',v8_2_cycle1_RD_equivalent_v1:'RD等效/Normal · 1周期',v8_2_cycle1_TD_equivalent_v1:'TD等效/Normal · 1周期',v8_2_cycle1_RD_equivalent_stable_v1:'RD等效/Normal · 1周期平滑与迭代对照',v8_2_cycle1_RD_equivalent_intrinsic_v1:'RD等效/Intrinsic · 1周期平滑与迭代对照',v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1:'RD等效/Intrinsic · 1周期不平滑与迭代对照',v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1:'RD等效/Intrinsic · 101点 / 0.1ms'};
+mbProtocolLabels[mbCatalogLossProtocol]='RD等效 · 101点厂家目录铁损估计';
 async function mbAPI(url,body){const response=await fetch(url,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw Error(data.error||'请求失败');return data}
 function mbEntries(options={}){
  const calibration=mb$('batchCalibration').value,previous=options.preserve===true&&MBB.selectionCalibration===calibration?new Set(MBB.selected):new Set();
  MBB.selectionCalibration=calibration;MBB.selected.clear();const out=mb$('batchMaterials');out.replaceChildren();const record=MBB.catalog.find(r=>r.id===calibration);
- for(const entry of record?.entries||[]){const label=mbText('label','');label.className='choice';const input=document.createElement('input');input.type='checkbox';input.value=entry.key;input.disabled=!entry.available;
+ const catalog=mb$('batchProtocol').value===mbCatalogLossProtocol;
+ for(const entry of record?.entries||[]){if(catalog&&entry.kind!=='fit')continue;
+ const label=mbText('label','');label.className='choice';const input=document.createElement('input');input.type='checkbox';input.value=entry.key;input.disabled=!entry.available;
  input.checked=entry.available&&previous.has(entry.key);if(input.checked)MBB.selected.add(entry.key);
  const text=mbText('span',({fit:'标定',holdout:'整牌号留出',prediction:'保存的预测'}[entry.kind]||entry.kind)+' · '+entry.label);text.append(mbText('small',entry.available?(entry.excluded_grades.length?'排除 '+entry.excluded_grades.join('、'):'使用全库校准'):entry.reason));input.onchange=()=>{if(input.checked)MBB.selected.add(entry.key);else MBB.selected.delete(entry.key);mbSelection()};label.append(input,text);out.append(label)}mbSelection();
 }
@@ -68,6 +72,7 @@ function mbButtons(){
  mb$('batchStart').disabled=!(bound&&MBB.canStart&&r.status==='prepared'&&r.dispatch_compatible);
  mb$('batchResume').disabled=!(bound&&MBB.canStart&&['paused','needs_attention'].includes(r.status)&&r.dispatch_compatible);
  mb$('batchPause').disabled=!(bound&&['prepared','starting','running'].includes(r.status)&&!r.pause_requested);
+ const settle=mb$('batchSettle');if(settle){settle.hidden=r?.interruption_recovery_available!==true;settle.disabled=!(bound&&r.interruption_recovery_available===true)}
 }
 function mbReset(message){
  ++mbPowerGeneration;
@@ -87,12 +92,17 @@ function mbRender(record,canStart){
  const windowLink=mb$('batchWindowLink');if(windowLink){windowLink.href='/calibrated-motor/torque-windows?batch='+encodeURIComponent(record.id);windowLink.hidden=!record.items.some(row=>row.result_available)}
  mb$('batchTotals').textContent=`${record.totals.materials}种材料 · 可读取实际转矩 ${record.totals.actual_torque_results}项 · 本批新增完成 ${record.totals.new_completed_motor_solves}项 · 复用 ${counts.reused}项 · 原数值判据：通过 ${counts.passed}项 / 未通过 ${counts.bad}项 / 未报告 ${counts.unknown}项`+(record.pause_requested?(record.status==='paused'?' · 已暂停，可显式接续':' · 已请求暂停，等待当前阶段结束'):'');
  const rows=mb$('batchRows');rows.replaceChildren();const number=v=>v===null||v===undefined?'—':Number(v).toFixed(6);
+ const catalog=record.measurement_protocol===mbCatalogLossProtocol;
+ if(mb$('batchCatalogLossHeader'))mb$('batchCatalogLossHeader').hidden=!catalog;
+ if(mb$('batchCatalogLossDeltaHeader'))mb$('batchCatalogLossDeltaHeader').hidden=!catalog;
  for(const item of record.items){const row=document.createElement('tr'),name=document.createElement('td'),m=item.result_available?item.metrics||{}:{};name.append(mbText('strong',mbName(item)),mbText('small',' · '+item.selection.key));
  name.append(mbText('p','排除：'+(item.source.excluded_grades.join('、')||'无')));const link=mbText('a','查看独立分析与原始结果');link.href=item.analysis_url;
  if(/^\/calibrated-motor\/analysis\/bhanalysis_[a-f0-9]{12}$/.test(item.analysis_url)&&/^bhexec_[a-f0-9]{12}$/.test(item.execution_id))link.href+='?execution='+encodeURIComponent(item.execution_id);name.append(link);
  const bad=item.result_available&&m.torque_numerical_acceptance===false,quality=mbText('td',!item.result_available?'尚无结果':bad?'数值异常 · 原值保留':m.torque_numerical_acceptance===true?'通过原判据':'未报告');if(bad)quality.className='error';
  const phase=mbText('td',mbItemLabels[item.status]||item.status);
- const power=mbText('td','—');power.className='derivedPower';row.append(name,phase,quality,mbText('td',number(m.T_avg_Nm)),power,mbText('td',number(m.T_min_Nm)+' / '+number(m.T_max_Nm)),mbText('td',number(m.K_T_ripple_pct)),mbText('td',item.error||item.execution_id||'尚无实际转矩结果'));rows.append(row);mbLoadPower(item,power,record.id,powerGeneration)}
+ const power=mbText('td','—');power.className='derivedPower';row.append(name,phase,quality,mbText('td',number(m.T_avg_Nm)),power);
+ if(catalog)row.append(mbText('td',number(item.catalog_loss_summary?.time_weighted_mean_W?.CoreLoss)));
+ row.append(mbText('td',number(m.T_min_Nm)+' / '+number(m.T_max_Nm)),mbText('td',number(m.K_T_ripple_pct)),mbText('td',item.error||item.execution_id||'尚无实际转矩结果'));rows.append(row);mbLoadPower(item,power,record.id,powerGeneration)}
  mbComparisonSetup(record);mbPlot(record);
 }
 function mbComparisonReset(){
@@ -107,7 +117,7 @@ function mbComparisonClear(){
  mb$('batchCompareRead').disabled=MBB.loading||!mb$('batchBaseline').value;
 }
 function mbComparisonSetup(record){
- const signature=JSON.stringify(record.items.map(i=>[i.id,i.selection,i.source,i.execution_id,i.model_version,i.measurement_protocol,i.result_available,i.metrics]));
+ const signature=JSON.stringify(record.items.map(i=>[i.id,i.selection,i.source,i.execution_id,i.model_version,i.measurement_protocol,i.result_available,i.metrics,i.catalog_loss_summary]));
  if(mbComparison.batch===record.id&&mbComparison.signature===signature)return;
  const sameBatch=mbComparison.batch===record.id,previous=sameBatch?mb$('batchBaseline').value:'';mbComparisonClear();
  mbComparison.batch=record.id;mbComparison.signature=signature;mb$('batchComparePanel').hidden=false;
@@ -143,8 +153,9 @@ async function mbCompare(){
    if(entry.percentage_unavailable_reason)notes.push(entry.percentage_unavailable_reason);
    row.append(mbText('td',mbName(item)+(entry.item===baseline?' · 基准':'')),
     mbText('td',entry.engineering_comparison_eligible===true?'可列工程差值':entry.comparison_status==='same_saved_setup'?'同工况 · 诊断原值见下载':'不可比较'),
-    ...['delta_T_avg_Nm','delta_T_avg_pct','delta_power_W','delta_power_pct'].map(key=>mbText('td',value(entry.engineering_comparison_eligible===true?entry['qualified_'+key]:null))),
-    mbText('td',entry.torque_numerical_acceptance===true?'通过原判据':entry.torque_numerical_acceptance===false?'数值异常 · 原值保留':'判据未报告'),mbText('td',notes.join('；')||'标定来源相同'));
+    ...['delta_T_avg_Nm','delta_T_avg_pct','delta_power_W','delta_power_pct'].map(key=>mbText('td',value(entry.engineering_comparison_eligible===true?entry['qualified_'+key]:null))));
+   if(record.measurement_protocol===mbCatalogLossProtocol)row.append(mbText('td',value(entry.qualified_delta_catalog_CoreLoss_W)));
+   row.append(mbText('td',entry.torque_numerical_acceptance===true?'通过原判据':entry.torque_numerical_acceptance===false?'数值异常 · 原值保留':'判据未报告'),mbText('td',notes.join('；')||'标定来源相同'));
    rows.push(row)}
   mb$('batchCompareRows').replaceChildren(...rows);mbComparison.data=data;mb$('batchCompareStatus').textContent='基准 '+mbName(record.items.find(i=>i.id===baseline))+'；'+(data.comparison_summary||'工程比较资格尚未核对。')+' 差值 = 当前条目 − 基准，保持材料选择顺序；下载保留全部诊断原值。';
   for(const [id,format] of [['batchCompareCSV','csv'],['batchCompareJSON','json'],['batchCompareZIP','zip']]){mb$(id).href=url+'&format='+format;mb$(id).download=record.id+'_'+baseline+'_comparison.'+format;mb$(id).hidden=false}
@@ -201,8 +212,9 @@ async function mbHistory(preferred,mayReplace=()=>true){
  }catch(error){if(generation===MBB.historyGeneration&&mayReplace()){++MBB.generation;if(MBB.timer)clearTimeout(MBB.timer);MBB.timer=null;mbReset('批量清单读取失败');mb$('batchError').textContent=error.message}return false}
 }
 async function mbAction(action){
- if(!['start','resume','pause'].includes(action)||!MBB.record||MBB.loading||MBB.actionPending||MBB.record.id!==mb$('batchHistory').value)return;
- mbButtons();if(mb$({start:'batchStart',resume:'batchResume',pause:'batchPause'}[action]).disabled)return;
+ const actions={start:'batchStart',resume:'batchResume',pause:'batchPause','settle-interruption':'batchSettle'};
+ if(!Object.hasOwn(actions,action)||!MBB.record||MBB.loading||MBB.actionPending||MBB.record.id!==mb$('batchHistory').value)return;
+ mbButtons();if(mb$(actions[action]).disabled)return;
  const artifact=MBB.record.id;++MBB.viewRevision;MBB.actionPending=true;mbButtons();let failure='';
  try{await mbAPI('/api/workbench/calibrated-motor/batches/'+artifact+'/'+action,{})}
  catch(error){failure=error.message}
@@ -212,6 +224,8 @@ if(typeof document!=='undefined'){
  mb$('batchBaseline').onchange=mbBaselineChanged;mb$('batchCompareRead').onclick=mbCompare;
  mb$('batchPlotAll').onclick=()=>mbPlotMode('all');mb$('batchPlotAccepted').onclick=()=>mbPlotMode('accepted');mb$('batchPlotNone').onclick=()=>mbPlotMode('none');
  mb$('batchCatalogRefresh').onclick=mbCatalog;mb$('batchCalibration').onchange=mbEntries;mb$('batchSelectFit').onclick=()=>mbSelectFits();mb$('batchClearSelection').onclick=()=>mbSelectFits(true);
+ mb$('batchProtocol').onchange=()=>mbEntries({preserve:true});
  mb$('batchPrepare').onclick=mbPrepare;mb$('batchRefresh').onclick=()=>mbHistory();mb$('batchHistory').onchange=mbLoad;
  mb$('batchStart').onclick=()=>mbAction('start');mb$('batchResume').onclick=()=>mbAction('resume');mb$('batchPause').onclick=()=>mbAction('pause');mbCatalog();mbHistory();
+ if(mb$('batchSettle'))mb$('batchSettle').onclick=()=>mbAction('settle-interruption');
 }

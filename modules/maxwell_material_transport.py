@@ -215,10 +215,10 @@ def equivalent_native_arguments(contract,direction,curve_representation='Normal'
     raise ValueError('原材料缺少方向B-H曲线')
 
 
-def verify_saved_equivalent_material(saved_text,contract,direction,curve_representation='Normal'):
-    """Keep the original tensor and check the scalar copy against its source nodes."""
+def verify_saved_equivalent_curve(saved_text, contract, direction, curve_representation, name):
+    """Verify the scalar copy's saved physical curve and common material properties."""
     verify_saved_material(saved_text,contract)
-    name=equivalent_material_name(contract,direction,curve_representation);body=one(saved_text,name);mu=one(body,'permeability')
+    body=one(saved_text,name);mu=one(body,'permeability')
     if (value(mu,'property_type')!='nonlinear' or (value(mu,'BTypeForSingleCurve') or '').casefold()!=curve_representation.casefold()
             or value(mu,'HUnit')!='A_per_meter' or value(mu,'BUnit')!='tesla'
             or value(mu,'IsTemperatureDependent')!='false'):
@@ -235,8 +235,6 @@ def verify_saved_equivalent_material(saved_text,contract,direction,curve_represe
         points=np.asarray(raw).reshape(-1,2);physical_error=float(np.max(abs(points[:,1]+4*np.pi*1e-7*points[:,0]-np.asarray(source['B']))))
         if np.any(np.diff(points[:,1])<0) or not np.allclose(points[:,0],source['H'],rtol=1e-10,atol=1e-12) or physical_error>1e-9:
             raise ValueError('实际Intrinsic节点不能重建原物理B曲线')
-    for field in ('core_loss_kh','core_loss_kc','core_loss_ke','core_loss_kdc'):
-        if float(value(body,field))!=0:raise ValueError('方向等效B-H材料不得填造损耗系数')
     for field,key in (('conductivity','conductivity_S_per_m'),('mass_density','mass_density_kg_per_m3')):
         if float(value(body,field))!=contract['curves'][key]:raise ValueError('方向等效材料改变了'+field)
     if cut_depth_meters(value(body,'core_loss_equiv_cut_depth'))!=contract['curves']['core_loss_equiv_cut_depth_m']:
@@ -249,4 +247,13 @@ def verify_saved_equivalent_material(saved_text,contract,direction,curve_represe
         result.update(curve_representation='Intrinsic',native_B_definition='Bi=B-mu0H',source_points_unchanged=False,
             source_physical_B_preserved_at_nodes=True,physical_B_reconstruction_max_error_T=physical_error,
             physical_B_reconstruction_tolerance_T=1e-9,scope='One directional curve stored as native Intrinsic Bi-H and used isotropically; physical B is preserved at source H nodes within 1e-9T. Interpolation, local anisotropy and losses are not certified.')
+    return body, result
+
+
+def verify_saved_equivalent_material(saved_text,contract,direction,curve_representation='Normal'):
+    """Keep the zero-loss contract of the original direction-equivalent branch."""
+    name = equivalent_material_name(contract, direction, curve_representation)
+    body, result = verify_saved_equivalent_curve(saved_text, contract, direction, curve_representation, name)
+    for field in ('core_loss_kh','core_loss_kc','core_loss_ke','core_loss_kdc'):
+        if float(value(body,field))!=0:raise ValueError('方向等效B-H材料不得填造损耗系数')
     return result

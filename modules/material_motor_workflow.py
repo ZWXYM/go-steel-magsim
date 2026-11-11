@@ -158,11 +158,16 @@ class MaterialMotorWorkflow:
                         rank = 5; next_step.update(action='execution_prepare', label='准备独立转矩执行任务')
                         if run:
                             rank = 6
-                            next_step.update(action='execution_start', label='手动执行现有转矩任务')
+                            label = '手动执行目录铁损任务' if run.get('catalog_loss') else '手动执行现有转矩任务'
+                            next_step.update(action='execution_start', label=label)
                             if run['status'] == 'prepared_source_changed':
                                 next_step.update(action='execution_reprepare', label='程序已更新，保留旧任务并准备新执行')
+                            elif run['status'] == 'validated_not_solved':
+                                rank = 5
+                                next_step.update(action='preflight_result', label='查看目录铁损原生预检')
             if result:
-                rank = 8; next_step.update(action='result', label='查看官方转矩与下载', href=href)
+                label = '查看官方转矩、目录铁损与下载' if run.get('catalog_loss') else '查看官方转矩与下载'
+                rank = 8; next_step.update(action='result', label=label, href=href)
             for stage in ('native_import', 'analysis_plan', 'execution'):
                 r = records.get(stage)
                 if r and r['status'] in ACTIVE:
@@ -180,6 +185,10 @@ class MaterialMotorWorkflow:
             out['torque'] = {k:run['result']['metrics'][k] for k in ('T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_csv_sha256')}
             out['torque']['torque_numerical_acceptance']=run['result']['metrics'].get('torque_numerical_acceptance')
             out['result_scope'] = 'actual_calibrated_material_motor_torque_only'
+            loss = run['result'].get('loss_estimate_metrics')
+            if loss is not None:
+                out['result_scope'] = 'catalog_loss_engineering_motor_estimate'
+                out['catalog_CoreLoss_mean_W'] = loss['time_weighted_mean_W']['CoreLoss']
         return out
 
     @staticmethod

@@ -9,7 +9,7 @@ EXACT_STARTS={'/api/run-script','/api/ml/train','/api/ml/paper-train','/api/pipe
 START_PATHS=(r'/api/pipeline/[^/]+/(?:resume|rerun)',
     r'/api/workbench/native-material-runs/[^/]+/start',
     r'/api/workbench/calibrated-motor/(?:executions|native-imports)/[^/]+/start',
-    r'/api/workbench/calibrated-motor/batches/[^/]+/(?:start|resume)',
+    r'/api/workbench/calibrated-motor/batches/[^/]+/(?:start|resume|settle-interruption)',
     r'/api/workbench/motor/jobs/[^/]+/(?:submit|continue)',
     r'/api/workbench/optimization/plans/[^/]+/submit')
 

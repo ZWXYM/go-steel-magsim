@@ -193,11 +193,18 @@ class SystemDataBuilder:
                     efficiency_enabled=False,optimization_ranking_enabled=False)
                 row.update({key:metrics.get(key) if row['result_available'] else None for key in
                     ('source_n_samples','n_samples','T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_numerical_acceptance','torque_csv_sha256')})
+                if source.get('catalog_loss_reference_sha256'):
+                    means = (item.get('catalog_loss_summary') or {}).get('time_weighted_mean_W', {})
+                    row.update(catalog_loss_reference_sha256=source['catalog_loss_reference_sha256'],
+                               catalog_CoreLoss_mean_W=means.get('CoreLoss'), catalog_StrandedLoss_mean_W=means.get('StrandedLoss'),
+                               catalog_SolidLoss_mean_W=means.get('SolidLoss'))
                 batch_overview.append(row)
         if selected_batches:
             fields=['batch_id','item_id','execution_id','material_name','material_key','measurement_protocol','model_version','status','result_available',
                 'source_n_samples','n_samples','T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_numerical_acceptance','torque_csv_sha256',
                 'parent_bank_sha256','effective_bank_sha256','training_grades_json','excluded_grades_json','error','efficiency_enabled','optimization_ranking_enabled']
+            if any(row.get('catalog_loss_reference_sha256') for row in batch_overview):
+                fields += ['catalog_loss_reference_sha256','catalog_CoreLoss_mean_W','catalog_StrandedLoss_mean_W','catalog_SolidLoss_mean_W']
             put('calibrated_motor/overview.csv',csv_bytes(batch_overview,fields))
             index['calibrated_batch_overview']=dict(path='calibrated_motor/overview.csv',rows=len(batch_overview),
                 interpretation='Original metrics and protocol identities only; no pooled ranking or new independent samples')

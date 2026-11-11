@@ -23,6 +23,11 @@ function mlBindNativeAction(button,url,data,selected,baseDisabled=false){ML.nati
 function mlRender(v){
  ML.nativeButtons=[];mlSyncActions();
  ML.detail=v;ml$('preparedMotor').replaceChildren();ml$('chainStatus').textContent='';ml$('chainOpen').hidden=true;mlLoadPreparations(v);
+ const catalogOption=ml$('catalogLossOption');
+ if(catalogOption){
+  catalogOption.disabled=v.evidence_scope!=='same_material_fit';
+  if(catalogOption.disabled&&catalogOption.selected)ml$('torqueProtocol').value='v8_2_cycle1_RD_equivalent_intrinsic_fine100_v1';
+ }
  ml$('detail').hidden=false;ml$('title').textContent=mlLabels[v.kind]+' · '+(v.display_name||v.material_name);
  ml$('scope').textContent=v.evidence_scope==='same_material_fit'?'同样品参考修正展示；其拟合误差不能作为泛化误差。':v.excluded_grades.length?'校准训练已完整排除所列牌号；此包保留原留出/预测结果，不代表新增外部实验验证。':'此预测使用全部训练样品，未执行材料留出；若输入为已知样品，结果仍属于同样品标定。';
  const dl=ml$('identity');dl.replaceChildren();

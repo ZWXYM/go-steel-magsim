@@ -1,0 +1,118 @@
+{
+  "baseline_T_avg_Nm": 1.8699053535415184,
+  "baseline_execution_id": "bhexec_09d5b52d199a",
+  "baseline_torque_csv_sha256": "3bd15470aabc2fa3cb93b104db42693907c391e83534a3eaf7198f3f0919d31e",
+  "completed_within_budget": true,
+  "core_loss_breakdown": {
+    "closure_passed": true,
+    "insert_mean_W": 0.88784750993737,
+    "max_abs_closure_error_W": 9.094947017729282e-13,
+    "other_mean_W": {
+      "Rotor_1": 14.843733446976657,
+      "Stator": 26.750654086334695
+    }
+  },
+  "core_loss_effect_on_field": false,
+  "core_loss_object_count": 50,
+  "cut_edge_effect_active": false,
+  "effective_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+  "efficiency_enabled": false,
+  "electrical_frequency_Hz": 100,
+  "electromagnetic_mechanical_power_W": 585.7491008818896,
+  "execution_id": "bhexec_735cbf500f0a",
+  "grade": "B27R095",
+  "independent_specimen_loss_measurements": 0,
+  "initial_model_sha256": "90f416b6a84ab6add5f25f9cd974dcac8a595bf6d92256b3186a3bf6e8fb2c28",
+  "insert_count": 48,
+  "loss_coefficients_saved": {
+    "Kc": 0.239831386946471,
+    "Kdc": 0.0,
+    "Ke": 0.184767785926873,
+    "Kh": 34.7170517494311,
+    "Y": 2.0
+  },
+  "loss_minima_W": {
+    "CoreLoss": 0.0,
+    "SolidLoss": 0.0,
+    "StrandedLoss": 49.1750641103824
+  },
+  "loss_source": {
+    "coefficient_units": {
+      "Kc": "W m^-3 Hz^-2 T^-2",
+      "Ke": "W m^-3 Hz^-1.5 T^-1.5",
+      "Kh": "W m^-3 Hz^-1 T^-2"
+    },
+    "coefficients": {
+      "Kc": 0.23983138694647138,
+      "Kdc": 0,
+      "Ke": 0.18476778592687337,
+      "Kh": 34.71705174943113,
+      "Y": 2
+    },
+    "conductivity_S_per_m": 2000000.0,
+    "density_kg_per_m3": 7650.0,
+    "equivalent_cut_depth_m": 0.00027,
+    "estimate_status": "existing_program_estimate",
+    "frequency_extrapolated": true,
+    "grade": "B27R095",
+    "nominal_thickness_mm": 0.27,
+    "operating_electrical_frequency_Hz": 100,
+    "reference_direction": "not_stated_in_selected_table",
+    "reference_document": {
+      "filename": "baosteel_go.pdf",
+      "pdf_page": 17,
+      "printed_page": "14",
+      "review": "PDF table visually checked against saved values",
+      "sha256": "c92d52a3803a23dd81afc7b19aeb0edcb0499eba730253a5155e807cb2ddeb60",
+      "table": "Typical magnetic properties"
+    },
+    "reference_kind": "manufacturer_typical",
+    "reference_sha256": "1a80dc811e663be64a02aa27a3874da16ea8efc4efc682ca2aab483606383436",
+    "reference_version": "four_sample_loss_reference_v1",
+    "saved_fit_rmse_W_kg": 0.031133503839620633,
+    "source_frequencies_Hz": [
+      50.0,
+      60.0
+    ],
+    "source_warning": "",
+    "specimen_measurement": false
+  },
+  "loss_time_weighted_mean_W": {
+    "CoreLoss": 42.48223504324873,
+    "SolidLoss": 0.0,
+    "StrandedLoss": 49.17506412486481
+  },
+  "max_abs_paired_torque_delta_Nm": 0.28594483949858995,
+  "mean_torque_delta_Nm": -0.005408057201798266,
+  "measurement_protocol": "v8_2_cycle1_RD_equivalent_intrinsic_fine100_catalog_loss_v1",
+  "model_version": "V8_2_scalar_RD_equivalent_intrinsic_fine100_catalog_loss_v1",
+  "native_session_released": true,
+  "native_solves_new": 1,
+  "object_report": {
+    "requested_objects": 50,
+    "status": "exported"
+  },
+  "official_loss_csv_sha256": {
+    "case/maxwell_reports/Catalog CoreLoss by Object.csv": "ea50f8a5caf28444598133c78caab7667f8737764164e2f832e7d510b2fb9bfa",
+    "case/maxwell_reports/Catalog Losses.csv": "d648808a837d0ef2571a172317892823b35c07f46acf5f53e256f5dadff9ea6c"
+  },
+  "official_samples": 101,
+  "operating_speed_rpm": 3000,
+  "optimization_ranking_enabled": false,
+  "physical_B_reconstruction_max_error_T": 7.179368211041037e-12,
+  "preflight_id": "bhexec_e72b269e83e5",
+  "preserved_files": 18,
+  "selected_window_ms": [
+    0,
+    10
+  ],
+  "source_BH_nodes": 26,
+  "torque_acceptance": true,
+  "torque_csv_sha256": "90d3679bd56c7e6ca522316581029691589cfb36ca2504da205d2cb514a85d5e",
+  "torque_metrics": {
+    "K_T_ripple_pct": 51.48109577731874,
+    "T_avg_Nm": 1.8644972963397202,
+    "T_max_Nm": 2.23748306674006,
+    "T_min_Nm": 1.27761942784589
+  }
+}

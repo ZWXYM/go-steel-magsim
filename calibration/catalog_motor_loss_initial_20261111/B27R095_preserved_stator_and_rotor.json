@@ -1,0 +1,21 @@
+{
+  "execution": "bhexec_735cbf500f0a",
+  "object_material_assignments_preserved": true,
+  "original_material_definition_blocks_byte_equal_after_text_newline_normalization": true,
+  "original_two_actors": {
+    "Stator": {
+      "material_name": "M350-50A_20C",
+      "body_sha256": "92b8e9086dc94f413a1b356e170fdff97205521bd2e182c20ff26fe06d17a4da",
+      "native_loss_model": "Electrical Steel",
+      "has_nonzero_native_loss": true
+    },
+    "Rotor_1": {
+      "material_name": "M350-50A_20C",
+      "body_sha256": "92b8e9086dc94f413a1b356e170fdff97205521bd2e182c20ff26fe06d17a4da",
+      "native_loss_model": "Electrical Steel",
+      "has_nonzero_native_loss": true
+    }
+  },
+  "native_app_calls": 0,
+  "new_solves": 0
+}

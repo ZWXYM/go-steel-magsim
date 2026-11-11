@@ -7,6 +7,7 @@ import re
 import zipfile
 from pathlib import PurePosixPath, Path
 
+from modules.catalog_motor_loss import PROTOCOL as LOSS_PROTOCOL
 from modules.material_library import sha
 from modules.material_input_view import MaterialInputView, PARAMETERS
 
@@ -191,6 +192,7 @@ def baseline_comparison(batches, record, baseline):
         raise ValueError('请选择当前批量中的基准条目')
     points=operating_points(batches,record);entries=points['entries']
     base=next(e for e in entries if e['item']==baseline);rows=[]
+    catalog = record.get('measurement_protocol') == LOSS_PROTOCOL
     scope_keys=('parent_bank_sha256','effective_bank_sha256','training_grades','excluded_grades')
     for point in entries:
         item=items[point['item']];source=item['source'];reasons=[]
@@ -238,10 +240,23 @@ def baseline_comparison(batches, record, baseline):
         entry.update(engineering_comparison_eligible=not qualification,engineering_comparison_reasons=qualification)
         for key in ('delta_T_avg_Nm','delta_T_avg_pct','delta_power_W','delta_power_pct'):
             entry['qualified_'+key]=entry[key] if not qualification else None
+        if catalog:
+            loss = item.get('catalog_loss_summary') or {}
+            base_loss = items[baseline].get('catalog_loss_summary') or {}
+            source_hash = source.get('catalog_loss_reference_sha256')
+            means = loss.get('time_weighted_mean_W', {})
+            base_means = base_loss.get('time_weighted_mean_W', {})
+            eligible_loss = (not qualification and bool(source_hash)
+                and source_hash == items[baseline]['source'].get('catalog_loss_reference_sha256')
+                and all(s.get('official_samples') == 101 and s.get('budget_exceeded') is False
+                        and s.get('minima_W', {}).get('CoreLoss', -1) >= 0 for s in (loss,base_loss)))
+            entry.update(catalog_loss_reference_sha256=source_hash, catalog_CoreLoss_mean_W=means.get('CoreLoss'),
+                         catalog_baseline_CoreLoss_mean_W=base_means.get('CoreLoss'),
+                         qualified_delta_catalog_CoreLoss_W=means['CoreLoss']-base_means['CoreLoss'] if eligible_loss else None)
         rows.append(entry)
     eligible=sum(row['engineering_comparison_eligible'] for row in rows)
     alternatives=sum(row['engineering_comparison_eligible'] and row['item']!=baseline for row in rows)
-    return dict(version='batch_baseline_comparison_v1',batch=record['id'],baseline_item=baseline,entries=rows,
+    result = dict(version='batch_baseline_comparison_v1',batch=record['id'],baseline_item=baseline,entries=rows,
         baseline_torque_numerical_acceptance=base['torque_numerical_acceptance'],
         qualification_version='same_source_numeric_screen_v1',eligible_comparison_count=eligible,
         qualified_alternative_count=alternatives,engineering_comparison_available=alternatives>0,
@@ -252,6 +267,8 @@ def baseline_comparison(batches, record, baseline):
         power_definition=points['power_definition'],scope='Saved model result differences under the same template, model version, protocol and speed; not causal material effects or ranking',
         percentage_definition='100 * (item - baseline) / baseline; only a positive baseline has a percentage',
         new_native_solves=0,new_predictions=0,efficiency_enabled=False,optimization_ranking_enabled=False)
+    if catalog:result['catalog_loss_comparison'] = True
+    return result
 
 
 def baseline_comparison_csv(comparison):
@@ -262,6 +279,9 @@ def baseline_comparison_csv(comparison):
         'comparison_status','comparison_reasons','percentage_unavailable_reason','notes','calibration_scope','torque_csv_sha256',
         'engineering_comparison_eligible','engineering_comparison_reasons','qualified_delta_T_avg_Nm',
         'qualified_delta_T_avg_pct','qualified_delta_power_W','qualified_delta_power_pct')
+    if comparison.get('catalog_loss_comparison'):
+        fields += ('catalog_loss_reference_sha256','catalog_CoreLoss_mean_W','catalog_baseline_CoreLoss_mean_W',
+                   'qualified_delta_catalog_CoreLoss_W')
     writer.writerow(fields)
     for entry in comparison['entries']:
         values=dict(entry,batch=comparison['batch'])
@@ -275,6 +295,8 @@ def engineering_comparison_csv(comparison):
     fields=('item','material_name','execution','baseline_item','T_avg_Nm','electromagnetic_mechanical_power_W',
         'qualified_delta_T_avg_Nm','qualified_delta_T_avg_pct','qualified_delta_power_W','qualified_delta_power_pct',
         'measurement_protocol','model_version','torque_csv_sha256')
+    if comparison.get('catalog_loss_comparison'):
+        fields += ('catalog_CoreLoss_mean_W','qualified_delta_catalog_CoreLoss_W','catalog_loss_reference_sha256')
     writer.writerow(fields)
     for row in comparison['entries']:
         if row['engineering_comparison_eligible']:writer.writerow([row.get(key) for key in fields])
@@ -339,8 +361,12 @@ def summary_markdown(record, identities=None, operating=None):
         for entry in operating['entries']:
             lines.append('| '+' | '.join([cell(entry['item']),number(entry['speed_rpm']),
                 number(entry['electromagnetic_mechanical_power_W']),cell('已核对' if entry['status']=='verified_saved_operating_point' else entry['error'])])+' |')
-    lines+=['','保持选择顺序，未做材料排名。原转矩点不平滑、不重采样；标定、留出与预测身份分别保留。',
-        '仅汇总已保存转矩，不补损耗或效率，不提交任何原生求解。','']
+    lines+=['','保持选择顺序，未做材料排名。原转矩点不平滑、不重采样；标定、留出与预测身份分别保留。']
+    if record.get('measurement_protocol') == LOSS_PROTOCOL:
+        lines += ['目录铁损使用同一厂家参考快照。catalog_loss_summary.csv 保存各案的 0–10 ms 损耗均值，逐案目录内提供原 CSV。']
+    else:
+        lines += ['仅汇总已保存转矩，不补损耗或效率，不提交任何原生求解。']
+    lines.append('')
     return '\n'.join(lines)
 
 

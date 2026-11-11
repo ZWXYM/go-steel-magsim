@@ -15,8 +15,10 @@ from modules.material_motor_workflow import LINEAGE, same_source
 from modules.motor_queue import DispatchWindow, QueueLease, process_identity, identity_status
 from modules.motor_workbench import write_json
 from modules.calibrated_motor_native import SUPPORT as IMPORT_SUPPORT
-from modules.calibrated_motor_execution import SUPPORT as EXEC_SUPPORT,execution_budget
+from modules.calibrated_motor_execution import SUPPORT as EXEC_SUPPORT,execution_budget,execution_support
 from modules.calibrated_motor_analysis import protocol,DEFAULT_PROTOCOL
+from modules.catalog_motor_loss import PROTOCOL as LOSS_PROTOCOL
+from modules.material_loss_reference import GRADES
 
 VERSION = 'calibrated_material_batch_v1'
 TERMINAL = ('completed', 'completed_with_failures', 'failed', 'needs_attention', 'paused')
@@ -70,8 +72,9 @@ class MaterialMotorBatches:
             raise ValueError('无效校准材料批量计划')
         return self.storage/artifact
 
-    def producers(self):
-        return {name: sha((self.project/name).read_bytes()) for name in SUPPORT}
+    def producers(self, measurement=DEFAULT_PROTOCOL):
+        names = sorted(set(SUPPORT + execution_support(measurement)))
+        return {name: sha((self.project/name).read_bytes()) for name in names}
 
     def prepare(self, data):
         if (not isinstance(data, dict) or set(data)-{'materials','cores','measurement_protocol'}
@@ -82,26 +85,39 @@ class MaterialMotorBatches:
             raise ValueError('批量材料需包含校准记录和材料键')
         if len({(r['calibration'],r['key']) for r in materials}) != len(materials):
             raise ValueError('同一材料不能重复选择')
+        measurement = data.get('measurement_protocol', DEFAULT_PROTOCOL)
+        catalog = measurement == LOSS_PROTOCOL
+        if catalog and any(row['key'] not in {'fit:'+grade for grade in GRADES} for row in materials):
+            raise ValueError('目录铁损批量仅支持四个已标定牌号的拟合材料')
         lease = QueueLease(self.storage/'prepare.lease')
         if not lease.acquire(): raise ValueError('另一批材料正在准备，请稍后重开')
         try:
             items = []
             for index, selection in enumerate(materials, 1):
-                response = self.chain.ensure(dict(selection, cores=data.get('cores',2),
-                    measurement_protocol=data.get('measurement_protocol',DEFAULT_PROTOCOL)))
+                response = self.chain.ensure(dict(selection, cores=data.get('cores',2), measurement_protocol=measurement))
                 prep = self.chain.preparation.get(response['records']['preparation']['id'])
-                items.append(dict(id=f'item_{index:02d}', selection=selection,
+                item = dict(id=f'item_{index:02d}', selection=selection,
                     source={**{k:response[k] for k in LINEAGE},
                         'AMAT_sha256':prep['files']['package/material.amat'],
                         'metadata_sha256':prep['files']['package/metadata.json'],
                         'template_sha256':prep['template_sha256']},
-                    records=response['records'], initial_status=response['status']))
-            producers = self.producers()
+                    records=response['records'], initial_status=response['status'])
+                if catalog:
+                    plan = self.chain.analysis.get(response['records']['analysis_plan']['id'])
+                    item['source']['catalog_loss_reference_sha256'] = plan['catalog_loss']['reference_sha256']
+                items.append(item)
+            if catalog and len({item['source']['catalog_loss_reference_sha256'] for item in items}) != 1:
+                raise ValueError('所选目录铁损分析计划使用不同目录快照，请统一来源后准备批量')
+            producers = self.producers(measurement)
             identity = dict(materials=[dict(selection=r['selection'],source=r['source']) for r in items],
                 cores=response['cores'], measurement_protocol=response['measurement_protocol'],producer_hashes=producers)
             digest = sha(json.dumps(identity,sort_keys=True,separators=(',',':')).encode())
             for old in self.records():
                 if old.get('idempotency_sha256') == digest:
+                    old_executions = [item['records'].get('execution', {}).get('id') for item in old['items']]
+                    new_executions = [item['records'].get('execution', {}).get('id') for item in items]
+                    if old.get('interruption_recovery') and old_executions != new_executions:
+                        continue  # An explicitly prepared replacement has a different case directory.
                     return dict(old, existing_batch_reused=True)
             artifact = 'bhbatch_'+uuid.uuid4().hex[:12]; folder = self.path(artifact); folder.mkdir()
             manifest = dict(id=artifact,version=VERSION,created_utc=datetime.now(timezone.utc).isoformat(),
@@ -117,7 +133,7 @@ class MaterialMotorBatches:
         finally: lease.release()
 
     def verify_producers(self, manifest):
-        if manifest['producer_hashes'] != self.producers():
+        if manifest['producer_hashes'] != self.producers(manifest['measurement_protocol']):
             raise ValueError('批量程序已改变；保留本记录，不下发旧程序任务')
 
     def item_records(self, item, cursor):
@@ -139,12 +155,12 @@ class MaterialMotorBatches:
                 or prep['template_sha256'] != item['source']['template_sha256']
                 or native['preparation_id'] != prep['id'] or plan['native_import_id'] != native['id']):
             raise ValueError('批量项的文件或父子记录绑定改变')
-        if 'execution' in values and values['execution']['analysis_plan_id'] != plan['id']:
+        if 'execution' in values and (values['execution']['analysis_plan_id'] != plan['id'] or values['execution'].get('preflight_only')):
             raise ValueError('批量项执行不属于冻结分析计划')
         if 'execution' not in values:
             runs=self.chain.execution.records()
             if any(r['status']=='invalid' for r in runs):raise ValueError('执行记录不可核对，批量未创建替代任务')
-            candidates=[r for r in runs if r.get('analysis_plan_id')==plan['id']]
+            candidates=[r for r in runs if r.get('analysis_plan_id')==plan['id'] and not r.get('preflight_only')]
             if any(not same_source(r,item['source']) for r in candidates):raise ValueError('已有执行的批量来源不符')
             discovered=self.chain.pick(candidates,{'completed':5,'running':4,'starting':4,'prepared':3})
             if discovered:values['execution']=discovered
@@ -160,6 +176,9 @@ class MaterialMotorBatches:
                 or state['status'] not in ('prepared','starting','running',*TERMINAL)):
             raise ValueError('批量计划身份或范围不符')
         protocol(manifest['measurement_protocol'])
+        catalog = manifest['measurement_protocol'] == LOSS_PROTOCOL
+        if catalog and len({item['source']['catalog_loss_reference_sha256'] for item in manifest['items']}) != 1:
+            raise ValueError('目录铁损批量的冻结目录来源不统一')
         identity=dict(materials=[dict(selection=r['selection'],source=r['source']) for r in manifest['items']],
             cores=manifest['cores'],measurement_protocol=manifest['measurement_protocol'],producer_hashes=manifest['producer_hashes'])
         if sha(json.dumps(identity,sort_keys=True,separators=(',',':')).encode())!=manifest['idempotency_sha256']:
@@ -167,6 +186,8 @@ class MaterialMotorBatches:
         result=dict(manifest,**state);rows=[]
         for item,cursor in zip(manifest['items'],state['items']):
             records=self.item_records(item,cursor);run=records.get('execution')
+            if catalog and records['analysis_plan']['catalog_loss']['reference_sha256'] != item['source']['catalog_loss_reference_sha256']:
+                raise ValueError('目录铁损分析计划与冻结批量的目录来源不符')
             if (records['preparation']['cores']!=manifest['cores'] or records['analysis_plan']['cores']!=manifest['cores']
                     or records['analysis_plan']['measurement_protocol']!=manifest['measurement_protocol']
                     or (run and (run['cores']!=manifest['cores'] or run['measurement_protocol']!=manifest['measurement_protocol']))):
@@ -177,15 +198,26 @@ class MaterialMotorBatches:
             if run and run.get('result_available'):
                 row.update(result_available=True,metrics=run['result']['metrics'],execution_id=run['id'],
                     model_version=run['result']['model_version'],measurement_protocol=run['measurement_protocol'])
+                if catalog:
+                    loss = run['result']['loss_estimate_metrics']
+                    row['catalog_loss_summary'] = {key: loss[key] for key in
+                        ('official_samples','time_weighted_mean_W','minima_W','csv_hashes','object_report')}
+                    row['catalog_loss_summary'].update(core_loss_breakdown=loss.get('core_loss_breakdown'),
+                                                       budget_exceeded=run['result']['budget_exceeded'])
             if run and run.get('budget_stop') and run.get('status')=='failed':
                 row.update(raw_error=row.get('error'),error=run['error'],budget_stop=run['budget_stop'])
             rows.append(row)
-        result['items']=rows;result['dispatch_compatible']=manifest['producer_hashes']==self.producers()
+        result['items']=rows;result['dispatch_compatible']=manifest['producer_hashes']==self.producers(manifest['measurement_protocol'])
         result['pause_requested']=(folder/'pause_requested.json').exists()
         if state['status']=='prepared' and not result['dispatch_compatible']:result['status']='prepared_source_changed'
         if state['status'] in ('starting','running') and (folder/'controller.json').exists():
             if identity_status(read(folder/'controller.json')['identity'])!='alive':
                 result.update(status='needs_attention',error='批量控制器已退出；保留各阶段，请显式接续')
+        controller = folder/'controller.json'
+        journal_pending = (folder/'interruption_recovery.json').exists() and not (folder/'interruption_applied.json').exists()
+        if journal_pending or (result['status']=='needs_attention' and state.get('current_item') and controller.is_file()
+                               and identity_status(read(controller)['identity'])=='dead'):
+            result['interruption_recovery_available'] = True
         result['totals']=dict(materials=len(rows),actual_torque_results=sum(r['result_available'] for r in rows),
             new_completed_motor_solves=sum(r.get('execution_id') in state['new_execution_ids'] and r['result_available'] for r in rows))
         imports=state['new_import_ids'];executions=state['new_execution_ids']
@@ -252,12 +284,24 @@ class MaterialMotorBatches:
             state=read(folder/'state.json');state.update(status='paused');write_json(folder/'state.json',state)
         return self.get(artifact)
 
+    def settle_interruption(self, artifact):
+        from modules.motor_batch_recovery import settle_interruption
+        return settle_interruption(self, artifact)
+
     def bundle(self, artifact):
         record=self.get(artifact);stream=io.StringIO(newline='')
         writer=csv.writer(stream);writer.writerow(['item','calibration','material_key','material','effective_bank_sha256',
             'excluded_grades','measurement_protocol','model_version','status','execution',
             'T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','error'])
         files={'batch.json':json.dumps(record,ensure_ascii=False,indent=2).encode('utf8')}
+        if record.get('interruption_recovery'):
+            files['interruption_recovery.json'] = (self.path(artifact)/'interruption_recovery.json').read_bytes()
+        catalog = record['measurement_protocol'] == LOSS_PROTOCOL
+        if catalog:
+            loss_stream=io.StringIO(newline='')
+            loss_writer=csv.writer(loss_stream)
+            loss_writer.writerow(['item','material_key','execution','reference_sha256','official_samples',
+                'CoreLoss_mean_W','StrandedLoss_mean_W','SolidLoss_mean_W','verified_insert_CoreLoss_mean_W','object_report_status'])
         for row in record['items']:
             m=row.get('metrics',{})
             writer.writerow([row['id'],row['selection']['calibration'],row['selection']['key'],row['source']['material_name'],
@@ -269,6 +313,20 @@ class MaterialMotorBatches:
                 if protocol(record['measurement_protocol']).get('equivalent_direction'):
                     for name,blob in self.chain.execution.material_exports(row['execution_id']).items():
                         files[row['id']+'/'+name]=blob
+            if catalog:
+                loss = row.get('catalog_loss_summary') or {}
+                means = loss.get('time_weighted_mean_W') or {}
+                breakdown = loss.get('core_loss_breakdown') or {}
+                loss_writer.writerow([row['id'],row['selection']['key'],row.get('execution_id'),
+                    row['source']['catalog_loss_reference_sha256'],loss.get('official_samples'),
+                    *[means.get(name) for name in ('CoreLoss','StrandedLoss','SolidLoss')],
+                    breakdown.get('insert_mean_W') if breakdown.get('closure_passed') else None,
+                    loss.get('object_report',{}).get('status')])
+                for name,digest in loss.get('csv_hashes',{}).items():
+                    blob=self.chain.execution.download(row['execution_id'],name).read_bytes()
+                    if sha(blob)!=digest:raise ValueError('批量原始损耗CSV在打包期间改变')
+                    files[row['id']+'/'+Path(name).name]=blob
+        if catalog:files['catalog_loss_summary.csv']=loss_stream.getvalue().encode('utf-8-sig')
         files['summary.csv']=stream.getvalue().encode('utf-8-sig')
         files['manifest.json']=json.dumps(dict(files={n:sha(b) for n,b in files.items()},efficiency_enabled=False,
             optimization_ranking_enabled=False,new_native_solves=0),indent=2).encode()

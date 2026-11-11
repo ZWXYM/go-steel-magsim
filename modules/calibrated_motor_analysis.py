@@ -10,7 +10,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
+from modules.catalog_motor_loss import PROTOCOL as LOSS_PROTOCOL, MODEL as LOSS_MODEL, SNAPSHOT, loss_contract
 from modules.material_library import sha
+from modules.material_loss_reference import MaterialLossReference
 from modules.maxwell_material_transport import load_contract, verify_saved_material
 from modules.motor_model_audit import audit_project,one,value
 from modules.motor_workbench import numeric_csv, unit, write_json
@@ -31,6 +33,7 @@ PROTOCOLS={
         solver_settings={'SmoothBHCurve':True,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100}),
     'v8_2_cycle1_RD_equivalent_intrinsic_nosmooth_v1':dict(cycles=1,source_samples=31,stop_s=.01,selected_window_ms=[0,10],equivalent_direction='RD',constitutive_model='scalar_direction_equivalent_v1',curve_representation='Intrinsic',
         solver_settings={'SmoothBHCurve':False,'UseNonLinearIterNum':True,'MinIterNum':1,'MaxIterNum':100})}
+PROTOCOLS[LOSS_PROTOCOL] = dict(PROTOCOLS[DEFAULT_PROTOCOL])
 
 
 def protocol(name):
@@ -43,6 +46,8 @@ def protocol(name):
 
 def execution_model_version(measurement):
     p=protocol(measurement)
+    if measurement == LOSS_PROTOCOL:
+        return LOSS_MODEL
     if p.get('equivalent_direction'):
         if p.get('curve_representation')=='Intrinsic':
             return 'V8_2_scalar_RD_equivalent_BH_only_intrinsic'+('_nosmooth' if p['solver_settings']['SmoothBHCurve'] is False else '')+('_fine100' if p['points_per_cycle']==100 else '')+'_v1'
@@ -118,13 +123,21 @@ class CalibratedMotorAnalysis:
         measurement=data.get('measurement_protocol',DEFAULT_PROTOCOL);p=protocol(measurement)
         cores=data.get('cores',source['cores'])
         if type(cores) is not int or not 1<=cores<=32: raise ValueError('核数需为1–32整数')
-        origin=self.native.path(source['id']);artifact='bhanalysis_'+uuid.uuid4().hex[:12]
+        origin=self.native.path(source['id'])
+        catalog = None
+        if measurement == LOSS_PROTOCOL:
+            snapshot, _ = MaterialLossReference(self.native.project).snapshot()
+            metadata = json.loads((origin/'inputs/material.metadata.json').read_bytes())
+            catalog = loss_contract(snapshot, metadata, source['material_contract'])
+        artifact='bhanalysis_'+uuid.uuid4().hex[:12]
         folder=self.path(artifact);inputs=folder/'inputs';inputs.mkdir(parents=True)
         for name,relative in (('native_import_manifest.json','manifest.json'),('material.amat','inputs/material.amat'),
                               ('material.metadata.json','inputs/material.metadata.json'),('source_package.zip','inputs/source_package.zip')):
             shutil.copy2(origin/relative,inputs/name)
         contract=load_contract(inputs/'material.amat')
         if contract!=source['material_contract']: raise ValueError('分析包与导入材料合同不符')
+        if catalog is not None:
+            (folder/SNAPSHOT).write_bytes(snapshot)
         manifest=dict(id=artifact,version=VERSION,created_utc=datetime.now(timezone.utc).isoformat(),
             native_import_id=source['id'],preparation_id=source['preparation_id'],material_name=source['material_name'],
             parent_bank_sha256=source['parent_bank_sha256'],effective_bank_sha256=source['effective_bank_sha256'],
@@ -132,6 +145,8 @@ class CalibratedMotorAnalysis:
             cores=cores,measurement_protocol=measurement,requested_protocol=p,material_contract=contract,
             native_submission_allowed=False,efficiency_enabled=False,optimization_ranking_enabled=False,new_native_solves=0,
             input_hashes={f.relative_to(folder).as_posix():sha(f.read_bytes()) for f in inputs.iterdir()})
+        if catalog is not None:
+            manifest['catalog_loss'] = catalog
         write_json(folder/'manifest.json',manifest)
         write_json(folder/'state.json',dict(id=artifact,status='planned_not_submitted'))
         return self.get(artifact)
@@ -148,6 +163,14 @@ class CalibratedMotorAnalysis:
             p=(folder/name).resolve()
             if not p.is_relative_to(folder/'inputs') or sha(p.read_bytes())!=digest: raise ValueError('冻结分析输入改变：'+name)
         if load_contract(folder/'inputs/material.amat')!=manifest['material_contract']: raise ValueError('冻结分析材料不符')
+        if manifest['measurement_protocol'] == LOSS_PROTOCOL:
+            raw = (folder/SNAPSHOT).read_bytes()
+            metadata = json.loads((folder/'inputs/material.metadata.json').read_bytes())
+            if (manifest['input_hashes'].get(SNAPSHOT) != sha(raw)
+                    or manifest.get('catalog_loss') != loss_contract(raw, metadata, manifest['material_contract'])):
+                raise ValueError('冻结分析的目录铁损来源不符')
+        elif 'catalog_loss' in manifest:
+            raise ValueError('原B-H分析协议不能附加目录铁损系数')
         result=dict(manifest,**state)
         if state['status']=='model_snapshot_ready_not_submitted':
             binding=json.loads((folder/'model_binding.json').read_text(encoding='utf8'))

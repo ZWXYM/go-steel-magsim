@@ -1,4 +1,4 @@
-"""Dedicated, one-shot BH-only motor analysis; export official torque only."""
+"""Dedicated motor analysis and official reports for frozen material models."""
 import argparse
 import csv
 import math
@@ -15,7 +15,11 @@ from pathlib import Path
 PROJECT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(PROJECT))
 from modules.calibrated_motor_analysis import collect_torque,execution_model_version,verify_solver_settings
-from modules.calibrated_motor_execution import read,verify_inputs,verify_model,execution_budget,BUDGET,BUDGET_STOP_POLICY
+from modules.calibrated_motor_execution import read,verify_inputs,verify_model,execution_budget,execution_material_name,BUDGET,BUDGET_STOP_POLICY
+from modules.catalog_motor_loss import (
+    REPORT, OBJECT_REPORT, QUANTITIES, catalog_native_arguments, collect_catalog_losses,
+    object_expressions, verify_catalog_material,
+)
 from modules.material_library import sha
 from modules.motor_queue import QueueLease,process_identity,identity_status,require_native_pid,configure_native_transport,bind_new_native_session,connect_owned_stop_client
 from modules.motor_workbench import write_json,license_config
@@ -140,13 +144,18 @@ def configure(app,project,m,folder):
     before=verify_model(project,m);p=m['requested_protocol']
     direction=p.get('equivalent_direction');representation=p.get('curve_representation','Normal')
     if direction:
-        name=equivalent_material_name(m['material_contract'],direction,representation)
+        name=execution_material_name(m)
         if name.casefold() in {n.casefold() for n in app.materials.odefinition_manager.GetProjectMaterialNames()}:
             raise ValueError('新执行副本已有同名方向等效材料；不覆盖')
-        app.materials.odefinition_manager.AddMaterial(equivalent_native_arguments(m['material_contract'],direction,representation))
+        catalog = m.get('catalog_loss')
+        args = (catalog_native_arguments(m['material_contract'], catalog) if catalog else
+                equivalent_native_arguments(m['material_contract'],direction,representation))
+        app.materials.odefinition_manager.AddMaterial(args)
         for row in before['inserts']:app.modeler[row['name']].material_name=name
         app.save_project(str(project))
-        transported=verify_saved_equivalent_material(project.read_text(encoding='utf-8-sig'),m['material_contract'],direction,representation)
+        text = project.read_text(encoding='utf-8-sig')
+        transported = (verify_catalog_material(text, m['material_contract'], catalog) if catalog else
+                       verify_saved_equivalent_material(text,m['material_contract'],direction,representation))
         write_json(folder/'equivalent_material.json',transported)
     app['NumTorqueCycles']=str(p['cycles']);app['NumTorquePointsPerCycle']=str(p['points_per_cycle'])
     if (abs(float(app.get_evaluated_value('NumTorqueCycles'))-p['cycles'])>1e-8 or
@@ -171,11 +180,38 @@ def configure(app,project,m,folder):
     record=dict(native_configuration_verified=True,requested_protocol=p,setup=after['setup'],operating_point=after['operating_point'],
         validation=valid,configured_project_sha256=sha(project.read_bytes()),core_loss_object_names=after['core_loss']['enabled_object_names'],
         original_loss_selection_preserved=True,solver_settings_requested=p.get('solver_settings',{}),solver_settings_saved=saved_solver,efficiency_enabled=False,optimization_ranking_enabled=False)
+    if 'catalog_loss' in m:
+        record['catalog_loss_native_scope'] = after['catalog_loss_native_scope']
     write_json(folder/'configuration.json',record);return record
+
+def export_catalog_loss_reports(app, folder, configuration, torque):
+    scope = configuration['catalog_loss_native_scope']
+    export_report(app, 'WB_Catalog_Losses', list(QUANTITIES), folder / REPORT)
+    expected = object_expressions(scope['core_loss_objects'])
+    status = dict(status='exported', requested_objects=len(expected))
+    try:
+        setup = 'Setup1 : Transient'
+        categories = app.post.available_quantities_categories('Transient', solution=setup)
+        available = set()
+        for category in categories:
+            if 'loss' in category.casefold():
+                available.update(app.post.available_report_quantities('Transient', solution=setup, quantities_category=category))
+        missing = [name for name in expected if name not in available]
+        if missing:
+            status.update(status='native_quantities_unavailable', missing_expressions=missing)
+        else:
+            export_report(app, 'WB_Catalog_CoreLoss_by_Object', expected, folder / OBJECT_REPORT)
+    except Exception as exc:
+        status.update(status='object_export_failed', error=str(exc))
+    write_json(folder/'loss_report_scope.json', status)
+    return collect_catalog_losses(folder, torque['time_ms'], scope, status)
 
 def execute(app,project,m,folder,deadline,phase):
     check_budget(folder,deadline);phase('configuring');configuration=configure(app,project,m,folder)
-    check_budget(folder,deadline);phase('solving')
+    check_budget(folder,deadline)
+    if m.get('preflight_only'):
+        return None
+    phase('solving')
     if m.get('budget_stop_policy')==BUDGET_STOP_POLICY:launch_budget_watch(folder,deadline)
     check_budget(folder,deadline)
     write_json(folder/'solve_attempt.json',dict(setup=m['setup'],utc=datetime.now(timezone.utc).isoformat(),cores=m['cores'],gpus=0))
@@ -183,10 +219,13 @@ def execute(app,project,m,folder,deadline,phase):
         raise RuntimeError('Maxwell转矩分析失败；不自动重试')
     if (folder/'budget_stop.json').exists():
         raise TimeoutError(f'达到{m["budget"]["wall_seconds"]}秒预算并已请求停止，保留现场，不将停止后的数据当完整结果')
+    if 'catalog_loss' in m:
+        write_json(folder/'solve_completed.json', dict(execution_id=m['id'], native_analyze_succeeded=True))
     # Collect a late solve as late, never silently turn an over-budget run into normal completion.
     phase('collecting');report=folder/'case/reports/Torque Plots.csv'
     export_report(app,'WB_BH_Torque',['-Moving1.Torque'],report)
     metrics=collect_torque(report,m['measurement_protocol'])
+    losses = export_catalog_loss_reports(app, folder, configuration, metrics) if 'catalog_loss' in m else None
     app.save_project(str(project));verify_model(project,m,execution_material=True)
     result=dict(execution_id=m['id'],analysis_plan_id=m['analysis_plan_id'],native_import_id=m['native_import_id'],
         material_name=m['material_name'],model_version=execution_model_version(m['measurement_protocol']),measurement_protocol=m['measurement_protocol'],
@@ -200,15 +239,22 @@ def execute(app,project,m,folder,deadline,phase):
         result['solver_settings']=m['requested_protocol']['solver_settings']
     if m['requested_protocol'].get('equivalent_direction'):
         result.update(constitutive_model='scalar_direction_equivalent_v1',equivalent_direction=m['requested_protocol']['equivalent_direction'],
-            actual_material_name=equivalent_material_name(m['material_contract'],m['requested_protocol']['equivalent_direction'],m['requested_protocol'].get('curve_representation','Normal')),
+            actual_material_name=execution_material_name(m),
             model_scope='Direction-equivalent scalar B-H engineering comparison; not local RD/TD anisotropy',
             equivalent_material_verification=read(folder/'equivalent_material.json'))
         if m['requested_protocol'].get('curve_representation')=='Intrinsic':result['curve_representation']='Intrinsic'
+    if losses is not None:
+        result.update(catalog_loss=m['catalog_loss'], catalog_loss_native_scope=configuration['catalog_loss_native_scope'],
+                      loss_estimate_metrics=losses, source_scope='catalog_loss_engineering_motor_estimate',
+                      model_scope='Scalar RD-equivalent B-H with catalog loss estimates at the saved operating point.')
     write_json(folder/'result.json',result)
     names=['execution_id','material_name','measurement_protocol','T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_csv_sha256']
+    summary = {key:(result[key] if key in result else metrics[key]) for key in names}
+    if losses is not None:
+        summary.update({name+'_time_weighted_mean_W': number for name, number in losses['time_weighted_mean_W'].items()})
     with (folder/'summary.csv').open('w',encoding='utf-8-sig',newline='') as stream:
-        writer=csv.DictWriter(stream,fieldnames=names);writer.writeheader()
-        writer.writerow({key:(result[key] if key in result else metrics[key]) for key in names})
+        writer=csv.DictWriter(stream,fieldnames=list(summary));writer.writeheader()
+        writer.writerow(summary)
     return result
 
 def create_session(project,m,folder):
@@ -287,11 +333,16 @@ def run(folder,motor_storage,native_storage):
         desktop,identity=create_session(project,m,folder)
         app=open_app(project,m,identity)
         result=execute(app,project,m,folder,deadline,phase)
-        state.update(status='completed_after_budget' if result['budget_exceeded'] else 'completed',phase='finished',new_Maxwell_solves=1)
+        if m.get('preflight_only'):
+            state.update(status='validated_not_solved', phase='finished', new_Maxwell_solves=0)
+        else:
+            state.update(status='completed_after_budget' if result['budget_exceeded'] else 'completed',phase='finished',new_Maxwell_solves=1)
     except Exception as exc:
         state.update(status='failed',phase='failed',error=str(exc))
+        completed = int(bool(result) or (folder/'solve_completed.json').exists())
+        state['new_Maxwell_solves'] = completed
         write_json(folder/'failure.json',dict(error=str(exc),traceback=traceback.format_exc(),
-            solve_attempted=(folder/'solve_attempt.json').exists(),new_completed_Maxwell_solves=1 if result else 0))
+            solve_attempted=(folder/'solve_attempt.json').exists(),new_completed_Maxwell_solves=completed))
     finally:
         cleanup_error=None
         if desktop is not None and identity is not None:
@@ -321,4 +372,4 @@ if __name__=='__main__':
     if args.watch_budget:raise SystemExit(watch_budget(args.folder))
     if args.motor_storage is None or args.native_storage is None:parser.error('normal worker requires both storage paths')
     outcome=run(args.folder,args.motor_storage,args.native_storage)
-    raise SystemExit(0 if outcome['status']=='completed' else 1)
+    raise SystemExit(0 if outcome['status'] in ('completed','validated_not_solved') else 1)
