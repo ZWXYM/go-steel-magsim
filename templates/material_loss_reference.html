@@ -6,4 +6,17 @@
 <section id="lossDetail" class="card" hidden><h2 id="lossTitle"></h2><p id="lossInputs" class="muted"></p><h3>原程序采用的厂家典型值</h3><div class="tablewrap"><table><thead><tr><th>磁密 T</th><th>频率 Hz</th><th>比损耗 W/kg</th><th>文档与页码</th></tr></thead><tbody id="lossPoints"></tbody></table></div>
 <section id="lossAlternatePanel" hidden><h3>另一版手册值（未加入原拟合）</h3><p class="muted">文档版本不同，数值可能不同；不作为同一批样品重复测量。</p><div class="tablewrap"><table><thead><tr><th>磁密 T</th><th>频率 Hz</th><th>比损耗 W/kg</th><th>文档与页码</th></tr></thead><tbody id="lossAlternates"></tbody></table></div></section>
 <h3>原程序保存的估计系数</h3><p><code id="lossFormula"></code></p><p class="muted">Kc来自经典薄片公式，Kh/Ke来自原非负拟合，磁密指数固定为2；体积系数=质量系数×假定密度。电机工程估计采用体积系数。</p><div class="tablewrap"><table><thead><tr><th>系数</th><th>质量系数</th><th>质量单位</th><th>体积系数</th><th>体积单位</th></tr></thead><tbody id="lossCoefficients"></tbody></table></div><p id="lossFit" class="muted"></p><p id="lossWarnings" class="notice"></p><details><summary>原资料身份与快照</summary><div id="lossSources" class="hash"></div></details></section>
+{% if catalog_check %}
+<section class="card"><h2>宝钢牌号典型值对照</h2>
+<p>对照来自<a href="{{ catalog_check.source.url }}">宝钢标准 PDF 表 D.1</a>（印刷第 22、23 页）。表中给出磁极化 J；在 H = 800 A/m 时按 B = J + μ₀H 换算。系统参考曲线来自日钢/JFE 图谱和历史单调处理，以下差值反映两套来源的区别。</p>
+<div class="tablewrap"><table><thead><tr><th>牌号</th><th>厂家 J₈₀₀ / T</th><th>厂家换算 B₈₀₀ / T</th><th>V4 拟合 RD B₈₀₀ / T</th><th>拟合减厂家 / T</th></tr></thead><tbody>
+{% for row in catalog_check.RD_B800_rows %}<tr><td>{{ row.grade }}</td><td>{{ '%.3f'|format(row.J800_catalog_T) }}</td><td>{{ '%.4f'|format(row.B800_catalog_converted_T) }}</td><td>{{ '%.4f'|format(row.V4_fitted_RD_B_T) }}</td><td>{{ '%+.4f'|format(row.V4_fit_minus_catalog_B_T) }}</td></tr>{% endfor %}
+</tbody></table></div>
+<h3>B23R075：补齐 60 Hz 目录值</h3>
+<div class="tablewrap"><table><thead><tr><th>目录峰值 J / T</th><th>50 Hz / W·kg⁻¹</th><th>60 Hz / W·kg⁻¹</th><th>新来源的 100 Hz 外推 / W·kg⁻¹</th><th>相同数字幅值下较旧估计</th></tr></thead><tbody>
+{% for row in catalog_check.B23_frequency_rows %}<tr><td>{{ '%.1f'|format(row.J_peak_T) }}</td><td>{{ '%.2f'|format(row.source_50_W_kg) }}</td><td>{{ '%.2f'|format(row.source_60_W_kg) }}</td><td>{{ '%.3f'|format(row.candidate_100_nominal_J_W_kg) }}</td><td>{{ '%+.2f'|format(row.nominal_change_pct) }}%</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="muted">表 D.1 是厂家典型参考，未给出各行试样身份或损耗点的 H，不能把 J 的损耗点直接改作 B 的实测。100 Hz 是外推；此对照不改原校准曲线或电机系数。</p>
+<a href="/api/workbench/material-loss-reference/baosteel-check">下载四牌号来源对照 JSON</a></section>
+{% endif %}
 </main><script src="/static/js/material_loss_reference.js" defer></script></body></html>

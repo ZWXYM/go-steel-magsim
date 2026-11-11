@@ -13,6 +13,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from flask import Flask
+from modules.baosteel_catalog_check import SOURCE as STANDARD_CHECK
 from modules.material_loss_reference import MaterialLossReference, GRADES, reference_csv, reference_bundle
 from modules.workbench_routes import create_workbench
 
@@ -120,6 +121,30 @@ class LossReferenceTests(unittest.TestCase):
         self.path.rename(self.path.with_suffix('.missing'))
         self.assertEqual(client.get('/api/workbench/material-loss-reference').status_code,400)
         self.assertEqual(client.get('/system').status_code,200)
+
+    def test_standard_comparison_is_separate_and_keeps_original_loss_snapshot(self):
+        check_path=self.project/STANDARD_CHECK
+        raw=(PROJECT/STANDARD_CHECK).read_bytes()
+        original=self.path.read_bytes()
+        check_path.write_bytes(raw)
+        client=self.client()
+        page=client.get('/material-loss-reference').get_data(as_text=True)
+        self.assertIn('宝钢牌号典型值对照',page)
+        self.assertIn('+0.0504',page)
+        self.assertIn('1.544',page)
+        endpoint='/api/workbench/material-loss-reference/baosteel-check'
+        result=client.get(endpoint)
+        self.addCleanup(result.close)
+        self.assertEqual(result.status_code,200)
+        self.assertEqual(result.data,raw)
+        self.assertEqual(client.get(endpoint+'?file=other').status_code,400)
+        self.assertEqual(client.post(endpoint,json={}).status_code,405)
+        changed=json.loads(raw)
+        changed['RD_B800_rows'][0]['B800_catalog_converted_T']=changed['RD_B800_rows'][0]['J800_catalog_T']
+        check_path.write_text(json.dumps(changed),encoding='utf8')
+        self.assertEqual(client.get(endpoint).status_code,400)
+        self.assertNotIn('宝钢牌号典型值对照',client.get('/material-loss-reference').get_data(as_text=True))
+        self.assertEqual(self.path.read_bytes(),original)
 
 
 if __name__ == '__main__': unittest.main()
