@@ -11,7 +11,7 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from modules.calibration_regularized import default_eligible
-from modules.external_bh_validation import MAX_CURVE_BYTES, compare_direction, read_measurement_csv
+from modules.external_bh_validation import MAX_CURVE_BYTES, compare_curves, read_measurement_csv
 from modules.system_data import json_bytes, sha256
 
 
@@ -32,6 +32,7 @@ CURVE_LABELS = {
 }
 EXCITATION_LABELS = {'dc': '直流', 'quasistatic': '准静态', 'ac': '交流', 'unspecified': '激励条件待核对'}
 SELECTION = re.compile(r'(cal_[0-9a-f]{12})\|([A-Za-z0-9_-]+)\|([0-9a-f]{64})')
+SECONDARY_SELECTION = re.compile(r'(cal_[0-9a-f]{12})\|([0-9a-f]{64})')
 
 
 def _source(form):
@@ -107,6 +108,7 @@ class ExternalBHIntake:
                 if options:
                     groups.append(dict(id=artifact, label=report.get('display_label') or report['calibration_version'],
                                        created_utc=report.get('created_utc') or '', default=default_eligible(report),
+                                       version_value='|'.join((artifact, digest)),
                                        options=options))
             except (OSError, ValueError, KeyError, TypeError):
                 continue
@@ -166,16 +168,27 @@ class ExternalBHIntake:
                     or not source['direction_and_pairing_declared']):
                 raise ValueError('比较需要 RD 和 TD 两份原表、明确曲线类型，以及对方向和配对条件的确认')
             identity, models = self._models(form.get('selection', ''))
+            comparison_identity = None
+            secondary = form.get('secondary_selection', '')
+            if secondary:
+                match = SECONDARY_SELECTION.fullmatch(secondary)
+                if match is None or match[1] == identity['calibration_id']:
+                    raise ValueError('请选择另一条校准记录作为对照')
+                selection = '|'.join((match[1], identity['grade'], match[2]))
+                comparison_identity, comparison_models = self._models(selection)
+                models.update({'secondary_' + name: model for name, model in comparison_models.items()})
             summary.update(model=identity, H_axis='physical_A_per_m',
-                           method='Linear interpolation on physical H. Fit and holdout use the same original input rows in the common range. Errors are saved B minus input B.')
+                           method='Linear interpolation on physical H. All selected curves use the same original input rows in the common range. Errors are saved B minus input B.')
+            if comparison_identity:
+                summary['comparison_model'] = comparison_identity
             saved_rows = []
             for direction in DIRECTIONS:
                 measurement = read_measurement_csv(uploads[direction][1], direction)
-                fit, heldout = (models[name]['curves'][direction] for name in ('fit', 'holdout'))
-                compared = compare_direction(measurement, fit, heldout)
+                curves = {name: model['curves'][direction] for name, model in models.items()}
+                compared = compare_curves(measurement, curves)
                 files[f'comparison/{direction}.csv'] = _csv_bytes(compared.pop('rows'))
                 summary['comparison'][direction] = compared
-                for name, curve in (('fit', fit), ('holdout', heldout)):
+                for name, curve in curves.items():
                     saved_rows.extend(dict(model=name, direction=direction, H_A_per_m=h, B_T=b)
                                       for h, b in zip(curve['H'], curve['B']))
             files['model_curves.csv'] = _csv_bytes(saved_rows)

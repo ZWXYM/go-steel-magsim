@@ -100,9 +100,11 @@ def _model_curve(curve):
     return h, b
 
 
-def compare_direction(measurement, fitted, heldout):
-    """Use the same original measurement rows for both sets of errors."""
-    curves = {'fit': _model_curve(fitted), 'holdout': _model_curve(heldout)}
+def compare_curves(measurement, saved_curves):
+    """Interpolate every saved curve over the same original sample rows."""
+    if not saved_curves:
+        raise ValueError('请选择可比较的保存曲线')
+    curves = {name: _model_curve(curve) for name, curve in saved_curves.items()}
     h_min = min(measurement['points'][0]['H_A_per_m'], measurement['points'][-1]['H_A_per_m'])
     h_max = max(measurement['points'][0]['H_A_per_m'], measurement['points'][-1]['H_A_per_m'])
     low = max(h_min, *(curve[0][0] for curve in curves.values()))
@@ -123,7 +125,7 @@ def compare_direction(measurement, fitted, heldout):
             row[name + '_error_T'] = residual
         rows.append(row)
 
-    count = len(errors['fit'])
+    count = sum(row['in_comparison'] for row in rows)
     metrics = {}
     for name, values in errors.items():
         metrics[name] = dict(
@@ -147,3 +149,7 @@ def compare_direction(measurement, fitted, heldout):
                 source_order=measurement['source_order'], measurement_points=len(rows),
                 measurement_H_range_A_per_m=[h_min, h_max], overlap_H_range_A_per_m=[float(low), float(high)]
                 if low <= high else None, compared_points=count, metrics=metrics, B800=b800, rows=rows)
+
+
+def compare_direction(measurement, fitted, heldout):
+    return compare_curves(measurement, {'fit': fitted, 'holdout': heldout})

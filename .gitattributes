@@ -314,3 +314,5 @@ modules/external_bh_validation.py -text
 templates/external_bh_validation.html -text
 tests/test_external_bh_intake.py -text
 tests/test_external_bh_validation.py -text
+tools/compare_reference_samples.py -text
+calibration/pilot_reference_samples_20261111/** -text

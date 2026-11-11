@@ -47,21 +47,25 @@
     <h2>{{ report.model.grade ~ ' · 原表比较' if report.model else '原表归档' }}</h2>
     <p>{{ source_labels[report.source.source_kind] }} · {{ curve_labels[report.source.curve_kind] }} · {{ record.id }}</p>
     {% if report.model %}
-    <p class="muted">两种曲线使用同一组原采样点。误差为保存的 B 减去上传表的 B，单位 T。</p>
+    {% set secondary = report.get('comparison_model') %}
+    {% set versions = [(report.model, ''), (secondary, 'secondary_')] if secondary else [(report.model, '')] %}
+    <p class="muted">所有选中曲线使用同一组原采样点。误差为保存的 B 减去上传表的 B，单位 T。</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>方向</th><th>原表点数</th><th>共同 H 范围（A/m）</th><th>比较点数</th><th>拟合 RMSE</th><th>留出 RMSE</th><th>拟合 MAE</th><th>留出 MAE</th></tr></thead>
+        <thead><tr><th>方向</th>{% if secondary %}<th>校准记录</th>{% endif %}<th>原表点数</th><th>共同 H 范围（A/m）</th><th>比较点数</th><th>拟合 RMSE</th><th>留出 RMSE</th><th>拟合 MAE</th><th>留出 MAE</th></tr></thead>
         <tbody>
           {% for direction in ('RD', 'TD') %}
           {% set row = report.comparison[direction] %}
+          {% for identity, prefix in versions %}
           <tr>
-            <th scope="row">{{ direction }}</th><td>{{ row.measurement_points }}</td>
+            <th scope="row">{{ direction }}</th>{% if secondary %}<td>{{ identity.calibration_id }}</td>{% endif %}<td>{{ row.measurement_points }}</td>
             <td>{% if row.overlap_H_range_A_per_m %}{{ number(row.overlap_H_range_A_per_m[0]) }} 至 {{ number(row.overlap_H_range_A_per_m[1]) }}{% else %}无共同范围{% endif %}</td>
             <td>{{ row.compared_points }}</td>
             {% for metric in ('rmse_T', 'mae_T') %}
-              {% for model in ('fit', 'holdout') %}<td>{{ number(row.metrics[model][metric] if row.metrics[model] else none) }}</td>{% endfor %}
+              {% for model in ('fit', 'holdout') %}{% set stats = row.metrics[prefix ~ model] %}<td>{{ number(stats[metric] if stats else none) }}</td>{% endfor %}
             {% endfor %}
           </tr>
+          {% endfor %}
           {% endfor %}
         </tbody>
       </table>
@@ -69,31 +73,35 @@
     <h3>B800 对照（T）</h3>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>方向</th><th>原表 B800</th><th>取值方式</th><th>拟合 B800</th><th>留出 B800</th><th>拟合误差</th><th>留出误差</th></tr></thead>
+        <thead><tr><th>方向</th>{% if secondary %}<th>校准记录</th>{% endif %}<th>原表 B800</th><th>取值方式</th><th>拟合 B800</th><th>留出 B800</th><th>拟合误差</th><th>留出误差</th></tr></thead>
         <tbody>
           {% for direction in ('RD', 'TD') %}
           {% set point = report.comparison[direction].B800 %}
-          <tr><th scope="row">{{ direction }}</th>
+          {% for identity, prefix in versions %}
+          <tr><th scope="row">{{ direction }}</th>{% if secondary %}<td>{{ identity.calibration_id }}</td>{% endif %}
             {% if point %}
             <td>{{ number(point.input_B_T) }}</td><td>{{ '原表有 800 A/m 点' if point.at_original_point else '原表线性插值' }}</td>
-            <td>{{ number(point.fit_B_T) }}</td><td>{{ number(point.holdout_B_T) }}</td><td>{{ number(point.fit_error_T) }}</td><td>{{ number(point.holdout_error_T) }}</td>
+            <td>{{ number(point[prefix ~ 'fit_B_T']) }}</td><td>{{ number(point[prefix ~ 'holdout_B_T']) }}</td><td>{{ number(point[prefix ~ 'fit_error_T']) }}</td><td>{{ number(point[prefix ~ 'holdout_error_T']) }}</td>
             {% else %}
             <td colspan="6">共同范围未覆盖 800 A/m</td>
             {% endif %}
           </tr>
+          {% endfor %}
           {% endfor %}
         </tbody>
       </table>
     </div>
     <details>
       <summary>校准记录与训练牌号</summary>
+      {% for identity, _ in versions %}
       <dl>
-        <dt>校准记录</dt><dd>{{ report.model.calibration_id }} · {{ report.model.calibration_version }}</dd>
-        <dt>报告 SHA-256</dt><dd>{{ report.model.source_report_sha256 }}</dd>
-        <dt>拟合训练牌号</dt><dd>{{ report.model.models.fit.training_grades | join('、') }}</dd>
-        <dt>留出训练牌号</dt><dd>{{ report.model.models.holdout.training_grades | join('、') }}</dd>
-        <dt>留出牌号</dt><dd>{{ report.model.models.holdout.excluded_grades | join('、') }}</dd>
+        <dt>校准记录</dt><dd>{{ identity.calibration_id }} · {{ identity.calibration_version }}</dd>
+        <dt>报告 SHA-256</dt><dd>{{ identity.source_report_sha256 }}</dd>
+        <dt>拟合训练牌号</dt><dd>{{ identity.models.fit.training_grades | join('、') }}</dd>
+        <dt>留出训练牌号</dt><dd>{{ identity.models.holdout.training_grades | join('、') }}</dd>
+        <dt>留出牌号</dt><dd>{{ identity.models.holdout.excluded_grades | join('、') }}</dd>
       </dl>
+      {% endfor %}
     </details>
     {% endif %}
     <details open>
@@ -137,6 +145,14 @@
           {% endfor %}
         </select>
       </label>
+      {% if groups | length > 1 %}
+      <label style="margin-top: 14px">同牌号的第二条校准记录（可选）
+        <select name="secondary_selection">
+          <option value="">仅核对首选记录</option>
+          {% for group in groups %}<option value="{{ group.version_value }}"{% if form.get('secondary_selection') == group.version_value %} selected{% endif %}>{{ group.label }} · {{ group.id }}</option>{% endfor %}
+        </select>
+      </label>
+      {% endif %}
       <div class="grid">
         <label>RD 原表<input type="file" name="RD" accept=".csv,text/csv"></label>
         <label>TD 原表<input type="file" name="TD" accept=".csv,text/csv"></label>

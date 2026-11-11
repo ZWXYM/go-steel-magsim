@@ -13,6 +13,7 @@ from modules.system_data import WorkpackStore, json_bytes, sha256
 
 
 CALIBRATION = 'cal_123456789abc'
+ALTERNATE = 'cal_abcdef123456'
 GRADE = 'B23R075'
 RD = b'H_A_per_m,B_T\n20,1.0\n800,1.9\n1200,1.95\n'
 TD = b'H_A_per_m,J_T\n800,1.1\n400,0.8\n10,0.1\n'
@@ -21,24 +22,31 @@ TD = b'H_A_per_m,J_T\n800,1.1\n400,0.8\n10,0.1\n'
 class SavedMaterials:
     def __init__(self, storage):
         self.storage = storage
-        folder = storage / CALIBRATION
-        folder.mkdir(parents=True)
-        self.report = folder / 'report.json'
-        self.report.write_bytes(json_bytes(dict(
-            id=CALIBRATION, H_axis='physical_A_per_m', calibration_version='fixture',
-            bank_sha256='a' * 64, known_material_exports={GRADE: {}}, holdout_material_exports={GRADE: {}})))
+        self.report = self.add_report(CALIBRATION, 'a' * 64)
         self.heldout_training = ['B27R090']
 
+    def add_report(self, artifact, bank):
+        folder = self.storage / artifact
+        folder.mkdir(parents=True)
+        report = folder / 'report.json'
+        report.write_bytes(json_bytes(dict(
+            id=artifact, H_axis='physical_A_per_m', calibration_version='fixture',
+            bank_sha256=bank, known_material_exports={GRADE: {}}, holdout_material_exports={GRADE: {}})))
+        return report
+
     def detail(self, artifact, key):
-        assert artifact == CALIBRATION and key in ('fit:' + GRADE, 'holdout:' + GRADE)
+        assert artifact in (CALIBRATION, ALTERNATE) and key in ('fit:' + GRADE, 'holdout:' + GRADE)
         fit = key.startswith('fit:')
+        primary = artifact == CALIBRATION
+        parent, heldout = ('a', 'b') if primary else ('e', 'f')
+        field = [10, 800, 1000] if primary else [30, 800, 900]
         return dict(
             key=key, evidence_scope='same_material_fit' if fit else 'whole_material_exclusion',
             training_grades=[GRADE, 'B27R090'] if fit else self.heldout_training, excluded_grades=[] if fit else [GRADE],
-            parent_bank_sha256='a' * 64, effective_bank_sha256=('a' if fit else 'b') * 64,
-            files={'source_report.json': {'sha256': sha256(self.report.read_bytes())},
+            parent_bank_sha256=parent * 64, effective_bank_sha256=(parent if fit else heldout) * 64,
+            files={'source_report.json': {'sha256': sha256((self.storage / artifact / 'report.json').read_bytes())},
                    'material.amat': {'sha256': ('c' if fit else 'd') * 64}},
-            curves={direction: {'H': [10, 800, 1000], 'B': values}
+            curves={direction: {'H': field, 'B': values}
                     for direction, values in (('RD', [0.1, 1.91 if fit else 1.8, 2.0]),
                                                ('TD', [0.05, 1.2, 1.3]))})
 
@@ -94,6 +102,28 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.library.heldout_training.append(GRADE)
         self.assertEqual(self._post_pair().status_code, 400)
         self.assertEqual(self.store.records(), [])
+
+    def test_two_versions_use_common_rows_and_preserve_old_result(self):
+        first = self._post_pair()
+        first_id = first.location.rsplit('/', 1)[1]
+        _, first_report = self.intake.read(first_id)
+        alternate = self.library.add_report(ALTERNATE, 'e' * 64)
+        selection = '|'.join((ALTERNATE, sha256(alternate.read_bytes())))
+        result = self._post_pair(secondary_selection=selection)
+        self.assertEqual(result.status_code, 303)
+        artifact = result.location.rsplit('/', 1)[1]
+        _, report = self.intake.read(artifact)
+        self.assertEqual(report['comparison_model']['calibration_id'], ALTERNATE)
+        self.assertEqual(report['comparison_model']['grade'], GRADE)
+        self.assertEqual(report['comparison']['RD']['overlap_H_range_A_per_m'], [30, 900])
+        self.assertEqual(report['comparison']['RD']['compared_points'], 1)
+        self.assertEqual(set(report['comparison']['RD']['metrics']), {'fit', 'holdout', 'secondary_fit', 'secondary_holdout'})
+        self.assertAlmostEqual(report['comparison']['RD']['metrics']['fit']['rmse_T'], .01)
+        self.assertAlmostEqual(report['comparison']['RD']['metrics']['secondary_holdout']['rmse_T'], .1)
+        self.assertIn(ALTERNATE, self.client.get(result.location).get_data(as_text=True))
+        self.assertEqual(self.intake.read(first_id)[1], first_report)
+        self.assertEqual(first_report['comparison']['RD']['compared_points'], 2)
+        self.assertEqual(self._post_pair(secondary_selection=CALIBRATION+'|'+'a'*64).status_code, 400)
 
     def test_archive_accepts_one_original_without_physical_axis_claim(self):
         raw = b'H,unknown\n12,0.18\n'
