@@ -12,14 +12,17 @@ from types import SimpleNamespace
 from unittest.mock import patch
 from flask import Flask
 from modules.calibrated_motor_analysis import collect_torque,protocol,execution_model_version
-from modules.torque_windows import TorqueWindows,window_statistics,create_torque_window_routes,digest
+from modules.catalog_motor_loss import PROTOCOL as LOSS_PROTOCOL, REPORT, OBJECT_REPORT, collect_catalog_losses, object_expressions
+from modules.torque_windows import TORQUE_REPORT,TorqueWindows,window_statistics,create_torque_window_routes,digest
 
 
 class TorqueWindowTests(unittest.TestCase):
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name);self.batch='bhbatch_0123456789ab';self.runs={};self.paths={};items=[]
+        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name);self.batch='bhbatch_0123456789ab';self.runs={};self.paths={};self.loss_paths={};items=[]
         for n,letter in enumerate('ab',1):
-            run='bhexec_'+letter*12;plan='bhanalysis_'+letter*12;path=self.root/(letter+'.csv');out=io.StringIO(newline='');writer=csv.writer(out);writer.writerow(['Time [ns]','-Moving1.Torque [NewtonMeter]'])
+            run='bhexec_'+letter*12;plan='bhanalysis_'+letter*12;path=self.root/run/TORQUE_REPORT
+            path.parent.mkdir(parents=True)
+            out=io.StringIO(newline='');writer=csv.writer(out);writer.writerow(['Time [ns]','-Moving1.Torque [NewtonMeter]'])
             values=[n+i*.01 for i in range(31)]
             if n==2:values[15]=177
             for i,value in enumerate(values):writer.writerow([i*protocol('v8_2_cycle1')['stop_s']*1e9/30,value])
@@ -32,11 +35,48 @@ class TorqueWindowTests(unittest.TestCase):
         def get(artifact):
             if artifact!=self.batch:raise ValueError('unknown batch')
             return copy.deepcopy(self.record)
-        def download(artifact,name):
-            if name!='case/reports/Torque Plots.csv':raise ValueError('wrong source filename')
-            return self.paths[artifact]
-        self.manager=SimpleNamespace(get=get,records=lambda:[copy.deepcopy(self.record)],chain=SimpleNamespace(execution=SimpleNamespace(get=lambda key:copy.deepcopy(self.runs[key]),download=download)))
+        self.manager=SimpleNamespace(get=get,records=lambda:[copy.deepcopy(self.record)],chain=SimpleNamespace(execution=SimpleNamespace(get=lambda key:copy.deepcopy(self.runs[key]),path=lambda key:self.root/key)))
         self.service=TorqueWindows(self.manager)
+
+    def attach_catalog_loss(self, *, object_status='exported', bad_first_object=False):
+        row=self.record['items'][0]
+        artifact=row['execution_id']
+        execution=self.runs[artifact]
+        root=self.root/artifact
+        torque=self.paths[artifact]
+        with torque.open('w',newline='',encoding='utf8') as stream:
+            writer=csv.writer(stream)
+            writer.writerow(['Time [ns]','-Moving1.Torque [NewtonMeter]'])
+            writer.writerows((index*100000,1.5) for index in range(101))
+        metrics=collect_torque(torque,LOSS_PROTOCOL)
+        version=execution_model_version(LOSS_PROTOCOL)
+        row.update(metrics=metrics,measurement_protocol=LOSS_PROTOCOL,model_version=version)
+        execution.update(measurement_protocol=LOSS_PROTOCOL,requested_protocol=protocol(LOSS_PROTOCOL))
+        inserts=[f'Insert_{index}' for index in range(48)]
+        names=inserts+['Stator','Rotor_1']
+        scope=dict(inserts=inserts,core_loss_objects=names)
+        result=execution['result']
+        result.update(metrics=copy.deepcopy(metrics),model_version=version,
+            catalog_loss=dict(operating_electrical_frequency_Hz=100),catalog_loss_native_scope=scope)
+        loss_path=root/REPORT
+        loss_path.parent.mkdir(parents=True)
+        with loss_path.open('w',newline='',encoding='utf8') as stream:
+            writer=csv.writer(stream)
+            writer.writerow(['Time [ns]','CoreLoss [mW]','StrandedLoss [W]','SolidLoss [kW]'])
+            writer.writerows((index*100000,10000+200*index+(4000 if index==49 else 0),3,.00005) for index in range(101))
+        self.loss_paths[artifact,REPORT]=loss_path
+        if object_status=='exported':
+            object_path=root/OBJECT_REPORT
+            with object_path.open('w',newline='',encoding='utf8') as stream:
+                writer=csv.writer(stream)
+                writer.writerow(['Time [ms]',*[name+' [W]' for name in object_expressions(names)]])
+                for index in range(101):
+                    core=10+.2*index+(4 if index==49 else 0)
+                    first=1 if bad_first_object and index==0 else 0
+                    writer.writerow([index/10,core*.2/48+first,*([core*.2/48]*47),core*.5,core*.3])
+            self.loss_paths[artifact,OBJECT_REPORT]=object_path
+        result['loss_estimate_metrics']=collect_catalog_losses(root,metrics['time_ms'],scope,dict(status=object_status))
+        return artifact
 
     def test_known_interval_statistics_preserve_sign_zero_and_sample_endpoints(self):
         result=window_statistics([0,1,2,3],[-2,0,2,4],[.5,3],3000)
@@ -89,6 +129,71 @@ class TorqueWindowTests(unittest.TestCase):
             for row in payload['records']:self.assertEqual(archive.read('raw/'+row['item']+'/Torque Plots.csv'),self.paths[row['execution_id']].read_bytes())
             points=list(csv.DictReader(io.StringIO(archive.read('all_original_points.csv').decode('utf-8-sig'))));self.assertEqual(len(points),62);self.assertEqual(float(points[15]['torque_Nm']),177);self.assertEqual([row['item'] for row in json.loads(archive.read('analysis.json'))['records']],['item_02','item_01'])
             summary=list(csv.DictReader(io.StringIO(archive.read('summary.csv').decode('utf-8-sig'))));self.assertEqual(summary[0]['original_numerical_acceptance'],'False')
+            self.assertNotIn('catalog_loss_window.csv',archive.namelist())
+
+    def test_catalog_window_uses_same_original_samples_and_exports_exact_reports(self):
+        artifact=self.attach_catalog_loss()
+        data=dict(items=['item_01'],window_ms=[.23,4.97])
+        payload=self.service.analyze(self.batch,data)
+        record=payload['records'][0]
+        loss=record['catalog_loss_window']
+        self.assertEqual(record['window_statistics']['sample_indices'],list(range(3,50)))
+        self.assertEqual(loss['n_samples'],47)
+        for actual,expected in zip(loss['sampled_window_ms'],[.3,4.9]):
+            self.assertAlmostEqual(actual,expected)
+        self.assertEqual(loss['object_report_status'],'closed')
+        # A 4 W increase at the last selected point contributes half a single step.
+        expected_mean=15.2+4/(2*46)
+        self.assertAlmostEqual(loss['time_weighted_mean_W']['CoreLoss'],expected_mean)
+        self.assertAlmostEqual(loss['time_weighted_mean_W']['StrandedLoss'],3)
+        self.assertAlmostEqual(loss['time_weighted_mean_W']['SolidLoss'],.05)
+        self.assertAlmostEqual(loss['core_loss_breakdown']['insert_mean_W'],expected_mean*.2)
+        self.assertAlmostEqual(loss['core_loss_breakdown']['stator_mean_W'],expected_mean*.5)
+        self.assertAlmostEqual(loss['core_loss_breakdown']['rotor_mean_W'],expected_mean*.3)
+        with zipfile.ZipFile(self.service.export(self.batch,dict(data,snapshot_sha256=payload['snapshot_sha256']))) as archive:
+            manifest=json.loads(archive.read('manifest.json'))
+            for source in (REPORT,OBJECT_REPORT):
+                path=self.loss_paths[artifact,source]
+                member='raw/item_01/'+path.name
+                self.assertEqual(archive.read(member),path.read_bytes())
+                self.assertEqual(manifest['files'][member],loss['csv_hashes'][source])
+            rows=list(csv.DictReader(io.StringIO(archive.read('catalog_loss_window.csv').decode('utf-8-sig'))))
+            self.assertAlmostEqual(float(rows[0]['core_loss_time_weighted_mean_W']),expected_mean)
+            self.assertEqual(rows[0]['execution'],artifact)
+
+    def test_missing_object_report_keeps_total_without_inventing_groups(self):
+        self.attach_catalog_loss(object_status='native_quantities_unavailable')
+        data=dict(items=['item_01'],window_ms=[0,10])
+        payload=self.service.analyze(self.batch,data)
+        loss=payload['records'][0]['catalog_loss_window']
+        self.assertAlmostEqual(loss['time_weighted_mean_W']['CoreLoss'],20.04)
+        self.assertIsNone(loss['core_loss_breakdown'])
+        self.assertEqual(loss['object_report_status'],'native_quantities_unavailable')
+        with zipfile.ZipFile(self.service.export(self.batch,dict(data,snapshot_sha256=payload['snapshot_sha256']))) as archive:
+            self.assertNotIn('raw/item_01/Catalog CoreLoss by Object.csv',archive.namelist())
+            rows=list(csv.DictReader(io.StringIO(archive.read('catalog_loss_window.csv').decode('utf-8-sig'))))
+            self.assertEqual(rows[0]['insert_mean_W'],'')
+
+    def test_window_cannot_hide_failed_full_report_closure(self):
+        self.attach_catalog_loss(bad_first_object=True)
+        loss=self.service.analyze(self.batch,dict(items=['item_01'],window_ms=[2,8]))['records'][0]['catalog_loss_window']
+        self.assertLess(loss['max_abs_closure_error_W'],1e-10)
+        self.assertEqual(loss['object_report_status'],'closure_failed')
+        self.assertIsNone(loss['core_loss_breakdown'])
+
+    def test_changed_official_loss_bytes_block_download_and_grid_must_match(self):
+        artifact=self.attach_catalog_loss()
+        data=dict(items=['item_01'],window_ms=[0,5])
+        payload=self.service.analyze(self.batch,data)
+        path=self.loss_paths[artifact,REPORT]
+        raw=path.read_bytes()
+        path.write_bytes(raw.replace(b',10000,',b',10001,',1))
+        with self.assertRaisesRegex(ValueError,'哈希'):
+            self.service.export(self.batch,dict(data,snapshot_sha256=payload['snapshot_sha256']))
+        path.write_bytes(raw.replace(b'100000,',b'125000,',1))
+        self.runs[artifact]['result']['loss_estimate_metrics']['csv_hashes'][REPORT]=digest(path.read_bytes())
+        with self.assertRaisesRegex(ValueError,'时间网格'):
+            self.service.analyze(self.batch,data)
 
     def test_export_does_not_silently_use_a_changed_selection_window_or_source(self):
         data=dict(items=['item_01'],window_ms=[0,2]);payload=self.service.analyze(self.batch,data)

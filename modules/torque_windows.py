@@ -1,4 +1,4 @@
-"""Describe explicit windows of existing calibrated-motor CSV points, without solving."""
+"""Describe explicit windows of existing calibrated-motor reports, without solving."""
 import copy
 import csv
 import hashlib
@@ -9,11 +9,14 @@ import re
 import zipfile
 from datetime import datetime,timezone
 from pathlib import Path
+import numpy as np
 from flask import Blueprint,jsonify,render_template,request,send_file
+from modules.catalog_motor_loss import OBJECT_REPORT, REPORT, QUANTITIES, _read_report, object_expressions
 from modules.material_batch_reports import verified_operating_point,torque_findings
 
 VERSION='calibrated_batch_torque_windows_v1'
 TIME_TOL_MS=1e-7  # Same physical tolerance as the existing 1e-10-second CSV check.
+TORQUE_REPORT='case/reports/Torque Plots.csv'
 
 
 def digest(data):return hashlib.sha256(data).hexdigest()
@@ -44,6 +47,72 @@ def window_statistics(times,torques,window,speed_rpm):
         scope='Selected original samples; arithmetic mean; no resampling, new acceptance test or material ranking')
 
 
+def catalog_loss_window(execution, source_folder, time_ms, stats):
+    """Use the same original point indices as the torque window and keep the exact CSV bytes."""
+    result=execution['result']
+    loss=result.get('loss_estimate_metrics')
+    if loss is None:
+        return None, {}
+    if loss['time_ms']!=time_ms:
+        raise ValueError('保存的目录损耗时间与转矩不符')
+    raw_sources={}
+    csv_hashes=loss['csv_hashes']
+
+    def read_report(name, expressions):
+        path=source_folder/name
+        time,traces,sha=_read_report(path,expressions,time_ms)
+        raw=path.read_bytes()
+        if sha!=csv_hashes.get(name) or digest(raw)!=sha:
+            raise ValueError('官方目录损耗CSV与保存来源哈希不同：'+path.name)
+        raw_sources[Path(name).name]=raw
+        return time,traces
+
+    indices=stats['sample_indices']
+    time,traces=read_report(REPORT,QUANTITIES)
+    selected=time[indices]
+    widths=np.diff(selected)
+    duration=selected[-1]-selected[0]
+    if not np.all(widths>0):
+        raise ValueError('官方目录损耗采样时间未严格递增')
+
+    def average(trace):
+        values=trace[indices]
+        mean=float(np.dot((values[:-1]+values[1:])*.5,widths)/duration)
+        if not finite(mean):
+            raise ValueError('目录损耗区间均值不是有限数值')
+        return mean
+
+    object_report_status=loss['object_report']['status']
+    data=dict(sampled_window_ms=[float(selected[0]*1000),float(selected[-1]*1000)], n_samples=len(selected),
+        time_weighted_mean_W={name:average(trace) for name,trace in traces.items()},
+        electrical_frequency_Hz=result['catalog_loss']['operating_electrical_frequency_Hz'],
+        csv_hashes={REPORT:csv_hashes[REPORT]}, object_report_status=object_report_status,
+        core_loss_breakdown=None, max_abs_closure_error_W=None,
+        scope='Manufacturer typical catalog coefficients; trapezoidal average on selected official timestamps. Not measured losses or steady-state efficiency.')
+    if object_report_status=='exported':
+        scope=result['catalog_loss_native_scope']
+        names=scope['core_loss_objects']
+        inserts=scope['inserts']
+        if len(inserts)!=48 or len(set(inserts))!=48 or len(names)!=50 or set(names)-set(inserts)!={'Stator','Rotor_1'} or not set(inserts)<=set(names):
+            raise ValueError('目录损耗对象范围不是48插片与定转子')
+        object_time,objects=read_report(OBJECT_REPORT,object_expressions(names))
+        if not np.allclose(object_time,time,rtol=1e-8,atol=1e-10):
+            raise ValueError('两份官方损耗CSV时间网格不符')
+        total=sum(objects.values())[indices]
+        core=traces['CoreLoss'][indices]
+        data['csv_hashes'][OBJECT_REPORT]=csv_hashes[OBJECT_REPORT]
+        data['max_abs_closure_error_W']=float(np.max(abs(total-core)))
+        if loss['core_loss_breakdown']['closure_passed'] is True and np.allclose(total,core,rtol=1e-5,atol=1e-5):
+            data['object_report_status']='closed'
+            data['core_loss_breakdown']=dict(
+                insert_mean_W=average(sum(objects[key] for key in object_expressions(inserts))),
+                stator_mean_W=average(objects['CoreLoss(Stator)']),
+                rotor_mean_W=average(objects['CoreLoss(Rotor_1)']))
+        else:
+            data['object_report_status']='closure_failed'
+    return data,raw_sources
+
+
 class TorqueWindows:
     def __init__(self,batches):self.batches=batches
 
@@ -71,7 +140,8 @@ class TorqueWindows:
             if name not in lookup:raise ValueError('所选项目不属于本批量')
             item=lookup[name]
             if item.get('result_available') is not True:raise ValueError('所选项目没有完整官方转矩结果：'+name)
-            execution=self.batches.chain.execution.get(item['execution_id']);operating=verified_operating_point(item,execution);metrics=item['metrics']
+            executions=self.batches.chain.execution
+            execution=executions.get(item['execution_id']);operating=verified_operating_point(item,execution);metrics=item['metrics']
             if execution['result']['metrics']!=metrics:raise ValueError('批量原指标与已核验执行不符')
             template=item['source'].get('template_sha256')
             if not isinstance(template,str) or not re.fullmatch(r'[0-9a-f]{64}',template):raise ValueError('保存的模板身份缺失')
@@ -81,23 +151,31 @@ class TorqueWindows:
             stats=window_statistics(times,torques,window,operating['speed_rpm'])
             if base_times is not None and (len(times)!=len(base_times) or any(not math.isclose(a,b,abs_tol=TIME_TOL_MS,rel_tol=1e-8) for a,b in zip(times,base_times))):raise ValueError('所选项目原始时间网格不同，请分别查看')
             base_times=times
-            raw=self.batches.chain.execution.download(execution['id'],'case/reports/Torque Plots.csv').read_bytes()
+            # get() already verified the saved model and reports. Pin the exact bytes
+            # included in this snapshot without repeating model validation per file.
+            source_folder=executions.path(execution['id'])
+            raw=(source_folder/TORQUE_REPORT).read_bytes()
             if digest(raw)!=metrics['torque_csv_sha256']:raise ValueError('官方转矩CSV与保存来源哈希不同')
-            raw_sources[name]=raw
-            records.append(dict(item=name,execution_id=execution['id'],analysis_plan_id=execution['analysis_plan_id'],analysis_url=item['analysis_url'],
+            raw_sources['raw/'+name+'/Torque Plots.csv']=raw
+            record=dict(item=name,execution_id=execution['id'],analysis_plan_id=execution['analysis_plan_id'],analysis_url=item['analysis_url'],
                 material_name=item['source']['material_name'],selection=copy.deepcopy(item['selection']),source=copy.deepcopy(item['source']),
                 model_version=item['model_version'],measurement_protocol=item['measurement_protocol'],time_ms=list(times),torque_Nm=list(torques),
                 original_metrics=copy.deepcopy({key:value for key,value in metrics.items() if key not in ('time_ms','torque_Nm')}),
                 original_findings=torque_findings(metrics),window_statistics=stats,torque_csv_sha256=metrics['torque_csv_sha256'],
-                raw_csv_url='/api/workbench/calibrated-motor/executions/'+execution['id']+'/files/case/reports/Torque%20Plots.csv'))
+                raw_csv_url='/api/workbench/calibrated-motor/executions/'+execution['id']+'/files/case/reports/Torque%20Plots.csv')
+            losses,loss_sources=catalog_loss_window(execution,source_folder,times,stats)
+            if losses is not None:
+                record['catalog_loss_window']=losses
+                raw_sources.update({'raw/'+name+'/'+filename:blob for filename,blob in loss_sources.items()})
+            records.append(record)
         if len(frames)!=1:raise ValueError('同图需要相同模板、模型版本、周期协议和转速；请分别查看')
         identity=dict(version=VERSION,producer_sha256=LOADED_PRODUCER_SHA,batch=artifact,requested_window_ms=records[0]['window_statistics']['requested_window_ms'],
-            records=[{key:record[key] for key in ('item','execution_id','analysis_plan_id','selection','source','model_version','measurement_protocol','torque_csv_sha256')} for record in records])
+            records=[{key:record[key] for key in ('item','execution_id','analysis_plan_id','selection','source','model_version','measurement_protocol','torque_csv_sha256','catalog_loss_window') if key in record} for record in records])
         snapshot=digest(json.dumps(identity,sort_keys=True,separators=(',',':'),allow_nan=False).encode())
         result=dict(version=VERSION,producer_sha256=LOADED_PRODUCER_SHA,batch=artifact,created_utc=datetime.now(timezone.utc).isoformat(),snapshot_sha256=snapshot,
             requested_window_ms=identity['requested_window_ms'],records=records,new_native_solves=0,raw_results_changed=False,
             original_acceptance_changed=False,efficiency_enabled=False,optimization_ranking_enabled=False,
-            scope='Descriptive windows of original official torque samples; original metrics/acceptance retained; derived power is not rated shaft power')
+            scope='Descriptive windows of original official torque and available catalog loss samples; original metrics/acceptance retained; derived power is not rated shaft power')
         return result,raw_sources
 
     def analyze(self,artifact,data):return self._snapshot(artifact,data)[0]
@@ -113,8 +191,25 @@ class TorqueWindows:
             chosen=set(stats['sample_indices'])
             for index,(time,value) in enumerate(zip(record['time_ms'],record['torque_Nm'])):point_writer.writerow([record['item'],record['execution_id'],index,time,value,index in chosen])
         files={'analysis.json':json_bytes(payload),'summary.csv':summary.getvalue().encode('utf-8-sig'),'all_original_points.csv':points.getvalue().encode('utf-8-sig')}
-        for name,raw in raw_sources.items():files['raw/'+name+'/Torque Plots.csv']=raw
+        files.update(raw_sources)
         files['README.txt']='区间统计不替换原指标或原判据。all_original_points.csv保留全部原始点并标明是否入选；raw为未改官方CSV。均值为选中点的算术均值，功率为电磁转矩乘已保存转速折算，不是铭牌额定轴功率。没有新求解、效率计算或最终材料排名。\n'.encode('utf8')
+        if any('catalog_loss_window' in record for record in payload['records']):
+            loss_table=io.StringIO(newline='')
+            loss_writer=csv.writer(loss_table)
+            groups=('insert_mean_W','stator_mean_W','rotor_mean_W')
+            loss_writer.writerow(['item','material','execution','sampled_start_ms','sampled_stop_ms','n_samples','electrical_frequency_Hz',
+                'core_loss_time_weighted_mean_W','stranded_loss_time_weighted_mean_W','solid_loss_time_weighted_mean_W',
+                *groups,'object_report_status','max_abs_closure_error_W','catalog_loss_csv_sha256','object_loss_csv_sha256'])
+            for record in payload['records']:
+                if 'catalog_loss_window' not in record:continue
+                loss=record['catalog_loss_window']
+                breakdown=loss['core_loss_breakdown'] or {}
+                loss_writer.writerow([record['item'],record['material_name'],record['execution_id'],*loss['sampled_window_ms'],loss['n_samples'],
+                    loss['electrical_frequency_Hz'],*[loss['time_weighted_mean_W'][name] for name in QUANTITIES],
+                    *[breakdown.get(name) for name in groups],loss['object_report_status'],loss['max_abs_closure_error_W'],
+                    loss['csv_hashes'][REPORT],loss['csv_hashes'].get(OBJECT_REPORT)])
+            files['catalog_loss_window.csv']=loss_table.getvalue().encode('utf-8-sig')
+            files['README.txt']+='catalog_loss_window.csv 使用同一组选中原采样点，对厂家目录系数估算的官方损耗按实际时间作梯形积分并除以采样时长；逐对象铁损闭合通过才列分组，缺项留空。\n'.encode('utf8')
         files['manifest.json']=json_bytes(dict(version=VERSION,batch=artifact,snapshot_sha256=payload['snapshot_sha256'],files={name:digest(raw) for name,raw in files.items()},new_native_solves=0,original_acceptance_changed=False))
         out=io.BytesIO()
         with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:

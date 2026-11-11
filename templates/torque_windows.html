@@ -9,5 +9,7 @@
 <div class="row"><label>开始 / ms <input id="twStart" type="number" step="any"></label><label>结束 / ms <input id="twStop" type="number" step="any"></label><button id="twReset">使用原指标区间</button><button id="twApply" disabled>统计所选区间</button><button id="twDownload" disabled>下载统计与全部原始数据</button></div><p id="twError" class="error" role="alert"></p></section>
 <section id="twResult" class="card" hidden><h2>原始波形与区间统计</h2><p id="twIdentity" class="muted"></p><p><a id="twBookmark">收藏本次批量、材料选择和区间</a></p><div id="twLegend" class="legend"></div>
 <div class="plots"><article><h3>全段原始转矩 / N·m</h3><svg id="twFull" role="img" aria-label="完整原始转矩，阴影为所选区间"></svg><p id="twFullProbe" class="probe"></p></article><article><h3>所选区间原始转矩 / N·m</h3><svg id="twZoom" role="img" aria-label="所选区间的原始采样点"></svg><p id="twZoomProbe" class="probe"></p></article></div>
-<p class="muted">全段图保留全部点；指向曲线查看最近采样值。均值为区间内采样点的算术均值，峰峰值比使用 |均值| 作分母；均值为零时不定义该比值。功率按电磁转矩与已保存转速折算，属于所选区间，不是铭牌额定轴功率。区间变化不会改写原判据或形成新的稳态、效率与最终材料排名结论。</p><div id="twMetrics" class="tablewrap"></div><details><summary>原结果、来源和完整CSV</summary><div id="twSources"></div></details></section>
+<p class="muted">全段图保留全部点；指向曲线查看最近采样值。均值为区间内采样点的算术均值，峰峰值比使用 |均值| 作分母；均值为零时不定义该比值。功率按电磁转矩与已保存转速折算，属于所选区间，不是铭牌额定轴功率。区间变化不会改写原判据或形成新的稳态、效率与最终材料排名结论。</p><div id="twMetrics" class="tablewrap"></div>
+<section id="twLoss" hidden><h3>同区间目录铁损估计</h3><p class="muted">使用同一组原始采样点，按实际时间作梯形积分并除以时长。数据来自厂家目录系数的工程估计；逐对象铁损闭合后才显示分组。下载包保留原始损耗 CSV。</p><div id="twLossMetrics" class="tablewrap"></div></section>
+<details><summary>原结果、来源和完整CSV</summary><div id="twSources"></div></details></section>
 </main><script src="/static/js/torque_windows.js" defer></script></body></html>
