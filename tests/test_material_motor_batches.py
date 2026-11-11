@@ -33,7 +33,9 @@ class MaterialBatchTests(unittest.TestCase):
 
     def test_two_materials_prepare_sources_and_budget_without_native(self):
         self.request['materials'].append(dict(calibration=self.cal,key='fit:B23R075'))
-        batch=self.prepare()
+        with patch.object(self.execution, 'records', wraps=self.execution.records) as records:
+            batch=self.prepare()
+            records.assert_called_once_with()
         self.assertEqual(batch['totals']['materials'],2)
         self.assertEqual(batch['budget']['max_new_imports'],2)
         self.assertEqual(batch['budget']['max_new_motor_solves'],2)
@@ -43,6 +45,17 @@ class MaterialBatchTests(unittest.TestCase):
         self.assertFalse((self.batches.storage/'active_controller.json').exists())
         self.assertFalse(batch['efficiency_enabled'])
         self.assertEqual(self.motor.jobs(),[])
+
+    def test_history_uses_only_saved_phase_and_retains_detailed_validation(self):
+        batch = self.prepare()
+        path = self.batches.path(batch['id']) / 'manifest.json'
+        manifest = read(path)
+        manifest['budget']['max_new_imports'] += 1
+        write_json(path, manifest)
+        with patch.object(self.batches, 'get', side_effect=AssertionError('history should not open native sources')):
+            rows = self.batches.history()
+        self.assertEqual([(row['id'], row['status']) for row in rows], [(batch['id'], 'prepared')])
+        self.assertEqual(self.batches.records()[0]['status'], 'invalid')
 
     def test_new_batch_defaults_to_fine_when_protocol_is_omitted(self):
         self.request.pop('measurement_protocol');batch=self.prepare()

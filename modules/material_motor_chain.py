@@ -32,32 +32,39 @@ class MaterialMotorChain:
         return children
 
     def ensure(self, data):
-        if (not isinstance(data, dict) or set(data) - {'calibration', 'key', 'cores', 'measurement_protocol'}
-                or not {'calibration', 'key'} <= set(data)):
-            raise ValueError('请选择保存材料、核数及分析协议')
-        cores = data.get('cores', 2)
-        if type(cores) is not int or not 1 <= cores <= 2:
-            raise ValueError('本入口核数需为1–2整数')
-        measurement = data.get('measurement_protocol', DEFAULT_PROTOCOL)
-        protocol(measurement)
+        return self.ensure_many([data])[0]
+
+    def ensure_many(self, requests):
+        """Verify the shared stage records once for one preparation request."""
+        selections = []
+        for data in requests:
+            if (not isinstance(data, dict) or set(data) - {'calibration', 'key', 'cores', 'measurement_protocol'}
+                    or not {'calibration', 'key'} <= set(data)):
+                raise ValueError('请选择保存材料、核数及分析协议')
+            cores = data.get('cores', 2)
+            if type(cores) is not int or not 1 <= cores <= 2:
+                raise ValueError('本入口核数需为1–2整数')
+            measurement = data.get('measurement_protocol', DEFAULT_PROTOCOL)
+            protocol(measurement)
+            selections.append((data['calibration'], data['key'], cores, measurement))
         lease = QueueLease(self.lock)
         if not lease.acquire():
             raise ValueError('同一存储正在准备材料链路，请稍后重开')
         try:
-            return self._ensure(data['calibration'], data['key'], cores, measurement)
+            # Verify every stage before any new preparation. A damaged saved
+            # record is distinct from a missing record.
+            saved = {name: self.records(component) for name, component in (
+                ('preparation', self.preparation), ('native_import', self.native),
+                ('analysis_plan', self.analysis), ('execution', self.execution))}
+            template = sha(self.preparation.motor.template.read_bytes())
+            return [self._ensure(*selection, saved, template) for selection in selections]
         finally:
             lease.release()
 
-    def _ensure(self, calibration, key, cores, measurement):
+    def _ensure(self, calibration, key, cores, measurement, saved, template):
         source = self.library.detail(calibration, key)
         if measurement == LOSS_PROTOCOL and source['kind'] != 'fit':
             raise ValueError('目录铁损请选择同牌号的四个已标定样品；预测材料请使用B-H协议')
-        # Read/verify every stage before the first mutation: unreadable records
-        # cannot be treated as absent records after an interrupted request.
-        saved = {name: self.records(component) for name, component in (
-            ('preparation', self.preparation), ('native_import', self.native),
-            ('analysis_plan', self.analysis), ('execution', self.execution))}
-        template = sha(self.preparation.motor.template.read_bytes())
         candidates = [r for r in saved['preparation']
             if r.get('calibration_id') == calibration and r.get('material_key') == key
             and same_source(r, source) and r['cores'] == cores and r['template_sha256'] == template
@@ -92,6 +99,8 @@ class MaterialMotorChain:
         def keep(stage, record, created=False):
             result['records'][stage] = dict(id=record['id'], status=record['status'])
             result['created' if created else 'reused'].append(dict(stage=stage, id=record['id']))
+            if created:
+                saved[stage].append(record)
             return record
 
         def finish(status, label):
@@ -124,7 +133,7 @@ class MaterialMotorChain:
         if native['status'] == 'ready':
             return finish('awaiting_manual_import', '准备已完成，请在材料页手动执行现有原生导入')
         if plan['status'] == 'ready_for_model_preparation':
-            plan = self.analysis.prepare_model(plan['id'])
+            plan.update(self.analysis.prepare_model(plan['id']))
             result['records']['analysis_plan']['status'] = plan['status']
             result['created'].append(dict(stage='model_snapshot', id=plan['id']))
         elif plan['status'] != 'model_snapshot_ready_not_submitted':

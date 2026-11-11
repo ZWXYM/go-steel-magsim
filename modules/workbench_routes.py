@@ -261,7 +261,7 @@ def create_workbench(project,storage=None,root=None,script_history=None):
 
     @bp.get('/api/workbench/calibrated-motor/batches')
     def material_batch_records():
-        return jsonify(material_batches.records())
+        return jsonify(material_batches.history() if request.args.get('view')=='history' else material_batches.records())
 
     @bp.post('/api/workbench/calibrated-motor/batches')
     def material_batch_prepare():

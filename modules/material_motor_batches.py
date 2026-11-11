@@ -93,8 +93,9 @@ class MaterialMotorBatches:
         if not lease.acquire(): raise ValueError('另一批材料正在准备，请稍后重开')
         try:
             items = []
-            for index, selection in enumerate(materials, 1):
-                response = self.chain.ensure(dict(selection, cores=data.get('cores',2), measurement_protocol=measurement))
+            responses = self.chain.ensure_many([
+                dict(selection, cores=data.get('cores',2), measurement_protocol=measurement) for selection in materials])
+            for index, (selection, response) in enumerate(zip(materials, responses, strict=True), 1):
                 prep = self.chain.preparation.get(response['records']['preparation']['id'])
                 item = dict(id=f'item_{index:02d}', selection=selection,
                     source={**{k:response[k] for k in LINEAGE},
@@ -112,7 +113,10 @@ class MaterialMotorBatches:
             identity = dict(materials=[dict(selection=r['selection'],source=r['source']) for r in items],
                 cores=response['cores'], measurement_protocol=response['measurement_protocol'],producer_hashes=producers)
             digest = sha(json.dumps(identity,sort_keys=True,separators=(',',':')).encode())
-            for old in self.records():
+            for row in self.history():
+                if row.get('idempotency_sha256') != digest:
+                    continue
+                old = self._record_or_error(row['id'])
                 if old.get('idempotency_sha256') == digest:
                     old_executions = [item['records'].get('execution', {}).get('id') for item in old['items']]
                     new_executions = [item['records'].get('execution', {}).get('id') for item in items]
@@ -162,7 +166,7 @@ class MaterialMotorBatches:
             raise ValueError('批量项的文件或父子记录绑定改变')
         if 'execution' in values and (values['execution']['analysis_plan_id'] != plan['id'] or values['execution'].get('preflight_only')):
             raise ValueError('批量项执行不属于冻结分析计划')
-        if discover_execution and 'execution' not in values:
+        if discover_execution and 'execution' not in values and plan['status']=='model_snapshot_ready_not_submitted':
             runs=self.chain.execution.records()
             if any(r['status']=='invalid' for r in runs):raise ValueError('执行记录不可核对，批量未创建替代任务')
             candidates=[r for r in runs if r.get('analysis_plan_id')==plan['id'] and not r.get('preflight_only')]
@@ -234,11 +238,32 @@ class MaterialMotorBatches:
             raise ValueError('批量新增下发记录与冻结预算或原阶段不符')
         return result
 
-    def records(self):
+    def history(self):
+        """List saved phase labels without opening the native result files."""
         rows=[]
         for folder in self.storage.glob('bhbatch_*'):
-            try: rows.append(self.get(folder.name))
-            except (ValueError,KeyError,OSError,TypeError) as error:rows.append(dict(id=folder.name,status='invalid',error=str(error)))
+            try:
+                path = self.path(folder.name)
+                manifest, state = read(path/'manifest.json'), read(path/'state.json')
+                if (manifest['id']!=folder.name or state['id']!=folder.name or manifest['version']!=VERSION
+                        or state['status'] not in ('prepared','starting','running',*TERMINAL)
+                        or not isinstance(manifest['created_utc'],str)
+                        or not re.fullmatch(r'[a-f0-9]{64}',manifest['idempotency_sha256'])):
+                    raise ValueError('批量保存记录身份不符')
+                rows.append(dict(id=folder.name,status=state['status'],created_utc=manifest['created_utc'],
+                                 idempotency_sha256=manifest['idempotency_sha256']))
+            except (ValueError,KeyError,OSError,TypeError) as error:
+                rows.append(dict(id=folder.name,status='invalid',error=str(error)))
+        return sorted(rows,key=lambda row:row.get('created_utc',''),reverse=True)
+
+    def _record_or_error(self, artifact):
+        try:
+            return self.get(artifact)
+        except (ValueError,KeyError,OSError,TypeError) as error:
+            return dict(id=artifact,status='invalid',error=str(error))
+
+    def records(self):
+        rows = [self._record_or_error(folder.name) for folder in self.storage.glob('bhbatch_*')]
         return sorted(rows,key=lambda r:r.get('created_utc',''),reverse=True)
 
     def start(self, artifact, resume=False):

@@ -203,7 +203,7 @@ async function mbLoad(){
  if(['starting','running'].includes(settled[0].value.status))MBB.timer=setTimeout(mbLoad,3000);
 }
 async function mbHistory(preferred,mayReplace=()=>true){
- const generation=++MBB.historyGeneration;mb$('batchError').textContent='';try{const records=await mbAPI('/api/workbench/calibrated-motor/batches');if(generation!==MBB.historyGeneration||!mayReplace())return false;
+ const generation=++MBB.historyGeneration;mb$('batchError').textContent='';try{const records=await mbAPI('/api/workbench/calibrated-motor/batches?view=history');if(generation!==MBB.historyGeneration||!mayReplace())return false;
  const select=mb$('batchHistory'),old=preferred||select.value||(typeof location!=='undefined'?new URLSearchParams(location.search).get('batch'):null);++MBB.generation;if(MBB.timer)clearTimeout(MBB.timer);MBB.timer=null;select.replaceChildren();
  for(const r of records){const o=mbText('option',r.id+' · '+(mbLabels[r.status]||r.status));o.value=r.id;select.append(o)}
  if(old){if(!records.some(r=>r.id===old)){select.value='';mbReset('指定的批量记录不存在');mb$('batchError').textContent='指定的批量记录不存在，请选择现有记录。';return}select.value=old}

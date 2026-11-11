@@ -46,13 +46,15 @@ function harness(api){
  const running=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:{...record,status:'running'});await running.c.mbLoad();assert.ok(running.timers.includes(3000));assert.ok(running.calls.every(c=>c.method==='GET'));
  let resolveOld,count=0;const stalePromise=new Promise(r=>resolveOld=r),stale=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:(++count===1?stalePromise:{...record,status:'completed'}));
  const first=stale.c.mbLoad();await stale.c.mbLoad();resolveOld({...record,status:'running'});await first;assert.match(stale.nodes.get('batchStatus').textContent,/批量已完成/);assert.equal(stale.timers.length,0);
- const prepare=harness(async(url,options)=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')&&options.method!=='POST'?[record]:record);
+ const prepare=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches?view=history')?[{id:record.id,status:record.status}]:record);
  vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',prepare.c);await prepare.c.mbPrepare();
  const posts=prepare.calls.filter(c=>c.method==='POST');assert.equal(posts.length,1);assert.equal(posts[0].url,'/api/workbench/calibrated-motor/batches');
  assert.deepEqual(JSON.parse(posts[0].body),{materials:[{calibration:'cal_a',key:'prediction:pred_a'}],cores:2,measurement_protocol:'v8_2_cycle1'});
+ assert.ok(prepare.calls.some(c=>c.method==='GET'&&c.url==='/api/workbench/calibrated-motor/batches?view=history'));
+ assert.ok(prepare.calls.some(c=>c.method==='GET'&&c.url==='/api/workbench/calibrated-motor/batches/'+record.id));
  assert.ok(!prepare.calls.some(c=>c.url.endsWith('/start')||c.url.endsWith('/resume')));
  for(const status of ['running','completed']){
-  const saved={...record,status};const reopen=harness(async(url,options)=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')&&options.method!=='POST'?[saved]:saved);
+  const saved={...record,status};const reopen=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches?view=history')?[saved]:saved);
   vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',reopen.c);await reopen.c.mbPrepare();
   assert.match(reopen.nodes.get('batchPrepareStatus').text(),/已重开保存批量.*本次操作未启动求解/);assert.doesNotMatch(reopen.nodes.get('batchPrepareStatus').text(),/尚未开始/);assert.equal(reopen.calls.filter(c=>c.method==='POST').length,1);assert.ok(!reopen.calls.some(c=>c.url.endsWith('/start')||c.url.endsWith('/resume')));
  }
@@ -120,7 +122,7 @@ function harness(api){
  assert.equal(vm.runInContext('MBB.record.id',cross.c),next);assert.match(cross.nodes.get('batchStatus').textContent,/bbbbbbbbbbbb/);
 
  // A missing or failed history clears old data, bundle and executable binding.
- const missing=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')?[record]:record);
+ const missing=harness(async url=>url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches?view=history')?[record]:record);
  await missing.c.mbLoad();await missing.c.mbHistory('bhbatch_missing');await missing.c.mbAction('start');
  assert.equal(missing.nodes.get('batchHistory').value,'');assert.equal(vm.runInContext('MBB.record',missing.c),null);
  assert.equal(missing.nodes.get('batchBundle').hidden,true);assert.equal(missing.nodes.get('batchRows').children.length,0);
@@ -161,7 +163,7 @@ function harness(api){
  assert.equal(JSON.stringify(powerMetrics),JSON.stringify(powerRun.result.metrics));
  // A delayed CPU plan must not replace the batch the user switched to.
  let prepareReady;const prepareWait=new Promise(resolve=>prepareReady=resolve);
- const delayedPrepare=harness(async(url,options)=>options.method==='POST'?prepareWait:url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')?[record,{...record,id:next}]:url.endsWith('/'+next)?{...record,id:next}:record);
+ const delayedPrepare=harness(async(url,options)=>options.method==='POST'?prepareWait:url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches?view=history')?[record,{...record,id:next}]:url.endsWith('/'+next)?{...record,id:next}:record);
  vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',delayedPrepare.c);
  await delayedPrepare.c.mbLoad();const preparing=delayedPrepare.c.mbPrepare();
  assert.match(delayedPrepare.nodes.get('batchPrepareStatus').text(),/正在核对已提交的 1 种材料.*下方仍显示此前查看的批量.*不会启动求解/);
@@ -184,7 +186,7 @@ function harness(api){
  // A second late window exists while the saved-history GET is pending.
  for(const reject of [false,true]){
   let finishHistory;const historyWait=new Promise((resolve,fail)=>finishHistory=reject?fail:resolve);
-  const race=harness(async(url,options)=>options.method==='POST'?record:url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches')?historyWait:url.endsWith('/'+next)?{...record,id:next}:record);
+  const race=harness(async(url,options)=>options.method==='POST'?record:url.endsWith('/resources')?{cpu_only:false}:url.endsWith('/batches?view=history')?historyWait:url.endsWith('/'+next)?{...record,id:next}:record);
   vm.runInContext('MBB.selected=new Set(["prediction:pred_a"])',race.c);await race.c.mbLoad();const pending=race.c.mbPrepare();await flush();
   race.nodes.get('batchHistory').value=next;await race.c.mbLoad();
   finishHistory(reject?Error('earlier history failed'):[record,{...record,id:next}]);await pending;
