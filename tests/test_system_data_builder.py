@@ -200,6 +200,25 @@ class SystemDataBuilderTests(unittest.TestCase):
             index=json.loads(archive.read('data_index.json'));self.assertIsNone(index['calibrated_batch'])
             self.assertEqual([row['id'] for row in index['calibrated_batches']],[bindings[1]['id']])
 
+    def test_overview_preserves_only_recorded_failed_execution_ids_and_leaves_metrics_empty(self):
+        _,bindings,records,_=self.multi_batch_fixture()
+        binding=bindings[0]
+        record=records[binding['id']]
+        failed, unsubmitted = 'bhexec_111111111111', 'bhexec_222222222222'
+        record.update(status='completed_with_failures',new_execution_ids=[failed])
+        for item_id, execution_id, status in [('item_02',failed,'failed'),('item_03',unsubmitted,'prepared')]:
+            record['items'].append(dict(id=item_id,status='failed',result_available=False,
+                records={'execution':{'id':execution_id,'status':status}},metrics={'T_avg_Nm':9},
+                source={'catalog_loss_reference_sha256':'a'*64},catalog_loss_summary={'time_weighted_mean_W':{'CoreLoss':99}}))
+        selection=dict(calibration=None,datasets=[],batch=binding)
+        with patch('modules.system_data_builder.report_bundle',return_value=zipped({'batch.json':json_bytes(record)})):
+            saved=self.builder.build(selection)
+        with zipfile.ZipFile(io.BytesIO(self.builder.store.read(saved['id'])[1])) as archive:
+            rows=list(csv.DictReader(io.StringIO(archive.read('calibrated_motor/overview.csv').decode('utf-8-sig'))))
+        self.assertEqual([row['failed_execution_id'] for row in rows],['',failed,''])
+        for row in rows[1:]:
+            self.assertEqual((row['execution_id'],row['T_avg_Nm'],row['catalog_CoreLoss_mean_W']),('','',''))
+
     def test_duplicate_invalid_or_over_limit_batch_choices_do_not_register_partial_packages(self):
         _,bindings,_,_=self.multi_batch_fixture();base=dict(calibration=None,datasets=[],batch=bindings[0])
         invalid=[None,'bad',bindings,[bindings[0]],[bindings[1],bindings[1]],

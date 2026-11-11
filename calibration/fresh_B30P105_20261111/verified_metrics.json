@@ -1,0 +1,153 @@
+{
+  "file_sha256": {
+    "curves.csv": "d9d0445dfeced4c9b365bed58b8a3b126ff6de892742ac2f3989cc1b4d1e4fb1",
+    "native_residual_control.csv": "6258aae833e0cff6008cb1eb597b670855ceac42ede4ce91c0f74a0bb6485989"
+  },
+  "new_B30_input": {
+    "completed_Maxwell_total": 71,
+    "completed_MuMax_total": 698,
+    "elapsed_seconds": 57.32800000000134,
+    "inside_joint_parameter_support": false,
+    "material_bundle_sha256": "147eefa904a6886ef03a81ceca0a64cadf275581c3d2ab57be03eec86952b25c",
+    "metrics": [
+      {
+        "direction": "RD",
+        "new_abs_B800_le_0p05_T": true,
+        "new_excluded_prediction": {
+          "B1000_error_T": 0.018391098738088862,
+          "B800_error_T": 0.030573808467008856,
+          "high_field_rmse_T": 0.012662016174162448,
+          "low_field_rmse_T": 0.02837285065149327,
+          "mae_T": 0.016765086700750012,
+          "rmse_T": 0.01908551329041687
+        },
+        "new_native": {
+          "B1000_error_T": -1.9221020887279379,
+          "B800_error_T": -1.8950638132243864,
+          "high_field_rmse_T": 1.3056077201840464,
+          "low_field_rmse_T": 1.8933328676196155,
+          "mae_T": 1.4473303633244607,
+          "rmse_T": 1.635322722283553
+        },
+        "saved_original_ensemble_holdout": {
+          "B1000_error_T": 0.031852168899820565,
+          "B800_error_T": 0.0603564043850644,
+          "high_field_rmse_T": 0.012662016174162448,
+          "low_field_rmse_T": 0.05594377454069997,
+          "mae_T": 0.025139490008316057,
+          "rmse_T": 0.03302607431994312
+        }
+      },
+      {
+        "direction": "TD",
+        "new_abs_B800_le_0p05_T": true,
+        "new_excluded_prediction": {
+          "B1000_error_T": 0.024065768068512128,
+          "B800_error_T": 0.023717464965948398,
+          "high_field_rmse_T": 0.06546724349968268,
+          "low_field_rmse_T": 0.026897471721523947,
+          "mae_T": 0.040113848439948536,
+          "rmse_T": 0.04873977296146022
+        },
+        "new_native": {
+          "B1000_error_T": -1.6294381116698753,
+          "B800_error_T": -1.5919570373166658,
+          "high_field_rmse_T": 0.7851251469444855,
+          "low_field_rmse_T": 1.3402328471226364,
+          "mae_T": 0.9324180288258586,
+          "rmse_T": 1.196221826243213
+        },
+        "saved_original_ensemble_holdout": {
+          "B1000_error_T": 0.05376607037226422,
+          "B800_error_T": 0.05362148509672737,
+          "high_field_rmse_T": 0.0665468344277545,
+          "low_field_rmse_T": 0.05660945952836184,
+          "mae_T": 0.056535253384009394,
+          "rmse_T": 0.05864270976302634
+        }
+      }
+    ],
+    "native_pair_id": "nativepair_16513a68483a",
+    "native_quality": "unassessed",
+    "new_Maxwell_solves": 0,
+    "new_MuMax_solves": 8,
+    "new_training": 0,
+    "original_grains_per_direction": 8,
+    "original_seed": 20261006,
+    "physical_H_and_AMAT_verified": true,
+    "prediction_id": "pred_4ee19ff3c6f3",
+    "prediction_scope": {
+      "effective_calibration_sha256": "8a471ac48187c99bf1786ab7c7ad6b5528c12fd673c10d10973686fbd85b726c",
+      "effective_training_grades": [
+        "B23R075",
+        "B27R090",
+        "B27R095"
+      ],
+      "excluded_grades": [
+        "B30P105"
+      ],
+      "excluded_references_used_for_selection": false,
+      "mode": "whole_material_exclusion",
+      "physical_H_unchanged": true,
+      "prospective_external_validation": false,
+      "selection_rerun_after_exclusion": true,
+      "source_calibration_sha256": "1ccd070a3dbba851d7a5ba11010abd8981a47c8900fcd6bf8e6a9fca0b8bfaf2",
+      "version": "whole_material_prediction_scope_v1"
+    },
+    "raw_pair_sha256": "52c4fcc3ec642d2b47215bbaa886663843837a11bcd2b64104107a95738b84d0",
+    "recipe": {
+      "calibration_id": "cal_ff02c5f685a0",
+      "material_id": "B30P105_fresh_20261111",
+      "n_grains": 4,
+      "params": {
+        "Si_content": 3.0,
+        "f_Goss": 0.79,
+        "halfwidth_deg": 8.0,
+        "theta_0_deg": 6.0
+      },
+      "seed": 20261111,
+      "thickness_mm": 0.3
+    },
+    "reference_status": "existing processed catalogue reference",
+    "run_id": "nativerun_4af465b663d6",
+    "scope": "Additional native seed and smaller ensemble at the known nominal parameter set; no additional measured specimen.",
+    "source_calibration_report_sha256": "a3031d4ae8ca644d10e9348747f6e02d3950bf6d4a791b98c8a0057fd8e1cf79",
+    "source_producers": {
+      "modules/material_calibration.py": "f08cec15c1832003bf3a0b2bd596b1ddb773c47283489325c6839bdacbfaf334",
+      "modules/motor_queue.py": "e488337890b079c4a600b5df0efcd8ae6462e2d773720c321be67b6d95f1dd01",
+      "modules/mx3_generator.py": "4fa379a5a13f23b9f9ee17c162c0d4fafdf01a8746ee928eba3d6a15030fb9d8",
+      "modules/native_material_runs.py": "4f95f9fc8273ca3800f383cd9f5152dea92598859f095c1c4edc301de7fbf53b",
+      "modules/native_pair_export.py": "e4921f6b17eb552b58f40e018663d86c7b2a3d372c0b7c00ea8cc84d99b27748",
+      "modules/native_pair_exports.py": "e1a3da5f3caa058fc240b7fa9fa77e7a5323031dfad7b8399b4dc4038e41a478",
+      "modules/odf_texture.py": "a40f458345b6ddd9a6022846eea70bcf5b2267c4a0bcb2a3edc686bda3d7fa47",
+      "modules/texture_sampling.py": "4f0f04b2cea41bd4c53cf08e29f1fcea325046eb5e3a655d8d7211a3de7950f5",
+      "tools/analyze_sampling_convergence.py": "e27b6d06091c761ff55c9d3e9172aa47faf1ae724f241e1a164e87909ed50ca9",
+      "tools/native_material_run_worker.py": "949b479d4feedd54eba4c722ba3ea4c60d96fcf987aaf4a1915f349eb9c133ca",
+      "tools/run_calibration_pilot.py": "564d69462ebfd04827183e554ab16860cee2c85476e1449501adf812bcc999c2"
+    },
+    "strict_training_eligible": false,
+    "version": "fresh_B30P105_whole_material_exclusion_v1",
+    "worker_exited": true
+  },
+  "same_weights_beta0": {
+    "controls_csv_sha256": "6258aae833e0cff6008cb1eb597b670855ceac42ede4ce91c0f74a0bb6485989",
+    "existing_predictions_changed": 0,
+    "scope": "Retrospective diagnostic, preserving saved weights, training members, physical H and guard. No candidate reselection.",
+    "summary": {
+      "fresh_four_grains": {
+        "comparisons": 4,
+        "max_abs_same_weights_beta0_B800_T": 0.0349863188153241,
+        "mean_same_weights_beta0_rmse_T": 0.013996854033212495,
+        "mean_saved_transfer_rmse_T": 0.031496925454301536,
+        "same_weights_beta0_lower_rmse": 4
+      },
+      "frozen_eight_grains": {
+        "comparisons": 8,
+        "max_abs_same_weights_beta0_B800_T": 0.0349863188153241,
+        "mean_same_weights_beta0_rmse_T": 0.014915903899141264,
+        "mean_saved_transfer_rmse_T": 0.030801268167274947,
+        "same_weights_beta0_lower_rmse": 8
+      }
+    }
+  }
+}

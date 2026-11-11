@@ -183,18 +183,25 @@ class SystemDataBuilder:
             if selection['batch'] is not None and batch['id']==selection['batch']['id']:index['calibrated_batch']=entry
             for item in record['items']:
                 source=item.get('source') or {};metrics=item.get('metrics') or {};selection_row=item.get('selection') or {}
+                available = item.get('result_available') is True
+                execution = item.get('records', {}).get('execution', {})
+                attempt_id = execution.get('id')
+                failed_execution = (not available and item.get('status') == 'failed'
+                                    and execution.get('status') == 'failed'
+                                    and attempt_id in record.get('new_execution_ids', ()))
                 row=dict(batch_id=batch['id'],item_id=item.get('id'),execution_id=item.get('execution_id'),
                     material_name=source.get('material_name'),material_key=selection_row.get('key'),
                     measurement_protocol=item.get('measurement_protocol') or record.get('measurement_protocol'),
-                    model_version=item.get('model_version'),status=item.get('status'),result_available=item.get('result_available') is True,
+                    model_version=item.get('model_version'),status=item.get('status'),result_available=available,
                     error=item.get('error'),parent_bank_sha256=source.get('parent_bank_sha256'),effective_bank_sha256=source.get('effective_bank_sha256'),
                     training_grades_json=json.dumps(source.get('training_grades'),ensure_ascii=False),
                     excluded_grades_json=json.dumps(source.get('excluded_grades'),ensure_ascii=False),
-                    efficiency_enabled=False,optimization_ranking_enabled=False)
+                    efficiency_enabled=False,optimization_ranking_enabled=False,
+                    failed_execution_id=attempt_id if failed_execution else None)
                 row.update({key:metrics.get(key) if row['result_available'] else None for key in
                     ('source_n_samples','n_samples','T_avg_Nm','T_min_Nm','T_max_Nm','K_T_ripple_pct','torque_numerical_acceptance','torque_csv_sha256')})
                 if source.get('catalog_loss_reference_sha256'):
-                    means = (item.get('catalog_loss_summary') or {}).get('time_weighted_mean_W', {})
+                    means = (item.get('catalog_loss_summary') or {}).get('time_weighted_mean_W', {}) if available else {}
                     row.update(catalog_loss_reference_sha256=source['catalog_loss_reference_sha256'],
                                catalog_CoreLoss_mean_W=means.get('CoreLoss'), catalog_StrandedLoss_mean_W=means.get('StrandedLoss'),
                                catalog_SolidLoss_mean_W=means.get('SolidLoss'))
@@ -205,9 +212,10 @@ class SystemDataBuilder:
                 'parent_bank_sha256','effective_bank_sha256','training_grades_json','excluded_grades_json','error','efficiency_enabled','optimization_ranking_enabled']
             if any(row.get('catalog_loss_reference_sha256') for row in batch_overview):
                 fields += ['catalog_loss_reference_sha256','catalog_CoreLoss_mean_W','catalog_StrandedLoss_mean_W','catalog_SolidLoss_mean_W']
+            fields.append('failed_execution_id')
             put('calibrated_motor/overview.csv',csv_bytes(batch_overview,fields))
             index['calibrated_batch_overview']=dict(path='calibrated_motor/overview.csv',rows=len(batch_overview),
-                interpretation='Original metrics and protocol identities only; no pooled ranking or new independent samples')
+                interpretation='Result and failed attempt IDs are separate. Failed attempts do not supply result metrics.')
 
         if selection.get('optimization') is not None:
             optimization,content=self.optimization_exports.collect(selection['optimization'])
