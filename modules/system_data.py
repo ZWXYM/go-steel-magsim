@@ -236,6 +236,31 @@ def create_system_data_routes(data):
         response.cache_control.no_store = True
         return response
 
+    @bp.get('/api/workbench/system-data/calibration-comparison')
+    def calibration_comparison():
+        from flask import request
+        from modules.calibration_comparison import compare_calibrations, comparison_bundle, comparison_csv
+        keys = ('baseline', 'candidate', 'baseline_sha256', 'candidate_sha256')
+        args = request.args
+        output = args.get('format', 'json')
+        if (not set(keys) <= set(args) or set(args)-{*keys,'format'} or output not in ('json','csv','zip')
+                or any(len(args.getlist(key)) != 1 for key in args)):
+            raise ValueError('请选择两个已保存报告和 JSON、CSV 或 ZIP 格式')
+        try:
+            result, reports = compare_calibrations(data.storage/'calibration', *(args[key] for key in keys))
+        except (KeyError, TypeError) as error:
+            raise ValueError('所选校准报告缺少可比较的完整记录') from error
+        if output == 'zip':
+            response = send_file(comparison_bundle(result, reports), as_attachment=True,
+                                 download_name='saved_calibration_comparison.zip', mimetype='application/zip')
+        elif output == 'csv':
+            response = send_file(io.BytesIO(comparison_csv(result)), as_attachment=True,
+                                 download_name='saved_calibration_comparison.csv', mimetype='text/csv')
+        else:
+            response = jsonify(result)
+        response.cache_control.no_store = True
+        return response
+
     @bp.get('/api/workbench/system-data/packages/<artifact>/download')
     def download_package(artifact):
         record, blob = data.packages.read(artifact)

@@ -31,6 +31,54 @@
    item.append(link('查看材料与来源','/material-library?calibration='+row.id),link('下载原报告','/api/workbench/files/calibration/'+row.id+'/report.json'));
   }
  }
+ let compareGeneration=0, comparing=false;
+ function compareSelection(){
+  const reports=catalog?.calibrations||[];
+  return ['compareBaseline','compareCandidate'].map(id=>reports.find(row=>row.id===$(id).value&&row.readable));
+ }
+ function compareControls(){
+  if(!$('compareCalibrations'))return;
+  const [a,b]=compareSelection();
+  $('compareCalibrations').disabled=busy||comparing||!a||!b||a.id===b.id;
+ }
+ function clearComparison(){
+  if(!$('compareCalibrations'))return;
+  compareGeneration++;comparing=false;
+  $('calibrationComparisonStatus').textContent='';$('calibrationComparisonResults').hidden=true;
+  $('calibrationComparisonLinks').replaceChildren();$('calibrationComparisonRows').replaceChildren();compareControls();
+ }
+ function comparisonOptions(rows){
+  if(!$('compareCalibrations'))return;
+  const reports=rows.filter(row=>row.readable&&validCal(row.id)&&/^[a-f0-9]{64}$/.test(row.report_sha256));
+  for(const id of ['compareBaseline','compareCandidate']){
+   const select=$(id),previous=select.value,blank=element('option','请选择');blank.value='';select.replaceChildren(blank);
+   for(const row of reports){const option=element('option',(row.display_label||row.calibration_version)+' · '+row.id);option.value=row.id;select.append(option)}
+   select.value=reports.some(row=>row.id===previous)?previous:'';select.disabled=reports.length<2;
+  }
+  clearComparison();
+ }
+ async function compareSavedCalibrations(){
+  if(comparing||$('compareCalibrations').disabled)return;
+  const [a,b]=compareSelection();if(!a||!b||a.id===b.id)return;
+  clearComparison();comparing=true;compareControls();const generation=compareGeneration;
+  const url='/api/workbench/system-data/calibration-comparison?'+Object.entries({baseline:a.id,candidate:b.id,baseline_sha256:a.report_sha256,candidate_sha256:b.report_sha256}).map(([key,value])=>key+'='+encodeURIComponent(value)).join('&');
+  $('calibrationComparisonStatus').textContent='正在核对同源曲线与整牌号留出记录…';
+  try{
+   const response=await fetch(url,{method:'GET',cache:'no-store'}),result=await response.json();
+   if(generation!==compareGeneration)return;
+   if(!response.ok)throw Error(result.error||'比较失败');
+   if(result.version!=='saved_calibration_comparison_v1'||result.baseline?.id!==a.id||result.candidate?.id!==b.id||result.baseline.report_sha256!==a.report_sha256||result.candidate.report_sha256!==b.report_sha256||!Array.isArray(result.rows))throw Error('比较响应与所选报告不符');
+   const rows=$('calibrationComparisonRows');
+   for(const row of result.rows){const tr=element('tr');tr.append(element('td',row.grade+' / '+row.direction));
+    for(const key of ['fit_baseline_rmse_T','fit_candidate_rmse_T','holdout_baseline_rmse_T','holdout_candidate_rmse_T','holdout_delta_rmse_T','holdout_baseline_B800_error_T','holdout_candidate_B800_error_T'])tr.append(element('td',numeric(row[key])));
+    rows.append(tr);
+   }
+   $('calibrationComparisonStatus').textContent=`整牌号留出平均 RMSE ${numeric(result.baseline.material_holdout_mean_rmse_T)} → ${numeric(result.candidate.material_holdout_mean_rmse_T)} T。${result.improved_holdout_directions} 个方向改善，${result.worsened_holdout_directions} 个方向增大。最大 |B800 误差| ${numeric(result.baseline.material_holdout_max_abs_B800_error_T)} → ${numeric(result.candidate.material_holdout_max_abs_B800_error_T)} T。`;
+   $('calibrationComparisonResults').hidden=false;
+   $('calibrationComparisonLinks').append(link('下载逐方向 CSV',url+'&format=csv'),link('下载对照及原报告',url+'&format=zip'));
+  }catch(error){if(generation===compareGeneration)$('calibrationComparisonStatus').textContent=error.message}
+  finally{if(generation===compareGeneration){comparing=false;compareControls()}}
+ }
  function datasets(rows){
   const body=$('dataDatasets');body.replaceChildren();
   if(!rows.length){const tr=element('tr'),td=element('td','暂无保存电机数据。');td.colSpan=5;tr.append(td);body.append(tr);return}
@@ -109,17 +157,22 @@
   finally{building=false;formDisabled(!catalog.package_build_available);$('dataRefresh').disabled=false}
  }
  async function refresh(){
-  if(busy||building)return;busy=true;formDisabled(true);$('dataRefresh').disabled=true;$('dataStatus').textContent='正在读取…';$('dataCounts').textContent='';
+  if(busy||building)return;busy=true;clearComparison();formDisabled(true);$('dataRefresh').disabled=true;$('dataStatus').textContent='正在读取…';$('dataCounts').textContent='';
   for(const id of ['dataPackages','dataCalibrations','dataDatasets'])$(id).replaceChildren();
   try{
    const response=await fetch('/api/workbench/system-data',{method:'GET',cache:'no-store'}),data=await response.json();if(!response.ok)throw Error(data.error||'读取失败');
    if(data.schema!=='go_steel_system_data_v1'||!['packages','calibrations','datasets'].every(key=>Array.isArray(data[key])))throw Error('数据清单格式不符');
    packages(data.packages);calibrations(data.calibrations);datasets(data.datasets);
-   buildOptions(data);catalog=data;
+   buildOptions(data);catalog=data;comparisonOptions(data.calibrations);
    const counts=data.counts;$('dataCounts').textContent=(counts.complete?'当前':'可读取部分')+'：'+counts.dataset_count+' 数据集、'+counts.row_count+' 保存记录、'+counts.original_accepted_count+' 原判据通过、'+counts.native_csv_accepted_count+' 原生CSV通过。记录包含重复材料及不同版本。';
    $('dataStatus').textContent='读取时间：'+data.created_utc+'。'+data.scope;
-  }catch(error){catalog=null;formDisabled(true);for(const id of ['dataPackages','dataCalibrations','dataDatasets','packageMoreBatches'])if($(id))$(id).replaceChildren();$('dataCounts').textContent='';$('dataStatus').textContent='暂不可读取：'+error.message}
-  finally{busy=false;$('dataRefresh').disabled=false}
+  }catch(error){catalog=null;formDisabled(true);comparisonOptions([]);for(const id of ['dataPackages','dataCalibrations','dataDatasets','packageMoreBatches'])if($(id))$(id).replaceChildren();$('dataCounts').textContent='';$('dataStatus').textContent='暂不可读取：'+error.message}
+  finally{busy=false;$('dataRefresh').disabled=false;compareControls()}
  }
- $('dataRefresh').addEventListener('click',refresh);$('packageBuild').addEventListener('click',build);refresh();
+ $('dataRefresh').addEventListener('click',refresh);$('packageBuild').addEventListener('click',build);
+ if($('compareCalibrations')){
+  $('compareCalibrations').addEventListener('click',compareSavedCalibrations);
+  $('compareBaseline').addEventListener('change',clearComparison);$('compareCandidate').addEventListener('change',clearComparison);
+ }
+ refresh();
 })(typeof window==='object'?window:globalThis);

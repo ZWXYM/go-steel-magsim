@@ -26,9 +26,9 @@ function all(node){return [node,...node.children.flatMap(all)]}
 function text(node){return all(node).map(n=>n.textContent).join(' ')}
 async function flush(){for(let i=0;i<12;i++)await Promise.resolve()}
 (async()=>{
- const nodes=new Map(),calls=[];let handler=()=>structuredClone(fixture),buildHandler=()=>({id:'pack_1111111111111111',member_count:20,sha256:'1'.repeat(64),title:'new snapshot'});
+ const nodes=new Map(),calls=[];let handler=()=>structuredClone(fixture),buildHandler=()=>({id:'pack_1111111111111111',member_count:20,sha256:'1'.repeat(64),title:'new snapshot'}),compareHandler;
  const document={getElementById:id=>{if(!nodes.has(id))nodes.set(id,new Node('root'));return nodes.get(id)},createElement:tag=>new Node(tag)};
- const context={document,fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>options.method==='POST'?buildHandler():handler()}},Number};
+ const context={document,fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>options.method==='POST'?buildHandler():url.includes('/calibration-comparison?')?compareHandler():handler()}},Number};
  context.window=context;vm.runInNewContext(script,context);await flush();
  const links=()=>[...nodes.values()].flatMap(all).filter(n=>n.tag==='a').map(n=>n.href);
  assert(links().includes('/api/workbench/system-data/packages/pack_0123456789abcdef/download'));
@@ -67,5 +67,17 @@ async function flush(){for(let i=0;i<12;i++)await Promise.resolve()}
  handler=()=>{throw Error('unavailable')};await nodes.get('dataRefresh').listeners.click();assert.match(nodes.get('dataStatus').textContent,/unavailable/);assert.equal(nodes.get('dataCounts').textContent,'');assert.equal(links().length,0);
  let finish;handler=()=>new Promise(resolve=>finish=resolve);const pending=nodes.get('dataRefresh').listeners.click();await flush();const count=calls.length;await nodes.get('dataRefresh').listeners.click();assert.equal(calls.length,count);assert.equal(nodes.get('dataRefresh').disabled,true);finish(structuredClone(fixture));await pending;assert.equal(nodes.get('dataRefresh').disabled,false);
  assert(calls.every(call=>call.url==='/api/workbench/system-data'&&call.options.method==='GET'&&call.options.cache==='no-store'||call.url==='/api/workbench/system-data/packages'&&call.options.method==='POST'));
+ const first=fixture.calibrations[0],second={...first,id:'cal_cccccccccccc',report_sha256:'d'.repeat(64),calibration_version:'fit_v3'};
+ handler=()=>({...structuredClone(fixture),calibrations:[first,second]});await nodes.get('dataRefresh').listeners.click();
+ nodes.get('compareBaseline').value=first.id;nodes.get('compareCandidate').value=second.id;nodes.get('compareCandidate').listeners.change();
+ const payload={version:'saved_calibration_comparison_v1',baseline:{...first,material_holdout_mean_rmse_T:.04,material_holdout_max_abs_B800_error_T:.1},candidate:{...second,material_holdout_mean_rmse_T:.03,material_holdout_max_abs_B800_error_T:.06},improved_holdout_directions:1,worsened_holdout_directions:0,rows:[{grade:'B23R075',direction:'RD',holdout_delta_rmse_T:-.01}]};
+ compareHandler=()=>payload;await nodes.get('compareCalibrations').listeners.click();
+ assert.match(nodes.get('calibrationComparisonStatus').textContent,/0.040000 → 0.030000/);
+ assert.match(text(nodes.get('calibrationComparisonRows')),/-0.010000/);
+ assert(links().some(href=>href.includes(first.report_sha256)&&href.endsWith('&format=zip')));
+ let finishCompare;compareHandler=()=>new Promise(resolve=>finishCompare=resolve);const earlier=nodes.get('compareCalibrations').listeners.click();await flush();
+ nodes.get('compareCandidate').value='';nodes.get('compareCandidate').listeners.change();finishCompare(payload);await earlier;
+ assert.equal(nodes.get('calibrationComparisonResults').hidden,true);
+ assert(calls.filter(call=>call.url.includes('/calibration-comparison?')).every(call=>call.options.method==='GET'));
  console.log('System data: version-bound links, separate fit/holdout and estimate/native counts, source-bound explicit builds, no duplicate or automatic retries, safe text and refresh recovery: PASS');
 })().catch(error=>{console.error(error);process.exitCode=1});
