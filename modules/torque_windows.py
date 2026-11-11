@@ -17,6 +17,7 @@ from modules.material_batch_reports import verified_operating_point,torque_findi
 VERSION='calibrated_batch_torque_windows_v1'
 TIME_TOL_MS=1e-7  # Same physical tolerance as the existing 1e-10-second CSV check.
 TORQUE_REPORT='case/reports/Torque Plots.csv'
+BATCH_ID=re.compile(r'bhbatch_[0-9a-f]{12}')
 
 
 def digest(data):return hashlib.sha256(data).hexdigest()
@@ -116,9 +117,16 @@ def catalog_loss_window(execution, source_folder, time_ms, stats):
 class TorqueWindows:
     def __init__(self,batches):self.batches=batches
 
-    def catalog(self):
+    def catalog(self,artifact=None):
+        if artifact is None:
+            batches=self.batches.records()
+        else:
+            if not isinstance(artifact,str) or not BATCH_ID.fullmatch(artifact):raise ValueError('无效校准材料批量')
+            batch=self.batches.get(artifact)
+            if batch['id']!=artifact:raise ValueError('收藏批量与保存记录不符')
+            batches=[batch]
         rows=[]
-        for batch in self.batches.records():
+        for batch in batches:
             items=[]
             for item in batch.get('items',[]):
                 metrics=item.get('metrics') or {};available=item.get('result_available') is True
@@ -127,10 +135,12 @@ class TorqueWindows:
                     original_window_ms=metrics.get('selected_window_ms') if available else None,error=item.get('error'),
                     time_range_ms=[metrics['time_ms'][0],metrics['time_ms'][-1]] if available else None))
             rows.append(dict(id=batch['id'],status=batch['status'],created_utc=batch.get('created_utc'),items=items,error=batch.get('error')))
-        return dict(version=VERSION,batches=rows,new_native_solves=0,raw_results_changed=False)
+        data=dict(version=VERSION,batches=rows,new_native_solves=0,raw_results_changed=False)
+        if artifact is not None:data['focused_batch']=artifact
+        return data
 
     def _snapshot(self,artifact,data):
-        if not isinstance(artifact,str) or not re.fullmatch(r'bhbatch_[0-9a-f]{12}',artifact):raise ValueError('无效校准材料批量')
+        if not isinstance(artifact,str) or not BATCH_ID.fullmatch(artifact):raise ValueError('无效校准材料批量')
         if not isinstance(data,dict) or set(data)-{'items','window_ms'}:raise ValueError('请明确选择批量项和时间区间')
         selected=data.get('items')
         if (not isinstance(selected,list) or not 1<=len(selected)<=6 or any(not isinstance(name,str) or not re.fullmatch(r'item_\d{2}',name) for name in selected)
@@ -236,7 +246,8 @@ def create_torque_window_routes(service):
     def page():return render_template('torque_windows.html')
     @bp.get('/api/workbench/torque-windows')
     def catalog():
-        response=jsonify(service.catalog());response.headers['Cache-Control']='no-store';return response
+        if set(request.args)-{'batch'} or len(request.args.getlist('batch'))>1:raise ValueError('批量目录查询参数无效')
+        response=jsonify(service.catalog(request.args.get('batch')));response.headers['Cache-Control']='no-store';return response
     @bp.get('/api/workbench/torque-windows/<artifact>/analyze')
     def analyze(artifact):
         response=jsonify(service.analyze(artifact,query()));response.headers['Cache-Control']='no-store';return response

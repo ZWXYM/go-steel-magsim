@@ -35,14 +35,17 @@
   $('twSelection').textContent=record?`${record.id} · ${record.status} · 已选 ${selected.length} 项`+(record.error?' · '+record.error:''):'所选批量不在可读目录，请重新选择。';invalidate();
  }
  async function read(url){const response=await fetch(url,{cache:'no-store'});if(!response.ok){const data=await response.json();throw Error(data.error||'读取失败')}return response.json()}
- async function refresh(){
+ async function refresh(focus=null){
   if(catalogBusy)return;catalogBusy=true;controls();const had=!!catalog,previous=$('twBatch').value,keep=selection();
-  try{const data=await read('/api/workbench/torque-windows');if(data.version!==VERSION||!Array.isArray(data.batches))throw Error('批量目录格式不符');catalog=data;const chosen=had?previous:(initial.get('batch')||data.batches[0]?.id||'');$('twBatch').replaceChildren();
+  if(focus)$('twSelection').textContent='正在读取收藏的批量…';
+  try{const data=await read('/api/workbench/torque-windows'+(focus?'?batch='+encodeURIComponent(focus):''));
+   if(data.version!==VERSION||!Array.isArray(data.batches)||data.focused_batch&&(data.focused_batch!==focus||data.batches.length!==1||data.batches[0].id!==focus))throw Error('批量目录格式或来源不符');
+   catalog=data;$('twRefresh').textContent=data.focused_batch?'查看全部批量':'刷新已有批量';const chosen=had?previous:(initial.get('batch')||data.batches[0]?.id||'');$('twBatch').replaceChildren();
    if(!data.batches.some(row=>row.id===chosen)){const option=document.createElement('option');option.value='';option.textContent='请选择可读批量';$('twBatch').append(option)}
    for(const row of data.batches){const option=document.createElement('option');option.value=row.id;option.textContent=row.id+' · '+row.status+' · '+row.items.filter(item=>item.available).length+' 项已有转矩';$('twBatch').append(option)}
    $('twBatch').value=data.batches.some(row=>row.id===chosen)?chosen:'';fillItems(had?keep:initial.has('items')?initial.get('items').split(','):null);
    if(!had){resetWindow();if(initial.has('start_ms')||initial.has('stop_ms')){$('twStart').value=initial.get('start_ms')??'';$('twStop').value=initial.get('stop_ms')??''}}
-  }catch(error){$('twError').textContent='目录暂不可更新：'+error.message+'；已有选择保留。'}finally{catalogBusy=false;controls()}
+  }catch(error){if(!had&&focus){$('twRefresh').textContent='查看全部批量';$('twSelection').textContent='收藏批量暂不可读，可查看全部批量。'}$('twError').textContent='目录暂不可更新：'+error.message+'；已有选择保留。'}finally{catalogBusy=false;controls()}
  }
  function form(){const artifact=$('twBatch').value,items=selection(),start=$('twStart').value,stop=$('twStop').value,window=[Number(start),Number(stop)];if(!(/^bhbatch_[0-9a-f]{12}$/).test(artifact)||!items.length||items.length>6)throw Error('请选择可读批量中的1至6项');if(!start.trim()||!stop.trim()||!window.every(Number.isFinite)||window[0]>=window[1])throw Error('请输入递增的有效开始和结束时间');return {artifact,items,window}}
  function query(data,snapshot){const values=new URLSearchParams({items:data.items.join(','),start_ms:String(data.window[0]),stop_ms:String(data.window[1])});if(snapshot)values.set('snapshot',snapshot);return values.toString()}
@@ -72,5 +75,5 @@
   request.promise=(async()=>{try{const data=await read('/api/workbench/torque-windows/'+input.artifact+'/analyze?'+query(input));if(pending!==request||revision!==request.revision||!matches(input))return;current={input,data:checked(data,input)};render()}catch(error){if(pending===request&&revision===request.revision&&matches(input)){current=null;$('twResult').hidden=true;$('twError').textContent=error.message}}finally{if(pending===request){pending=null;controls()}}})();return request.promise;
  }
  async function download(){if(downloadBusy||!current)return;const saved=current;downloadBusy=true;controls();try{const response=await fetch('/api/workbench/torque-windows/'+saved.input.artifact+'/export?'+query(saved.input,saved.data.snapshot_sha256),{cache:'no-store'});if(!response.ok){const data=await response.json();throw Error(data.error||'下载失败')}const url=URL.createObjectURL(await response.blob()),link=document.createElement('a');link.href=url;link.download=saved.input.artifact+'_torque_window.zip';try{link.click()}finally{setTimeout(()=>URL.revokeObjectURL(url),1000)}}catch(error){if(current===saved)$('twError').textContent=error.message}finally{downloadBusy=false;controls()}}
- $('twRefresh').addEventListener('click',refresh);$('twBatch').addEventListener('change',()=>{fillItems();resetWindow()});$('twReset').addEventListener('click',resetWindow);$('twStart').addEventListener('input',invalidate);$('twStop').addEventListener('input',invalidate);$('twApply').addEventListener('click',analyze);$('twDownload').addEventListener('click',download);root.addEventListener('resize',draw);refresh();
+ $('twRefresh').addEventListener('click',()=>refresh());$('twBatch').addEventListener('change',()=>{fillItems();resetWindow()});$('twReset').addEventListener('click',resetWindow);$('twStart').addEventListener('input',invalidate);$('twStop').addEventListener('input',invalidate);$('twApply').addEventListener('click',analyze);$('twDownload').addEventListener('click',download);root.addEventListener('resize',draw);const bookmarked=initial.get('batch');refresh(/^bhbatch_[0-9a-f]{12}$/.test(bookmarked??'')?bookmarked:null);
 })(typeof window==='object'?window:globalThis);

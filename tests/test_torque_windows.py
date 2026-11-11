@@ -206,6 +206,18 @@ class TorqueWindowTests(unittest.TestCase):
     def test_catalog_keeps_unavailable_and_invalid_batches_visible(self):
         self.manager.records=lambda:[self.record,dict(id='bhbatch_aaaaaaaaaaaa',status='invalid',error='synthetic source error')];data=self.service.catalog();self.assertEqual(len(data['batches']),2);self.assertFalse(data['batches'][0]['items'][2]['available']);self.assertEqual(data['batches'][1]['error'],'synthetic source error')
 
+    def test_bookmarked_catalog_loads_only_exact_batch_and_keeps_failure_visible(self):
+        app=Flask(__name__);app.register_blueprint(create_torque_window_routes(self.service));client=app.test_client()
+        url='/api/workbench/torque-windows?batch='+self.batch
+        with patch.object(self.manager,'records',side_effect=AssertionError('unrelated saved batch read')):
+            response=client.get(url)
+            self.assertEqual(response.status_code,200)
+            self.assertEqual(response.json['focused_batch'],self.batch)
+            self.assertEqual([row['id'] for row in response.json['batches']],[self.batch])
+            self.assertFalse(response.json['batches'][0]['items'][2]['available'])
+            for invalid in ('?batch=../other','?batch=bhbatch_aaaaaaaaaaaa',f'?batch={self.batch}&batch={self.batch}'):
+                self.assertEqual(client.get('/api/workbench/torque-windows'+invalid).status_code,400)
+
     def test_download_snapshot_also_binds_the_loaded_statistics_program(self):
         data=dict(items=['item_01']);result=self.service.analyze(self.batch,data)
         with patch('modules.torque_windows.LOADED_PRODUCER_SHA','b'*64):

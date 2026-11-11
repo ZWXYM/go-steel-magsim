@@ -1,6 +1,7 @@
 """CPU/mocked worker lifecycle only: none of these tests launches or solves AEDT."""
 import copy
 import csv
+import io
 import json
 import os
 import shutil
@@ -8,6 +9,7 @@ import subprocess
 import sys
 import time
 import unittest
+import zipfile
 from types import SimpleNamespace
 from pathlib import Path
 from unittest.mock import MagicMock,patch
@@ -64,13 +66,19 @@ class ExecutionTests(unittest.TestCase):
         write_json(folder/'state.json',state);write_json(self.motor.storage/'queue.lock',dict(process_identity(),token='test-token',torque_execution_id=record['id']))
         return folder
 
+    def mock_session(self,desktop,manifest,folder):
+        identity=process_identity()
+        write_json(folder/'desktop_session.json',dict(identity=identity,dedicated_session=True,closed=False,
+            requested_transport=manifest.get('aedt_transport','auto'),actual_transport='grpc',native_PID_verified=True))
+        return desktop,identity
+
     def fake_run(self,record,app=None,desktop=None):
         self.measurement=record['measurement_protocol'];folder=self.simulated_start(record)
         desktop=desktop or MagicMock();desktop.release_desktop.return_value=True
         desktop.odesktop.GetProcessID.return_value=os.getpid()
         app=app or self.mock_app();cycles=record['requested_protocol']['cycles']
         with patch.object(worker,'require_configured_license_connection',return_value={'TCP':True}),\
-             patch.object(worker,'create_session',return_value=(desktop,process_identity())),\
+             patch.object(worker,'create_session',side_effect=lambda _,m,path:self.mock_session(desktop,m,path)),\
              patch.object(worker,'open_app',return_value=app),\
              patch.object(worker,'verify_solver_settings',side_effect=lambda text,requested:{k:str(v).lower() for k,v in (requested or {}).items()}),\
              patch.object(worker,'launch_budget_watch',return_value=None),\
@@ -335,6 +343,16 @@ class ExecutionTests(unittest.TestCase):
         desktop.odesktop.GetMessages.assert_called_once_with('motor',record['design'],0)
         self.assertFalse((folder/'result.json').exists());self.assertFalse(self.exe.get(record['id'])['result_available'])
         desktop.release_desktop.assert_called_once()
+        session_path=folder/'desktop_session.json'
+        session=read(session_path)
+        self.assertTrue(session['closed'])
+        self.assertTrue(session['native_PID_verified'])
+        self.assertEqual(session['requested_transport'],record['aedt_transport'])
+        self.assertEqual(session['actual_transport'],'grpc')
+        self.assertTrue(session['closed_utc'])
+        with zipfile.ZipFile(io.BytesIO(self.exe.bundle(record['id']).getvalue())) as archive:
+            self.assertEqual(archive.read('desktop_session.json'),session_path.read_bytes())
+            self.assertEqual(archive.read('failure.json'),(folder/'failure.json').read_bytes())
         with self.assertRaisesRegex(ValueError,'禁止重提'):worker.run(folder,self.motor.storage,self.native.storage)
 
     def test_failed_solve_does_not_query_native_messages_after_budget_stop(self):
@@ -375,7 +393,7 @@ class ExecutionTests(unittest.TestCase):
         record=self.ready();folder=self.simulated_start(record);desktop=MagicMock();desktop.release_desktop.return_value=True
         desktop.odesktop.GetProcessID.return_value=os.getpid()
         with patch.object(worker,'require_configured_license_connection',return_value={'TCP':True}),\
-             patch.object(worker,'create_session',return_value=(desktop,process_identity())),\
+             patch.object(worker,'create_session',side_effect=lambda _,m,path:self.mock_session(desktop,m,path)),\
              patch.object(worker,'open_app',side_effect=RuntimeError('mock initialization failure')):
             result=worker.run(folder,self.motor.storage,self.native.storage)
         self.assertEqual(result['status'],'failed');self.assertFalse(read(folder/'failure.json')['solve_attempted'])

@@ -372,7 +372,11 @@ def run(folder,motor_storage,native_storage):
                 try:
                     require_native_pid(desktop.odesktop,identity['pid'])
                     if desktop.release_desktop(close_projects=True,close_on_exit=True) is False:raise ValueError('原生API未确认释放')
-                    write_json(folder/'desktop_session.json',dict(identity=identity,dedicated_session=True,closed=True))
+                    session_path=folder/'desktop_session.json'
+                    opened=read(session_path)
+                    if opened.get('identity')!=identity or opened.get('dedicated_session') is not True:
+                        raise ValueError('专用会话原记录与已释放的进程不符')
+                    write_json(session_path,dict(opened,closed=True,closed_utc=datetime.now(timezone.utc).isoformat()))
                 except Exception as exc:cleanup_error=str(exc)
             elif status!='dead':cleanup_error='专用会话身份无法确认，未关闭'
         if (folder/'desktop_unowned.json').exists() or ((folder/'desktop_session.json').exists() and identity is None):

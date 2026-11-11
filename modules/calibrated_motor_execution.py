@@ -332,7 +332,7 @@ class CalibratedMotorExecution:
         with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as archive:
             archive.writestr('execution.json',json.dumps(record,ensure_ascii=False,indent=2))
             for name in record['input_hashes']:archive.write(folder/name,name)
-            for name in ('failure.json','attention.json','configuration.json','budget_stop.json','budget_watch.json','equivalent_material.json','loss_report_scope.json','solve_completed.json'):
+            for name in ('failure.json','attention.json','configuration.json','desktop_session.json','budget_stop.json','budget_watch.json','equivalent_material.json','loss_report_scope.json','solve_completed.json'):
                 if (folder/name).is_file():archive.write(folder/name,name)
             if record['result_available']:
                 for name in ('result.json','summary.csv','case/reports/Torque Plots.csv'):archive.write(folder/name,name)
