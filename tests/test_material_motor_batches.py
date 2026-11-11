@@ -160,6 +160,36 @@ class MaterialBatchTests(unittest.TestCase):
         self.assertIsNone(reopened['items'][0]['metrics']['K_T_ripple_pct'])
         self.assertEqual(path.read_bytes(),before)
 
+    def test_recovered_result_creates_new_batch_and_preserves_terminal_failure(self):
+        previous = self.prepare()
+        path = self.batches.path(previous['id']) / 'state.json'
+        state = read(path)
+        state['status'] = 'completed_with_failures'
+        state['items'][0].update(status='blocked', error='fixture did not obtain an execution')
+        write_json(path, state)
+        before = path.read_bytes()
+
+        snapshot = fixtures.MaterialChainTests.model_ready(self)
+        execution = snapshot['records']['execution']['id']
+        self.assertEqual(self.prepare()['id'], previous['id'])
+        get_execution = self.execution.get
+        completed = dict(get_execution(execution), status='completed', result_available=True,
+                         result=dict(model_version='fixture_BH', metrics=dict(T_avg_Nm=1.2)))
+
+        def get_saved(artifact):
+            return completed if artifact == execution else get_execution(artifact)
+
+        with patch.object(self.execution, 'get', side_effect=get_saved):
+            self.assertFalse(self.batches.get(previous['id'])['items'][0]['result_available'])
+            updated = self.prepare()
+            self.assertNotEqual(updated['id'], previous['id'])
+            self.assertEqual(updated['idempotency_sha256'], previous['idempotency_sha256'])
+            self.assertEqual(updated['items'][0]['execution_id'], execution)
+            self.assertEqual(updated['budget']['max_new_motor_solves'], 0)
+            self.assertEqual(updated['budget']['max_new_imports'], 0)
+            self.assertEqual(self.prepare()['id'], updated['id'])
+        self.assertEqual(path.read_bytes(), before)
+
     def test_pause_prepared_batch_is_cpu_only_and_preserves_stage_ids(self):
         batch=self.prepare();before=batch['items'][0]['records']
         with patch('subprocess.Popen') as launch:paused=self.batches.pause(batch['id'])

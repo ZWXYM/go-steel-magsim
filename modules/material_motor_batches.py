@@ -118,6 +118,11 @@ class MaterialMotorBatches:
                     new_executions = [item['records'].get('execution', {}).get('id') for item in items]
                     if old.get('interruption_recovery') and old_executions != new_executions:
                         continue  # An explicitly prepared replacement has a different case directory.
+                    if old['status'] == 'completed_with_failures' and any(
+                            not prior['result_available'] and old_id != new_id
+                            and current['records'].get('execution', {}).get('status') == 'completed'
+                            for prior, current, old_id, new_id in zip(old['items'], items, old_executions, new_executions)):
+                        continue  # Keep the historical batch and bind the newly verified result in a fresh batch.
                     return dict(old, existing_batch_reused=True)
             artifact = 'bhbatch_'+uuid.uuid4().hex[:12]; folder = self.path(artifact); folder.mkdir()
             manifest = dict(id=artifact,version=VERSION,created_utc=datetime.now(timezone.utc).isoformat(),
@@ -136,7 +141,7 @@ class MaterialMotorBatches:
         if manifest['producer_hashes'] != self.producers(manifest['measurement_protocol']):
             raise ValueError('批量程序已改变；保留本记录，不下发旧程序任务')
 
-    def item_records(self, item, cursor):
+    def item_records(self, item, cursor, *, discover_execution=True):
         if item['id'] != cursor['id']: raise ValueError('批量项身份不符')
         values = {}
         components = dict(preparation=self.chain.preparation,native_import=self.chain.native,
@@ -157,7 +162,7 @@ class MaterialMotorBatches:
             raise ValueError('批量项的文件或父子记录绑定改变')
         if 'execution' in values and (values['execution']['analysis_plan_id'] != plan['id'] or values['execution'].get('preflight_only')):
             raise ValueError('批量项执行不属于冻结分析计划')
-        if 'execution' not in values:
+        if discover_execution and 'execution' not in values:
             runs=self.chain.execution.records()
             if any(r['status']=='invalid' for r in runs):raise ValueError('执行记录不可核对，批量未创建替代任务')
             candidates=[r for r in runs if r.get('analysis_plan_id')==plan['id'] and not r.get('preflight_only')]
@@ -184,8 +189,9 @@ class MaterialMotorBatches:
         if sha(json.dumps(identity,sort_keys=True,separators=(',',':')).encode())!=manifest['idempotency_sha256']:
             raise ValueError('批量来源或程序身份改变')
         result=dict(manifest,**state);rows=[]
+        discover_execution = state['status'] not in ('completed', 'completed_with_failures')
         for item,cursor in zip(manifest['items'],state['items']):
-            records=self.item_records(item,cursor);run=records.get('execution')
+            records=self.item_records(item,cursor,discover_execution=discover_execution);run=records.get('execution')
             if catalog and records['analysis_plan']['catalog_loss']['reference_sha256'] != item['source']['catalog_loss_reference_sha256']:
                 raise ValueError('目录铁损分析计划与冻结批量的目录来源不符')
             if (records['preparation']['cores']!=manifest['cores'] or records['analysis_plan']['cores']!=manifest['cores']

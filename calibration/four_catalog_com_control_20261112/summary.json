@@ -1,0 +1,492 @@
+{
+  "schema": "four_catalog_com_control_public_v1",
+  "protocol": "v8_2_cycle1_RD_equivalent_intrinsic_fine100_catalog_loss_v1",
+  "batch": "bhbatch_392d74f133df",
+  "original_torque_points": 404,
+  "new_Maxwell_solves": 1,
+  "new_MuMax_solves": 0,
+  "batch_new_solves": 0,
+  "B23_new_execution": "bhexec_f5ea40ced34d",
+  "B23_previous_execution": "bhexec_ecca8147fc99",
+  "B23_previous_failure_preserved": true,
+  "B23_previous_failure_cause": "unresolved",
+  "B23_new_requested_and_actual_transport": "com",
+  "same_core_inputs_and_protocol": true,
+  "source_scope": "Official first-cycle Maxwell 2D RD-equivalent runs using frozen manufacturer-catalog loss coefficients; 3000 r/min, four poles, 100 Hz.",
+  "efficiency_enabled": false,
+  "optimization_ranking_enabled": false,
+  "rows": [
+    {
+      "grade": "B23R075",
+      "execution": "bhexec_f5ea40ced34d",
+      "model_version": "V8_2_scalar_RD_equivalent_intrinsic_fine100_catalog_loss_v1",
+      "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "csv_sha256": {
+        "case/reports/Torque Plots.csv": "c8718ccfe806f2c038a837e750f8d000708aa6fa852f4f71a7e4502b5ffd6e08",
+        "case/maxwell_reports/Catalog Losses.csv": "e6c1968581b7b6a163a65151e24730885e0884a9d88c43671bb9ca79ab7b6435",
+        "case/maxwell_reports/Catalog CoreLoss by Object.csv": "3f845079f5ebec37d5bd4971727b87a22d49aa43df5f3a535529a2ff433b888f"
+      },
+      "points": 101,
+      "speed_rpm": 3000,
+      "torque_mean_Nm": 1.8460464054056969,
+      "electromagnetic_power_W": 579.9525825408383,
+      "torque_min_Nm": 0.303010473698592,
+      "torque_max_Nm": 2.42131501611286,
+      "torque_ripple_pct": 114.74817405517703,
+      "original_torque_acceptance": false,
+      "core_loss_mean_W": 125.16822173799953,
+      "core_loss_object_mean_W": {
+        "inserts": 1.2765791726448326,
+        "stator": 83.65389651614397,
+        "rotor": 40.237746049210806
+      },
+      "coil_loss_mean_W": 49.175064124864804,
+      "loss_object_closure_abs_max_W": 5.002220859751105e-12,
+      "windows": [
+        {
+          "start_ms": 0.0,
+          "end_ms": 5.0,
+          "points": 51,
+          "torque_time_weighted_mean_Nm": 1.8122749111392629,
+          "torque_min_Nm": 0.303010473698592,
+          "torque_max_Nm": 2.42131501611286,
+          "iron_loss_mean_W": 218.6648173189337,
+          "object_loss_mean_W": {
+            "inserts": 2.1745727501958476,
+            "stator": 142.8734918645011,
+            "rotor": 73.61675270423694
+          }
+        },
+        {
+          "start_ms": 5.0,
+          "end_ms": 10.0,
+          "points": 51,
+          "torque_time_weighted_mean_Nm": 1.8820568492529377,
+          "torque_min_Nm": 1.66971799481579,
+          "torque_max_Nm": 2.14955972821808,
+          "iron_loss_mean_W": 31.671626157065358,
+          "object_loss_mean_W": {
+            "inserts": 0.37858559509381723,
+            "stator": 24.43430116778686,
+            "rotor": 6.858739394184675
+          }
+        },
+        {
+          "start_ms": 0.0,
+          "end_ms": 10.0,
+          "points": 101,
+          "torque_time_weighted_mean_Nm": 1.8471658801961002,
+          "torque_min_Nm": 0.303010473698592,
+          "torque_max_Nm": 2.42131501611286,
+          "iron_loss_mean_W": 125.16822173799953,
+          "object_loss_mean_W": {
+            "inserts": 1.2765791726448326,
+            "stator": 83.65389651614397,
+            "rotor": 40.237746049210806
+          }
+        }
+      ],
+      "largest_loss_contributions": [
+        {
+          "time_ms": 2.4000000000000004,
+          "torque_Nm": 2.35065445775751,
+          "iron_loss_W": 2605.9129500564604,
+          "stator_W": 1901.1737268560898,
+          "rotor_W": 679.501390701198,
+          "inserts_W": 25.237832499175372,
+          "energy_share": 0.20819285549259656
+        },
+        {
+          "time_ms": 2.5,
+          "torque_Nm": 2.05682498359204,
+          "iron_loss_W": 2094.18083519493,
+          "stator_W": 1443.60679001128,
+          "rotor_W": 638.888993763392,
+          "inserts_W": 11.685051420262862,
+          "energy_share": 0.16730930631725702
+        },
+        {
+          "time_ms": 2.3,
+          "torque_Nm": 0.303010473698592,
+          "iron_loss_W": 1697.99616979613,
+          "stator_W": 949.202005619548,
+          "rotor_W": 722.200211961258,
+          "inserts_W": 26.59395221532654,
+          "energy_share": 0.13565712975857036
+        },
+        {
+          "time_ms": 0.8,
+          "torque_Nm": 1.78368907380432,
+          "iron_loss_W": 1297.9760156833102,
+          "stator_W": 912.031565264851,
+          "rotor_W": 380.853380547053,
+          "inserts_W": 5.091069871404974,
+          "energy_share": 0.10369852648384005
+        },
+        {
+          "time_ms": 0.7,
+          "torque_Nm": 0.879066968492749,
+          "iron_loss_W": 782.715677625387,
+          "stator_W": 501.621748060541,
+          "rotor_W": 277.241039000027,
+          "inserts_W": 3.852890564819124,
+          "energy_share": 0.06253309879753323
+        }
+      ]
+    },
+    {
+      "grade": "B27R090",
+      "execution": "bhexec_f29638ba145a",
+      "model_version": "V8_2_scalar_RD_equivalent_intrinsic_fine100_catalog_loss_v1",
+      "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "csv_sha256": {
+        "case/reports/Torque Plots.csv": "5c62ea732268d14ae848e459364c1fcbf7d868ad28ab2c33166b4467d916838c",
+        "case/maxwell_reports/Catalog Losses.csv": "267ccafdd6468544f5867c2c303e6628205a0f1ec6259226744d8f915d159699",
+        "case/maxwell_reports/Catalog CoreLoss by Object.csv": "5e39bc6cee069fac0cb4c2c3c3361a19ef36cf0a1428f53ef5d3095d0aa69081"
+      },
+      "points": 101,
+      "speed_rpm": 3000,
+      "torque_mean_Nm": 1.863285089520793,
+      "electromagnetic_power_W": 585.3682748781923,
+      "torque_min_Nm": 1.28535821488242,
+      "torque_max_Nm": 2.15856796280452,
+      "torque_ripple_pct": 46.863990531190005,
+      "original_torque_acceptance": true,
+      "core_loss_mean_W": 41.63060129680277,
+      "core_loss_object_mean_W": {
+        "inserts": 0.5750300499416999,
+        "stator": 32.85241717301345,
+        "rotor": 8.203154073847625
+      },
+      "coil_loss_mean_W": 49.175064124864804,
+      "loss_object_closure_abs_max_W": 4.547473508864641e-13,
+      "windows": [
+        {
+          "start_ms": 0.0,
+          "end_ms": 5.0,
+          "points": 51,
+          "torque_time_weighted_mean_Nm": 1.8394504306748642,
+          "torque_min_Nm": 1.28535821488242,
+          "torque_max_Nm": 2.12635235441267,
+          "iron_loss_mean_W": 57.510516959108415,
+          "object_loss_mean_W": {
+            "inserts": 0.8240746432627916,
+            "stator": 44.89763816079449,
+            "rotor": 11.788804155051126
+          }
+        },
+        {
+          "start_ms": 5.0,
+          "end_ms": 10.0,
+          "points": 51,
+          "torque_time_weighted_mean_Nm": 1.8865297316718956,
+          "torque_min_Nm": 1.69000550576933,
+          "torque_max_Nm": 2.15856796280452,
+          "iron_loss_mean_W": 25.750685634497138,
+          "object_loss_mean_W": {
+            "inserts": 0.32598545662060835,
+            "stator": 20.807196185232414,
+            "rotor": 4.617503992644124
+          }
+        },
+        {
+          "start_ms": 0.0,
+          "end_ms": 10.0,
+          "points": 101,
+          "torque_time_weighted_mean_Nm": 1.86299008117338,
+          "torque_min_Nm": 1.28535821488242,
+          "torque_max_Nm": 2.15856796280452,
+          "iron_loss_mean_W": 41.63060129680277,
+          "object_loss_mean_W": {
+            "inserts": 0.5750300499416999,
+            "stator": 32.85241717301345,
+            "rotor": 8.203154073847625
+          }
+        }
+      ],
+      "largest_loss_contributions": [
+        {
+          "time_ms": 2.1,
+          "torque_Nm": 1.30561517958185,
+          "iron_loss_W": 512.936696120972,
+          "stator_W": 425.61870560715704,
+          "rotor_W": 85.5740989153092,
+          "inserts_W": 1.7438915985056893,
+          "energy_share": 0.12321145506979878
+        },
+        {
+          "time_ms": 2.2,
+          "torque_Nm": 1.88117921984058,
+          "iron_loss_W": 458.67270549158604,
+          "stator_W": 373.16593396523797,
+          "rotor_W": 83.6186969709282,
+          "inserts_W": 1.8880745554198377,
+          "energy_share": 0.11017681493993008
+        },
+        {
+          "time_ms": 3.2,
+          "torque_Nm": 1.47748868941111,
+          "iron_loss_W": 231.609020793501,
+          "stator_W": 185.283701891544,
+          "rotor_W": 45.3107433749147,
+          "inserts_W": 1.0145755270418848,
+          "energy_share": 0.05563432032659318
+        },
+        {
+          "time_ms": 3.3000000000000003,
+          "torque_Nm": 1.78876412988028,
+          "iron_loss_W": 173.574352422333,
+          "stator_W": 131.302388329692,
+          "rotor_W": 40.2424084231376,
+          "inserts_W": 2.0295556695038437,
+          "energy_share": 0.04169393355259165
+        },
+        {
+          "time_ms": 3.5,
+          "torque_Nm": 1.69995566009854,
+          "iron_loss_W": 141.599260200332,
+          "stator_W": 108.509330840662,
+          "rotor_W": 31.1894489410843,
+          "inserts_W": 1.9004804185856299,
+          "energy_share": 0.034013263270162485
+        }
+      ]
+    },
+    {
+      "grade": "B27R095",
+      "execution": "bhexec_735cbf500f0a",
+      "model_version": "V8_2_scalar_RD_equivalent_intrinsic_fine100_catalog_loss_v1",
+      "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "csv_sha256": {
+        "case/reports/Torque Plots.csv": "90d3679bd56c7e6ca522316581029691589cfb36ca2504da205d2cb514a85d5e",
+        "case/maxwell_reports/Catalog Losses.csv": "d648808a837d0ef2571a172317892823b35c07f46acf5f53e256f5dadff9ea6c",
+        "case/maxwell_reports/Catalog CoreLoss by Object.csv": "ea50f8a5caf28444598133c78caab7667f8737764164e2f832e7d510b2fb9bfa"
+      },
+      "points": 101,
+      "speed_rpm": 3000,
+      "torque_mean_Nm": 1.8644972963397204,
+      "electromagnetic_power_W": 585.7491008818896,
+      "torque_min_Nm": 1.27761942784589,
+      "torque_max_Nm": 2.23748306674006,
+      "torque_ripple_pct": 51.48109577731873,
+      "original_torque_acceptance": true,
+      "core_loss_mean_W": 42.48223504324872,
+      "core_loss_object_mean_W": {
+        "inserts": 0.88784750993737,
+        "stator": 26.750654086334702,
+        "rotor": 14.843733446976662
+      },
+      "coil_loss_mean_W": 49.175064124864804,
+      "loss_object_closure_abs_max_W": 9.094947017729282e-13,
+      "windows": [
+        {
+          "start_ms": 0.0,
+          "end_ms": 5.0,
+          "points": 51,
+          "torque_time_weighted_mean_Nm": 1.849809671773165,
+          "torque_min_Nm": 1.27761942784589,
+          "torque_max_Nm": 2.09154657482997,
+          "iron_loss_mean_W": 50.48159600804656,
+          "object_loss_mean_W": {
+            "inserts": 1.3024135348931793,
+            "stator": 25.626963969079537,
+            "rotor": 23.552218504073867
+          }
+        },
+        {
+          "start_ms": 5.0,
+          "end_ms": 10.0,
+          "points": 51,
+          "torque_time_weighted_mean_Nm": 1.8765939499406574,
+          "torque_min_Nm": 1.63369139111432,
+          "torque_max_Nm": 2.23748306674006,
+          "iron_loss_mean_W": 34.482874078450884,
+          "object_loss_mean_W": {
+            "inserts": 0.4732814849815606,
+            "stator": 27.874344203589867,
+            "rotor": 6.135248389879453
+          }
+        },
+        {
+          "start_ms": 0.0,
+          "end_ms": 10.0,
+          "points": 101,
+          "torque_time_weighted_mean_Nm": 1.8632018108569113,
+          "torque_min_Nm": 1.27761942784589,
+          "torque_max_Nm": 2.23748306674006,
+          "iron_loss_mean_W": 42.48223504324872,
+          "object_loss_mean_W": {
+            "inserts": 0.88784750993737,
+            "stator": 26.750654086334702,
+            "rotor": 14.843733446976662
+          }
+        }
+      ],
+      "largest_loss_contributions": [
+        {
+          "time_ms": 4.2,
+          "torque_Nm": 1.80520185121262,
+          "iron_loss_W": 709.992005802479,
+          "stator_W": 220.52643788159003,
+          "rotor_W": 468.133213901794,
+          "inserts_W": 21.332354019095778,
+          "energy_share": 0.16712680137466301
+        },
+        {
+          "time_ms": 4.3,
+          "torque_Nm": 1.87209763457767,
+          "iron_loss_W": 533.3408807845241,
+          "stator_W": 182.439631169136,
+          "rotor_W": 330.269258462901,
+          "inserts_W": 20.631991152486986,
+          "energy_share": 0.12554444940139317
+        },
+        {
+          "time_ms": 8.300000000000011,
+          "torque_Nm": 1.98894919091187,
+          "iron_loss_W": 209.214081261753,
+          "stator_W": 172.551354931124,
+          "rotor_W": 33.924127876304006,
+          "inserts_W": 2.738598454325294,
+          "energy_share": 0.04924742802462107
+        },
+        {
+          "time_ms": 0.7,
+          "torque_Nm": 1.27761942784589,
+          "iron_loss_W": 170.065630398483,
+          "stator_W": 129.001736353004,
+          "rotor_W": 38.516792034203796,
+          "inserts_W": 2.547102011275618,
+          "energy_share": 0.04003217585547204
+        },
+        {
+          "time_ms": 8.8,
+          "torque_Nm": 2.08920703203861,
+          "iron_loss_W": 166.907360731599,
+          "stator_W": 137.03183876194302,
+          "rotor_W": 28.0570578252925,
+          "inserts_W": 1.8184641443632898,
+          "energy_share": 0.03928874282666135
+        }
+      ]
+    },
+    {
+      "grade": "B30P105",
+      "execution": "bhexec_84a6a610054a",
+      "model_version": "V8_2_scalar_RD_equivalent_intrinsic_fine100_catalog_loss_v1",
+      "parent_bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "csv_sha256": {
+        "case/reports/Torque Plots.csv": "3daf78d4a2f5d28b969b8c2eb2689d89aaf22d7cca54633592b77bba02b8ac41",
+        "case/maxwell_reports/Catalog Losses.csv": "087f8b71ddbe86945c3ce47960e202d1b9405bea6850eb962b1e16ccb1d25b69",
+        "case/maxwell_reports/Catalog CoreLoss by Object.csv": "ffff7e6a0c0ac68afee4e3818cd1379bae75e9041cdc0c07c4877822dd137e45"
+      },
+      "points": 101,
+      "speed_rpm": 3000,
+      "torque_mean_Nm": 1.8689762788800375,
+      "electromagnetic_power_W": 587.1562147463114,
+      "torque_min_Nm": 1.59959804464681,
+      "torque_max_Nm": 2.11081453750309,
+      "torque_ripple_pct": 27.352754480255925,
+      "original_torque_acceptance": true,
+      "core_loss_mean_W": 23.209534286982883,
+      "core_loss_object_mean_W": {
+        "inserts": 0.4226089281963,
+        "stator": 17.774677944730254,
+        "rotor": 5.012247414056328
+      },
+      "coil_loss_mean_W": 49.175064124864804,
+      "loss_object_closure_abs_max_W": 3.694822225952521e-13,
+      "windows": [
+        {
+          "start_ms": 0.0,
+          "end_ms": 5.0,
+          "points": 51,
+          "torque_time_weighted_mean_Nm": 1.8735300373111514,
+          "torque_min_Nm": 1.59959804464681,
+          "torque_max_Nm": 2.10126500944,
+          "iron_loss_mean_W": 21.40460912749165,
+          "object_loss_mean_W": {
+            "inserts": 0.46480756963845815,
+            "stator": 15.652051383559392,
+            "rotor": 5.2877501742938025
+          }
+        },
+        {
+          "start_ms": 5.0,
+          "end_ms": 10.0,
+          "points": 51,
+          "torque_time_weighted_mean_Nm": 1.863783624057097,
+          "torque_min_Nm": 1.6879788539138,
+          "torque_max_Nm": 2.11081453750309,
+          "iron_loss_mean_W": 25.014459446474113,
+          "object_loss_mean_W": {
+            "inserts": 0.38041028675414196,
+            "stator": 19.89730450590112,
+            "rotor": 4.736744653818854
+          }
+        },
+        {
+          "start_ms": 0.0,
+          "end_ms": 10.0,
+          "points": 101,
+          "torque_time_weighted_mean_Nm": 1.868656830684124,
+          "torque_min_Nm": 1.59959804464681,
+          "torque_max_Nm": 2.11081453750309,
+          "iron_loss_mean_W": 23.209534286982883,
+          "object_loss_mean_W": {
+            "inserts": 0.4226089281963,
+            "stator": 17.774677944730254,
+            "rotor": 5.012247414056328
+          }
+        }
+      ],
+      "largest_loss_contributions": [
+        {
+          "time_ms": 4.500000000000001,
+          "torque_Nm": 1.76102403506736,
+          "iron_loss_W": 133.339206206923,
+          "stator_W": 100.438799891575,
+          "rotor_W": 32.0559041622214,
+          "inserts_W": 0.844502153126959,
+          "energy_share": 0.05745018601329986
+        },
+        {
+          "time_ms": 4.4,
+          "torque_Nm": 1.65247787081268,
+          "iron_loss_W": 97.6605473809527,
+          "stator_W": 68.4548467904094,
+          "rotor_W": 27.9979693844632,
+          "inserts_W": 1.2077312060800482,
+          "energy_share": 0.04207777121823857
+        },
+        {
+          "time_ms": 2.6000000000000005,
+          "torque_Nm": 1.9627360383901,
+          "iron_loss_W": 72.0783472069845,
+          "stator_W": 59.6081842110055,
+          "rotor_W": 11.7051849259625,
+          "inserts_W": 0.76497807001658,
+          "energy_share": 0.031055490522017858
+        },
+        {
+          "time_ms": 2.7,
+          "torque_Nm": 2.0578667206071,
+          "iron_loss_W": 52.0699071541099,
+          "stator_W": 41.151613507833396,
+          "rotor_W": 10.2006053894632,
+          "inserts_W": 0.7176882568133627,
+          "energy_share": 0.022434705716311305
+        },
+        {
+          "time_ms": 8.300000000000011,
+          "torque_Nm": 1.95829378063624,
+          "iron_loss_W": 40.950793835105095,
+          "stator_W": 26.1530607623763,
+          "rotor_W": 13.1574347027884,
+          "inserts_W": 1.6402983699403362,
+          "energy_share": 0.017643953268838494
+        }
+      ]
+    }
+  ]
+}

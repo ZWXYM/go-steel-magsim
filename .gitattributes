@@ -322,3 +322,4 @@ static/css/material_measurement.css -text
 templates/measured_loop_loss.html -text
 tests/test_measured_loop_loss.py -text
 calibration/measured_loop_workbench_20261111/** -text
+calibration/four_catalog_com_control_20261112/** -text
