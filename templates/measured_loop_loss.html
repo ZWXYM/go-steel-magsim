@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>实测回线损耗核算</title>
+  <link rel="stylesheet" href="/static/css/material_measurement.css">
+</head>
+<body>
+<header>
+  <h1>实测回线损耗核算</h1>
+  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/material-loss-reference">厂家损耗参考</a><a href="/system-data">系统数据与下载</a></nav>
+</header>
+<main>
+{% macro number(value) %}{{ '%.8g' | format(value) if value is not none else '—' }}{% endmacro %}
+{% if report is defined %}
+  {% set value = report.result %}
+  {% set source = report.source %}
+  <section>
+    <h2>{{ source.reported_grade ~ ' · 回线核算' if source.reported_grade else '回线核算结果' }}</h2>
+    <p>{{ source_labels[source.source_kind] }} · {{ direction_labels[source.direction] }} · {{ number(source.frequency_hz) }} Hz · {{ value.samples }} 点</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>每周期体积损失（J/m³）</th><th>体积功率损耗（W/m³）</th><th>比损耗（W/kg）</th><th>最大 |B|（T）</th><th>最大 |J|（T）</th><th>最大 |H|（A/m）</th></tr></thead>
+        <tbody><tr><td>{{ number(value.energy_loss_J_m3_per_cycle) }}</td><td>{{ number(value.volume_loss_W_m3) }}</td><td>{{ number(value.mass_loss_W_kg) if value.mass_loss_W_kg is not none else '密度未提供' }}</td><td>{{ number(value.peak_abs_B_T) }}</td><td>{{ number(value.peak_abs_J_T) }}</td><td>{{ number(value.peak_abs_H_A_per_m) }}</td></tr></tbody>
+      </table>
+    </div>
+    <h3>顺序积分与闭合</h3>
+    <p class="muted">按原采样顺序使用梯形积分，尾点到首点补一条线段。损耗取所报 B 或 J 积分的绝对值，符号保留在核算记录中。</p>
+    <dl>
+      <dt>H dB（J/m³）</dt><dd>{{ number(value.signed_HdB_J_m3) }}</dd>
+      <dt>H dJ（J/m³）</dt><dd>{{ number(value.signed_HdJ_J_m3) }}</dd>
+      <dt>闭合段（J/m³）</dt><dd>{{ number(value.closing_energy_J_m3) }}{% if value.closing_absolute_energy_fraction is not none %} · 占积分绝对值 {{ number(100 * value.closing_absolute_energy_fraction) }}%{% endif %}</dd>
+      <dt>首尾差</dt><dd>ΔH {{ number(value.closing_delta_H_A_per_m) }} A/m · ΔB {{ number(value.closing_delta_B_T) }} T · ΔJ {{ number(value.closing_delta_J_T) }} T</dd>
+    </dl>
+    <details>
+      <summary>测量来源与原文件</summary>
+      <dl>
+        <dt>原表来源</dt><dd>{{ source.source_reference }}</dd>
+        <dt>试样或卷号</dt><dd>{{ source.specimen_id or '未记录' }}</dd>
+        <dt>测量方法</dt><dd>{{ source.method or '未记录' }}</dd>
+        <dt>密度（kg/m³）</dt><dd>{{ number(source.density_kg_m3) }}{% if source.density_reference %} · {{ source.density_reference }}{% endif %}</dd>
+        <dt>其他条件</dt><dd>{{ source.conditions or '未记录' }}</dd>
+        <dt>输入列</dt><dd>{{ value.H_column }} · {{ value.ordinate_column }}</dd>
+        <dt>原文件</dt><dd>{{ report.original.filename }} · {{ report.original.bytes }} 字节<br>SHA-256 {{ report.original.sha256 }}</dd>
+      </dl>
+    </details>
+    <div class="actions">
+      <a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载原回线和核算记录</a>
+      <a href="{{ url_for('.page') }}">核算另一条回线</a>
+    </div>
+  </section>
+{% else %}
+  <section>
+    <h2>上传一个完整周期</h2>
+    <p class="muted">使用原采样顺序的 UTF-8 CSV。列名需标注单位，例如 <code>H_A_per_m,B_T</code> 或 <code>H_kA_per_m,J_mT</code>。填写原频率，密度有来源时可核算比损耗。</p>
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    <form method="post" action="{{ url_for('.save') }}" enctype="multipart/form-data">
+      <div class="grid">
+        <label>回线原表<input type="file" name="cycle" accept=".csv,text/csv" required></label>
+        <label>测量频率（Hz）<input type="number" step="any" name="frequency_hz" required value="{{ form.get('frequency_hz', '') }}"></label>
+        <label>来源类别<select name="source_kind">{% for value, label in source_labels.items() %}<option value="{{ value }}"{% if form.get('source_kind', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+        <label>测量方向<select name="direction">{% for value, label in direction_labels.items() %}<option value="{{ value }}"{% if form.get('direction', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+      </div>
+      <label>原表来源或测量记录编号<textarea name="source_reference" required maxlength="1200">{{ form.get('source_reference', '') }}</textarea></label>
+      <div class="grid">
+        <label>原表标注牌号<input name="reported_grade" maxlength="1200" value="{{ form.get('reported_grade', '') }}"></label>
+        <label>试样或卷号<input name="specimen_id" maxlength="1200" value="{{ form.get('specimen_id', '') }}"></label>
+        <label>密度（kg/m³）<input type="number" step="any" name="density_kg_m3" value="{{ form.get('density_kg_m3', '') }}"></label>
+        <label>密度来源<input name="density_reference" maxlength="1200" value="{{ form.get('density_reference', '') }}"></label>
+        <label>测量方法<input name="method" maxlength="1200" value="{{ form.get('method', '') }}"></label>
+        <label>温度、应力和其他条件<input name="conditions" maxlength="1200" value="{{ form.get('conditions', '') }}"></label>
+      </div>
+      <label class="check"><input type="checkbox" name="single_cycle" value="yes" required{% if form.get('single_cycle') == 'yes' %} checked{% endif %}>确认表中包含按原顺序保存的一个周期</label>
+      <button>核算并保存</button>
+    </form>
+  </section>
+{% endif %}
+</main>
+</body>
+</html>

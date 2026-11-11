@@ -1,5 +1,4 @@
 """Archive paired source tables and compare them with two saved material curves."""
-import csv
 import io
 import json
 import math
@@ -12,7 +11,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 
 from modules.calibration_regularized import default_eligible
 from modules.external_bh_validation import MAX_CURVE_BYTES, compare_curves, read_measurement_csv
-from modules.system_data import json_bytes, sha256
+from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
 
 
 VERSION = 'external_bh_validation_v1'
@@ -20,6 +19,7 @@ PACKAGE_FILENAME = 'external_bh_validation.zip'
 DIRECTIONS = ('RD', 'TD')
 SOURCE_LABELS = {
     'measurement': '实验原表（用户提供）',
+    'published_measurement': '公开实测',
     'digitized': '图表数字化',
     'reference': '参考曲线',
     'demonstration': '流程联调',
@@ -59,24 +59,6 @@ def _source(form):
         data[field] = value
     data['direction_and_pairing_declared'] = form.get('paired') == 'yes'
     return data
-
-
-def _csv_bytes(rows):
-    stream = io.StringIO(newline='')
-    writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
-    writer.writeheader()
-    writer.writerows(rows)
-    return stream.getvalue().encode('utf-8-sig')
-
-
-def _zip_bytes(files):
-    files['manifest.json'] = json_bytes(dict(version='system_data_workpack_v5', private_only=True,
-                                             files={name: sha256(blob) for name, blob in files.items()}))
-    stream = io.BytesIO()
-    with zipfile.ZipFile(stream, 'w', zipfile.ZIP_DEFLATED) as archive:
-        for name, blob in files.items():
-            archive.writestr(zipfile.ZipInfo(name), blob, compress_type=zipfile.ZIP_DEFLATED)
-    return stream.getvalue()
 
 
 class ExternalBHIntake:
@@ -186,17 +168,17 @@ class ExternalBHIntake:
                 measurement = read_measurement_csv(uploads[direction][1], direction)
                 curves = {name: model['curves'][direction] for name, model in models.items()}
                 compared = compare_curves(measurement, curves)
-                files[f'comparison/{direction}.csv'] = _csv_bytes(compared.pop('rows'))
+                files[f'comparison/{direction}.csv'] = csv_bytes(compared.pop('rows'))
                 summary['comparison'][direction] = compared
                 for name, curve in curves.items():
                     saved_rows.extend(dict(model=name, direction=direction, H_A_per_m=h, B_T=b)
                                       for h, b in zip(curve['H'], curve['B']))
-            files['model_curves.csv'] = _csv_bytes(saved_rows)
+            files['model_curves.csv'] = csv_bytes(saved_rows)
             title = 'RD/TD 原表比较 · ' + identity['grade']
         files['external_bh_report.json'] = json_bytes(summary)
         description = SOURCE_LABELS[source['source_kind']] + '。' + (
             '保留上传字节、物理 H 比较、两种训练范围和保存曲线。' if mode == 'compare' else '保留上传字节和自报来源。')
-        return self.packages.register_bytes(_zip_bytes(files), title, description, source_filename=PACKAGE_FILENAME)
+        return self.packages.register_bytes(workpack_bytes(files), title, description, source_filename=PACKAGE_FILENAME)
 
     def read(self, artifact):
         record, blob = self.packages.read(artifact)

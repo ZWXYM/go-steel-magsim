@@ -3,6 +3,7 @@
 Registration copies a verified package; read endpoints never dispatch work or
 rebuild scientific results. Manifest integrity is not physical validation.
 """
+import csv
 import hashlib
 import io
 import json
@@ -28,6 +29,24 @@ def json_bytes(value):
 
 def sha256(blob):
     return hashlib.sha256(blob).hexdigest()
+
+
+def csv_bytes(rows):
+    stream = io.StringIO(newline='')
+    writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+    writer.writeheader()
+    writer.writerows(rows)
+    return stream.getvalue().encode('utf-8-sig')
+
+
+def workpack_bytes(files):
+    manifest = json_bytes(dict(version='system_data_workpack_v5', private_only=True,
+                               files={name: sha256(blob) for name, blob in files.items()}))
+    stream = io.BytesIO()
+    with zipfile.ZipFile(stream, 'w', zipfile.ZIP_DEFLATED) as archive:
+        for name, blob in dict(files, **{'manifest.json': manifest}).items():
+            archive.writestr(zipfile.ZipInfo(name), blob, compress_type=zipfile.ZIP_DEFLATED)
+    return stream.getvalue()
 
 
 def verify_package(blob):

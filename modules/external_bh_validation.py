@@ -39,20 +39,21 @@ def _table_rows(reader):
     return comment_header, reader
 
 
-def read_measurement_csv(blob, direction):
+def read_bh_points(blob, label):
+    """Read an ordered H and B/J table using explicit physical units."""
     if not isinstance(blob, bytes) or not 0 < len(blob) <= MAX_CURVE_BYTES:
-        raise ValueError(f'{direction} CSV 为空或超过 2 MiB')
+        raise ValueError(f'{label} CSV 为空或超过 2 MiB')
     try:
         content = blob.decode('utf-8-sig')
     except UnicodeError as error:
-        raise ValueError(f'{direction} 请保存为 UTF-8 CSV') from error
+        raise ValueError(f'{label} 请保存为 UTF-8 CSV') from error
     reader = csv.reader(io.StringIO(content, newline=''), strict=True)
     try:
         header, data_rows = _table_rows(reader)
         h_columns = [i for i, column in enumerate(header) if column in H_COLUMNS]
         ordinate_columns = [i for i, column in enumerate(header) if column in ORDINATE_COLUMNS]
         if len(h_columns) != 1 or len(ordinate_columns) != 1:
-            raise ValueError(f'{direction} CSV 需明确标注一列 H 及一列 B 或 J，例如 H_A_per_m,B_T')
+            raise ValueError(f'{label} CSV 需明确标注一列 H 及一列 B 或 J，例如 H_A_per_m,B_T')
         h_index, = h_columns
         ordinate_index, = ordinate_columns
         h_scale = H_COLUMNS[header[h_index]]
@@ -67,19 +68,27 @@ def read_measurement_csv(blob, direction):
                 h_source = float(cells[h_index])
                 y_source = float(cells[ordinate_index])
             except ValueError as error:
-                raise ValueError(f'{direction} CSV 第 {reader.line_num} 行缺少有效的 H 或 B/J') from error
+                raise ValueError(f'{label} CSV 第 {reader.line_num} 行缺少有效的 H 或 B/J') from error
             h = h_source * h_scale
             b = y_source * ordinate_scale
             if ordinate == 'J':
                 b += MU0 * h
-            if h < 0 or not math.isfinite(h) or not math.isfinite(b):
-                raise ValueError(f'{direction} CSV 第 {reader.line_num} 行须为非负有限 H 和有限 B/J')
+            if not math.isfinite(h) or not math.isfinite(b):
+                raise ValueError(f'{label} CSV 第 {reader.line_num} 行须为有限 H 和 B/J')
             points.append(dict(source_row=reader.line_num, source_H=h_source, source_ordinate=y_source,
                                H_A_per_m=h, input_B_T=b))
     except csv.Error as error:
-        raise ValueError(f'{direction} CSV 第 {reader.line_num} 行格式无效') from error
+        raise ValueError(f'{label} CSV 第 {reader.line_num} 行格式无效') from error
+    return dict(H_column=header[h_index], ordinate_column=header[ordinate_index], ordinate=ordinate, points=points)
+
+
+def read_measurement_csv(blob, direction):
+    table = read_bh_points(blob, direction)
+    points = table['points']
     if len(points) < 2:
         raise ValueError(f'{direction} 至少需要两个采样点')
+    if any(point['H_A_per_m'] < 0 for point in points):
+        raise ValueError(f'{direction} 磁化曲线须为非负 H')
     field = [p['H_A_per_m'] for p in points]
     if all(a < b for a, b in zip(field, field[1:])):
         source_order = 'ascending'
@@ -87,8 +96,7 @@ def read_measurement_csv(blob, direction):
         source_order = 'descending'
     else:
         raise ValueError(f'{direction} 的 H 须严格单调。请提供单条磁化曲线，完整回线需单独处理')
-    return dict(H_column=header[h_index], ordinate_column=header[ordinate_index], ordinate=ordinate,
-                source_order=source_order, points=points)
+    return dict(table, source_order=source_order)
 
 
 def _model_curve(curve):

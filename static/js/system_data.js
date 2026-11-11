@@ -20,6 +20,8 @@
    item.append(link('下载完整工作包','/api/workbench/system-data/packages/'+row.id+'/download'));
    if(row.source_filename==='external_bh_validation.zip')
     item.append(link('查看原表核对','/external-bh-validation/'+row.id));
+   if(row.source_filename==='measured_loop_loss.zip')
+    item.append(link('查看回线核算','/measured-loop-loss/'+row.id));
   }
  }
  function calibrations(rows){

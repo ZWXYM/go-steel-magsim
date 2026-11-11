@@ -316,3 +316,9 @@ tests/test_external_bh_intake.py -text
 tests/test_external_bh_validation.py -text
 tools/compare_reference_samples.py -text
 calibration/pilot_reference_samples_20261111/** -text
+docs/measured_loop_loss.md -text
+modules/measured_loop_loss.py -text
+static/css/material_measurement.css -text
+templates/measured_loop_loss.html -text
+tests/test_measured_loop_loss.py -text
+calibration/measured_loop_workbench_20261111/** -text
