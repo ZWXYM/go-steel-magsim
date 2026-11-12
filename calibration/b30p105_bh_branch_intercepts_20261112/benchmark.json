@@ -1,0 +1,124 @@
+{
+  "schema": "b30p105_published_BH_branch_intersections_v1",
+  "grade": "B30P105",
+  "graph_doi": "https://doi.org/10.1063/5.0020789",
+  "graph_panel": "Fig. 2b",
+  "graph_sha256": "fc989bcdd06ac4e15ffa809caf3d88e7cfb888994779c18f228efcefa618ffc0",
+  "workbook_doi": "https://doi.org/10.1038/s41598-024-55155-w",
+  "workbook_original_sha256": "eb397a4f667ee6d089c2501e19c6afb41c0a50e87774a78c804292428ebe769b",
+  "graph_frequency_Hz": 5,
+  "workbook_frequency_Hz": 50,
+  "direction": null,
+  "coil_id": null,
+  "matched_specimen": false,
+  "frequency_effect_inferred": false,
+  "scope": "Half of the two signed H branch separations at fixed B. At B=0 this is a loop intercept, not an intrinsic J=0 coercivity.",
+  "compared_branch_intersections": 30,
+  "zero_B_rows": [
+    {
+      "figure_5Hz_ascending_H_A_m": 3.780235787704404,
+      "figure_5Hz_descending_H_A_m": -3.856022133555046,
+      "figure_5Hz_half_width_A_m": 3.818128960629725,
+      "figure_reading_resolution_A_m": 0.6,
+      "nominal_B_peak_T": 0.6,
+      "target_B_T": 0.0,
+      "workbook_50Hz_ascending_H_A_m": 12.8103723596823,
+      "workbook_50Hz_ascending_source_rows": [
+        5253,
+        5254
+      ],
+      "workbook_50Hz_descending_H_A_m": -12.650126273091875,
+      "workbook_50Hz_descending_source_rows": [
+        5753,
+        5754
+      ],
+      "workbook_50Hz_half_width_A_m": 12.730249316387088,
+      "workbook_measurement": 6,
+      "workbook_sampled_abs_B_peak_T": 0.6000099117385215
+    },
+    {
+      "figure_5Hz_ascending_H_A_m": 5.059372165595323,
+      "figure_5Hz_descending_H_A_m": -5.212538790012836,
+      "figure_5Hz_half_width_A_m": 5.13595547780408,
+      "figure_reading_resolution_A_m": 0.6,
+      "nominal_B_peak_T": 0.9,
+      "target_B_T": 0.0,
+      "workbook_50Hz_ascending_H_A_m": 17.08553802973098,
+      "workbook_50Hz_ascending_source_rows": [
+        8256,
+        8257
+      ],
+      "workbook_50Hz_descending_H_A_m": -17.252270937370877,
+      "workbook_50Hz_descending_source_rows": [
+        8756,
+        8757
+      ],
+      "workbook_50Hz_half_width_A_m": 17.16890448355093,
+      "workbook_measurement": 9,
+      "workbook_sampled_abs_B_peak_T": 0.9000378911297566
+    },
+    {
+      "figure_5Hz_ascending_H_A_m": 5.9976899254464495,
+      "figure_5Hz_descending_H_A_m": -6.157840393634951,
+      "figure_5Hz_half_width_A_m": 6.0777651595407,
+      "figure_reading_resolution_A_m": 0.6,
+      "nominal_B_peak_T": 1.2,
+      "target_B_T": 0.0,
+      "workbook_50Hz_ascending_H_A_m": 20.793686432915642,
+      "workbook_50Hz_ascending_source_rows": [
+        11259,
+        11260
+      ],
+      "workbook_50Hz_descending_H_A_m": -20.849766247680115,
+      "workbook_50Hz_descending_source_rows": [
+        11759,
+        11760
+      ],
+      "workbook_50Hz_half_width_A_m": 20.82172634029788,
+      "workbook_measurement": 12,
+      "workbook_sampled_abs_B_peak_T": 1.2000056030664101
+    },
+    {
+      "figure_5Hz_ascending_H_A_m": 7.4712437885795495,
+      "figure_5Hz_descending_H_A_m": -7.543581476943729,
+      "figure_5Hz_half_width_A_m": 7.507412632761639,
+      "figure_reading_resolution_A_m": 0.6,
+      "nominal_B_peak_T": 1.5,
+      "target_B_T": 0.0,
+      "workbook_50Hz_ascending_H_A_m": 23.634315974296936,
+      "workbook_50Hz_ascending_source_rows": [
+        14262,
+        14263
+      ],
+      "workbook_50Hz_descending_H_A_m": -23.645602932111075,
+      "workbook_50Hz_descending_source_rows": [
+        14762,
+        14763
+      ],
+      "workbook_50Hz_half_width_A_m": 23.639959453204007,
+      "workbook_measurement": 15,
+      "workbook_sampled_abs_B_peak_T": 1.499962818985692
+    },
+    {
+      "figure_5Hz_ascending_H_A_m": 12.427739920674895,
+      "figure_5Hz_descending_H_A_m": -13.459581628480514,
+      "figure_5Hz_half_width_A_m": 12.943660774577705,
+      "figure_reading_resolution_A_m": 2.5,
+      "nominal_B_peak_T": 1.8,
+      "target_B_T": 0.0,
+      "workbook_50Hz_ascending_H_A_m": 29.253231234215,
+      "workbook_50Hz_ascending_source_rows": [
+        17265,
+        17266
+      ],
+      "workbook_50Hz_descending_H_A_m": -26.671735793592905,
+      "workbook_50Hz_descending_source_rows": [
+        17765,
+        17766
+      ],
+      "workbook_50Hz_half_width_A_m": 27.962483513903955,
+      "workbook_measurement": 18,
+      "workbook_sampled_abs_B_peak_T": 1.8000053573687655
+    }
+  ]
+}
