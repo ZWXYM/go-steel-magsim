@@ -27,6 +27,7 @@ SOURCE_LABELS = {
 }
 CURVE_LABELS = {
     'initial': '初始磁化曲线',
+    'dc_magnetization': '直流磁化曲线',
     'normal_peak': '正常磁化曲线（峰值）',
     'unspecified': '曲线类型待核对',
 }
@@ -57,6 +58,10 @@ def _source(form):
         if value is not None and (not math.isfinite(value) or (field != 'temperature_C' and value <= 0)):
             raise ValueError('片厚、频率须为正有限数值，温度须为有限数值')
         data[field] = value
+    if data['curve_kind'] == 'dc_magnetization':
+        if data['excitation'] not in ('dc', 'unspecified') or data['frequency_hz'] is not None:
+            raise ValueError('直流磁化曲线应采用直流激励，频率请留空')
+        data['excitation'] = 'dc'
     data['direction_and_pairing_declared'] = form.get('paired') == 'yes'
     return data
 

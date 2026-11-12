@@ -202,6 +202,18 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertIn('请确认单份原表的测量方向', result.get_data(as_text=True))
         self.assertEqual(self.store.records(), [])
 
+    def test_dc_curve_cannot_claim_an_ac_frequency(self):
+        self.assertEqual(self._post_pair(curve_kind='dc_magnetization', excitation='ac').status_code, 400)
+        self.assertEqual(self._post_pair(curve_kind='dc_magnetization', frequency_hz='50').status_code, 400)
+        self.assertEqual(self.store.records(), [])
+        saved = self._post_pair(curve_kind='dc_magnetization')
+        self.assertEqual(saved.status_code, 303)
+        _, report = self.intake.read(saved.location.rsplit('/', 1)[1])
+        self.assertEqual(report['source']['curve_kind'], 'dc_magnetization')
+        self.assertEqual(report['source']['excitation'], 'dc')
+        self.assertIsNone(report['source']['frequency_hz'])
+        self.assertIn('直流磁化曲线', self.client.get(saved.location).get_data(as_text=True))
+
     def test_archive_accepts_one_original_without_physical_axis_claim(self):
         raw = b'H,unknown\n12,0.18\n'
         result = self.client.post('/external-bh-validation', data=dict(
