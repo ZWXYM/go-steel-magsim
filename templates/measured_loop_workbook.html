@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>回线工作簿复算</title>
+  <link rel="stylesheet" href="/static/css/material_measurement.css">
+</head>
+<body>
+<header>
+  <h1>回线工作簿复算</h1>
+  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/measured-loop-loss">单条回线核算</a><a href="/system-data#saved-workpacks">系统数据与下载</a></nav>
+</header>
+<main>
+  {% if report is defined %}
+  {% set source = report.source %}
+  {% macro number(value) %}{{ '%.8g' | format(value) if value is not none else '—' }}{% endmacro %}
+  <section>
+    <h2>{{ source.reported_grade ~ ' · ' if source.reported_grade else '' }}{{ report.cycles | length }} 个周期，{{ report.point_count }} 个采样点</h2>
+    <p class="muted">{{ source_labels[source.source_kind] }} · 方向{{ direction_labels[source.direction] }} · {{ record.id }}</p>
+    <p>H 在 B 峰值处读取同一采样行。体积损耗由回线积分得到，质量比损耗来自工作簿的 Results 表。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">测量编号</th><th scope="col">原样品标签</th><th scope="col">频率（Hz）</th><th scope="col">名义 B（T）</th><th scope="col">采样最高 B（T）</th><th scope="col">B 达峰时 H（A/m）</th><th scope="col">原表 Hmax（A/m）</th><th scope="col">原表 Ps（W/kg）</th><th scope="col">体积损耗（W/m³）</th></tr></thead>
+        <tbody>
+        {% for row in report.cycles %}
+          <tr><th scope="row">{{ row.measurement }}</th><td>{{ row.sample }}</td><td>{{ number(row.frequency_Hz) }}</td><td>{{ number(row.nominal_B_T) }}</td><td>{{ number(row.sampled_positive_B_peak_T) }}</td><td>{{ number(row.H_at_positive_B_peak_A_per_m) }}</td><td>{{ number(row.reported_Hmax_A_per_m) }}</td><td>{{ number(row.reported_Ps_W_kg) }}</td><td>{{ number(row.volume_loss_W_m3) }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <details><summary>来源与原文件</summary>
+      <dl><dt>来源</dt><dd>{{ source.source_reference }}</dd><dt>工作簿</dt><dd>{{ report.original.filename }}</dd><dt>原表 SHA-256</dt><dd>{{ report.original.sha256 }}</dd></dl>
+    </details>
+    <div class="actions"><a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载原工作簿与逐段积分</a><a href="{{ url_for('.page') }}">复算另一份工作簿</a></div>
+  </section>
+  {% else %}
+  <section>
+    <h2>导入原工作簿</h2>
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    <p>选择包含 <code>Results</code> 和 <code>DataPoints</code> 的 XLSX。频率、磁密和原比损耗从 Results 表读取。</p>
+    <details><summary>工作表格式</summary>
+      <p>Results 前九列依次为 <code>Measurement, Coil system, Sample, Signal form, Nominal, Frequency [Hz], Bmax [T], Hmax [A/m], Ps [W/kg]</code>。</p>
+      <p>DataPoints 前四列为 <code>Measurement, No., H [A/m], B [T]</code>。如 <code>1.5T/50Hz</code> 对应 Results 的 <code>1.5 T</code> 和 <code>50</code>。每周期 No. 从 1 连续递增。</p>
+    </details>
+    <form method="post" enctype="multipart/form-data">
+      <div class="grid">
+        <label>工作簿<input name="workbook" type="file" accept=".xlsx" required></label>
+        <label>牌号（已知时）<input name="reported_grade" maxlength="120" value="{{ form.get('reported_grade', '') }}"></label>
+        <label>来源类别<select name="source_kind">{% for value, label in source_labels.items() %}<option value="{{ value }}"{% if form.get('source_kind', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+        <label>全表测量方向<select name="direction">{% for value, label in direction_labels.items() %}<option value="{{ value }}"{% if form.get('direction', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+      </div>
+      <label>来源链接或测量记录编号<textarea name="source_reference" required maxlength="1200">{{ form.get('source_reference', '') }}</textarea></label>
+      <label class="check"><input type="checkbox" name="ordered_cycles" value="yes" required{% if form.get('ordered_cycles') == 'yes' %} checked{% endif %}>每组数据按原采样顺序记录一个完整周期</label>
+      <div class="actions"><button type="submit">复算并保存</button></div>
+    </form>
+  </section>
+  {% endif %}
+</main>
+</body>
+</html>

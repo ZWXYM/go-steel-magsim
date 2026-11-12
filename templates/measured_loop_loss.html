@@ -54,6 +54,7 @@
   <section>
     <h2>上传一个完整周期</h2>
     <p class="muted">使用原采样顺序的 UTF-8 CSV。优先使用带单位表头，例如 <code>H_A_per_m,B_T</code> 或 <code>H_kA_per_m,J_mT</code>。只有来源已确认两列单位分别为 A/m 和 T 时，才选择无表头格式。填写原频率，密度有来源时可核算比损耗。</p>
+    <p>有多组 Results 和 DataPoints 数据时，可<a href="/measured-loop-workbook">复算整本工作簿</a>。</p>
     {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
     <form method="post" action="{{ url_for('.save') }}" enctype="multipart/form-data">
       <div class="grid">

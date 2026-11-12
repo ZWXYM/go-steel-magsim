@@ -7,6 +7,7 @@
  const packageViews=new Map([
   ['external_bh_validation.zip',['查看原表核对','/external-bh-validation/']],
   ['measured_loop_loss.zip',['查看回线核算','/measured-loop-loss/']],
+  ['measured_loop_workbook.zip',['查看回线工作簿复算','/measured-loop-workbook/']],
   ['frequency_loss_validation.zip',['查看多频复核','/frequency-loss-validation/']],
  ]);
  const referencePackages=rows=>rows.filter(row=>row.readable&&validPack(row.id)&&/^[a-f0-9]{64}$/.test(row.sha256)&&packageViews.has(row.source_filename));

@@ -16,7 +16,7 @@
 <fieldset id="packagePredictions" disabled><legend>已保存的材料预测（至多16份）</legend></fieldset>
 <fieldset id="packageDatasets" disabled><legend>电机数据集（至多16份）</legend></fieldset>
 <fieldset id="packageReferenceEvidence" disabled><legend>已保存曲线与损耗核对（最多12份）</legend></fieldset>
-<p class="muted">原表核对、回线和多频复核以各自原 ZIP 归档，试样及使用范围分别保留。</p>
+<p class="muted">原表核对、回线、回线工作簿和多频复核以各自原 ZIP 归档，保留试样与条件。</p>
 <p><button id="packageBuild" disabled>生成所选数据工作包</button></p><p id="packageBuildStatus" role="status"></p><div id="packageBuildResult"></div></section>
 <section id="saved-workpacks"><h2>完整工作包</h2><p>工作包冻结生成或注册时的数据及来源文件；新任务结果仍在下方当前数据集中。包内按实际选择保存校准、材料、电机原CSV和使用说明，保留异常与历史版本。</p><p id="dataPackageStatus" role="status">正在核对已登记工作包…</p><ul class="records" id="dataPackages"></ul><p class="muted">工作包保留在本机任务存储中，不随程序自动上传GitHub。完整性核验只检查文件与清单一致，不代表新增物理精度验证。</p></section>
 <section><h2>四样品校准记录</h2><ul class="records" id="dataCalibrations"></ul><p class="muted">同一材料在多份校准中出现不增加独立样品数。标定拟合和整材料留出误差分别显示，参考数据与参数的来源身份随原报告保留。</p></section>

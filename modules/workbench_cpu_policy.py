@@ -6,6 +6,7 @@ from flask import request,jsonify
 ANALYSIS_POSTS = frozenset((
     '/api/workbench/system-data/packages', '/api/workbench/optimization/sensitivity',
     '/external-bh-validation', '/measured-loop-loss', '/frequency-loss-validation', '/frequency-loss-validation/loops',
+    '/measured-loop-workbook',
 ))
 
 

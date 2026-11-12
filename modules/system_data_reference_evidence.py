@@ -10,6 +10,8 @@ MAX_REFERENCE_PACKS = 12
 REFERENCE_PACKS = {
     'external_bh_validation.zip': ('magnetization_table', 'external_bh_report.json', {'external_bh_validation_v1'}, None),
     'measured_loop_loss.zip': ('ordered_loop', 'loop_loss_report.json', {'measured_loop_loss_v1'}, 'original/cycle.csv'),
+    'measured_loop_workbook.zip': ('loop_workbook', 'loop_workbook_report.json',
+                                  {'measured_loop_workbook_v1'}, 'original/workbook.xlsx'),
     'frequency_loss_validation.zip': ('frequency_holdout', 'frequency_loss_report.json',
                                       {'frequency_loss_validation_v1', 'frequency_loss_validation_v2',
                                        'frequency_loss_validation_v3_cycles'},
@@ -37,7 +39,7 @@ def collect_reference_package(store, item):
     file_name = record.get('source_filename')
     spec = REFERENCE_PACKS.get(file_name) if isinstance(file_name, str) else None
     if spec is None:
-        raise ValueError('只支持已保存的原表核对、回线核算和多频复核记录')
+        raise ValueError('只支持已保存的原表核对、回线核算、回线工作簿和多频复核记录')
     kind, report_path, versions, one_original = spec
     try:
         with zipfile.ZipFile(io.BytesIO(blob)) as archive:
