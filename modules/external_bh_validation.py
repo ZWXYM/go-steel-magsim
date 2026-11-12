@@ -161,3 +161,55 @@ def compare_curves(measurement, saved_curves):
 
 def compare_direction(measurement, fitted, heldout):
     return compare_curves(measurement, {'fit': fitted, 'holdout': heldout})
+
+
+def _integrated_errors(residual, weights):
+    if not np.all(np.isfinite(residual)):
+        raise ValueError('模型与原表差值超出有限数值范围')
+    scale = float(np.max(np.abs(residual)))
+    if scale == 0:
+        return dict(rmse_T=0., mae_T=0.)
+    normalized = residual / scale
+    a, b = normalized[:-1], normalized[1:]
+    squared = (a*a + a*b + b*b)/3
+    x, y = np.abs(a), np.abs(b)
+    absolute = (x+y)/2
+    crosses = ((a < 0) & (b > 0)) | ((a > 0) & (b < 0))
+    # If the residual crosses zero, integrate the two triangles separately.
+    absolute[crosses] = (x[crosses]**2 + y[crosses]**2)/(2*(x[crosses]+y[crosses]))
+    rmse = scale * math.sqrt(float(np.dot(weights, squared)))
+    mae = scale * float(np.dot(weights, absolute))
+    if not math.isfinite(rmse) or not math.isfinite(mae):
+        raise ValueError('按 H 积分的误差超出有限数值范围')
+    return dict(rmse_T=rmse, mae_T=mae)
+
+
+def field_weighted_errors(measurement, saved_curves):
+    """Integrate the piecewise-linear B residual, uniformly in physical H."""
+    if not saved_curves:
+        raise ValueError('请选择可比较的保存曲线')
+    curves = {name: _model_curve(curve) for name, curve in saved_curves.items()}
+    original = measurement['points'] if measurement['source_order'] == 'ascending' else measurement['points'][::-1]
+    h, b = (np.asarray(values, dtype=float) for values in zip(*((p['H_A_per_m'], p['input_B_T']) for p in original)))
+    low = max(h[0], *(grid[0] for grid, _ in curves.values()))
+    high = min(h[-1], *(grid[-1] for grid, _ in curves.values()))
+    split = 800.
+    ranges = {'common': (low, high), 'up_to_800': (low, min(high, split)), 'from_800': (max(low, split), high)}
+    bands = {}
+    for name, (a, z) in ranges.items():
+        if a >= z:
+            bands[name] = dict(H_range_A_per_m=None, span_A_per_m=0., largest_original_gap_A_per_m=None,
+                               intervals=0, metrics={model: None for model in curves})
+            continue
+        reference_knots = np.concatenate(([a], h[(h > a) & (h < z)], [z]))
+        knots = np.unique(np.concatenate([reference_knots, *(grid[(grid > a) & (grid < z)] for grid, _ in curves.values())]))
+        span = float(z-a)
+        widths = np.diff(knots) / span
+        reference = np.interp(knots, h, b)
+        with np.errstate(over='ignore', invalid='ignore'):
+            metrics = {model: _integrated_errors(np.interp(knots, grid, values)-reference, widths)
+                       for model, (grid, values) in curves.items()}
+        bands[name] = dict(H_range_A_per_m=[float(a), float(z)], span_A_per_m=span,
+                           largest_original_gap_A_per_m=float(np.max(np.diff(reference_knots))),
+                           intervals=len(knots)-1, metrics=metrics)
+    return dict(schema='linear_H_weighted_curve_error_v1', split_H_A_per_m=split, bands=bands)

@@ -1,0 +1,349 @@
+{
+  "version": "pilot_reference_samples_H_weighted_v1",
+  "sample_independence_verified": false,
+  "original_reference_points": 952,
+  "field_bands": [
+    {
+      "common": {
+        "H_range_A_per_m": [
+          0.0,
+          50000.0
+        ],
+        "intervals": 141,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 50000.0
+      },
+      "direction": "RD",
+      "from_800": {
+        "H_range_A_per_m": [
+          800.0,
+          50000.0
+        ],
+        "intervals": 48,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 49200.0
+      },
+      "grade": "B23R075",
+      "up_to_800": {
+        "H_range_A_per_m": [
+          0.0,
+          800.0
+        ],
+        "intervals": 93,
+        "largest_original_gap_A_per_m": 83.79330000000004,
+        "span_A_per_m": 800.0
+      }
+    },
+    {
+      "common": {
+        "H_range_A_per_m": [
+          0.0,
+          50000.0
+        ],
+        "intervals": 141,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 50000.0
+      },
+      "direction": "TD",
+      "from_800": {
+        "H_range_A_per_m": [
+          800.0,
+          50000.0
+        ],
+        "intervals": 48,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 49200.0
+      },
+      "grade": "B23R075",
+      "up_to_800": {
+        "H_range_A_per_m": [
+          0.0,
+          800.0
+        ],
+        "intervals": 93,
+        "largest_original_gap_A_per_m": 83.79330000000004,
+        "span_A_per_m": 800.0
+      }
+    },
+    {
+      "common": {
+        "H_range_A_per_m": [
+          0.0,
+          50000.0
+        ],
+        "intervals": 141,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 50000.0
+      },
+      "direction": "RD",
+      "from_800": {
+        "H_range_A_per_m": [
+          800.0,
+          50000.0
+        ],
+        "intervals": 48,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 49200.0
+      },
+      "grade": "B27R090",
+      "up_to_800": {
+        "H_range_A_per_m": [
+          0.0,
+          800.0
+        ],
+        "intervals": 93,
+        "largest_original_gap_A_per_m": 83.79330000000004,
+        "span_A_per_m": 800.0
+      }
+    },
+    {
+      "common": {
+        "H_range_A_per_m": [
+          0.0,
+          50000.0
+        ],
+        "intervals": 141,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 50000.0
+      },
+      "direction": "TD",
+      "from_800": {
+        "H_range_A_per_m": [
+          800.0,
+          50000.0
+        ],
+        "intervals": 48,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 49200.0
+      },
+      "grade": "B27R090",
+      "up_to_800": {
+        "H_range_A_per_m": [
+          0.0,
+          800.0
+        ],
+        "intervals": 93,
+        "largest_original_gap_A_per_m": 83.79330000000004,
+        "span_A_per_m": 800.0
+      }
+    },
+    {
+      "common": {
+        "H_range_A_per_m": [
+          0.0,
+          50000.0
+        ],
+        "intervals": 141,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 50000.0
+      },
+      "direction": "RD",
+      "from_800": {
+        "H_range_A_per_m": [
+          800.0,
+          50000.0
+        ],
+        "intervals": 48,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 49200.0
+      },
+      "grade": "B27R095",
+      "up_to_800": {
+        "H_range_A_per_m": [
+          0.0,
+          800.0
+        ],
+        "intervals": 93,
+        "largest_original_gap_A_per_m": 83.79330000000004,
+        "span_A_per_m": 800.0
+      }
+    },
+    {
+      "common": {
+        "H_range_A_per_m": [
+          0.0,
+          50000.0
+        ],
+        "intervals": 141,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 50000.0
+      },
+      "direction": "TD",
+      "from_800": {
+        "H_range_A_per_m": [
+          800.0,
+          50000.0
+        ],
+        "intervals": 48,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 49200.0
+      },
+      "grade": "B27R095",
+      "up_to_800": {
+        "H_range_A_per_m": [
+          0.0,
+          800.0
+        ],
+        "intervals": 93,
+        "largest_original_gap_A_per_m": 83.79330000000004,
+        "span_A_per_m": 800.0
+      }
+    },
+    {
+      "common": {
+        "H_range_A_per_m": [
+          0.0,
+          50000.0
+        ],
+        "intervals": 141,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 50000.0
+      },
+      "direction": "RD",
+      "from_800": {
+        "H_range_A_per_m": [
+          800.0,
+          50000.0
+        ],
+        "intervals": 48,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 49200.0
+      },
+      "grade": "B30P105",
+      "up_to_800": {
+        "H_range_A_per_m": [
+          0.0,
+          800.0
+        ],
+        "intervals": 93,
+        "largest_original_gap_A_per_m": 83.79330000000004,
+        "span_A_per_m": 800.0
+      }
+    },
+    {
+      "common": {
+        "H_range_A_per_m": [
+          0.0,
+          50000.0
+        ],
+        "intervals": 141,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 50000.0
+      },
+      "direction": "TD",
+      "from_800": {
+        "H_range_A_per_m": [
+          800.0,
+          50000.0
+        ],
+        "intervals": 48,
+        "largest_original_gap_A_per_m": 5199.583529000003,
+        "span_A_per_m": 49200.0
+      },
+      "grade": "B30P105",
+      "up_to_800": {
+        "H_range_A_per_m": [
+          0.0,
+          800.0
+        ],
+        "intervals": 93,
+        "largest_original_gap_A_per_m": 83.79330000000004,
+        "span_A_per_m": 800.0
+      }
+    }
+  ],
+  "calibrations": [
+    {
+      "B800_directions": 8,
+      "bank_sha256": "3cffed42ece56052a0518983b2d628dad376cbd266adfd224cc7b8b284caae33",
+      "calibration_id": "cal_8fff23daed9e",
+      "compared_directions": 8,
+      "holdout_max_abs_B800_error_T": 0.10615668757659735,
+      "holdout_mean_direction_rmse_T": 0.05847237945628633,
+      "holdout_mean_direction_rmse_uniform_H_common_T": 0.034119450872408134,
+      "holdout_mean_direction_rmse_uniform_H_from_800_T": 0.03326584969724345,
+      "holdout_mean_direction_rmse_uniform_H_up_to_800_T": 0.061456428967309115,
+      "report_sha256": "69ddd3ad8507cbbc3ee4ed7de560c22ade806847c2d86e54cf4d2bff09839190",
+      "version": "fixed_h_nested_transfer_v2"
+    },
+    {
+      "B800_directions": 8,
+      "bank_sha256": "1ccd070a3dbba851d7a5ba11010abd8981a47c8900fcd6bf8e6a9fca0b8bfaf2",
+      "calibration_id": "cal_ff02c5f685a0",
+      "compared_directions": 8,
+      "holdout_max_abs_B800_error_T": 0.0603564043850644,
+      "holdout_mean_direction_rmse_T": 0.03945591401887421,
+      "holdout_mean_direction_rmse_uniform_H_common_T": 0.03135089875346024,
+      "holdout_mean_direction_rmse_uniform_H_from_800_T": 0.030941814947260716,
+      "holdout_mean_direction_rmse_uniform_H_up_to_800_T": 0.041815331376121166,
+      "report_sha256": "a3031d4ae8ca644d10e9348747f6e02d3950bf6d4a791b98c8a0057fd8e1cf79",
+      "version": "fixed_h_regularized_transfer_v3"
+    },
+    {
+      "B800_directions": 8,
+      "bank_sha256": "9d5b37f20e4c5cc34a2e8b9a967128e17565ac14efd86f45668975c66247151e",
+      "calibration_id": "cal_eeb9d7859b04",
+      "compared_directions": 8,
+      "holdout_max_abs_B800_error_T": 0.0198829049838547,
+      "holdout_mean_direction_rmse_T": 0.024052679404711376,
+      "holdout_mean_direction_rmse_uniform_H_common_T": 0.01593745764808119,
+      "holdout_mean_direction_rmse_uniform_H_from_800_T": 0.015288245069389285,
+      "holdout_mean_direction_rmse_uniform_H_up_to_800_T": 0.026892821966256884,
+      "report_sha256": "a66dcf4abbc7d45ff6b25400b4ccaef89e3d5d5b56e9e8c8d28a626a1c51f293",
+      "version": "fixed_h_reference_dominant_transfer_v4"
+    }
+  ],
+  "independent_values_verified": 144,
+  "max_independent_abs_error_T": 7.632783294297951e-17,
+  "original_legacy_analysis_sha256": "37059a063d47f2e02af801b34a6a199a3e7fba22c22bff43e50e2d4e2ab0b163",
+  "sources": [
+    {
+      "direction": "RD",
+      "grade": "B23R075",
+      "sha256": "b9d0c3b389d1e8ef73b6c7b792d2b4ed69cdf9b6ecf7a9a9d12ad624b8c46de6",
+      "status": "existing_processed_catalog_reference_not_batch_measurement"
+    },
+    {
+      "direction": "TD",
+      "grade": "B23R075",
+      "sha256": "8aa3ed5195fd867d5cbe3f501646c1a6e0fa131cdb23f14fff29d6edbd746587",
+      "status": "existing_processed_catalog_reference_not_batch_measurement"
+    },
+    {
+      "direction": "RD",
+      "grade": "B27R090",
+      "sha256": "ebdf372b05bb2027d79241445f95f08f9538b5f8281f97ec571a1de591a6e69a",
+      "status": "existing_processed_catalog_reference_not_batch_measurement"
+    },
+    {
+      "direction": "TD",
+      "grade": "B27R090",
+      "sha256": "f23c9ce0cfdc7dca83c13c7681fb251d6c62dbfc0ac0f80474545dd66d751ea9",
+      "status": "existing_processed_catalog_reference_not_batch_measurement"
+    },
+    {
+      "direction": "RD",
+      "grade": "B27R095",
+      "sha256": "670dada7b858ec1f05c13cb5dc5ae13ef59db612f4ef67d890f413590db73faa",
+      "status": "existing_processed_catalog_reference_not_batch_measurement"
+    },
+    {
+      "direction": "TD",
+      "grade": "B27R095",
+      "sha256": "0c205e74f6c3ce538c302feccb23b80e6c41e961f79dd7f8ee059af9c51e9741",
+      "status": "existing_processed_catalog_reference_not_batch_measurement"
+    },
+    {
+      "direction": "RD",
+      "grade": "B30P105",
+      "sha256": "2794c946d6573a7bb00fd4100f3c5e8fd1eb4a0446304d722dd58a91ded8eccc",
+      "status": "existing_processed_catalog_reference_not_batch_measurement"
+    },
+    {
+      "direction": "TD",
+      "grade": "B30P105",
+      "sha256": "c8b6ed93137c70feb08ec85b9a0a770c97f48c6bc0a60baa4847dc10928af0e3",
+      "status": "existing_processed_catalog_reference_not_batch_measurement"
+    }
+  ]
+}

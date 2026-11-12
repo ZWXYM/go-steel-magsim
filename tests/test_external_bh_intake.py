@@ -88,12 +88,14 @@ class ExternalBHIntakeTest(unittest.TestCase):
             self.assertEqual(rows[-1]['fit_B_T'], '')
             self.assertEqual(report['model']['models']['holdout']['excluded_grades'], [GRADE])
             self.assertEqual(report['comparison']['RD']['compared_points'], 2)
+            self.assertEqual(report['comparison']['RD']['field_weighted']['bands']['up_to_800']['H_range_A_per_m'], [20,800])
             self.assertAlmostEqual(report['comparison']['RD']['B800']['fit_error_T'], .01)
             self.assertFalse(report['specimen_independence_verified'])
         self.library.report.write_bytes(b'{}')
         page = self.client.get(result.location).get_data(as_text=True)
         self.assertIn('流程联调', page)
         self.assertIn('B800', page)
+        self.assertIn('按物理 H 区间计权', page)
         self.assertIn('/api/workbench/system-data/packages/' + package + '/download', page)
 
     def test_stale_or_leaky_models_cannot_create_a_comparison(self):
@@ -118,6 +120,8 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertEqual(report['comparison']['RD']['overlap_H_range_A_per_m'], [30, 900])
         self.assertEqual(report['comparison']['RD']['compared_points'], 1)
         self.assertEqual(set(report['comparison']['RD']['metrics']), {'fit', 'holdout', 'secondary_fit', 'secondary_holdout'})
+        self.assertEqual(set(report['comparison']['RD']['field_weighted']['bands']['common']['metrics']),
+                         {'fit','holdout','secondary_fit','secondary_holdout'})
         self.assertAlmostEqual(report['comparison']['RD']['metrics']['fit']['rmse_T'], .01)
         self.assertAlmostEqual(report['comparison']['RD']['metrics']['secondary_holdout']['rmse_T'], .1)
         self.assertIn(ALTERNATE, self.client.get(result.location).get_data(as_text=True))

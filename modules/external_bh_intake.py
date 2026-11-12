@@ -10,7 +10,7 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from modules.calibration_regularized import default_eligible
-from modules.external_bh_validation import MAX_CURVE_BYTES, compare_curves, read_measurement_csv
+from modules.external_bh_validation import MAX_CURVE_BYTES, compare_curves, field_weighted_errors, read_measurement_csv
 from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
 
 
@@ -168,6 +168,7 @@ class ExternalBHIntake:
                 measurement = read_measurement_csv(uploads[direction][1], direction)
                 curves = {name: model['curves'][direction] for name, model in models.items()}
                 compared = compare_curves(measurement, curves)
+                compared['field_weighted'] = field_weighted_errors(measurement, curves)
                 files[f'comparison/{direction}.csv'] = csv_bytes(compared.pop('rows'))
                 summary['comparison'][direction] = compared
                 for name, curve in curves.items():

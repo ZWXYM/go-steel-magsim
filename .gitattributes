@@ -333,3 +333,4 @@ modules/system_data_reference_evidence.py -text
 modules/loop_frequency_series.py -text
 templates/frequency_loss_cycles.html -text
 tests/test_loop_frequency_series.py -text
+calibration/reference_field_weighted_20261112/** -text

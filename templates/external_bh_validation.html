@@ -41,6 +41,23 @@
         </tbody>
       </table>
     </div>
+    {% if report.comparison.RD.get('field_weighted') %}
+    <details open>
+      <summary>按物理 H 区间计权</summary>
+      <p class="muted">对原表和保存曲线分段线性插值，按 H 区间长度积分，避免采样密集处获得更多权重。只计共同覆盖区间；请结合原表间隔和上面的原点误差解释。</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>方向</th><th>区段</th><th>实际 H 范围（A/m）</th><th>区段内最大原表插值跨度（A/m）</th>{% if secondary %}<th>校准记录</th>{% endif %}<th>拟合 RMSE（T）</th><th>留出 RMSE（T）</th><th>拟合 MAE（T）</th><th>留出 MAE（T）</th></tr></thead>
+        <tbody>{% for direction in ('RD', 'TD') %}
+        {% for key, label in [('common','全共同范围'), ('up_to_800','至 800 A/m'), ('from_800','从 800 A/m')] %}
+        {% set band = report.comparison[direction].field_weighted.bands[key] %}
+        {% for identity, prefix in versions %}
+          <tr><th scope="row">{{ direction }}</th><td>{{ label }}</td><td>{% if band.H_range_A_per_m %}{{ number(band.H_range_A_per_m[0]) }} 至 {{ number(band.H_range_A_per_m[1]) }}{% else %}无共同区段{% endif %}</td>
+          <td>{{ number(band.largest_original_gap_A_per_m) }}</td>{% if secondary %}<td>{{ identity.calibration_id }}</td>{% endif %}
+          {% for metric in ('rmse_T','mae_T') %}{% for model in ('fit','holdout') %}{% set stats = band.metrics[prefix ~ model] %}<td>{{ number(stats[metric] if stats else none) }}</td>{% endfor %}{% endfor %}</tr>
+        {% endfor %}{% endfor %}{% endfor %}</tbody>
+      </table></div>
+    </details>
+    {% endif %}
     <h3>B800 对照（T）</h3>
     <div class="table-wrap">
       <table>

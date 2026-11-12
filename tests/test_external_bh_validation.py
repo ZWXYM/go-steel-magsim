@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from modules.external_bh_validation import compare_direction, read_measurement_csv
+from modules.external_bh_validation import compare_direction, field_weighted_errors, read_measurement_csv
 
 
 class ExternalBHValidationTest(unittest.TestCase):
@@ -42,6 +42,32 @@ class ExternalBHValidationTest(unittest.TestCase):
         self.assertEqual(measurement['H_column'], 'H (A/m)')
         self.assertEqual([row['source_row'] for row in measurement['points']], [4, 5])
         self.assertEqual([row['input_B_T'] for row in measurement['points']], [0.8, 1.1])
+
+    def test_field_weighting_detects_model_kink_between_original_points(self):
+        measured = read_measurement_csv(b'H_A_per_m,B_T\n800,0\n0,0\n', 'RD')
+        fitted = {'H':[0,400,800], 'B':[0,2,0]}
+        heldout = {'H':[0,800], 'B':[0,0]}
+        self.assertEqual(compare_direction(measured, fitted, heldout)['metrics']['fit']['rmse_T'], 0)
+        bands = field_weighted_errors(measured, {'fit':fitted,'holdout':heldout})['bands']
+        low = bands['up_to_800']
+        self.assertEqual(low['H_range_A_per_m'], [0,800])
+        self.assertEqual(low['largest_original_gap_A_per_m'], 800)
+        self.assertAlmostEqual(low['metrics']['fit']['rmse_T'], 2/math.sqrt(3))
+        self.assertAlmostEqual(low['metrics']['fit']['mae_T'], 1)
+        self.assertIsNone(bands['from_800']['metrics']['fit'])
+
+    def test_field_integral_accounts_for_sign_change_and_common_clipping(self):
+        measured = read_measurement_csv(b'H_A_per_m,B_T\n100,0\n1200,0\n', 'TD')
+        models = {'a':{'H':[200,1100], 'B':[-1,2]}, 'b':{'H':[200,1100], 'B':[0,0]}}
+        bands = field_weighted_errors(measured, models)['bands']
+        common = bands['common']
+        self.assertEqual(common['H_range_A_per_m'], [200,1100])
+        self.assertAlmostEqual(common['metrics']['a']['rmse_T'], 1)
+        self.assertAlmostEqual(common['metrics']['a']['mae_T'], 5/6)
+        self.assertEqual(bands['up_to_800']['H_range_A_per_m'], [200,800])
+        self.assertEqual(bands['from_800']['span_A_per_m'], 300)
+        models['b']['H'] = [1100, 2000]
+        self.assertEqual(field_weighted_errors(measured, models)['bands']['common']['span_A_per_m'], 0)
 
     def test_unknown_units_ambiguous_ordinate_and_loop_rejected(self):
         bad = (b'H,B_T\n10,1\n20,2\n',
