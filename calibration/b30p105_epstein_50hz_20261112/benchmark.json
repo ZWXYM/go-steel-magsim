@@ -1,0 +1,44 @@
+{
+  "schema": "b30p105_epstein_50hz_published_replay_v1",
+  "source_doi": "https://doi.org/10.1038/s41598-024-55155-w",
+  "source_url": "https://pmc-oa-opendata.s3.amazonaws.com/PMC11043459.1/41598_2024_55155_MOESM1_ESM.xlsx",
+  "source_sha256": "eb397a4f667ee6d089c2501e19c6afb41c0a50e87774a78c804292428ebe769b",
+  "source_pmc_md5": "97726ef3660e1621a4643fbc0529b0b7",
+  "license": "CC BY 4.0",
+  "grade": "B30P105",
+  "coil_system": "Epstein 700",
+  "frequency_Hz": 50,
+  "direction": null,
+  "specimen_id": null,
+  "measured_density_kg_m3": null,
+  "original_points": 20000,
+  "cycles": 20,
+  "checked_workbook_cells": 80193,
+  "independent_calculation_checks": 80,
+  "examples": [
+    {
+      "nominal_B_T": 1.5,
+      "sampled_B_positive_T": 1.4999628189856917,
+      "H_at_positive_B_peak_A_m": 50.6672960646609,
+      "reported_Hmax_A_m": 53.51939099900266,
+      "reported_Ps_W_kg": 0.8838866144470952,
+      "integral_W_m3": 6823.67932862368
+    },
+    {
+      "nominal_B_T": 1.7,
+      "sampled_B_positive_T": 1.7000439965758052,
+      "H_at_positive_B_peak_A_m": 181.53413813164894,
+      "reported_Hmax_A_m": 182.69315679022606,
+      "reported_Ps_W_kg": 1.2561300400162745,
+      "integral_W_m3": 9689.011104181503
+    },
+    {
+      "nominal_B_T": 2.0,
+      "sampled_B_positive_T": 1.9769596820625508,
+      "H_at_positive_B_peak_A_m": 31507.126828457447,
+      "reported_Hmax_A_m": 31416.223404255317,
+      "reported_Ps_W_kg": 2.818473281973387,
+      "integral_W_m3": 21495.57646603942
+    }
+  ]
+}
