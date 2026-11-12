@@ -1,0 +1,71 @@
+{
+  "schema": "b30p105_measured_catalog_loss_50hz_v1",
+  "grade": "B30P105",
+  "frequency_Hz": 50,
+  "source_doi": "https://doi.org/10.1038/s41598-024-55155-w",
+  "source_sha256": "eb397a4f667ee6d089c2501e19c6afb41c0a50e87774a78c804292428ebe769b",
+  "manufacturer_source": "https://ecommerce.ibaosteel.com/baosteel/manufacturerStandard/pdf2023/BQB%20485-2023.pdf",
+  "manufacturer_source_sha256": "8398884524bde5e6cf6e3baf69f521090198e0d4ab0829dee2e6babe9f47498c",
+  "B_H_points_checked": 20000,
+  "matched_J": [
+    {
+      "J_peak_T": 1.5,
+      "bracket_J_T": [
+        1.4998991485836541,
+        1.5998046160584776
+      ],
+      "bracket_measurements": [
+        15,
+        16
+      ],
+      "catalog_D1_typical_W_kg": 0.74,
+      "difference_W_kg": 0.14404359005638678,
+      "frequency_Hz": 50,
+      "workbook_interpolated_Ps_W_kg": 0.8840435900563868,
+      "workbook_minus_typical_percent": 19.46535000761984
+    },
+    {
+      "J_peak_T": 1.7,
+      "bracket_J_T": [
+        1.6998158740499132,
+        1.7994103482517199
+      ],
+      "bracket_measurements": [
+        17,
+        18
+      ],
+      "catalog_D1_typical_W_kg": 0.99,
+      "difference_W_kg": 0.2667320102926616,
+      "frequency_Hz": 50,
+      "workbook_interpolated_Ps_W_kg": 1.2567320102926616,
+      "workbook_minus_typical_percent": 26.942627302289047
+    }
+  ],
+  "examples": [
+    {
+      "J_peak_source_row": 14512,
+      "catalog_model_at_sampled_B_W_kg": 0.7763038651580945,
+      "derived_abs_J_peak_T": 1.4998991485836541,
+      "frequency_Hz": 50,
+      "measured_abs_B_peak_T": 1.499962818985692,
+      "measurement": 15,
+      "model_minus_measurement_W_kg": -0.10758274928900069,
+      "model_minus_measurement_percent": -12.17155543828411,
+      "nominal_B_T": 1.5,
+      "published_Ps_W_kg": 0.8838866144470952
+    },
+    {
+      "J_peak_source_row": 16514,
+      "catalog_model_at_sampled_B_W_kg": 0.9972202353025799,
+      "derived_abs_J_peak_T": 1.6998158740499132,
+      "frequency_Hz": 50,
+      "measured_abs_B_peak_T": 1.7000439965758054,
+      "measurement": 17,
+      "model_minus_measurement_W_kg": -0.2589098047136946,
+      "model_minus_measurement_percent": -20.61170392122301,
+      "nominal_B_T": 1.7,
+      "published_Ps_W_kg": 1.2561300400162745
+    }
+  ],
+  "actual_motor_frequency_Hz": 100
+}

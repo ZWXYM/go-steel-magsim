@@ -1,0 +1,60 @@
+{
+  "schema": "b27r095_published_bias_sst_2020_v1",
+  "grade": "B27R095",
+  "source_doi": "https://doi.org/10.19595/j.cnki.1000-6753.tces.190603",
+  "article": "https://dgjsxb.ces-transaction.com/fileup/HTML/2020-9-1849.htm",
+  "direction": null,
+  "source_hashes": {
+    "b27r095_2020_article.htm": "5b0ae5f1488ee5344e34bfd6d9fa9df20effe14f2bb72ae52f5e7fdb318bc483",
+    "b27r095_fig_4.jpg": "6862239f2f0e94f3483dcea02cdd21fdf05096720e2bddc7f4e74e10bbe7a5ff",
+    "b27r095_table_2.jpg": "207034b0240ee1cab3932983bafb3c5b45e9b06e3fca43ef5b74e0b7655deef3",
+    "b27r095_table_3.jpg": "f445ea141128e456bc104cfecd531089d8c95d81b42e93a204f8b54da8dcd732",
+    "b27r095_table_4.jpg": "4de5308676f6f65bb0d7453078d500677883515f03707c6b744a26b52a3e4119"
+  },
+  "published_fields": 10,
+  "published_losses": 5,
+  "verified_cells": 65,
+  "near_static_frequency_Hz": 4,
+  "dynamic_graph_frequency_Hz": 50,
+  "model_RMSE_in_study": {
+    "table_2_asymmetric_rmse_A_per_m": 17.528018712906484,
+    "table_2_symmetric_rmse_A_per_m": 27.265736740458713,
+    "table_3_asymmetric_rmse_A_per_m": 12.695424372584009,
+    "table_3_symmetric_rmse_A_per_m": 23.953702845280517
+  },
+  "table_4_correction_check": {
+    "Bacm_T": "0.8",
+    "Hdc_A_per_m": 25,
+    "author_asymmetric_P_W_kg": "0.0131",
+    "author_symmetric_P_W_kg": "0.0184",
+    "frequency_Hz": 4,
+    "grade": "B27R095",
+    "independently_computed_reduction_percentage_points": 46.08695652173913,
+    "measured_static_approx_P_W_kg": "0.0115",
+    "reduction_difference_percentage_points": 2.6069565217391304,
+    "reported_abs_error_reduction_percentage_points": "43.48",
+    "source_row": 2,
+    "table": 4,
+    "within_print_rounding": false
+  },
+  "figure_4_example": [
+    {
+      "B_axis_T": 1.0,
+      "Hdc_A_per_m": 0,
+      "approximate_P_W_kg": 0.277,
+      "resolution_W_kg": 0.01
+    },
+    {
+      "B_axis_T": 1.0,
+      "Hdc_A_per_m": 25,
+      "approximate_P_W_kg": 0.382,
+      "resolution_W_kg": 0.01
+    },
+    {
+      "B_axis_T": 1.0,
+      "Hdc_A_per_m": 50,
+      "approximate_P_W_kg": 0.445,
+      "resolution_W_kg": 0.01
+    }
+  ]
+}
