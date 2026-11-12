@@ -2,12 +2,14 @@
 import csv
 import io
 import math
+import re
 from itertools import chain
 
 import numpy as np
 
 
 MAX_CURVE_BYTES = 2 * 1024 * 1024
+DECIMAL_COMMA_NUMBER = re.compile(r"[+-]?(?:[0-9]+(?:,[0-9]+)?|,[0-9]+)(?:[eE][+-]?[0-9]+)?")
 MU0 = 4e-7 * math.pi
 H_COLUMNS = {
     'H_A_per_m': 1.0, 'H [A/m]': 1.0, 'H (A/m)': 1.0,
@@ -39,17 +41,20 @@ def _table_rows(reader):
     return comment_header, reader
 
 
-def read_bh_points(blob, label):
-    """Read an ordered H and B/J table using explicit physical units."""
+def read_bh_points(blob, label, *, headerless_decimal_comma_hb=False):
+    """Read ordered H and B/J, with units from the header or an explicit H/B layout."""
     if not isinstance(blob, bytes) or not 0 < len(blob) <= MAX_CURVE_BYTES:
         raise ValueError(f'{label} CSV 为空或超过 2 MiB')
     try:
         content = blob.decode('utf-8-sig')
     except UnicodeError as error:
         raise ValueError(f'{label} 请保存为 UTF-8 CSV') from error
-    reader = csv.reader(io.StringIO(content, newline=''), strict=True)
+    reader = csv.reader(io.StringIO(content, newline=''), delimiter=';' if headerless_decimal_comma_hb else ',', strict=True)
     try:
-        header, data_rows = _table_rows(reader)
+        if headerless_decimal_comma_hb:
+            header, data_rows = ['H_A_per_m', 'B_T'], reader
+        else:
+            header, data_rows = _table_rows(reader)
         h_columns = [i for i, column in enumerate(header) if column in H_COLUMNS]
         ordinate_columns = [i for i, column in enumerate(header) if column in ORDINATE_COLUMNS]
         if len(h_columns) != 1 or len(ordinate_columns) != 1:
@@ -65,8 +70,13 @@ def read_bh_points(blob, label):
             try:
                 if len(cells) != len(header):
                     raise ValueError
-                h_source = float(cells[h_index])
-                y_source = float(cells[ordinate_index])
+                h_raw, y_raw = cells[h_index], cells[ordinate_index]
+                if headerless_decimal_comma_hb:
+                    h_raw, y_raw = h_raw.strip(), y_raw.strip()
+                    if not all(DECIMAL_COMMA_NUMBER.fullmatch(cell) for cell in (h_raw, y_raw)):
+                        raise ValueError
+                    h_raw, y_raw = h_raw.replace(',', '.'), y_raw.replace(',', '.')
+                h_source, y_source = float(h_raw), float(y_raw)
             except ValueError as error:
                 raise ValueError(f'{label} CSV 第 {reader.line_num} 行缺少有效的 H 或 B/J') from error
             h = h_source * h_scale

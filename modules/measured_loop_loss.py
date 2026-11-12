@@ -16,6 +16,10 @@ from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
 
 VERSION = 'measured_loop_loss_v1'
 PACKAGE_FILENAME = 'measured_loop_loss.zip'
+INPUT_FORMAT_LABELS = {
+    'unit_headers': '表头标注单位（默认）',
+    'decimal_comma_hb': '无表头，分号分列，小数逗号（第一列 H：A/m，第二列 B：T）',
+}
 DIRECTION_LABELS = {'unspecified': '待核对', 'RD': 'RD（轧向）', 'TD': 'TD（横向）', 'other': '其他方向'}
 
 
@@ -109,7 +113,12 @@ class MeasuredLoopLoss:
             raise ValueError('请填写所用试样密度的来源')
         if len(density_reference or '') > 1200:
             raise ValueError('密度来源最多 1200 字')
-        table = read_bh_points(blob, '回线')
+        input_format = form.get('input_format', 'unit_headers')
+        if input_format not in INPUT_FORMAT_LABELS:
+            raise ValueError('原表格式无效')
+        table = read_bh_points(blob, '回线', headerless_decimal_comma_hb=input_format == 'decimal_comma_hb')
+        if input_format != 'unit_headers':
+            source['input_format'] = input_format
         result, segments = integrate_loop(table, frequency, density)
         source.update(source_kind=source_kind, direction=direction, frequency_hz=frequency, density_kg_m3=density,
                       density_reference=density_reference, single_cycle_declared=True)
@@ -134,7 +143,7 @@ class MeasuredLoopLoss:
 
 def create_measured_loop_routes(loss):
     bp = Blueprint('measured_loop', __name__)
-    labels = dict(source_labels=SOURCE_LABELS, direction_labels=DIRECTION_LABELS)
+    labels = dict(source_labels=SOURCE_LABELS, direction_labels=DIRECTION_LABELS, input_formats=INPUT_FORMAT_LABELS)
 
     @bp.get('/measured-loop-loss')
     def page():

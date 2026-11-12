@@ -41,7 +41,7 @@
         <dt>测量方法</dt><dd>{{ source.method or '未记录' }}</dd>
         <dt>密度（kg/m³）</dt><dd>{{ number(source.density_kg_m3) }}{% if source.density_reference %} · {{ source.density_reference }}{% endif %}</dd>
         <dt>其他条件</dt><dd>{{ source.conditions or '未记录' }}</dd>
-        <dt>输入列</dt><dd>{{ value.H_column }} · {{ value.ordinate_column }}</dd>
+        <dt>输入列</dt><dd>{{ value.H_column }} · {{ value.ordinate_column }}{% if source.get('input_format') %}<br>{{ input_formats[source.input_format] }}{% endif %}</dd>
         <dt>原文件</dt><dd>{{ report.original.filename }} · {{ report.original.bytes }} 字节<br>SHA-256 {{ report.original.sha256 }}</dd>
       </dl>
     </details>
@@ -53,7 +53,7 @@
 {% else %}
   <section>
     <h2>上传一个完整周期</h2>
-    <p class="muted">使用原采样顺序的 UTF-8 CSV。列名需标注单位，例如 <code>H_A_per_m,B_T</code> 或 <code>H_kA_per_m,J_mT</code>。填写原频率，密度有来源时可核算比损耗。</p>
+    <p class="muted">使用原采样顺序的 UTF-8 CSV。优先使用带单位表头，例如 <code>H_A_per_m,B_T</code> 或 <code>H_kA_per_m,J_mT</code>。只有来源已确认两列单位分别为 A/m 和 T 时，才选择无表头格式。填写原频率，密度有来源时可核算比损耗。</p>
     {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
     <form method="post" action="{{ url_for('.save') }}" enctype="multipart/form-data">
       <div class="grid">
@@ -62,6 +62,7 @@
         <label>来源类别<select name="source_kind">{% for value, label in source_labels.items() %}<option value="{{ value }}"{% if form.get('source_kind', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
         <label>测量方向<select name="direction">{% for value, label in direction_labels.items() %}<option value="{{ value }}"{% if form.get('direction', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
       </div>
+      <label>原表格式<select name="input_format">{% for key, label in input_formats.items() %}<option value="{{ key }}"{% if form.get('input_format', 'unit_headers') == key %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
       <label>原表来源或测量记录编号<textarea name="source_reference" required maxlength="1200">{{ form.get('source_reference', '') }}</textarea></label>
       <div class="grid">
         <label>原表标注牌号<input name="reported_grade" maxlength="1200" value="{{ form.get('reported_grade', '') }}"></label>

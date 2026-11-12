@@ -1,0 +1,215 @@
+{
+  "declared_raw_layout": {
+    "B_column": 2,
+    "B_unit": "T",
+    "H_column": 1,
+    "H_unit": "A/m",
+    "decimal": ",",
+    "delimiter": ";",
+    "field": "surface H extrapolated from three H coils",
+    "header": null,
+    "method_reference": "Publisher notebook §3.1–3.2 and functions.py plot-axis definitions"
+  },
+  "holdout": {
+    "evaluated": {
+      "actual_loss": 1.083684737047986,
+      "actual_standard_u": null,
+      "basis_coefficients": null,
+      "basis_scale_Hz": null,
+      "basis_status": "insufficient_training_frequencies",
+      "bracket_Hz": [
+        1.0,
+        100.0
+      ],
+      "estimates": {
+        "bracket_cycle_linear": {
+          "predicted": 1.0552905425481092,
+          "signed_error": -0.0283941944998769,
+          "signed_relative_error_pct": -2.6201526633312353
+        },
+        "linear_lowest": {
+          "predicted": 0.6609597275121925,
+          "signed_error": -0.4227250095357936,
+          "signed_relative_error_pct": -39.00811694435401
+        }
+      },
+      "holdout_source_row": 3,
+      "missing_training_standard_u": 2,
+      "peak_T": 1.0,
+      "training_frequencies_Hz": [
+        1.0,
+        100.0
+      ],
+      "training_source_rows": [
+        2,
+        4
+      ],
+      "weighting": null
+    },
+    "held_out_frequency_Hz": 50.0,
+    "loss_unit": "W/kg",
+    "target_peak_B_T": 1.0,
+    "tolerance_T": 0.001
+  },
+  "publisher": {
+    "authors": [
+      "Indiara Pitta Corrêa da Silva",
+      "Gustavo Felipe Martin Nascimento",
+      "Yuri Gabriel Langaro",
+      "Nelson Jhoe Batistela",
+      "Nelson Sadowski",
+      "Jean Vianei Leite"
+    ],
+    "doi": "10.17632/hgzgpcvjxk.1",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "metadata_files": [
+      {
+        "bytes": 24926,
+        "file_id": "65754a8c-033a-4ce5-8760-94a142737c7d",
+        "name": "functions.py",
+        "sha256": "257f70256d804fa85e86e738ab6964ddd4c84c5166a8e1f883dcf4f5b1347de7"
+      },
+      {
+        "bytes": 1501,
+        "file_id": "ee0710de-6ca1-4d8c-b483-559bab4f2830",
+        "name": "globals_module.py",
+        "sha256": "d426471985b0f27c1daa8efab34113e967a07d72e0e97a98843e1e6e45b7b9b0"
+      },
+      {
+        "bytes": 232923,
+        "file_id": "3c3d2e60-33fa-4aa2-a163-6f4672cdcebd",
+        "name": "Magneto-mechanical_Coupling_Data_script (copy).ipynb",
+        "sha256": "1f3016b63962a2185ccce83b3295287067752061fbeba6d4cdb91ddc91637b9f"
+      }
+    ]
+  },
+  "reviewed_loops": [
+    {
+      "actual_peak_B_T": 0.999985,
+      "closed_shoelace_J_m3": 103.70458124666297,
+      "closing_abs_J_m3": 0.06512606779500003,
+      "closing_fraction": 0.0006279960539071718,
+      "frequency_Hz": 1,
+      "loop_original": {
+        "bytes": 270000,
+        "folder": "RD_Sample_1Hz_BH_loop_0MPa",
+        "frequency_hz": 1,
+        "no_header": true,
+        "numeric_rows": 10000,
+        "published_file_id": "1fb19b7b-626d-41c3-b257-c37bd55444d0",
+        "sha256": "4c7564caf401d2b5ffd9933d3ec387caeec4e29fa73939e85598f56a7213a792",
+        "source_filename": "Bp_1002mT_1Hz_H-EXTRAPvsB.csv"
+      },
+      "loss_original": {
+        "bytes": 571,
+        "name": "RD_Losses_0MPa_1Hz.csv",
+        "publisher_file_id": "0e08012b-e1b2-48a4-9549-5829fe5c32ec",
+        "rows": 30,
+        "sha256": "00deecbad428f623b706440275ebe6184e766ad727283d6596e094f82eda7a4c"
+      },
+      "mass_energy_J_kg": 0.013219194550243845,
+      "mass_power_W_kg": 0.013219194550243845,
+      "nearest_peak_delta_T": 0.001666999999999974,
+      "nearest_source_peak_B_T": 1.001652,
+      "nearest_source_row": 20,
+      "next_nearest_peak_delta_T": 0.048833000000000015,
+      "open_BdH_J_m3": -103.710418682813,
+      "open_HdB_J_m3": 103.639455178868,
+      "relative_error_percent": -0.6000860948654374,
+      "source_mass_energy_J_kg": 0.013299
+    },
+    {
+      "actual_peak_B_T": 0.999839,
+      "closed_shoelace_J_m3": 170.0301352428289,
+      "closing_abs_J_m3": 0.15126500702499993,
+      "closing_fraction": 0.0008896364565550129,
+      "frequency_Hz": 50,
+      "loop_original": {
+        "bytes": 54000,
+        "folder": "RD_Sample_50Hz_BH_loop_0MPa",
+        "frequency_hz": 50,
+        "no_header": true,
+        "numeric_rows": 2000,
+        "published_file_id": "b914f5e1-ddcb-43e7-837f-3d7026f53ca8",
+        "sha256": "c01d55de7ac66aa62ea1dbb39881c600819cbb31e39e7e87637edb6217a9f67f",
+        "source_filename": "Bp_1000mT_50Hz_H-EXTRAPvsB.csv"
+      },
+      "loss_original": {
+        "bytes": 491,
+        "name": "RD_Losses_0MPa_50Hz.csv",
+        "publisher_file_id": "37436b47-f9fc-4109-8711-885e823abfa1",
+        "rows": 26,
+        "sha256": "aa119b7b26e78f61cfd6cd01890791c8b898ee098f8a54c88d8c5efd864d7984"
+      },
+      "mass_energy_J_kg": 0.021673694740959707,
+      "mass_power_W_kg": 1.0836847370479854,
+      "nearest_peak_delta_T": 4.999999999921734e-06,
+      "nearest_source_peak_B_T": 0.999844,
+      "nearest_source_row": 20,
+      "next_nearest_peak_delta_T": 0.050404000000000004,
+      "open_BdH_J_m3": -170.033171895249,
+      "open_HdB_J_m3": 169.878870235804,
+      "relative_error_percent": -0.3462469954494174,
+      "source_mass_energy_J_kg": 0.021749
+    },
+    {
+      "actual_peak_B_T": 0.999905,
+      "closed_shoelace_J_m3": 228.70825436981397,
+      "closing_abs_J_m3": 0.40055363865,
+      "closing_fraction": 0.0017513737742159384,
+      "frequency_Hz": 100,
+      "loop_original": {
+        "bytes": 27000,
+        "folder": "RD_Sample_100Hz_BH_loop_0MPa",
+        "frequency_hz": 100,
+        "no_header": true,
+        "numeric_rows": 1000,
+        "published_file_id": "3dac61e7-0d61-4399-acdf-bdd3bef3a7ac",
+        "sha256": "05fc825f8765256a77d1fde3a27132397c4a6d034710e37392733e8a6e40f991",
+        "source_filename": "Bp_1000mT_100Hz_H-EXTRAPvsB.csv"
+      },
+      "loss_original": {
+        "bytes": 450,
+        "name": "RD_Losses_0MPa_100Hz.csv",
+        "publisher_file_id": "2be8a2bf-ff00-4063-ae7f-e49de89cdf78",
+        "rows": 24,
+        "sha256": "f762807ee1938039214347c779a3d90a185014e01ff786648d2c72224456810e"
+      },
+      "mass_energy_J_kg": 0.0291533785047564,
+      "mass_power_W_kg": 2.91533785047564,
+      "nearest_peak_delta_T": 0.00017300000000008975,
+      "nearest_source_peak_B_T": 0.999732,
+      "nearest_source_row": 20,
+      "next_nearest_peak_delta_T": 0.04941899999999999,
+      "open_BdH_J_m3": -228.753679080558,
+      "open_HdB_J_m3": 228.307700731164,
+      "relative_error_percent": 0.28681976180393587,
+      "source_mass_energy_J_kg": 0.02907
+    }
+  ],
+  "schema": "nog_rd_multifrequency_loop_benchmark_v1",
+  "specimen": {
+    "density_kg_m3": 7845,
+    "density_reference": "Publisher notebook §2.1 Table 1; RD row",
+    "direction": "RD",
+    "excitation": "sinusoidal magnetic induction",
+    "label": "RD_Sample",
+    "material_class": "non-oriented iron-silicon electrical steel",
+    "nominal_peak_B_T": 1,
+    "project_calibration_grade": null,
+    "stress_MPa": 0
+  },
+  "verification": {
+    "independent_laboratory_validation": false,
+    "matched_table_row_method": "Unique nearest original peak in same orientation, load, and frequency; no claim of separate lab measurement.",
+    "max_abs_relative_difference_vs_publisher_loss_table_percent": 0.6000860948654374,
+    "new_Maxwell": 0,
+    "new_MuMax": 0,
+    "original_points": 13000,
+    "original_publisher_loss_table_rows": 80,
+    "raw_files": 3,
+    "raw_files_byte_equal": true,
+    "same_released_specimen_scope": true
+  }
+}

@@ -70,5 +70,29 @@ class MeasuredLoopLossTest(unittest.TestCase):
         self.assertIn('密度未提供', client.get(response.location).get_data(as_text=True))
 
 
+    def test_declared_decimal_comma_input_keeps_original_line_numbers_and_bytes(self):
+        source = b" 400,0;0,0\r\n\r\n0,0;1,2\r\n-400,0;0,0\r\n0,0;-1,2\r\n"
+        with tempfile.TemporaryDirectory() as temporary:
+            store = WorkpackStore(Path(temporary))
+            service = MeasuredLoopLoss(store)
+            form = dict(source_reference='发布者注明 H 为 A/m，B 为 T', frequency_hz='50', single_cycle='yes')
+            with self.assertRaisesRegex(ValueError, '标注'):
+                service.save(form, 'original.csv', source)
+            declared = dict(form, input_format='decimal_comma_hb')
+            with self.assertRaisesRegex(ValueError, '第 3 行'):
+                service.save(declared, 'wrong.csv', source.replace(b'0,0;1,2', b'0,0;1.2'))
+            self.assertEqual(store.records(), [])
+            record = service.save(declared, 'original.csv', source)
+            _, saved = store.read(record['id'])
+            with zipfile.ZipFile(io.BytesIO(saved)) as archive:
+                self.assertEqual(archive.read('original/cycle.csv'), source)
+                summary = json.loads(archive.read('loop_loss_report.json'))
+                self.assertEqual(summary['source']['input_format'], 'decimal_comma_hb')
+                self.assertAlmostEqual(summary['result']['energy_loss_J_m3_per_cycle'], 960)
+                rows = list(csv.DictReader(io.StringIO(archive.read('ordered_segments.csv').decode('utf-8-sig'))))
+                self.assertEqual([int(row['source_row']) for row in rows], [1,3,4,5])
+                self.assertEqual(rows[-1]['next_source_row'], '1')
+
+
 if __name__ == '__main__':
     unittest.main()
