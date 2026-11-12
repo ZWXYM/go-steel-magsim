@@ -12,6 +12,7 @@ from modules.calibration_transfer import load_bank
 from modules.material_batch_reports import report_bundle
 from modules.motor_dataset_export import dataset_bundle,DATASET_ID_PATTERN
 from modules.system_data import WorkpackStore, MAX_CONTENT_BYTES, json_bytes, sha256
+from modules.system_data_reference_evidence import collect_reference_package, validate_reference_selection
 from modules.system_data_relations import batch_calibration_relation
 
 VERSION = 'system_data_workpack_v5'
@@ -44,7 +45,8 @@ class SystemDataBuilder:
 
     def build(self, selection):
         if (not isinstance(selection, dict) or not {'calibration', 'datasets', 'batch'} <= set(selection)
-                or set(selection)-{'calibration', 'datasets', 'batch', 'optimization', 'constraint_study','predictions','additional_batches'}
+                or set(selection)-{'calibration', 'datasets', 'batch', 'optimization', 'constraint_study','predictions',
+                                   'additional_batches', 'reference_evidence'}
                 or not isinstance(selection['datasets'], list) or len(selection['datasets']) > 16):
             raise ValueError('请明确选择校准、至多16份电机数据集及可选批量')
         predictions=selection.get('predictions',[])
@@ -53,6 +55,7 @@ class SystemDataBuilder:
         additional=selection.get('additional_batches',[])
         if not isinstance(additional,list) or len(additional)>3:
             raise ValueError('每包至多另选3份已完成电机批量')
+        reference_evidence = validate_reference_selection(selection.get('reference_evidence', []))
         selected_batches=([selection['batch']] if selection['batch'] is not None else [])+additional
         for selected_batch in selected_batches:
             if (not isinstance(selected_batch,dict) or set(selected_batch)!={'id','source_binding_sha256'}
@@ -61,7 +64,8 @@ class SystemDataBuilder:
                 raise ValueError('校准电机批量选择不符')
         if len({row['id'] for row in selected_batches})!=len(selected_batches):
             raise ValueError('同一电机批量不能重复选择；请取消主批量或其他批量中的重复项')
-        if not selection['calibration'] and not selection['datasets'] and not selected_batches and not selection.get('optimization') and not selection.get('constraint_study') and not predictions:
+        if not any((selection['calibration'], selection['datasets'], selected_batches, selection.get('optimization'),
+                    selection.get('constraint_study'), predictions, reference_evidence)):
             raise ValueError('请至少选择一项已有数据')
         files, source_files = {}, {}
         index = dict(version=VERSION, created_utc=datetime.now(timezone.utc).isoformat(),
@@ -232,6 +236,12 @@ class SystemDataBuilder:
                     raise ValueError('所选约束研究与当前同名数据集的来源不同，请分开打包')
             for name,blob in content.items():put('constraint_studies/'+study['id']+'/'+name,blob)
             index['constraint_study']=study
+        if reference_evidence:
+            index['reference_evidence'] = []
+            for item in reference_evidence:
+                evidence, content = collect_reference_package(self.store, item)
+                put(evidence['path'], content)
+                index['reference_evidence'].append(evidence)
         if any(sha256(path.read_bytes())!=checksum for path,checksum in source_files.items()):
             raise ValueError('校准来源在打包期间变化，未登记新包')
         if any(batch_binding(self.batches,artifact)!=binding for artifact,binding in batch_sources):
@@ -245,6 +255,8 @@ class SystemDataBuilder:
 calibration/保存所选校准原报告、bank、曲线/误差CSV及既有标定/留出材料包。拟合和整材料留出分别报告；原成分、织构与参考状态保留在bank和材料来源中，未知项不补为实测。
 
 predictions/仅含明确勾选的已有材料预测包，保留原输入、父bank、有效子bank、修正曲线及材料出口；不重新预测。整材料排除与训练成员分别保留，不与同材料拟合混称独立验证。零损耗出口不能用于效率排名。
+
+reference_evidence/仅含明确勾选的曲线原表、回线核算或多频留出工作包，原 ZIP 逐字节保留。data_index.json 记录原表与报告身份。共同归档不建立这些试样与校准或电机工况的匹配关系。
 
 motor_datasets/每包仅含一个原模型/协议的数据集、原文件及哈希。原判据通过与官方CSV来源且通过原判据分别列出；V8_1历史处理/估算保留，不能替代当前原生损耗或稳态改善证据。重复材料、工况及曲线节点不增加独立样品数。不同版本不得混拼排名。
 
@@ -270,5 +282,5 @@ manifest.json核对文件完整性；本包是私有冻结快照，不随新任�
             '网页冻结快照：'+str(len(index['datasets']))+'份版本独立电机数据集；校准'+('已包含' if cal else '未选择')+
             '，校准电机批量'+str(len(index['calibrated_batches']))+'份，已有原筛选'+('已包含' if index['optimization'] else '未选择')+
             '，已有约束研究'+('已包含' if index['constraint_study'] else '未选择')+
-            '，保存预测'+str(len(index['saved_predictions']))+'份。原始异常和使用范围保持。'+
+            '，保存预测'+str(len(index['saved_predictions']))+'份，曲线与损耗记录'+str(len(reference_evidence))+'份。原始异常和使用范围保持。'+
             (' '+' '.join(relation_notes) if relation_notes else ''))

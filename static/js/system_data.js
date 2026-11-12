@@ -4,6 +4,12 @@
  const validDataset=id=>/^(v8_1|v8_2_archive|v8_2_bound_archive|scan_[a-f0-9]{12})$/.test(id),validCal=id=>/^cal_[a-f0-9]{12}$/.test(id),validPack=id=>/^pack_[a-f0-9]{16}$/.test(id);
  const numeric=value=>Number.isFinite(value)?value.toFixed(6):'未记录';
  const predictionKey=row=>row.calibration_id+'/'+row.id;
+ const packageViews=new Map([
+  ['external_bh_validation.zip',['查看原表核对','/external-bh-validation/']],
+  ['measured_loop_loss.zip',['查看回线核算','/measured-loop-loss/']],
+  ['frequency_loss_validation.zip',['查看多频复核','/frequency-loss-validation/']],
+ ]);
+ const referencePackages=rows=>rows.filter(row=>row.readable&&validPack(row.id)&&/^[a-f0-9]{64}$/.test(row.sha256)&&packageViews.has(row.source_filename));
  if(typeof module==='object'&&module.exports)module.exports={validDataset,validCal,validPack,numeric};
  if(!root.document)return;
  const $=id=>root.document.getElementById(id);
@@ -18,12 +24,8 @@
    item.append(element('strong',row.title),element('small',row.created_utc+' · '+row.member_count+' 文件 · '+row.bytes+' 字节 · 冻结快照'));
    item.append(element('p',row.description),element('span','SHA-256：'+row.sha256,'sha'));
    item.append(link('下载完整工作包','/api/workbench/system-data/packages/'+row.id+'/download'));
-   if(row.source_filename==='external_bh_validation.zip')
-    item.append(link('查看原表核对','/external-bh-validation/'+row.id));
-   if(row.source_filename==='measured_loop_loss.zip')
-    item.append(link('查看回线核算','/measured-loop-loss/'+row.id));
-   if(row.source_filename==='frequency_loss_validation.zip')
-    item.append(link('查看多频复核','/frequency-loss-validation/'+row.id));
+   const view=packageViews.get(row.source_filename);
+   if(view)item.append(link(view[0],view[1]+row.id));
   }
  }
  function calibrations(rows){
@@ -97,13 +99,14 @@
   }
  }
  let busy=false,building=false,catalog=null;
- function formDisabled(disabled){for(const id of ['packageCalibration','packageBatch','packageMoreBatches','packageOptimization','packageStudy','packageDatasets','packagePredictions','packageBuild'])if($(id))$(id).disabled=disabled}
+ function formDisabled(disabled){for(const id of ['packageCalibration','packageBatch','packageMoreBatches','packageOptimization','packageStudy','packageDatasets','packagePredictions','packageReferenceEvidence','packageBuild'])if($(id))$(id).disabled=disabled}
  function buildOptions(data){
   const previousCal=$('packageCalibration').value,previousBatch=$('packageBatch').value,previousOptimization=$('packageOptimization').value;
   const checked=new Set(Array.from($('packageDatasets').querySelectorAll('input:checked')).map(input=>input.value));
   const hadOptions=$('packageDatasets').querySelectorAll('input').length>0;
   const selectedPredictions=new Set(Array.from($('packagePredictions').querySelectorAll('input:checked')).map(input=>input.value));
   const moreBatches=$('packageMoreBatches'),checkedBatches=new Set(moreBatches?Array.from(moreBatches.querySelectorAll('input:checked')).map(input=>input.value):[]);
+  const references=$('packageReferenceEvidence'),checkedReferences=new Set(references?Array.from(references.querySelectorAll('input:checked')).map(input=>input.value):[]);
   $('packageCalibration').replaceChildren(element('option','不包含校准'));$('packageCalibration').children[0].value='';
   for(const row of data.calibrations.filter(row=>row.readable&&validCal(row.id))){const option=element('option',row.id+' · '+(row.display_label?row.display_label+' · ':'')+row.selected_grades.join('、'));option.value=row.id;$('packageCalibration').append(option)}
   $('packageCalibration').value=data.calibrations.some(row=>row.readable&&row.id===previousCal)?previousCal:'';
@@ -125,6 +128,11 @@
   for(const row of data.datasets.filter(row=>row.readable&&validDataset(row.id))){const label=element('label'),input=element('input');input.type='checkbox';input.value=row.id;input.checked=hadOptions?checked.has(row.id):false;label.append(input,element('span',' '+row.title+' '));$('packageDatasets').append(label,element('br'))}
   $('packagePredictions').replaceChildren(element('legend','已保存的材料预测（至多16份）'));
   for(const row of (data.saved_predictions||[]).filter(row=>row.readable&&validCal(row.calibration_id)&&/^pred_[a-f0-9]{12}$/.test(row.id))){const label=element('label'),input=element('input');input.type='checkbox';input.value=predictionKey(row);input.checked=selectedPredictions.has(input.value);label.append(input,element('span',' '+row.material_name+' · '+row.calibration_id+' · 排除'+(row.excluded_grades?.join('、')||'无')));$('packagePredictions').append(label,element('br'))}
+  if(references){
+   const choices=referencePackages(data.packages);references.replaceChildren(element('legend','已保存曲线与损耗核对（最多12份）'));
+   for(const row of choices){const label=element('label'),input=element('input');input.type='checkbox';input.value=row.id;input.checked=checkedReferences.has(row.id);label.append(input,element('span',' '+row.title+' · '+row.id));references.append(label,element('br'))}
+   if(!choices.length)references.append(element('p','保存原表核对、回线或多频复核后可选择。','muted'));
+  }
   formDisabled(!data.package_build_available);
  }
  async function build(){
@@ -141,7 +149,10 @@
   const predKeys=Array.from($('packagePredictions').querySelectorAll('input:checked')).map(input=>input.value);
   const predictions=(catalog.saved_predictions||[]).filter(row=>row.readable&&predKeys.includes(predictionKey(row)));
   if(predictions.length!==predKeys.length||predictions.length>16){$('packageBuildStatus').textContent='保存预测选择已变化或超过16份，请刷新后重新选择。';return}
-  if(!cal&&!batch&&!extraBatches.length&&!optimization&&!study&&!ids.length&&!predictions.length){$('packageBuildStatus').textContent='请至少选择一项已有数据。';return}
+  const references=$('packageReferenceEvidence'),referenceIds=references?Array.from(references.querySelectorAll('input:checked')).map(input=>input.value):[];
+  const referenceEvidence=referencePackages(catalog.packages).filter(row=>referenceIds.includes(row.id));
+  if(referenceEvidence.length!==referenceIds.length||referenceIds.length>12){$('packageBuildStatus').textContent='曲线与损耗记录已变化或超过12份，请刷新后重新选择。';return}
+  if(!cal&&!batch&&!extraBatches.length&&!optimization&&!study&&!ids.length&&!predictions.length&&!referenceEvidence.length){$('packageBuildStatus').textContent='请至少选择一项已有数据。';return}
   if(ids.length>16){$('packageBuildStatus').textContent='每包最多16份电机数据集，请分开选择。';return}
   const selected=catalog.datasets.filter(row=>ids.includes(row.id)&&row.readable);
   if(selected.length!==ids.length){$('packageBuildStatus').textContent='所选记录已变化，请刷新后重新选择。';return}
@@ -151,6 +162,7 @@
    optimization:optimization?{id:optimization.id,source_binding_sha256:optimization.source_binding_sha256}:null,
    constraint_study:study?{id:study.id,source_binding_sha256:study.source_binding_sha256}:null};
   if(predictions.length)payload.predictions=predictions.map(row=>({calibration_id:row.calibration_id,id:row.id,source_binding_sha256:row.source_binding_sha256}));
+  if(referenceEvidence.length)payload.reference_evidence=referenceEvidence.map(row=>({id:row.id,sha256:row.sha256}));
   if(extraBatches.length)payload.additional_batches=extraBatches.map(row=>({id:row.id,source_binding_sha256:row.source_binding_sha256}));
   building=true;formDisabled(true);$('dataRefresh').disabled=true;$('packageBuildResult').replaceChildren();$('packageBuildStatus').textContent='正在收集所选原文件和核对来源，请等待…';
   try{

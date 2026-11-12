@@ -18,7 +18,8 @@ from modules.measured_loop_loss import DIRECTION_LABELS
 from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
 
 
-VERSION = 'frequency_loss_validation_v1'
+VERSION = 'frequency_loss_validation_v2'
+READABLE_VERSIONS = {VERSION, 'frequency_loss_validation_v1'}
 PACKAGE_FILENAME = 'frequency_loss_validation.zip'
 SOURCE_KINDS = dict(SOURCE_LABELS, reference_statistics='公开测量参考统计')
 AMPLITUDE_COLUMNS = {'peak_B_T': 'B', 'peak_J_T': 'J', 'peak_polarization_J_T': 'J'}
@@ -95,15 +96,10 @@ def read_frequency_table(blob):
                 amplitude_column=amplitude_column, loss_column=loss_column)
 
 
-def _fit_group(rows, holdout, peak):
-    train = [row for row in rows if row['frequency_Hz'] != holdout]
-    target = next((row for row in rows if row['frequency_Hz'] == holdout), None)
+def _nonnegative_prediction(train, holdout, uncertainties):
     frequencies = [row['frequency_Hz'] for row in train]
-    if target is None or len(train) < 4 or not frequencies[0] < holdout < frequencies[-1]:
-        raise ValueError(f'峰值 {peak:g} T 需有留出值，且至少四档训练频率在留出频率两侧共同覆盖')
     f_scale = frequencies[-1]
     y_scale = max(row['loss'] for row in train)
-    uncertainties = [row['standard_u'] for row in train]
     weighted = all(u is not None for u in uncertainties)
     min_u = min(uncertainties) if weighted else None
     weights = np.array([min_u/u for u in uncertainties]) if weighted else np.ones(len(train))
@@ -118,26 +114,43 @@ def _fit_group(rows, holdout, peak):
     except (RuntimeError, np.linalg.LinAlgError) as error:
         raise ValueError('无法稳定拟合，请核对频率和损耗范围') from error
     coeff = [float(value)*y_scale for value in scaled_coeff]
+    return (float(scaled_coeff @ ((holdout/f_scale)**powers))*y_scale,
+            dict(basis_status='fit', weighting='inverse_standard_u' if weighted else 'equal',
+                 basis_scale_Hz=f_scale, basis_coefficients=coeff))
+
+
+def _fit_group(rows, holdout, peak):
+    train = [row for row in rows if row['frequency_Hz'] != holdout]
+    target = next((row for row in rows if row['frequency_Hz'] == holdout), None)
+    frequencies = [row['frequency_Hz'] for row in train]
+    if target is None or len(train) < 2 or not frequencies[0] < holdout < frequencies[-1]:
+        raise ValueError(f'峰值 {peak:g} T 需有留出值，且两侧各有至少一档训练频率')
     actual = target['loss']
     low = next(row for row in reversed(train) if row['frequency_Hz'] < holdout)
     high = next(row for row in train if row['frequency_Hz'] > holdout)
     fraction = (holdout-low['frequency_Hz'])/(high['frequency_Hz']-low['frequency_Hz'])
-    predictions = dict(nonnegative_fit=float(scaled_coeff @ ((holdout/f_scale)**powers))*y_scale,
-                       linear_lowest=train[0]['loss']*(holdout/frequencies[0]),
+    uncertainties = [row['standard_u'] for row in train]
+    predictions = {}
+    if len(train) >= 4:
+        predictions['nonnegative_fit'], fit = _nonnegative_prediction(train, holdout, uncertainties)
+    else:
+        fit = dict(basis_status='insufficient_training_frequencies', weighting=None,
+                   basis_scale_Hz=None, basis_coefficients=None)
+    predictions.update(linear_lowest=train[0]['loss']*(holdout/frequencies[0]),
                        bracket_cycle_linear=(low['loss']*((1-fraction)*(holdout/low['frequency_Hz']))
                                              + high['loss']*(fraction*(holdout/high['frequency_Hz']))))
     errors = {name: dict(predicted=value, signed_error=value-actual,
                          signed_relative_error_pct=100*((value-actual)/actual))
               for name, value in predictions.items()}
-    if not all(math.isfinite(value) for value in coeff + [v for e in errors.values() for v in e.values()]):
+    numbers = (fit['basis_coefficients'] or []) + [value for row in errors.values() for value in row.values()]
+    if not all(math.isfinite(value) for value in numbers):
         raise ValueError('预测或误差超出有限数值范围，请核对原表单位和量级')
     return dict(peak_T=peak, actual_loss=actual, actual_standard_u=target['standard_u'],
                 holdout_source_row=target['source_row'], training_frequencies_Hz=frequencies,
                 training_source_rows=[row['source_row'] for row in train],
                 bracket_Hz=[low['frequency_Hz'], high['frequency_Hz']],
-                weighting='inverse_standard_u' if weighted else 'equal',
                 missing_training_standard_u=uncertainties.count(None),
-                basis_scale_Hz=f_scale, basis_coefficients=coeff, estimates=errors)
+                estimates=errors, **fit)
 
 
 def evaluate_frequency_holdout(table, holdout):
@@ -188,7 +201,8 @@ class FrequencyLossValidation:
                       original=dict(filename=PureWindowsPath(filename).name, bytes=len(blob), sha256=sha256(blob)))
         compare = [dict(peak_T=result['peak_T'], holdout_frequency_Hz=holdout, loss_unit=table['loss_unit'],
                         holdout_source_row=result['holdout_source_row'], actual_loss=result['actual_loss'],
-                        actual_standard_u=result['actual_standard_u'], weighting=result['weighting'], estimator=method, **error)
+                        actual_standard_u=result['actual_standard_u'], basis_status=result['basis_status'],
+                        weighting=result['weighting'] if method == 'nonnegative_fit' else None, estimator=method, **error)
                    for result in evaluations for method, error in result['estimates'].items()]
         files = {'original/loss_table.csv': blob, 'frequency_loss_report.json': json_bytes(report),
                  'holdout_comparison.csv': csv_bytes(compare)}
@@ -202,7 +216,7 @@ class FrequencyLossValidation:
             raise ValueError('工作包类型不符')
         with zipfile.ZipFile(io.BytesIO(blob)) as archive:
             report = json.loads(archive.read('frequency_loss_report.json'))
-        if report['version'] != VERSION:
+        if report['version'] not in READABLE_VERSIONS:
             raise ValueError('多频工作包版本不符')
         return record, report
 

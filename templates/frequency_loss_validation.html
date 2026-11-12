@@ -20,13 +20,14 @@
   <section>
     <h2>{{ source.specimen_id }} · 留出 {{ holdout }} Hz</h2>
     <p>{{ source_kinds[source.source_kind] }} · {{ direction_labels[source.direction] }} · {{ report.rows | length }} 个原表点。损耗单位 {{ unit }}。</p>
-    <p class="muted">每个峰值单独拟合。{{ holdout }} Hz 的损耗和不确定度不参与拟合。相对误差以留出原值为分母，正值表示高估。</p>
+    <p class="muted">每个峰值单独复核。{{ holdout }} Hz 的损耗和不确定度只用于对照。相对误差以留出原值为分母，正值表示高估。</p>
+    {% if report.evaluations | selectattr('weighting', 'none') | list %}<p>少于四档训练频率的峰值只列插值和线性对照，三项拟合留空。</p>{% endif %}
     {% if report.configurations | length > 1 %}<p>原表的配置随记录变化：{{ report.configurations | join('、') }}。留出误差反映这张表的频率和配置组合。</p>{% endif %}
     {% if report.configuration_missing_rows %}<p class="muted">{{ report.configuration_missing_rows }} 个原点未注明试片配置。</p>{% endif %}
     <div class="table-wrap">
       <table>
         <thead><tr><th>峰值 {{ report.table.amplitude }}（T）</th><th>留出原值</th><th>原标准不确定度</th><th>非负拟合</th><th>拟合误差</th><th>最低频线性误差</th><th>相邻频率插值误差</th></tr></thead>
-        <tbody>{% for row in report.evaluations %}<tr><td>{{ number(row.peak_T) }}</td><td>{{ number(row.actual_loss) }}</td><td>{{ number(row.actual_standard_u) }}</td><td>{{ number(row.estimates.nonnegative_fit.predicted) }}</td><td>{{ number(row.estimates.nonnegative_fit.signed_relative_error_pct) }}%</td><td>{{ number(row.estimates.linear_lowest.signed_relative_error_pct) }}%</td><td>{{ number(row.estimates.bracket_cycle_linear.signed_relative_error_pct) }}%</td></tr>{% endfor %}</tbody>
+        <tbody>{% for row in report.evaluations %}<tr><td>{{ number(row.peak_T) }}</td><td>{{ number(row.actual_loss) }}</td><td>{{ number(row.actual_standard_u) }}</td>{% if row.estimates.nonnegative_fit is defined %}<td>{{ number(row.estimates.nonnegative_fit.predicted) }}</td><td>{{ number(row.estimates.nonnegative_fit.signed_relative_error_pct) }}%</td>{% else %}<td>—</td><td>—</td>{% endif %}<td>{{ number(row.estimates.linear_lowest.signed_relative_error_pct) }}%</td><td>{{ number(row.estimates.bracket_cycle_linear.signed_relative_error_pct) }}%</td></tr>{% endfor %}</tbody>
       </table>
     </div>
     <details>
@@ -34,7 +35,7 @@
       <p class="muted">非负拟合采用 f、f<sup>1.5</sup> 和 f² 三项；训练点均有标准不确定度时按其倒数加权。最低频对照按频率正比换算；相邻频率对照先在最近两训练点之间插值每周期损耗，再乘留出频率。</p>
       <div class="table-wrap"><table>
         <thead><tr><th>峰值 {{ report.table.amplitude }}（T）</th><th>训练频率（Hz）</th><th>训练权重</th><th>插值区间（Hz）</th><th>留出值源行</th></tr></thead>
-        <tbody>{% for row in report.evaluations %}<tr><td>{{ number(row.peak_T) }}</td><td>{{ row.training_frequencies_Hz | join('、') }}</td><td>{{ '标准不确定度倒数' if row.weighting == 'inverse_standard_u' else '等权（部分或全部训练点无标准不确定度）' }}</td><td>{{ row.bracket_Hz | join('–') }}</td><td>{{ row.holdout_source_row }}</td></tr>{% endfor %}</tbody>
+        <tbody>{% for row in report.evaluations %}<tr><td>{{ number(row.peak_T) }}</td><td>{{ row.training_frequencies_Hz | join('、') }}</td><td>{% if row.weighting is none %}未拟合（训练频率不足）{% elif row.weighting == 'inverse_standard_u' %}标准不确定度倒数{% else %}等权（部分或全部训练点无标准不确定度）{% endif %}</td><td>{{ row.bracket_Hz | join('–') }}</td><td>{{ row.holdout_source_row }}</td></tr>{% endfor %}</tbody>
       </table></div>
     </details>
     <details>
@@ -58,7 +59,7 @@
 {% else %}
   <section>
     <h2>上传一个试样的多频损耗表</h2>
-    <p class="muted">用 UTF-8 CSV，表头如 <code>frequency_Hz,peak_J_T,specific_loss_W_per_kg,standard_u_W_per_kg,configuration</code>。可改用 <code>peak_B_T</code>，或改用 <code>volume_loss_W_per_m3,standard_u_W_per_m3</code>。标准不确定度和配置可省略。每个峰值至少要有五档频率，留出频率须处于其他频率之间。</p>
+    <p class="muted">用 UTF-8 CSV，表头如 <code>frequency_Hz,peak_J_T,specific_loss_W_per_kg,standard_u_W_per_kg,configuration</code>。可改用 <code>peak_B_T</code>，或改用 <code>volume_loss_W_per_m3,standard_u_W_per_m3</code>。标准不确定度和配置可省略。每个峰值至少要有三档频率，留出点须处于其他频率之间；五档起可另外做三项拟合。</p>
     {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
     <form method="post" action="{{ url_for('.save') }}" enctype="multipart/form-data">
       <div class="grid">

@@ -61,6 +61,11 @@ async function flush(){for(let i=0;i<12;i++)await Promise.resolve()}
  for(const id of ['packageCalibration','packageBatch','packageOptimization','packageStudy'])nodes.get(id).value='';
  for(const id of ['packagePredictions','packageDatasets'])nodes.get(id).querySelectorAll('input').forEach(input=>input.checked=false);
  await nodes.get('packageBuild').listeners.click();const onlyExtra=JSON.parse(calls.filter(call=>call.options.method==='POST').at(-1).options.body);assert.equal(onlyExtra.batch,null);assert.equal(onlyExtra.additional_batches.length,1);assert.equal(onlyExtra.calibration,null);
+ extra().forEach(input=>input.checked=false);
+ const refs=()=>nodes.get('packageReferenceEvidence').querySelectorAll('input');assert.equal(refs().length,1);refs()[0].checked=true;
+ await nodes.get('dataRefresh').listeners.click();assert.equal(refs()[0].checked,true);
+ await nodes.get('packageBuild').listeners.click();const onlyReference=JSON.parse(calls.filter(call=>call.options.method==='POST').at(-1).options.body);
+ assert.deepEqual(onlyReference,{calibration:null,batch:null,datasets:[],optimization:null,constraint_study:null,reference_evidence:[{id:'pack_2468ace02468ace0',sha256:'e'.repeat(64)}]});
  let completeBuild;buildHandler=()=>new Promise(resolve=>completeBuild=resolve);const building=nodes.get('packageBuild').listeners.click();await flush();const beforePending=calls.length;await nodes.get('packageBuild').listeners.click();await nodes.get('dataRefresh').listeners.click();assert.equal(calls.length,beforePending);assert.equal(nodes.get('dataRefresh').disabled,true);completeBuild({id:'pack_2222222222222222',title:'second',member_count:2,sha256:'2'.repeat(64)});await building;
  buildHandler=()=>{throw Error('response lost')};await nodes.get('packageBuild').listeners.click();assert.match(nodes.get('packageBuildStatus').textContent,/response lost.*不自动重复生成/);assert.equal(nodes.get('packageBuildResult').children.length,0);
  handler=()=>({...structuredClone(fixture),packages:[{id:'pack_0123456789abcdef',readable:false,error:'changed bytes'}],datasets:[{id:'scan_aaaaaaaaaaaa',readable:false,error:'broken source'}],counts:{...fixture.counts,complete:false,dataset_count:0,row_count:0,original_accepted_count:0,native_csv_accepted_count:0}});

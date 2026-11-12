@@ -1,0 +1,164 @@
+{
+  "evaluations": [
+    {
+      "actual_loss": 6.682,
+      "actual_standard_u": 0.024,
+      "basis_coefficients": null,
+      "basis_scale_Hz": null,
+      "basis_status": "insufficient_training_frequencies",
+      "bracket_Hz": [
+        200.0,
+        1000.0
+      ],
+      "estimates": {
+        "bracket_cycle_linear": {
+          "predicted": 6.2940000000000005,
+          "signed_error": -0.3879999999999999,
+          "signed_relative_error_pct": -5.806644717150552
+        },
+        "linear_lowest": {
+          "predicted": 4.324,
+          "signed_error": -2.3580000000000005,
+          "signed_relative_error_pct": -35.288835677940746
+        }
+      },
+      "holdout_source_row": 6,
+      "missing_training_standard_u": 0,
+      "peak_T": 1.0,
+      "training_frequencies_Hz": [
+        200.0,
+        1000.0
+      ],
+      "training_source_rows": [
+        2,
+        10
+      ],
+      "weighting": null
+    },
+    {
+      "actual_loss": 14.909,
+      "actual_standard_u": 0.068,
+      "basis_coefficients": null,
+      "basis_scale_Hz": null,
+      "basis_status": "insufficient_training_frequencies",
+      "bracket_Hz": [
+        200.0,
+        1000.0
+      ],
+      "estimates": {
+        "bracket_cycle_linear": {
+          "predicted": 13.852500000000003,
+          "signed_error": -1.056499999999998,
+          "signed_relative_error_pct": -7.0863236970957
+        },
+        "linear_lowest": {
+          "predicted": 9.65,
+          "signed_error": -5.259,
+          "signed_relative_error_pct": -35.27399557314374
+        }
+      },
+      "holdout_source_row": 7,
+      "missing_training_standard_u": 0,
+      "peak_T": 1.5,
+      "training_frequencies_Hz": [
+        200.0,
+        1000.0
+      ],
+      "training_source_rows": [
+        3,
+        11
+      ],
+      "weighting": null
+    },
+    {
+      "actual_loss": 19.087,
+      "actual_standard_u": 0.094,
+      "basis_coefficients": null,
+      "basis_scale_Hz": null,
+      "basis_status": "insufficient_training_frequencies",
+      "bracket_Hz": [
+        200.0,
+        1000.0
+      ],
+      "estimates": {
+        "bracket_cycle_linear": {
+          "predicted": 18.049,
+          "signed_error": -1.0380000000000003,
+          "signed_relative_error_pct": -5.438256404882906
+        },
+        "linear_lowest": {
+          "predicted": 12.604,
+          "signed_error": -6.4830000000000005,
+          "signed_relative_error_pct": -33.965526274427624
+        }
+      },
+      "holdout_source_row": 8,
+      "missing_training_standard_u": 0,
+      "peak_T": 1.7,
+      "training_frequencies_Hz": [
+        200.0,
+        1000.0
+      ],
+      "training_source_rows": [
+        4,
+        12
+      ],
+      "weighting": null
+    },
+    {
+      "actual_loss": 22.18,
+      "actual_standard_u": 0.18,
+      "basis_coefficients": null,
+      "basis_scale_Hz": null,
+      "basis_status": "insufficient_training_frequencies",
+      "bracket_Hz": [
+        200.0,
+        1000.0
+      ],
+      "estimates": {
+        "bracket_cycle_linear": {
+          "predicted": 21.3965,
+          "signed_error": -0.7835000000000001,
+          "signed_relative_error_pct": -3.5324616771866553
+        },
+        "linear_lowest": {
+          "predicted": 15.234,
+          "signed_error": -6.946,
+          "signed_relative_error_pct": -31.31650135256988
+        }
+      },
+      "holdout_source_row": 9,
+      "missing_training_standard_u": 0,
+      "peak_T": 1.8,
+      "training_frequencies_Hz": [
+        200.0,
+        1000.0
+      ],
+      "training_source_rows": [
+        5,
+        13
+      ],
+      "weighting": null
+    }
+  ],
+  "holdout_Hz": 400,
+  "independently_recomputed_estimates": 8,
+  "original_units": {
+    "amplitude": "peak J (T)",
+    "power_loss": "W/kg"
+  },
+  "source_doi": "10.5281/zenodo.10032756",
+  "source_license": "CC BY 4.0",
+  "source_page": 22,
+  "source_points": 12,
+  "source_sample": "Laser scribed GO 0.2",
+  "source_table_page_20_combined": false,
+  "source_table_sha256": "ed9ba7bf98e5228e4a2981b3a00d78c57563d669d6906f6b1e731533ef27ba67",
+  "source_table_variant": "including_Lab2_alternate_configuration",
+  "trained_three_term_model": false,
+  "training_Hz": [
+    200,
+    1000
+  ],
+  "version": "frequency_loss_validation_v2"
+}

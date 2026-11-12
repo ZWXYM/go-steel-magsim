@@ -10,8 +10,11 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from modules.external_bh_intake import ExternalBHIntake
+from modules.frequency_loss_validation import FrequencyLossValidation
 from modules.material_calibration import CalibrationBank, VERSION, PHYSICS_VERSION
-from modules.system_data import WorkpackStore,json_bytes,sha256
+from modules.measured_loop_loss import MeasuredLoopLoss
+from modules.system_data import WorkpackStore,json_bytes,sha256,workpack_bytes
 from modules.system_data_builder import SystemDataBuilder,batch_binding
 
 
@@ -81,6 +84,59 @@ class SystemDataBuilderTests(unittest.TestCase):
             self.assertFalse(any(name.startswith('calibration/') for name in archive.namelist()))
             self.assertEqual(len([name for name in archive.namelist() if name.startswith('motor_datasets/')]),1)
             self.assertIsNone(json.loads(archive.read('data_index.json'))['calibration'])
+
+    def test_reference_records_keep_nested_bytes_and_source_identity_alongside_calibration(self):
+        store = self.builder.store
+        curve = b'H_A_per_m,B_T\n0,0\n800,1.5\n'
+        cycle = b'H_A_per_m,J_T\n400,0\n0,1.2\n-400,0\n0,-1.2\n400,0\n'
+        frequencies = b'frequency_Hz,peak_J_T,specific_loss_W_per_kg\n50,1.5,.25\n60,1.5,.36\n100,1.5,1\n'
+        saved = [ExternalBHIntake(None, store).save(dict(mode='archive', source_reference='示例图', source_kind='digitized'),
+                                                  {'RD':('curve.csv', curve)}),
+                 MeasuredLoopLoss(store).save(dict(source_reference='回线对照',source_kind='demonstration',
+                                                   specimen_id='coupon-loop',frequency_hz='50',single_cycle='yes'),
+                                              'loop.csv',cycle),
+                 FrequencyLossValidation(store).save(dict(source_reference='多频对照',source_kind='demonstration',
+                                                           specimen_id='coupon-frequency',holdout_frequency_Hz='60',one_series='yes'),
+                                                       'frequency.csv',frequencies)]
+        selected = [{key: row[key] for key in ('id','sha256')} for row in saved]
+        originals = {row['id']: store.read(row['id'])[1] for row in saved}
+        with patch('subprocess.Popen', side_effect=AssertionError('archival does not launch jobs')):
+            record = self.builder.build(dict(self.selection,reference_evidence=selected))
+        with zipfile.ZipFile(io.BytesIO(store.read(record['id'])[1])) as archive:
+            index = json.loads(archive.read('data_index.json'))
+            self.assertEqual(index['calibration']['id'], self.calid)
+            self.assertEqual(index['new_analyses'], 0)
+            for evidence, raw in zip(index['reference_evidence'], (curve,cycle,frequencies)):
+                self.assertEqual(archive.read(evidence['path']), originals[evidence['id']])
+                self.assertFalse(evidence['joined_to_other_results'])
+                [original] = evidence['originals'].values()
+                self.assertEqual(original['sha256'], sha256(raw))
+            self.assertEqual([e['kind'] for e in index['reference_evidence']],
+                             ['magnetization_table','ordered_loop','frequency_holdout'])
+            self.assertEqual([e['declared_specimen_id'] for e in index['reference_evidence']],
+                             [None,'coupon-loop','coupon-frequency'])
+            self.assertEqual(index['reference_evidence'][0]['declared_source_kind'], 'digitized')
+        self.assertEqual({key: store.read(key)[1] for key in originals}, originals)
+
+    def test_reference_selection_rejects_stale_duplicate_and_unbound_sources(self):
+        store = self.builder.store
+        original = b'H_A_per_m,B_T\n0,0\n800,1.5\n'
+        saved = ExternalBHIntake(None, store).save(dict(mode='archive', source_reference='示例'),
+                                                   {'TD':('curve.csv', original)})
+        intact = {key:saved[key] for key in ('id','sha256')}
+        unrelated = store.register_bytes(workpack_bytes({'README.md':b'unrelated'}), 'unrelated')
+        source = dict(version='measured_loop_loss_v1', source=dict(source_reference='demo',source_kind='demonstration'),
+                      original=dict(sha256='0'*64, bytes=len(original)))
+        mislabeled = store.register_bytes(workpack_bytes({'loop_loss_report.json':json_bytes(source),
+                                                         'original/cycle.csv':original}),
+                                          'mismatched original hash',source_filename='measured_loop_loss.zip')
+        before = {row['id'] for row in store.records()}
+        for selected, message in (([intact,intact], '不可重复'), ([dict(intact,sha256='f'*64)], '已变化'),
+                                  ([{key:unrelated[key] for key in ('id','sha256')}], '只支持'),
+                                  ([{key:mislabeled[key] for key in ('id','sha256')}], '原表声明')):
+            with self.subTest(message=message), self.assertRaisesRegex(ValueError, message):
+                self.builder.build(dict(calibration=None,batch=None,datasets=[],reference_evidence=selected))
+        self.assertEqual({row['id'] for row in store.records()}, before)
 
     def test_changed_selected_report_or_source_binding_does_not_create_a_package(self):
         for field in ('report','dataset'):

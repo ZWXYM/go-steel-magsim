@@ -54,7 +54,7 @@ class FrequencyLossTest(unittest.TestCase):
 
     def test_rejects_extrapolation_mixed_identifiers_and_ambiguous_units(self):
         for invalid_target in (50, 300, 1000):
-            with self.subTest(invalid_target=invalid_target), self.assertRaisesRegex(ValueError, '至少四档训练频率'):
+            with self.subTest(invalid_target=invalid_target), self.assertRaisesRegex(ValueError, '两侧各有至少一档训练频率'):
                 evaluate_frequency_holdout(read_frequency_table(sample_table()), invalid_target)
         for varied in (0, 1, 2):
             with self.subTest(varied=varied), self.assertRaisesRegex(ValueError, '一个试样、方向和统计版本'):
@@ -63,6 +63,21 @@ class FrequencyLossTest(unittest.TestCase):
             read_frequency_table(sample_table().replace(b'standard_u_W_per_m3', b'standard_u_W_per_kg'))
         with self.assertRaisesRegex(ValueError, '一种峰值量'):
             read_frequency_table(b'frequency_Hz,peak_J_T,peak_B_T,specific_loss_W_per_kg\n100,1,1,2\n')
+
+    def test_three_frequencies_only_support_bracketed_interpolation(self):
+        header = 'frequency_Hz,peak_J_T,specific_loss_W_per_kg,standard_u_W_per_kg\n'
+        # Peak 1.5 has the usual 50/60/100 Hz source minimum, while peak 1.7 has five rates.
+        losses = [(1.5, (50,60,100)), (1.7, (50,60,100,200,400))]
+        original = (header + ''.join(f'{f},{peak},{(f/100)**2},.01\n' for peak, rates in losses for f in rates)).encode()
+        sparse, dense = evaluate_frequency_holdout(read_frequency_table(original), 60)
+        self.assertEqual(sparse['basis_status'], 'insufficient_training_frequencies')
+        self.assertIsNone(sparse['basis_coefficients'])
+        self.assertNotIn('nonnegative_fit', sparse['estimates'])
+        self.assertAlmostEqual(sparse['estimates']['bracket_cycle_linear']['predicted'], .36)
+        self.assertAlmostEqual(sparse['estimates']['linear_lowest']['predicted'], .30)
+        self.assertEqual(sparse['training_frequencies_Hz'], [50, 100])
+        self.assertEqual(dense['basis_status'], 'fit')
+        self.assertAlmostEqual(dense['estimates']['nonnegative_fit']['predicted'], .36)
 
     def test_form_reopens_raw_upload_and_retains_configuration_and_units(self):
         temporary = tempfile.TemporaryDirectory()

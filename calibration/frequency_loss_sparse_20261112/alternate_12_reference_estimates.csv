@@ -1,0 +1,13 @@
+﻿sample_label,page,table_variant,peak_polarization_J_T,frequency_Hz,specific_power_loss_xref_W_per_kg,reference_u_W_per_kg,nominal_strip_configuration
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.0,200,2.162,0.018,1-16
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.5,200,4.825,0.026,1-16
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.7,200,6.302,0.039,1-16
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.8,200,7.617,0.092,1-16
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.0,400,6.682,0.024,1-12
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.5,400,14.909,0.068,1-12
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.7,400,19.087,0.094,1-12
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.8,400,22.18,0.18,1-12
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.0,1000,30.51,0.21,1-12
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.5,1000,66.15,0.3,1-12
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.7,1000,85.96,0.39,1-12
+Laser scribed GO 0.2,22,including_Lab2_alternate_configuration,1.8,1000,99.71,0.52,1-12

@@ -328,3 +328,5 @@ templates/frequency_loss_validation.html -text
 docs/frequency_loss_validation.md -text
 tests/test_frequency_loss_validation.py -text
 calibration/frequency_loss_workbench_20261112/** -text
+calibration/frequency_loss_sparse_20261112/** -text
+modules/system_data_reference_evidence.py -text
