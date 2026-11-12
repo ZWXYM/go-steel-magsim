@@ -22,6 +22,8 @@
     item.append(link('查看原表核对','/external-bh-validation/'+row.id));
    if(row.source_filename==='measured_loop_loss.zip')
     item.append(link('查看回线核算','/measured-loop-loss/'+row.id));
+   if(row.source_filename==='frequency_loss_validation.zip')
+    item.append(link('查看多频复核','/frequency-loss-validation/'+row.id));
   }
  }
  function calibrations(rows){

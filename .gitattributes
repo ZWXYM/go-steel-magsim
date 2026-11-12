@@ -323,3 +323,8 @@ templates/measured_loop_loss.html -text
 tests/test_measured_loop_loss.py -text
 calibration/measured_loop_workbench_20261111/** -text
 calibration/four_catalog_com_control_20261112/** -text
+modules/frequency_loss_validation.py -text
+templates/frequency_loss_validation.html -text
+docs/frequency_loss_validation.md -text
+tests/test_frequency_loss_validation.py -text
+calibration/frequency_loss_workbench_20261112/** -text

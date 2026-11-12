@@ -38,12 +38,14 @@ from modules.system_data import SystemData,create_system_data_routes
 from modules.system_data_builder import SystemDataBuilder
 from modules.external_bh_intake import ExternalBHIntake, create_external_bh_routes
 from modules.measured_loop_loss import MeasuredLoopLoss, create_measured_loop_routes
+from modules.frequency_loss_validation import FrequencyLossValidation, create_frequency_loss_routes
 from modules.motor_constraint_studies import MotorConstraintStudies,create_constraint_study_routes
 from modules.calibration_regularized import default_eligible
 
 SYSTEM_GUIDE_DOCUMENTS=frozenset(('system_user_guide.md','custom_material_full_chain_20261020.md','batch_result_views_20261020.md',
     'actual_motor_material_exports_20261106.md','engineering_motor_mode_20261105.md','motor_dataset_export_20261106.md',
-    'plan_results_20261110.md','torque_windows_20261022.md','external_bh_validation.md','measured_loop_loss.md'))
+    'plan_results_20261110.md','torque_windows_20261022.md','external_bh_validation.md','measured_loop_loss.md',
+    'frequency_loss_validation.md'))
 
 
 def create_workbench(project,storage=None,root=None,script_history=None):
@@ -80,6 +82,7 @@ def create_workbench(project,storage=None,root=None,script_history=None):
     bp.register_blueprint(create_system_data_routes(data_manager))
     bp.register_blueprint(create_external_bh_routes(ExternalBHIntake(materials, data_manager.packages)))
     bp.register_blueprint(create_measured_loop_routes(MeasuredLoopLoss(data_manager.packages)))
+    bp.register_blueprint(create_frequency_loss_routes(FrequencyLossValidation(data_manager.packages)))
     studies=MotorConstraintStudies(optimization,storage/'optimization_sensitivity')
     bp.register_blueprint(create_constraint_study_routes(studies))
     from modules.motor_study_applications import MotorStudyApplications,create_study_application_routes

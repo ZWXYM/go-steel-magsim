@@ -5,7 +5,8 @@ const {validDataset,validCal,validPack}=require('../static/js/system_data.js');
 assert(validDataset('scan_aaaaaaaaaaaa'));assert(validDataset('v8_2_bound_archive'));assert(!validDataset('../v8_1'));assert(!validCal('javascript:bad'));assert(validPack('pack_0123456789abcdef'));
 const fixture={schema:'go_steel_system_data_v1',created_utc:'2026-11-06',scope:'saved inventory',
  counts:{complete:true,dataset_count:2,row_count:4,original_accepted_count:2,native_csv_accepted_count:1},package_build_available:true,
- packages:[{id:'pack_0123456789abcdef',readable:true,title:'<script>原包</script>',created_utc:'2026-11-06',member_count:54,bytes:1000,sha256:'a'.repeat(64),description:'private snapshot'}],
+ packages:[{id:'pack_0123456789abcdef',readable:true,title:'<script>原包</script>',created_utc:'2026-11-06',member_count:54,bytes:1000,sha256:'a'.repeat(64),description:'private snapshot'},
+ {id:'pack_2468ace02468ace0',readable:true,title:'频率留出复核',created_utc:'2026-11-12',member_count:4,bytes:2000,sha256:'e'.repeat(64),description:'同试样表内检验',source_filename:'frequency_loss_validation.zip'}],
  calibrations:[{id:'cal_bbbbbbbbbbbb',readable:true,report_sha256:'c'.repeat(64),selected_grades:['B23R075'],calibration_version:'fit_v2',H_axis:'physical_A_per_m',calibration_fit:{mean_rmse_T:.01},material_holdout:{mean_rmse_T:.04},bank_sha256:'b'.repeat(64)}],
  saved_predictions:[{id:'pred_123456abcdef',calibration_id:'cal_bbbbbbbbbbbb',readable:true,source_binding_sha256:'9'.repeat(64),material_name:'B30 heldout',excluded_grades:['B30P105']}],
  constraint_studies:[{id:'csens_ffffffffffff',readable:true,source_binding_sha256:'b'.repeat(64),dataset:'scan_aaaaaaaaaaaa',configuration_count:48,original_default_candidate_count:0}],
@@ -44,6 +45,7 @@ async function flush(){for(let i=0;i<12;i++)await Promise.resolve()}
  assert.deepEqual(JSON.parse(write.options.body),{calibration:{id:'cal_bbbbbbbbbbbb',report_sha256:'c'.repeat(64)},batch:{id:'bhbatch_dddddddddddd',source_binding_sha256:'d'.repeat(64)},datasets:[{id:'scan_aaaaaaaaaaaa',source_hashes_sha256:'f'.repeat(64)}],optimization:{id:'opt_eeeeeeeeeeee',source_binding_sha256:'a'.repeat(64)},constraint_study:{id:'csens_ffffffffffff',source_binding_sha256:'b'.repeat(64)}});
  assert.match(nodes.get('optimizationRecordStatus').textContent,/1\/1.*无改善候选/);
  assert(links().includes('/api/workbench/system-data/packages/pack_1111111111111111/download'));assert.match(nodes.get('packageBuildStatus').textContent,/已保存 pack_1111111111111111/);
+ assert(links().includes('/frequency-loss-validation/pack_2468ace02468ace0'));
  assert.equal(nodes.get('packagePredictions').querySelectorAll('input')[0].checked,false);
  nodes.get('packagePredictions').querySelectorAll('input')[0].checked=true;
  await nodes.get('dataRefresh').listeners.click();assert.equal(nodes.get('packagePredictions').querySelectorAll('input')[0].checked,true);

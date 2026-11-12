@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>多频损耗留出复核</title>
+  <link rel="stylesheet" href="/static/css/material_measurement.css">
+</head>
+<body>
+<header>
+  <h1>多频损耗留出复核</h1>
+  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/material-loss-reference">厂家损耗参考</a><a href="/measured-loop-loss">实测回线核算</a><a href="/system-data">系统数据与下载</a></nav>
+</header>
+<main>
+{% macro number(value) %}{{ '%.8g' | format(value) if value is not none else '—' }}{% endmacro %}
+{% if report is defined %}
+  {% set source = report.source %}
+  {% set holdout = number(report.holdout_frequency_Hz) %}
+  {% set unit = report.table.loss_unit %}
+  <section>
+    <h2>{{ source.specimen_id }} · 留出 {{ holdout }} Hz</h2>
+    <p>{{ source_kinds[source.source_kind] }} · {{ direction_labels[source.direction] }} · {{ report.rows | length }} 个原表点。损耗单位 {{ unit }}。</p>
+    <p class="muted">每个峰值单独拟合。{{ holdout }} Hz 的损耗和不确定度不参与拟合。相对误差以留出原值为分母，正值表示高估。</p>
+    {% if report.configurations | length > 1 %}<p>原表的配置随记录变化：{{ report.configurations | join('、') }}。留出误差反映这张表的频率和配置组合。</p>{% endif %}
+    {% if report.configuration_missing_rows %}<p class="muted">{{ report.configuration_missing_rows }} 个原点未注明试片配置。</p>{% endif %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>峰值 {{ report.table.amplitude }}（T）</th><th>留出原值</th><th>原标准不确定度</th><th>非负拟合</th><th>拟合误差</th><th>最低频线性误差</th><th>相邻频率插值误差</th></tr></thead>
+        <tbody>{% for row in report.evaluations %}<tr><td>{{ number(row.peak_T) }}</td><td>{{ number(row.actual_loss) }}</td><td>{{ number(row.actual_standard_u) }}</td><td>{{ number(row.estimates.nonnegative_fit.predicted) }}</td><td>{{ number(row.estimates.nonnegative_fit.signed_relative_error_pct) }}%</td><td>{{ number(row.estimates.linear_lowest.signed_relative_error_pct) }}%</td><td>{{ number(row.estimates.bracket_cycle_linear.signed_relative_error_pct) }}%</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <details>
+      <summary>训练频率、权重与插值区间</summary>
+      <p class="muted">非负拟合采用 f、f<sup>1.5</sup> 和 f² 三项；训练点均有标准不确定度时按其倒数加权。最低频对照按频率正比换算；相邻频率对照先在最近两训练点之间插值每周期损耗，再乘留出频率。</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>峰值 {{ report.table.amplitude }}（T）</th><th>训练频率（Hz）</th><th>训练权重</th><th>插值区间（Hz）</th><th>留出值源行</th></tr></thead>
+        <tbody>{% for row in report.evaluations %}<tr><td>{{ number(row.peak_T) }}</td><td>{{ row.training_frequencies_Hz | join('、') }}</td><td>{{ '标准不确定度倒数' if row.weighting == 'inverse_standard_u' else '等权（部分或全部训练点无标准不确定度）' }}</td><td>{{ row.bracket_Hz | join('–') }}</td><td>{{ row.holdout_source_row }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </details>
+    <details>
+      <summary>测量来源与原文件</summary>
+      <dl>
+        <dt>原表来源</dt><dd>{{ source.source_reference }}</dd>
+        <dt>原表牌号</dt><dd>{{ source.reported_grade or '未记录' }}</dd>
+        <dt>方法及条件</dt><dd>{{ source.method or '未记录' }}{% if source.conditions %} · {{ source.conditions }}{% endif %}</dd>
+        <dt>统计版本</dt><dd>{{ source.input_table_identity.table_variant or '表内未标注' }}</dd>
+        <dt>原文件</dt><dd>{{ report.original.filename }} · {{ report.original.bytes }} 字节<br>SHA-256 {{ report.original.sha256 }}</dd>
+      </dl>
+      <div class="table-wrap"><table>
+        <thead><tr><th>源行</th><th>峰值（T）</th><th>频率（Hz）</th><th>损耗</th><th>标准不确定度</th><th>配置</th><th>用途</th></tr></thead>
+        <tbody>{% for row in report.rows[:100] %}<tr><td>{{ row.source_row }}</td><td>{{ number(row.peak_T) }}</td><td>{{ number(row.frequency_Hz) }}</td><td>{{ number(row.loss) }}</td><td>{{ number(row.standard_u) }}</td><td>{{ row.configuration or '—' }}</td><td>{{ '留出' if row.role == 'holdout' else '训练' }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      {% if report.rows | length > 100 %}<p>页面显示前 100 点；完整原表及用途见工作包。</p>{% endif %}
+    </details>
+    <p class="muted">这是表内频率留出。牌号、方向和配置的适用范围由原始测量记录决定；计算结果不写回材料库或电机系数。</p>
+    <div class="actions"><a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载原表与复核结果</a><a href="{{ url_for('.page') }}">复核另一张表</a></div>
+  </section>
+{% else %}
+  <section>
+    <h2>上传一个试样的多频损耗表</h2>
+    <p class="muted">用 UTF-8 CSV，表头如 <code>frequency_Hz,peak_J_T,specific_loss_W_per_kg,standard_u_W_per_kg,configuration</code>。可改用 <code>peak_B_T</code>，或改用 <code>volume_loss_W_per_m3,standard_u_W_per_m3</code>。标准不确定度和配置可省略。每个峰值至少要有五档频率，留出频率须处于其他频率之间。</p>
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    <form method="post" action="{{ url_for('.save') }}" enctype="multipart/form-data">
+      <div class="grid">
+        <label>多频损耗原表<input type="file" name="loss_table" accept=".csv,text/csv" required></label>
+        <label>留出频率（Hz）<input type="number" step="any" name="holdout_frequency_Hz" required value="{{ form.get('holdout_frequency_Hz', '') }}"></label>
+        <label>来源类别<select name="source_kind">{% for value, label in source_kinds.items() %}<option value="{{ value }}"{% if form.get('source_kind', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+        <label>测量方向<select name="direction">{% for value, label in direction_labels.items() %}<option value="{{ value }}"{% if form.get('direction', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+      </div>
+      <label>原表来源或测量记录编号<textarea name="source_reference" required maxlength="1200">{{ form.get('source_reference', '') }}</textarea></label>
+      <div class="grid">
+        <label>原试样标识（表中有 sample_label 时可留空）<input name="specimen_id" maxlength="1200" value="{{ form.get('specimen_id', '') }}"></label>
+        <label>原表标注牌号<input name="reported_grade" maxlength="1200" value="{{ form.get('reported_grade', '') }}"></label>
+        <label>测量方法<input name="method" maxlength="1200" value="{{ form.get('method', '') }}"></label>
+        <label>其他试验条件<input name="conditions" maxlength="1200" value="{{ form.get('conditions', '') }}"></label>
+      </div>
+      <label class="check"><input type="checkbox" name="one_series" value="yes" required{% if form.get('one_series') == 'yes' %} checked{% endif %}>确认原表只含一个试样、一个方向和一个统计版本</label>
+      <button>留出复核并保存</button>
+    </form>
+  </section>
+{% endif %}
+</main>
+</body>
+</html>
