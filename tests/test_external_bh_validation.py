@@ -69,6 +69,26 @@ class ExternalBHValidationTest(unittest.TestCase):
         models['b']['H'] = [1100, 2000]
         self.assertEqual(field_weighted_errors(measured, models)['bands']['common']['span_A_per_m'], 0)
 
+    def test_focus_keeps_full_table_and_reports_actual_measurement_spacing(self):
+        measured = read_measurement_csv(b'H_A_per_m,B_T\n0,0\n1000,0\n', 'TD')
+        model = {'holdout': {'H':[200,600], 'B':[.2,.6]}}
+        baseline = field_weighted_errors(measured, model)['bands']
+        bands = field_weighted_errors(measured, model, focus=(100,400))['bands']
+        band = bands.pop('focus')
+        self.assertEqual(bands, baseline)
+        self.assertEqual(band['requested_H_range_A_per_m'], [100,400])
+        self.assertEqual(band['H_range_A_per_m'], [200,400])
+        self.assertEqual(band['original_points'], 0)
+        self.assertEqual(band['largest_original_gap_A_per_m'], 200)
+        self.assertEqual(band['largest_bracketing_original_gap_A_per_m'], 1000)
+        self.assertAlmostEqual(band['metrics']['holdout']['mae_T'], .3)
+        self.assertAlmostEqual(band['metrics']['holdout']['rmse_T'], math.sqrt((.04+.08+.16)/3))
+        outside = field_weighted_errors(measured, model, focus=(650,850))['bands']['focus']
+        self.assertIsNone(outside['H_range_A_per_m'])
+        self.assertIsNone(outside['metrics']['holdout'])
+        with self.assertRaises(ValueError):
+            field_weighted_errors(measured, model, focus=(400,100))
+
     def test_unknown_units_ambiguous_ordinate_and_loop_rejected(self):
         bad = (b'H,B_T\n10,1\n20,2\n',
                b'H_A_per_m,B_T,J_T\n10,1,1\n20,2,2\n',

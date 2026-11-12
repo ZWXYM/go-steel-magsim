@@ -51,11 +51,14 @@
       <div class="table-wrap"><table>
         <thead><tr><th>方向</th><th>区段</th><th>实际 H 范围（A/m）</th><th>区段内最大原表插值跨度（A/m）</th>{% if secondary %}<th>校准记录</th>{% endif %}<th>拟合 RMSE（T）</th><th>留出 RMSE（T）</th><th>拟合 MAE（T）</th><th>留出 MAE（T）</th></tr></thead>
         <tbody>{% for direction in directions %}
-        {% for key, label in [('common','全共同范围'), ('up_to_800','至 800 A/m'), ('from_800','从 800 A/m')] %}
-        {% set band = report.comparison[direction].field_weighted.bands[key] %}
+        {% set bands = report.comparison[direction].field_weighted.bands %}
+        {% set segments = [('common','全共同范围'), ('up_to_800','至 800 A/m'), ('from_800','从 800 A/m')] %}
+        {% if 'focus' in bands %}{% set segments = segments + [('focus','指定区间')] %}{% endif %}
+        {% for key, label in segments %}
+        {% set band = bands[key] %}
         {% for identity, prefix in versions %}
-          <tr><th scope="row">{{ direction }}</th><td>{{ label }}</td><td>{% if band.H_range_A_per_m %}{{ number(band.H_range_A_per_m[0]) }} 至 {{ number(band.H_range_A_per_m[1]) }}{% else %}无共同区段{% endif %}</td>
-          <td>{{ number(band.largest_original_gap_A_per_m) }}</td>{% if secondary %}<td>{{ identity.calibration_id }}</td>{% endif %}
+          <tr><th scope="row">{{ direction }}</th><td>{{ label }}{% if key == 'focus' %}<br>{{ number(band.requested_H_range_A_per_m[0]) }} 至 {{ number(band.requested_H_range_A_per_m[1]) }} A/m{% endif %}</td><td>{% if band.H_range_A_per_m %}{{ number(band.H_range_A_per_m[0]) }} 至 {{ number(band.H_range_A_per_m[1]) }}{% else %}无共同区段{% endif %}</td>
+          <td>{{ number(band.largest_original_gap_A_per_m) }}{% if key == 'focus' and band.H_range_A_per_m %}<br>区间原点：{{ band.original_points }}<br>相邻原点最大间距：{{ number(band.largest_bracketing_original_gap_A_per_m) }}{% endif %}</td>{% if secondary %}<td>{{ identity.calibration_id }}</td>{% endif %}
           {% for metric in ('rmse_T','mae_T') %}{% for model in ('fit','holdout') %}{% set stats = band.metrics[prefix ~ model] %}<td>{{ number(stats[metric] if stats else none) }}</td>{% endfor %}{% endfor %}</tr>
         {% endfor %}{% endfor %}{% endfor %}</tbody>
       </table></div>
@@ -150,6 +153,11 @@
         <label>来源类别<select name="source_kind">{% for value, label in source_labels.items() %}<option value="{{ value }}"{% if form.get('source_kind', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
         <label>曲线种类<select name="curve_kind">{% for value, label in curve_labels.items() %}<option value="{{ value }}"{% if form.get('curve_kind', 'unspecified') == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
       </div>
+      <div class="grid">
+        <label>重点区间起点 H（A/m，可选）<input type="number" step="any" min="0" name="focus_h_min" value="{{ form.get('focus_h_min', '') }}"></label>
+        <label>重点区间终点 H（A/m，可选）<input type="number" step="any" min="0" name="focus_h_max" value="{{ form.get('focus_h_max', '') }}"></label>
+      </div>
+      <p class="muted">两个值一起填。结果另列该范围内的 H 区间误差及原点数；完整原表照常保留。</p>
       <label>原表来源或测量记录编号<textarea name="source_reference" required maxlength="1200">{{ form.get('source_reference', '') }}</textarea></label>
       <div class="grid">
         <label>原表标注牌号<input name="reported_grade" maxlength="1200" value="{{ form.get('reported_grade', '') }}"></label>

@@ -184,7 +184,7 @@ def _integrated_errors(residual, weights):
     return dict(rmse_T=rmse, mae_T=mae)
 
 
-def field_weighted_errors(measurement, saved_curves):
+def field_weighted_errors(measurement, saved_curves, *, focus=None):
     """Integrate the piecewise-linear B residual, uniformly in physical H."""
     if not saved_curves:
         raise ValueError('请选择可比较的保存曲线')
@@ -195,6 +195,11 @@ def field_weighted_errors(measurement, saved_curves):
     high = min(h[-1], *(grid[-1] for grid, _ in curves.values()))
     split = 800.
     ranges = {'common': (low, high), 'up_to_800': (low, min(high, split)), 'from_800': (max(low, split), high)}
+    if focus is not None:
+        start, stop = focus
+        if not (math.isfinite(start) and math.isfinite(stop) and 0 <= start < stop):
+            raise ValueError('指定 H 区间须填写两个非负有限数值，且起点小于终点')
+        ranges['focus'] = (max(low, start), min(high, stop))
     bands = {}
     for name, (a, z) in ranges.items():
         if a >= z:
@@ -212,4 +217,17 @@ def field_weighted_errors(measurement, saved_curves):
         bands[name] = dict(H_range_A_per_m=[float(a), float(z)], span_A_per_m=span,
                            largest_original_gap_A_per_m=float(np.max(np.diff(reference_knots))),
                            intervals=len(knots)-1, metrics=metrics)
-    return dict(schema='linear_H_weighted_curve_error_v1', split_H_A_per_m=split, bands=bands)
+    result = dict(schema='linear_H_weighted_curve_error_v1', split_H_A_per_m=split, bands=bands)
+    if focus is not None:
+        focused = bands['focus']
+        actual = focused['H_range_A_per_m']
+        count, largest = 0, None
+        if actual:
+            a, z = actual
+            count = int(np.count_nonzero((h >= a) & (h <= z)))
+            first = np.searchsorted(h, a, side='right') - 1
+            last = np.searchsorted(h, z, side='left')
+            largest = float(np.max(np.diff(h[first:last+1])))
+        focused.update(requested_H_range_A_per_m=list(focus), original_points=count,
+                       largest_bracketing_original_gap_A_per_m=largest)
+    return result

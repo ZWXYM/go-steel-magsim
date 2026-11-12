@@ -175,6 +175,25 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertIn('按物理 H 区间计权', page)
         self.assertNotIn('<th scope="row">RD</th>', page)
 
+    def test_requested_interval_requires_both_bounds_and_keeps_originals(self):
+        self.assertEqual(self._post_pair(focus_h_min='100').status_code, 400)
+        self.assertEqual(self._post_pair(focus_h_min='100', focus_h_max='nan').status_code, 400)
+        self.assertEqual(self.store.records(), [])
+        result = self._post_pair(focus_h_min='100', focus_h_max='400')
+        self.assertEqual(result.status_code, 303)
+        artifact = result.location.rsplit('/', 1)[1]
+        report = self.intake.read(artifact)[1]
+        band = report['comparison']['TD']['field_weighted']['bands']['focus']
+        self.assertEqual(band['original_points'], 1)
+        self.assertEqual(band['largest_bracketing_original_gap_A_per_m'], 390)
+        self.assertIsNotNone(report['comparison']['RD']['B800'])
+        with zipfile.ZipFile(io.BytesIO(self.store.read(artifact)[1])) as archive:
+            self.assertEqual(archive.read('original/RD.csv'), RD)
+            self.assertEqual(archive.read('original/TD.csv'), TD)
+        page = self.client.get(result.location).get_data(as_text=True)
+        self.assertIn('指定区间', page)
+        self.assertIn('区间原点：1', page)
+
     def test_single_confirmation_cannot_be_replaced_by_pair_confirmation(self):
         result = self.client.post('/external-bh-validation', data=dict(
             selection=self.selection, source_reference='TD fixture', curve_kind='normal_peak',

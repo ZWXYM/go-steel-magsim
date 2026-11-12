@@ -61,6 +61,16 @@ def _source(form):
     return data
 
 
+def _focus_range(form):
+    low, high = (form.get(key, '').strip() for key in ('focus_h_min', 'focus_h_max'))
+    if not low and not high:
+        return None
+    try:
+        return float(low), float(high)
+    except ValueError as error:
+        raise ValueError('指定 H 区间须同时填写起点和终点（A/m）') from error
+
+
 class ExternalBHIntake:
     def __init__(self, materials, packages):
         self.materials = materials
@@ -146,6 +156,7 @@ class ExternalBHIntake:
                                                 archive_path=member, sha256=sha256(blob), bytes=len(blob))
         title = '磁化曲线原表'
         if mode == 'compare':
+            focus = _focus_range(form)
             if source['curve_kind'] == 'unspecified':
                 raise ValueError('比较前请选择原表的曲线种类')
             directions = [direction for direction in DIRECTIONS if direction in uploads]
@@ -179,7 +190,7 @@ class ExternalBHIntake:
                 measurement = read_measurement_csv(uploads[direction][1], direction)
                 curves = {name: model['curves'][direction] for name, model in models.items()}
                 compared = compare_curves(measurement, curves)
-                compared['field_weighted'] = field_weighted_errors(measurement, curves)
+                compared['field_weighted'] = field_weighted_errors(measurement, curves, focus=focus)
                 files[f'comparison/{direction}.csv'] = csv_bytes(compared.pop('rows'))
                 summary['comparison'][direction] = compared
                 for name, curve in curves.items():
