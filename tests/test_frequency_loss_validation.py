@@ -112,5 +112,36 @@ class FrequencyLossTest(unittest.TestCase):
             self.assertEqual([row['frequency_Hz'] for row in report['rows'] if row['role'] == 'holdout'], [100])
 
 
+    def test_per_cycle_energy_and_observed_peak_keep_originals_and_convert_uncertainty(self):
+        original = (b'frequency_Hz,peak_B_T,observed_peak_B_T,specific_energy_loss_J_per_kg,standard_u_J_per_kg\n'
+                    b'1,1,.998,.1,.0002\n50,1,.999,.149,.0002\n100,1,1.001,.199,.0002\n')
+        with tempfile.TemporaryDirectory() as folder:
+            store = WorkpackStore(Path(folder))
+            service = FrequencyLossValidation(store)
+            form = dict(source_reference='每周期原值', specimen_id='one', one_series='yes',
+                        direction='RD', holdout_frequency_Hz='50')
+            for tolerance in ('', '.001'):
+                with self.subTest(tolerance=tolerance), self.assertRaisesRegex(ValueError, '允许偏差|峰值偏差'):
+                    service.save(dict(form, peak_tolerance_T=tolerance), 'energy.csv', original)
+            self.assertEqual(store.records(), [])
+            with self.assertRaisesRegex(ValueError, '相同的 B 或 J'):
+                read_frequency_table(original.replace(b'observed_peak_B_T', b'observed_peak_J_T'))
+            rec = service.save(dict(form, peak_tolerance_T='.002'), 'energy.csv', original)
+            with zipfile.ZipFile(io.BytesIO(store.read(rec['id'])[1])) as z:
+                self.assertEqual(z.read('original/loss_table.csv'), original)
+                report = json.loads(z.read('frequency_loss_report.json'))
+                self.assertEqual(report['table']['input_energy_unit'], 'J/kg')
+                self.assertEqual(report['table']['loss_unit'], 'W/kg')
+                self.assertAlmostEqual(report['table']['peak_matching']['maximum_abs_deviation_T'], .002)
+                middle = report['rows'][1]
+                self.assertEqual(middle['observed_peak_T'], .999)
+                self.assertEqual(middle['input_energy_per_cycle'], .149)
+                self.assertEqual(middle['input_energy_standard_u'], .0002)
+                self.assertAlmostEqual(middle['loss'], 7.45)
+                self.assertAlmostEqual(middle['standard_u'], .01)
+                result, = report['evaluations']
+                self.assertAlmostEqual(result['estimates']['bracket_cycle_linear']['predicted'], 7.45)
+
+
 if __name__ == '__main__':
     unittest.main()

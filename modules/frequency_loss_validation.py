@@ -29,7 +29,11 @@ LOSS_COLUMNS = {
     'specific_loss_W_per_kg': ('W/kg', 'standard_u_W_per_kg'),
     'specific_power_loss_xref_W_per_kg': ('W/kg', 'reference_u_W_per_kg'),
     'volume_loss_W_per_m3': ('W/m³', 'standard_u_W_per_m3'),
+    'specific_energy_loss_J_per_kg': ('W/kg', 'standard_u_J_per_kg'),
+    'volume_energy_loss_J_per_m3': ('W/m³', 'standard_u_J_per_m3'),
 }
+ENERGY_INPUT_UNITS = {'specific_energy_loss_J_per_kg': 'J/kg', 'volume_energy_loss_J_per_m3': 'J/m³'}
+OBSERVED_PEAK_COLUMNS = {'observed_peak_B_T': 'B', 'observed_peak_J_T': 'J'}
 CONFIGURATION_COLUMNS = ('configuration', 'nominal_strip_configuration')
 MAX_ROWS = 4000
 
@@ -61,7 +65,11 @@ def read_frequency_table(blob):
                 or len(amplitude) != 1 or len(loss) != 1 or len(config) > 1):
             raise ValueError('表头须有频率、一种峰值量和一种损耗单位；列名不可重复')
         amplitude_column, loss_column = amplitude[0], loss[0]
+        observed = [column for column in OBSERVED_PEAK_COLUMNS if column in columns]
+        if observed and (len(observed) > 1 or OBSERVED_PEAK_COLUMNS[observed[0]] != AMPLITUDE_COLUMNS[amplitude_column]):
+            raise ValueError('实测峰值列须与分组峰值使用相同的 B 或 J')
         unit, u_column = LOSS_COLUMNS[loss_column]
+        energy_unit = ENERGY_INPUT_UNITS.get(loss_column)
         if any(u != u_column and u in columns for _, u in LOSS_COLUMNS.values()):
             raise ValueError('标准不确定度列应与损耗列对应')
         identity = {key: set() for key in ('sample_label', 'table_variant', 'direction') if key in columns}
@@ -85,17 +93,31 @@ def read_frequency_table(blob):
             page = row.get('page', '').strip()
             if any(len(value or '') > 1200 for value in (configuration, page)):
                 raise ValueError(f'第 {i} 行原表配置或页码过长')
-            rows.append(dict(source_row=i, frequency_Hz=f, peak_T=peak,
-                             loss=_positive(row[loss_column], f'第 {i} 行损耗'),
-                             standard_u=_positive(u, f'第 {i} 行标准不确定度') if u else None,
-                             configuration=configuration or None, source_page=page or None))
+            input_loss = _positive(row[loss_column], f'第 {i} 行损耗')
+            input_u = _positive(u, f'第 {i} 行标准不确定度') if u else None
+            point = dict(source_row=i, frequency_Hz=f, peak_T=peak, loss=input_loss, standard_u=input_u,
+                         configuration=configuration or None, source_page=page or None)
+            if energy_unit:
+                point.update(input_energy_per_cycle=input_loss, input_energy_standard_u=input_u,
+                             loss=_positive(input_loss*f, f'第 {i} 行换算后的功率损耗'),
+                             standard_u=_positive(input_u*f, f'第 {i} 行换算后的标准不确定度')
+                             if input_u is not None else None)
+            if observed:
+                measured = _positive(row[observed[0]], f'第 {i} 行实测峰值')
+                point.update(observed_peak_T=measured, observed_minus_group_peak_T=measured-peak)
+            rows.append(point)
     except csv.Error as error:
         raise ValueError('CSV 列或引号格式不正确') from error
     if not rows or any(len(values) != 1 for values in identity.values()):
         raise ValueError('每张表只能包含一个试样、方向和统计版本')
-    return dict(rows=rows, identity={key: next(iter(values)) for key, values in identity.items()},
-                amplitude=AMPLITUDE_COLUMNS[amplitude_column], loss_unit=unit,
-                amplitude_column=amplitude_column, loss_column=loss_column)
+    table = dict(rows=rows, identity={key: next(iter(values)) for key, values in identity.items()},
+                 amplitude=AMPLITUDE_COLUMNS[amplitude_column], loss_unit=unit,
+                 amplitude_column=amplitude_column, loss_column=loss_column)
+    if energy_unit:
+        table['input_energy_unit'] = energy_unit
+    if observed:
+        table['observed_peak_column'] = observed[0]
+    return table
 
 
 def _nonnegative_prediction(train, holdout, uncertainties):
@@ -164,6 +186,25 @@ def evaluate_frequency_holdout(table, holdout):
             for peak, rows in sorted(groups.items())]
 
 
+def _peak_matching(table, raw_tolerance):
+    if 'observed_peak_column' not in table:
+        if raw_tolerance:
+            raise ValueError('填写峰值允许偏差前，请在表中保留对应的实测峰值列')
+        return None
+    try:
+        tolerance = float(raw_tolerance)
+    except ValueError as error:
+        raise ValueError('有实测峰值列时，请填写相对分组峰值的允许偏差（T）') from error
+    if not math.isfinite(tolerance) or tolerance < 0:
+        raise ValueError('允许的峰值偏差须为非负有限数值')
+    worst = max(table['rows'], key=lambda row: abs(row['observed_minus_group_peak_T']))
+    maximum = abs(worst['observed_minus_group_peak_T'])
+    if maximum > tolerance and not math.isclose(maximum, tolerance, rel_tol=1e-12):
+        raise ValueError(f"第 {worst['source_row']} 行实测峰值偏差 {maximum:g} T 超出 {tolerance:g} T")
+    return dict(observed_peak_column=table['observed_peak_column'], tolerance_T=tolerance,
+                maximum_abs_deviation_T=maximum)
+
+
 class FrequencyLossValidation:
     def __init__(self, packages):
         self.packages = packages
@@ -171,6 +212,7 @@ class FrequencyLossValidation:
     def save(self, form, filename, blob, *, cycle_series=None, cycle_files=None):
         table = read_frequency_table(blob)
         identity = table['identity']
+        matching = _peak_matching(table, form.get('peak_tolerance_T', '').strip())
         fields = ('source_reference', 'specimen_id', 'reported_grade', 'method', 'conditions')
         source = {field: form.get(field, '').strip() or None for field in fields}
         source_kind = form.get('source_kind', 'unspecified')
@@ -201,6 +243,10 @@ class FrequencyLossValidation:
                       configurations=configurations, configuration_missing_rows=sum(r['configuration'] is None for r in rows),
                       holdout_frequency_Hz=holdout, evaluations=evaluations,
                       original=dict(filename=PureWindowsPath(filename).name, bytes=len(blob), sha256=sha256(blob)))
+        if 'input_energy_unit' in table:
+            report['table']['input_energy_unit'] = table['input_energy_unit']
+        if matching is not None:
+            report['table']['peak_matching'] = matching
         if cycle_series:
             report['cycle_series'] = cycle_series
         compare = [dict(peak_T=result['peak_T'], holdout_frequency_Hz=holdout, loss_unit=table['loss_unit'],

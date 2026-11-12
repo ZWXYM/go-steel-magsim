@@ -20,6 +20,10 @@
   <section>
     <h2>{{ source.specimen_id }} · 留出 {{ holdout }} Hz</h2>
     <p>{{ source_kinds[source.source_kind] }} · {{ direction_labels[source.direction] }} · {{ report.rows | length }} {{ '个回线整理点' if report.cycle_series is defined else '个原表点' }}。损耗单位 {{ unit }}。</p>
+    {% set input_energy = report.table.get('input_energy_unit') %}
+    {% set matching = report.table.get('peak_matching') %}
+    {% if input_energy %}<p>原表为每周期能量（{{ input_energy }}）；每行能量与其不确定度乘该行频率，得到功率损耗（{{ unit }}）。</p>{% endif %}
+    {% if matching %}<p>按表内分组峰值对照；实测峰值最大偏差 {{ number(matching.maximum_abs_deviation_T) }} T，允许偏差 {{ number(matching.tolerance_T) }} T，未对峰值做插值。</p>{% endif %}
     {% if report.cycle_series is defined %}
     <details>
       <summary>从保存回线整理的频率表</summary>
@@ -34,7 +38,7 @@
     {% if report.configuration_missing_rows %}<p class="muted">{{ report.configuration_missing_rows }} 个原点未注明试片配置。</p>{% endif %}
     <div class="table-wrap">
       <table>
-        <thead><tr><th>峰值 {{ report.table.amplitude }}（T）</th><th>留出原值</th><th>原标准不确定度</th><th>非负拟合</th><th>拟合误差</th><th>最低频线性误差</th><th>相邻频率插值误差</th></tr></thead>
+        <thead><tr><th>峰值 {{ report.table.amplitude }}（T）</th><th>{{ '留出值（已换算）' if input_energy else '留出原值' }}</th><th>标准不确定度</th><th>非负拟合</th><th>拟合误差</th><th>最低频线性误差</th><th>相邻频率插值误差</th></tr></thead>
         <tbody>{% for row in report.evaluations %}<tr><td>{{ number(row.peak_T) }}</td><td>{{ number(row.actual_loss) }}</td><td>{{ number(row.actual_standard_u) }}</td>{% if row.estimates.nonnegative_fit is defined %}<td>{{ number(row.estimates.nonnegative_fit.predicted) }}</td><td>{{ number(row.estimates.nonnegative_fit.signed_relative_error_pct) }}%</td>{% else %}<td>—</td><td>—</td>{% endif %}<td>{{ number(row.estimates.linear_lowest.signed_relative_error_pct) }}%</td><td>{{ number(row.estimates.bracket_cycle_linear.signed_relative_error_pct) }}%</td></tr>{% endfor %}</tbody>
       </table>
     </div>
@@ -56,8 +60,8 @@
         <dt>{{ '回线整理表' if report.cycle_series is defined else '原文件' }}</dt><dd>{{ report.original.filename }} · {{ report.original.bytes }} 字节<br>SHA-256 {{ report.original.sha256 }}</dd>
       </dl>
       <div class="table-wrap"><table>
-        <thead><tr><th>源行</th><th>峰值（T）</th><th>频率（Hz）</th><th>损耗</th><th>标准不确定度</th><th>配置</th><th>用途</th></tr></thead>
-        <tbody>{% for row in report.rows[:100] %}<tr><td>{{ row.source_row }}</td><td>{{ number(row.peak_T) }}</td><td>{{ number(row.frequency_Hz) }}</td><td>{{ number(row.loss) }}</td><td>{{ number(row.standard_u) }}</td><td>{{ row.configuration or '—' }}</td><td>{{ '留出' if row.role == 'holdout' else '训练' }}</td></tr>{% endfor %}</tbody>
+        <thead><tr><th>源行</th><th>{{ '分组峰值' if matching else '峰值' }}（T）</th>{% if matching %}<th>实测峰值（T）</th>{% endif %}<th>频率（Hz）</th>{% if input_energy %}<th>原每周期能量（{{ input_energy }}）</th>{% endif %}<th>损耗（{{ unit }}）</th><th>标准不确定度</th><th>配置</th><th>用途</th></tr></thead>
+        <tbody>{% for row in report.rows[:100] %}<tr><td>{{ row.source_row }}</td><td>{{ number(row.peak_T) }}</td>{% if matching %}<td>{{ number(row.observed_peak_T) }}</td>{% endif %}<td>{{ number(row.frequency_Hz) }}</td>{% if input_energy %}<td>{{ number(row.input_energy_per_cycle) }}</td>{% endif %}<td>{{ number(row.loss) }}</td><td>{{ number(row.standard_u) }}</td><td>{{ row.configuration or '—' }}</td><td>{{ '留出' if row.role == 'holdout' else '训练' }}</td></tr>{% endfor %}</tbody>
       </table></div>
       {% if report.rows | length > 100 %}<p>页面显示前 100 点；完整原表及用途见工作包。</p>{% endif %}
     </details>
@@ -67,7 +71,7 @@
 {% else %}
   <section>
     <h2>上传一个试样的多频损耗表</h2>
-    <p class="muted">用 UTF-8 CSV，表头如 <code>frequency_Hz,peak_J_T,specific_loss_W_per_kg,standard_u_W_per_kg,configuration</code>。可改用 <code>peak_B_T</code>，或改用 <code>volume_loss_W_per_m3,standard_u_W_per_m3</code>。标准不确定度和配置可省略。每个峰值至少要有三档频率，留出点须处于其他频率之间；五档起可另外做三项拟合。</p>
+    <p class="muted">用 UTF-8 CSV，表头如 <code>frequency_Hz,peak_J_T,specific_loss_W_per_kg,standard_u_W_per_kg,configuration</code>。可改用 <code>peak_B_T</code>，或改用 <code>volume_loss_W_per_m3,standard_u_W_per_m3</code>。若原表为每周期能量，可用 <code>specific_energy_loss_J_per_kg</code> 或 <code>volume_energy_loss_J_per_m3</code>。实际峰值另有记录时，可添加与分组峰值量一致的 <code>observed_peak_B_T</code> 或 <code>observed_peak_J_T</code>，并填写允许偏差。标准不确定度和配置可省略。每个峰值至少要有三档频率，留出点须处于其他频率之间；五档起可另外做三项拟合。</p>
     {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
     <form method="post" action="{{ url_for('.save') }}" enctype="multipart/form-data">
       <div class="grid">
@@ -79,6 +83,7 @@
       <label>原表来源或测量记录编号<textarea name="source_reference" required maxlength="1200">{{ form.get('source_reference', '') }}</textarea></label>
       <div class="grid">
         <label>原试样标识（表中有 sample_label 时可留空）<input name="specimen_id" maxlength="1200" value="{{ form.get('specimen_id', '') }}"></label>
+        <label>实测峰值允许偏差（T，有实测峰值列时填）<input type="number" min="0" step="any" name="peak_tolerance_T" value="{{ form.get('peak_tolerance_T', '') }}"></label>
         <label>原表标注牌号<input name="reported_grade" maxlength="1200" value="{{ form.get('reported_grade', '') }}"></label>
         <label>测量方法<input name="method" maxlength="1200" value="{{ form.get('method', '') }}"></label>
         <label>其他试验条件<input name="conditions" maxlength="1200" value="{{ form.get('conditions', '') }}"></label>

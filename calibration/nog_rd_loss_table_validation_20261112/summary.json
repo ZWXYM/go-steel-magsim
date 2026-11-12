@@ -1,0 +1,503 @@
+{
+  "evidence": {
+    "matched_points": 72,
+    "raw_points": 80,
+    "scope": "same published specimen, internal frequency holdout",
+    "unmatched_points": 8,
+    "verified_web_predictions": 48
+  },
+  "group_results": [
+    {
+      "actual_50Hz_W_kg": 0.00455,
+      "interpolated_50Hz_W_kg": 0.004191414141414142,
+      "interpolation_error_pct": -7.881007881007881,
+      "lowest_50Hz_W_kg": 0.00335,
+      "lowest_error_pct": -26.373626373626372,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.05107,
+        "100": 0.050241,
+        "50": 0.051054
+      },
+      "peak_B_T": 0.05,
+      "publisher_row_by_frequency": {
+        "1": 1,
+        "100": 1,
+        "50": 1
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.01705,
+      "interpolated_50Hz_W_kg": 0.0168,
+      "interpolation_error_pct": -1.466275659824047,
+      "lowest_50Hz_W_kg": 0.01435,
+      "lowest_error_pct": -15.835777126099707,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.099282,
+        "100": 0.099734,
+        "50": 0.101311
+      },
+      "peak_B_T": 0.1,
+      "publisher_row_by_frequency": {
+        "1": 2,
+        "100": 2,
+        "50": 2
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.0355,
+      "interpolated_50Hz_W_kg": 0.035323232323232326,
+      "interpolation_error_pct": -0.49793711765542753,
+      "lowest_50Hz_W_kg": 0.0278,
+      "lowest_error_pct": -21.690140845070424,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.148149,
+        "100": 0.150234,
+        "50": 0.1488
+      },
+      "peak_B_T": 0.15,
+      "publisher_row_by_frequency": {
+        "1": 3,
+        "100": 3,
+        "50": 3
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.0625,
+      "interpolated_50Hz_W_kg": 0.06026616161616161,
+      "interpolation_error_pct": -3.574141414141414,
+      "lowest_50Hz_W_kg": 0.04715,
+      "lowest_error_pct": -24.56,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.199592,
+        "100": 0.199531,
+        "50": 0.201379
+      },
+      "peak_B_T": 0.2,
+      "publisher_row_by_frequency": {
+        "1": 4,
+        "100": 4,
+        "50": 4
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.0922,
+      "interpolated_50Hz_W_kg": 0.09040454545454546,
+      "interpolation_error_pct": -1.9473476631828042,
+      "lowest_50Hz_W_kg": 0.0688,
+      "lowest_error_pct": -25.379609544468547,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.249471,
+        "100": 0.251126,
+        "50": 0.248753
+      },
+      "peak_B_T": 0.25,
+      "publisher_row_by_frequency": {
+        "1": 5,
+        "100": 5,
+        "50": 5
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.1295,
+      "interpolated_50Hz_W_kg": 0.1258419191919192,
+      "interpolation_error_pct": -2.824772824772825,
+      "lowest_50Hz_W_kg": 0.09565,
+      "lowest_error_pct": -26.138996138996138,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.299675,
+        "100": 0.300318,
+        "50": 0.300281
+      },
+      "peak_B_T": 0.3,
+      "publisher_row_by_frequency": {
+        "1": 6,
+        "100": 6,
+        "50": 6
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.16985,
+      "interpolated_50Hz_W_kg": 0.1658611111111111,
+      "interpolation_error_pct": -2.348477414712328,
+      "lowest_50Hz_W_kg": 0.1253,
+      "lowest_error_pct": -26.229025610833087,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.349254,
+        "100": 0.350383,
+        "50": 0.349463
+      },
+      "peak_B_T": 0.35,
+      "publisher_row_by_frequency": {
+        "1": 7,
+        "100": 7,
+        "50": 7
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.21685,
+      "interpolated_50Hz_W_kg": 0.20836767676767676,
+      "interpolation_error_pct": -3.911608592263423,
+      "lowest_50Hz_W_kg": 0.1562,
+      "lowest_error_pct": -27.968641918376758,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.401312,
+        "100": 0.398776,
+        "50": 0.400889
+      },
+      "peak_B_T": 0.4,
+      "publisher_row_by_frequency": {
+        "1": 8,
+        "100": 8,
+        "50": 8
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.26455,
+      "interpolated_50Hz_W_kg": 0.25592373737373736,
+      "interpolation_error_pct": -3.260730533457806,
+      "lowest_50Hz_W_kg": 0.18965,
+      "lowest_error_pct": -28.312228312228314,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.448154,
+        "100": 0.448945,
+        "50": 0.449176
+      },
+      "peak_B_T": 0.45,
+      "publisher_row_by_frequency": {
+        "1": 9,
+        "100": 9,
+        "50": 9
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.3202,
+      "interpolated_50Hz_W_kg": 0.30760353535353535,
+      "interpolation_error_pct": -3.9339364917128816,
+      "lowest_50Hz_W_kg": 0.2271,
+      "lowest_error_pct": -29.075577763897563,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.501788,
+        "100": 0.498286,
+        "50": 0.501466
+      },
+      "peak_B_T": 0.5,
+      "publisher_row_by_frequency": {
+        "1": 10,
+        "100": 10,
+        "50": 10
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.3752,
+      "interpolated_50Hz_W_kg": 0.3598959595959596,
+      "interpolation_error_pct": -4.07890202666322,
+      "lowest_50Hz_W_kg": 0.2566,
+      "lowest_error_pct": -31.609808102345415,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.550415,
+        "100": 0.550033,
+        "50": 0.549804
+      },
+      "peak_B_T": 0.55,
+      "publisher_row_by_frequency": {
+        "1": 11,
+        "100": 11,
+        "50": 11
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.43895,
+      "interpolated_50Hz_W_kg": 0.42051363636363637,
+      "interpolation_error_pct": -4.200105623957999,
+      "lowest_50Hz_W_kg": 0.3018,
+      "lowest_error_pct": -31.24501651668755,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.599791,
+        "100": 0.598595,
+        "50": 0.602033
+      },
+      "peak_B_T": 0.6,
+      "publisher_row_by_frequency": {
+        "1": 12,
+        "100": 12,
+        "50": 12
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.5022,
+      "interpolated_50Hz_W_kg": 0.47976111111111114,
+      "interpolation_error_pct": -4.468118058321164,
+      "lowest_50Hz_W_kg": 0.33385,
+      "lowest_error_pct": -33.522500995619275,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.649532,
+        "100": 0.649523,
+        "50": 0.650412
+      },
+      "peak_B_T": 0.65,
+      "publisher_row_by_frequency": {
+        "1": 13,
+        "100": 13,
+        "50": 13
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.56855,
+      "interpolated_50Hz_W_kg": 0.5480449494949495,
+      "interpolation_error_pct": -3.606551843294434,
+      "lowest_50Hz_W_kg": 0.3785,
+      "lowest_error_pct": -33.42713921378947,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.701648,
+        "100": 0.699802,
+        "50": 0.698644
+      },
+      "peak_B_T": 0.7,
+      "publisher_row_by_frequency": {
+        "1": 14,
+        "100": 14,
+        "50": 14
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.64215,
+      "interpolated_50Hz_W_kg": 0.6205959595959596,
+      "interpolation_error_pct": -3.3565429267368065,
+      "lowest_50Hz_W_kg": 0.4242,
+      "lowest_error_pct": -33.94066806820836,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.750483,
+        "100": 0.749968,
+        "50": 0.750928
+      },
+      "peak_B_T": 0.75,
+      "publisher_row_by_frequency": {
+        "1": 15,
+        "100": 15,
+        "50": 15
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.7187,
+      "interpolated_50Hz_W_kg": 0.6983535353535354,
+      "interpolation_error_pct": -2.831009412336809,
+      "lowest_50Hz_W_kg": 0.4733,
+      "lowest_error_pct": -34.14498399888688,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.800627,
+        "100": 0.800252,
+        "50": 0.799223
+      },
+      "peak_B_T": 0.8,
+      "publisher_row_by_frequency": {
+        "1": 16,
+        "100": 16,
+        "50": 16
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.8058,
+      "interpolated_50Hz_W_kg": 0.7825656565656566,
+      "interpolation_error_pct": -2.88338836365642,
+      "lowest_50Hz_W_kg": 0.52685,
+      "lowest_error_pct": -34.61777115909655,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.850409,
+        "100": 0.849625,
+        "50": 0.851396
+      },
+      "peak_B_T": 0.85,
+      "publisher_row_by_frequency": {
+        "1": 17,
+        "100": 17,
+        "50": 17
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.8916,
+      "interpolated_50Hz_W_kg": 0.8653868686868686,
+      "interpolation_error_pct": -2.940010241490726,
+      "lowest_50Hz_W_kg": 0.5701,
+      "lowest_error_pct": -36.058770749214894,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.899903,
+        "100": 0.898823,
+        "50": 0.899637
+      },
+      "peak_B_T": 0.9,
+      "publisher_row_by_frequency": {
+        "1": 18,
+        "100": 18,
+        "50": 18
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 0.98395,
+      "interpolated_50Hz_W_kg": 0.9581989898989899,
+      "interpolation_error_pct": -2.617105554246669,
+      "lowest_50Hz_W_kg": 0.6151,
+      "lowest_error_pct": -37.48666090756644,
+      "observed_peak_B_T_by_frequency": {
+        "1": 0.948908,
+        "100": 0.950486,
+        "50": 0.948624
+      },
+      "peak_B_T": 0.95,
+      "publisher_row_by_frequency": {
+        "1": 19,
+        "100": 19,
+        "50": 19
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 1.08745,
+      "interpolated_50Hz_W_kg": 1.0552424242424243,
+      "interpolation_error_pct": -2.9617523341372713,
+      "lowest_50Hz_W_kg": 0.66495,
+      "lowest_error_pct": -38.85236102809325,
+      "observed_peak_B_T_by_frequency": {
+        "1": 1.001652,
+        "100": 0.999732,
+        "50": 0.999844
+      },
+      "peak_B_T": 1.0,
+      "publisher_row_by_frequency": {
+        "1": 20,
+        "100": 20,
+        "50": 20
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 1.19595,
+      "interpolated_50Hz_W_kg": 1.1672575757575758,
+      "interpolation_error_pct": -2.3991324254713193,
+      "lowest_50Hz_W_kg": 0.72945,
+      "lowest_error_pct": -39.00664743509344,
+      "observed_peak_B_T_by_frequency": {
+        "1": 1.048818,
+        "100": 1.04951,
+        "50": 1.050243
+      },
+      "peak_B_T": 1.05,
+      "publisher_row_by_frequency": {
+        "1": 21,
+        "100": 21,
+        "50": 21
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 1.31115,
+      "interpolated_50Hz_W_kg": 1.291709595959596,
+      "interpolation_error_pct": -1.4826987026964147,
+      "lowest_50Hz_W_kg": 0.80265,
+      "lowest_error_pct": -38.782747969339894,
+      "observed_peak_B_T_by_frequency": {
+        "1": 1.099651,
+        "100": 1.099568,
+        "50": 1.099732
+      },
+      "peak_B_T": 1.1,
+      "publisher_row_by_frequency": {
+        "1": 22,
+        "100": 22,
+        "50": 22
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 1.43355,
+      "interpolated_50Hz_W_kg": 1.412378282828283,
+      "interpolation_error_pct": -1.4768732985746693,
+      "lowest_50Hz_W_kg": 0.8492,
+      "lowest_error_pct": -40.762442886540406,
+      "observed_peak_B_T_by_frequency": {
+        "1": 1.148295,
+        "100": 1.15025,
+        "50": 1.149867
+      },
+      "peak_B_T": 1.15,
+      "publisher_row_by_frequency": {
+        "1": 23,
+        "100": 23,
+        "50": 23
+      }
+    },
+    {
+      "actual_50Hz_W_kg": 1.5648,
+      "interpolated_50Hz_W_kg": 1.5531424242424243,
+      "interpolation_error_pct": -0.7449882258164466,
+      "lowest_50Hz_W_kg": 0.9252,
+      "lowest_error_pct": -40.874233128834355,
+      "observed_peak_B_T_by_frequency": {
+        "1": 1.198627,
+        "100": 1.19965,
+        "50": 1.199005
+      },
+      "peak_B_T": 1.2,
+      "publisher_row_by_frequency": {
+        "1": 24,
+        "100": 24,
+        "50": 24
+      }
+    }
+  ],
+  "method": {
+    "actual_max_abs_delta_B_T": 0.002033,
+    "allowed_abs_delta_B_T": 0.005,
+    "amplitude_interpolation": false,
+    "evaluated_unit": "W/kg",
+    "held_out_frequency_Hz": 50,
+    "matching": "Tolerance is one tenth of the publisher protocol nominal step. Nearest group labels are retained separately from observed B; no amplitude interpolation.",
+    "nonnegative_fit": null,
+    "published_input_unit": "J/kg per cycle",
+    "step_B_T": 0.05,
+    "training_frequencies_Hz": [
+      1,
+      100
+    ]
+  },
+  "performance": {
+    "groups": 24,
+    "interpolation_beats_lowest": 24,
+    "max_abs_interpolation_error_pct": 7.881007881007881,
+    "mean_abs_interpolation_error_pct": 2.9872256095888003,
+    "mean_abs_lowest_error_pct": 31.495640658038045
+  },
+  "schema": "nog_rd_measured_multipeak_frequency_holdout_v1",
+  "sensitivity_2mT": {
+    "groups": 23,
+    "interpolation_beats_lowest": 23,
+    "max_abs_interpolation_error_pct": 7.881007881007881,
+    "mean_abs_interpolation_error_pct": 2.9344916959205745,
+    "mean_abs_lowest_error_pct": 31.506537359835892
+  },
+  "source": {
+    "citation": "I. P. C. da Silva et al., Mendeley Data V1",
+    "doi": "10.17632/hgzgpcvjxk.1",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "raw_files": [
+      {
+        "filename": "RD_Losses_0MPa_1Hz.csv",
+        "hz": 1,
+        "publisher_file_id": "0e08012b-e1b2-48a4-9549-5829fe5c32ec",
+        "rows": 30,
+        "sha256": "00deecbad428f623b706440275ebe6184e766ad727283d6596e094f82eda7a4c"
+      },
+      {
+        "filename": "RD_Losses_0MPa_50Hz.csv",
+        "hz": 50,
+        "publisher_file_id": "37436b47-f9fc-4109-8711-885e823abfa1",
+        "rows": 26,
+        "sha256": "aa119b7b26e78f61cfd6cd01890791c8b898ee098f8a54c88d8c5efd864d7984"
+      },
+      {
+        "filename": "RD_Losses_0MPa_100Hz.csv",
+        "hz": 100,
+        "publisher_file_id": "2be8a2bf-ff00-4063-ae7f-e49de89cdf78",
+        "rows": 24,
+        "sha256": "f762807ee1938039214347c779a3d90a185014e01ff786648d2c72224456810e"
+      }
+    ],
+    "scope": "RD_Sample, non-oriented Fe-Si, 0 MPa, sinusoidal B; 1,50,100 Hz; no transfer to project grades."
+  }
+}
