@@ -15,9 +15,10 @@
 {% macro number(value) %}{{ '%.6g' | format(value) if value is not none else '—' }}{% endmacro %}
 {% if report is defined %}
   <section>
-    <h2>{{ report.model.grade ~ ' · 原表比较' if report.model else '原表归档' }}</h2>
+    <h2>{{ report.model.grade ~ ' 模型 · 原表比较' if report.model else '原表归档' }}</h2>
     <p>{{ source_labels[report.source.source_kind] }} · {{ curve_labels[report.source.curve_kind] }} · {{ record.id }}</p>
     {% if report.model %}
+    {% if report.get('declared_grade_status') == 'not_recorded' %}<p>原表未注明牌号。本页保留数值对照，试样与所选模型的对应关系待核对。</p>{% endif %}
     {% set secondary = report.get('comparison_model') %}
     {% set versions = [(report.model, ''), (secondary, 'secondary_')] if secondary else [(report.model, '')] %}
     <p class="muted">所有选中曲线使用同一组原采样点。误差为保存的 B 减去上传表的 B，单位 T。</p>
@@ -159,7 +160,8 @@
         <label>温度（℃）<input type="number" step="any" name="temperature_C" value="{{ form.get('temperature_C', '') }}"></label>
       </div>
       <label>应力、退火和其他测量条件<textarea name="conditions" maxlength="1200">{{ form.get('conditions', '') }}</textarea></label>
-      <label class="check"><input type="checkbox" name="paired" value="yes"{% if form.get('paired') == 'yes' %} checked{% endif %}>确认方向、牌号及两份原表的可比条件</label>
+      <p class="muted">已知原表牌号时请按原标注填写。该牌号须与所选模型一致才能比较；其他牌号可仅归档。</p>
+      <label class="check"><input type="checkbox" name="paired" value="yes"{% if form.get('paired') == 'yes' %} checked{% endif %}>确认方向及两份原表的可比条件</label>
       <div class="actions">
         <button name="mode" value="compare"{% if not groups %} disabled{% endif %}>比较并保存</button>
         <button class="secondary" name="mode" value="archive">仅归档原表</button>

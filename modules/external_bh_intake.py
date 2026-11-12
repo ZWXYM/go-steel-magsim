@@ -150,6 +150,9 @@ class ExternalBHIntake:
                     or not source['direction_and_pairing_declared']):
                 raise ValueError('比较需要 RD 和 TD 两份原表、明确曲线类型，以及对方向和配对条件的确认')
             identity, models = self._models(form.get('selection', ''))
+            reported_grade = source['reported_grade']
+            if reported_grade and reported_grade.casefold() != identity['grade'].casefold():
+                raise ValueError('原表标注牌号与所选模型不同；请重新选择对应牌号，或仅归档原表')
             comparison_identity = None
             secondary = form.get('secondary_selection', '')
             if secondary:
@@ -160,6 +163,7 @@ class ExternalBHIntake:
                 comparison_identity, comparison_models = self._models(selection)
                 models.update({'secondary_' + name: model for name, model in comparison_models.items()})
             summary.update(model=identity, H_axis='physical_A_per_m',
+                           declared_grade_status='matches_selected' if reported_grade else 'not_recorded',
                            method='Linear interpolation on physical H. All selected curves use the same original input rows in the common range. Errors are saved B minus input B.')
             if comparison_identity:
                 summary['comparison_model'] = comparison_identity

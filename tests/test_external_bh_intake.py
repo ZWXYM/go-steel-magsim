@@ -96,6 +96,7 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertIn('流程联调', page)
         self.assertIn('B800', page)
         self.assertIn('按物理 H 区间计权', page)
+        self.assertIn('原表未注明牌号', page)
         self.assertIn('/api/workbench/system-data/packages/' + package + '/download', page)
 
     def test_stale_or_leaky_models_cannot_create_a_comparison(self):
@@ -104,6 +105,22 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.library.heldout_training.append(GRADE)
         self.assertEqual(self._post_pair().status_code, 400)
         self.assertEqual(self.store.records(), [])
+
+    def test_declared_different_grade_can_be_archived_but_not_compared(self):
+        mismatch = self._post_pair(reported_grade='H110-0.27')
+        self.assertEqual(mismatch.status_code, 400)
+        self.assertIn('原表标注牌号与所选模型不同', mismatch.get_data(as_text=True))
+        self.assertEqual(self.store.records(), [])
+        archived = self._post_pair(reported_grade='H110-0.27', mode='archive')
+        self.assertEqual(archived.status_code, 303)
+        report = self.intake.read(archived.location.rsplit('/',1)[1])[1]
+        self.assertEqual(report['source']['reported_grade'], 'H110-0.27')
+        self.assertEqual(report['comparison'], {})
+        matched = self._post_pair(reported_grade='b23r075')
+        self.assertEqual(matched.status_code, 303)
+        compared = self.intake.read(matched.location.rsplit('/',1)[1])[1]
+        self.assertEqual(compared['declared_grade_status'], 'matches_selected')
+        self.assertFalse(compared['specimen_independence_verified'])
 
     def test_two_versions_use_common_rows_and_preserve_old_result(self):
         first = self._post_pair()
