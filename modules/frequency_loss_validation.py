@@ -14,12 +14,14 @@ from werkzeug.exceptions import RequestEntityTooLarge
 
 from modules.external_bh_intake import SOURCE_LABELS
 from modules.external_bh_validation import MAX_CURVE_BYTES
+from modules.loop_frequency_series import SERIES_FILENAME, available_cycles, collect_loop_series
 from modules.measured_loop_loss import DIRECTION_LABELS
 from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
 
 
 VERSION = 'frequency_loss_validation_v2'
-READABLE_VERSIONS = {VERSION, 'frequency_loss_validation_v1'}
+LOOP_SERIES_REPORT_VERSION = 'frequency_loss_validation_v3_cycles'
+READABLE_VERSIONS = {VERSION, LOOP_SERIES_REPORT_VERSION, 'frequency_loss_validation_v1'}
 PACKAGE_FILENAME = 'frequency_loss_validation.zip'
 SOURCE_KINDS = dict(SOURCE_LABELS, reference_statistics='公开测量参考统计')
 AMPLITUDE_COLUMNS = {'peak_B_T': 'B', 'peak_J_T': 'J', 'peak_polarization_J_T': 'J'}
@@ -166,7 +168,7 @@ class FrequencyLossValidation:
     def __init__(self, packages):
         self.packages = packages
 
-    def save(self, form, filename, blob):
+    def save(self, form, filename, blob, *, cycle_series=None, cycle_files=None):
         table = read_frequency_table(blob)
         identity = table['identity']
         fields = ('source_reference', 'specimen_id', 'reported_grade', 'method', 'conditions')
@@ -194,21 +196,38 @@ class FrequencyLossValidation:
         evaluations = evaluate_frequency_holdout(table, holdout)
         rows = [dict(row, role='holdout' if row['frequency_Hz'] == holdout else 'training') for row in table['rows']]
         configurations = sorted({row['configuration'] for row in rows if row['configuration'] is not None})
-        report = dict(version=VERSION, source=source, table={k: table[k] for k in
+        report = dict(version=LOOP_SERIES_REPORT_VERSION if cycle_series else VERSION, source=source, table={k: table[k] for k in
                       ('amplitude', 'loss_unit', 'amplitude_column', 'loss_column')}, rows=rows,
                       configurations=configurations, configuration_missing_rows=sum(r['configuration'] is None for r in rows),
                       holdout_frequency_Hz=holdout, evaluations=evaluations,
                       original=dict(filename=PureWindowsPath(filename).name, bytes=len(blob), sha256=sha256(blob)))
+        if cycle_series:
+            report['cycle_series'] = cycle_series
         compare = [dict(peak_T=result['peak_T'], holdout_frequency_Hz=holdout, loss_unit=table['loss_unit'],
                         holdout_source_row=result['holdout_source_row'], actual_loss=result['actual_loss'],
                         actual_standard_u=result['actual_standard_u'], basis_status=result['basis_status'],
                         weighting=result['weighting'] if method == 'nonnegative_fit' else None, estimator=method, **error)
                    for result in evaluations for method, error in result['estimates'].items()]
         files = {'original/loss_table.csv': blob, 'frequency_loss_report.json': json_bytes(report),
-                 'holdout_comparison.csv': csv_bytes(compare)}
+                 'holdout_comparison.csv': csv_bytes(compare), **(cycle_files or {})}
         title = '多频损耗留出复核 · ' + source['specimen_id'][:120]
         return self.packages.register_bytes(workpack_bytes(files), title, SOURCE_KINDS[source_kind] + ' · 同试样频率留出',
                                             source_filename=PACKAGE_FILENAME)
+
+    def save_cycles(self, form, chosen):
+        if form.get('one_series') != 'yes':
+            raise ValueError('请确认回线来自同试样、同方向和共同试验条件')
+        try:
+            selected = [dict(zip(('id', 'sha256'), value.split('|', 1), strict=True)) for value in chosen]
+            tolerance = float(form.get('tolerance_T', ''))
+        except ValueError as error:
+            raise ValueError('回线选择或允许峰值偏差无效') from error
+        source, table, series, files = collect_loop_series(self.packages, selected,
+            quantity=form.get('quantity'), peak_T=_positive(form.get('peak_T'), '目标峰值'),
+            tolerance_T=tolerance, loss_basis=form.get('loss_basis'))
+        data = {key: (value or '') for key, value in source.items()}
+        data.update(one_series='yes', holdout_frequency_Hz=form.get('holdout_frequency_Hz', ''))
+        return self.save(data, SERIES_FILENAME, table, cycle_series=series, cycle_files=files)
 
     def read(self, artifact):
         record, blob = self.packages.read(artifact)
@@ -252,5 +271,25 @@ def create_frequency_loss_routes(service):
         except (ValueError, OSError, KeyError, TypeError):
             abort(404)
         return render_template('frequency_loss_validation.html', record=record, report=report, **labels)
+
+    @bp.get('/frequency-loss-validation/loops')
+    def cycles_page():
+        return render_template('frequency_loss_cycles.html', cycles=available_cycles(service.packages), form={}, selected=[], **labels)
+
+    @bp.post('/frequency-loss-validation/loops')
+    def cycles_save():
+        request.max_content_length = 64*1024
+        form, chosen = {}, []
+        try:
+            form = request.form.to_dict()
+            chosen = request.form.getlist('loop')
+            record = service.save_cycles(form, chosen)
+        except RequestEntityTooLarge:
+            return render_template('frequency_loss_cycles.html', cycles=[], form=form, selected=[],
+                                   error='回线选择请求过大', **labels), 413
+        except (ValueError, OSError, KeyError, TypeError) as error:
+            return render_template('frequency_loss_cycles.html', cycles=available_cycles(service.packages), form=form,
+                                   selected=chosen, error=str(error), **labels), 400
+        return redirect(url_for('.result', artifact=record['id']), code=303)
 
     return bp

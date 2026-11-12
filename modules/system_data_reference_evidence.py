@@ -11,7 +11,8 @@ REFERENCE_PACKS = {
     'external_bh_validation.zip': ('magnetization_table', 'external_bh_report.json', {'external_bh_validation_v1'}, None),
     'measured_loop_loss.zip': ('ordered_loop', 'loop_loss_report.json', {'measured_loop_loss_v1'}, 'original/cycle.csv'),
     'frequency_loss_validation.zip': ('frequency_holdout', 'frequency_loss_report.json',
-                                      {'frequency_loss_validation_v1', 'frequency_loss_validation_v2'},
+                                      {'frequency_loss_validation_v1', 'frequency_loss_validation_v2',
+                                       'frequency_loss_validation_v3_cycles'},
                                       'original/loss_table.csv'),
 }
 
@@ -60,6 +61,17 @@ def collect_reference_package(store, item):
                         or (not one_original and meta.get('archive_path') != path)):
                     raise ValueError('原表声明的哈希、路径或字节数与归档文件不同')
                 originals[path] = dict(sha256=meta['sha256'], bytes=meta['bytes'])
+            derived = {}
+            if report['version'] == 'frequency_loss_validation_v3_cycles':
+                cycles = report['cycle_series']['cycles']
+                if not 3 <= len(cycles) <= MAX_REFERENCE_PACKS or len({row['id'] for row in cycles}) != len(cycles):
+                    raise ValueError('多频记录的原回线数量或身份不符')
+                for row in cycles:
+                    if (not PACK_ID.fullmatch(row['id']) or row['path'] != f'source_cycles/{row["id"]}.zip'
+                            or manifest[row['path']] != row['sha256'] or not SHA256.fullmatch(row['original_csv_sha256'])):
+                        raise ValueError('多频记录的原回线绑定不符')
+                derived = dict(derivation='saved_loop_integrals', source_cycles=[
+                    {key: row[key] for key in ('id', 'path', 'sha256', 'original_csv_sha256')} for row in cycles])
     except (KeyError, TypeError, AttributeError, UnicodeError, json.JSONDecodeError) as error:
         raise ValueError('曲线或损耗记录缺少可追溯的原表及报告') from error
     return dict(id=record['id'], path=f'reference_evidence/{record["id"]}.zip', kind=kind, source_filename=file_name,
@@ -67,4 +79,4 @@ def collect_reference_package(store, item):
                 declared_source_kind=source['source_kind'], source_reference=source['source_reference'],
                 declared_specimen_id=source.get('specimen_id'), declared_grade=source.get('reported_grade'),
                 declared_direction=source.get('direction'), originals=originals,
-                joined_to_other_results=False), blob
+                joined_to_other_results=False, **derived), blob

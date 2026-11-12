@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>用保存回线复核多频损耗</title>
+  <link rel="stylesheet" href="/static/css/material_measurement.css">
+</head>
+<body>
+<header>
+  <h1>用保存回线复核多频损耗</h1>
+  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/measured-loop-loss">保存一条回线</a><a href="/frequency-loss-validation">上传多频损耗表</a><a href="/system-data#saved-workpacks">已有工作包</a></nav>
+</header>
+<main><section>
+  <h2>选择同一试样的回线</h2>
+  <p class="muted">至少三档频率，每档选一条。回线的来源、试样、方向、方法和共同条件须一致，实际 B 或 J 峰值须落在指定范围。频率已在回线记录中单独保存；共同条件应填写温度、应力、试片配置等。</p>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  {% if cycles %}
+  <form action="{{ url_for('.cycles_save') }}" method="post">
+    <div class="grid">
+      <label>原表幅值量<select name="quantity"><option value="J"{% if form.get('quantity') == 'J' %} selected{% endif %}>J（磁极化）</option><option value="B"{% if form.get('quantity') == 'B' %} selected{% endif %}>B（磁通密度）</option></select></label>
+      <label>损耗单位<select name="loss_basis"><option value="volume"{% if form.get('loss_basis') == 'volume' %} selected{% endif %}>W/m³</option><option value="mass"{% if form.get('loss_basis') == 'mass' %} selected{% endif %}>W/kg（须有一致的密度和来源）</option></select></label>
+      <label>目标峰值（T）<input type="number" step="any" name="peak_T" required value="{{ form.get('peak_T', '') }}"></label>
+      <label>允许峰值绝对偏差（T）<input type="number" step="any" min="0" name="tolerance_T" required value="{{ form.get('tolerance_T', '') }}"></label>
+      <label>留出频率（Hz）<input type="number" step="any" name="holdout_frequency_Hz" required value="{{ form.get('holdout_frequency_Hz', '') }}"></label>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>选择</th><th>记录</th><th>试样</th><th>方向</th><th>频率（Hz）</th><th>原表峰值（T）</th><th>条件字段</th></tr></thead>
+      <tbody>{% for row in cycles %}{% set key = row.id ~ '|' ~ row.sha256 %}<tr><td><input type="checkbox" name="loop" aria-label="选择 {{ row.id }}" value="{{ key }}"{% if key in selected %} checked{% endif %}{% if not row.eligible %} disabled{% endif %}></td><td><a href="/measured-loop-loss/{{ row.id }}">{{ row.id }}</a></td><td>{{ row.source.specimen_id or '未记录' }}</td><td>{{ direction_labels[row.source.direction] }}</td><td>{{ '%g' | format(row.source.frequency_hz) }}</td><td>{{ row.quantity }} {{ '%.8g' | format(row.peak_T) }}</td><td>{{ '已声明' if row.eligible else '缺少方向、试样、方法或条件' }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <label class="check"><input type="checkbox" name="one_series" value="yes" required{% if form.get('one_series') == 'yes' %} checked{% endif %}>确认选中回线来自同一试样、同一方向和共同试验条件，每档频率使用一个周期</label>
+    <button{% if not (cycles | selectattr('eligible') | list) %} disabled{% endif %}>整理回线并留出复核</button>
+  </form>
+  {% else %}<p>还没有可读取的单周期回线核算。请先保存原回线，并填写试样、方向和共同条件。</p>{% endif %}
+</section></main>
+</body>
+</html>

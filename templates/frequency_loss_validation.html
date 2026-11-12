@@ -9,7 +9,7 @@
 <body>
 <header>
   <h1>多频损耗留出复核</h1>
-  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/material-loss-reference">厂家损耗参考</a><a href="/measured-loop-loss">实测回线核算</a><a href="/system-data">系统数据与下载</a></nav>
+  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/material-loss-reference">厂家损耗参考</a><a href="/measured-loop-loss">实测回线核算</a><a href="{{ url_for('.cycles_page') }}">从保存回线复核</a><a href="/system-data">系统数据与下载</a></nav>
 </header>
 <main>
 {% macro number(value) %}{{ '%.8g' | format(value) if value is not none else '—' }}{% endmacro %}
@@ -19,7 +19,15 @@
   {% set unit = report.table.loss_unit %}
   <section>
     <h2>{{ source.specimen_id }} · 留出 {{ holdout }} Hz</h2>
-    <p>{{ source_kinds[source.source_kind] }} · {{ direction_labels[source.direction] }} · {{ report.rows | length }} 个原表点。损耗单位 {{ unit }}。</p>
+    <p>{{ source_kinds[source.source_kind] }} · {{ direction_labels[source.direction] }} · {{ report.rows | length }} {{ '个回线整理点' if report.cycle_series is defined else '个原表点' }}。损耗单位 {{ unit }}。</p>
+    {% if report.cycle_series is defined %}
+    <details>
+      <summary>从保存回线整理的频率表</summary>
+      <p>目标峰值 {{ report.cycle_series.amplitude }} {{ number(report.cycle_series.peak_T) }} T；允许偏差 {{ number(report.cycle_series.tolerance_T) }} T。计算使用已有的单周期积分，原回线与每档实际峰值随包保留。</p>
+      <div class="table-wrap"><table><thead><tr><th>原回线</th><th>频率（Hz）</th><th>实际峰值（T）</th><th>损耗（{{ unit }}）</th><th>闭合段能量占比</th></tr></thead>
+      <tbody>{% for cycle in report.cycle_series.cycles %}<tr><td><a href="/measured-loop-loss/{{ cycle.id }}">{{ cycle.id }}</a></td><td>{{ number(cycle.frequency_Hz) }}</td><td>{{ number(cycle.observed_peak_T) }}</td><td>{{ number(cycle.loss) }}</td><td>{{ number(100*cycle.closing_absolute_energy_fraction) ~ '%' if cycle.closing_absolute_energy_fraction is not none else '—' }}</td></tr>{% endfor %}</tbody></table></div>
+    </details>
+    {% endif %}
     <p class="muted">每个峰值单独复核。{{ holdout }} Hz 的损耗和不确定度只用于对照。相对误差以留出原值为分母，正值表示高估。</p>
     {% if report.evaluations | selectattr('weighting', 'none') | list %}<p>少于四档训练频率的峰值只列插值和线性对照，三项拟合留空。</p>{% endif %}
     {% if report.configurations | length > 1 %}<p>原表的配置随记录变化：{{ report.configurations | join('、') }}。留出误差反映这张表的频率和配置组合。</p>{% endif %}
@@ -45,7 +53,7 @@
         <dt>原表牌号</dt><dd>{{ source.reported_grade or '未记录' }}</dd>
         <dt>方法及条件</dt><dd>{{ source.method or '未记录' }}{% if source.conditions %} · {{ source.conditions }}{% endif %}</dd>
         <dt>统计版本</dt><dd>{{ source.input_table_identity.table_variant or '表内未标注' }}</dd>
-        <dt>原文件</dt><dd>{{ report.original.filename }} · {{ report.original.bytes }} 字节<br>SHA-256 {{ report.original.sha256 }}</dd>
+        <dt>{{ '回线整理表' if report.cycle_series is defined else '原文件' }}</dt><dd>{{ report.original.filename }} · {{ report.original.bytes }} 字节<br>SHA-256 {{ report.original.sha256 }}</dd>
       </dl>
       <div class="table-wrap"><table>
         <thead><tr><th>源行</th><th>峰值（T）</th><th>频率（Hz）</th><th>损耗</th><th>标准不确定度</th><th>配置</th><th>用途</th></tr></thead>
@@ -54,7 +62,7 @@
       {% if report.rows | length > 100 %}<p>页面显示前 100 点；完整原表及用途见工作包。</p>{% endif %}
     </details>
     <p class="muted">这是表内频率留出。牌号、方向和配置的适用范围由原始测量记录决定；计算结果不写回材料库或电机系数。</p>
-    <div class="actions"><a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载原表与复核结果</a><a href="{{ url_for('.page') }}">复核另一张表</a></div>
+    <div class="actions"><a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">{{ '下载原回线、整理表和复核结果' if report.cycle_series is defined else '下载原表与复核结果' }}</a><a href="{{ url_for('.page') }}">复核另一张表</a></div>
   </section>
 {% else %}
   <section>

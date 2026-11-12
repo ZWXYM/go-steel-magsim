@@ -330,3 +330,6 @@ tests/test_frequency_loss_validation.py -text
 calibration/frequency_loss_workbench_20261112/** -text
 calibration/frequency_loss_sparse_20261112/** -text
 modules/system_data_reference_evidence.py -text
+modules/loop_frequency_series.py -text
+templates/frequency_loss_cycles.html -text
+tests/test_loop_frequency_series.py -text

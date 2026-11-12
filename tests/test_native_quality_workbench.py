@@ -150,12 +150,13 @@ class NativeQualityWorkbench(unittest.TestCase):
         client=app.test_client()
         for route in ('/api/run','/api/train','/api/workbench/motor/queue/recover',
                       '/api/workbench/motor/jobs/scan_0123456789ab/submit',
-                      '/api/workbench/motor/jobs/scan_0123456789ab/continue'):
+                      '/api/workbench/motor/jobs/scan_0123456789ab/continue', '/frequency-loss-validation/loops/start'):
             self.assertEqual(client.post(route).status_code,423)
         self.assertEqual(client.put('/api/workbench/calibrate').status_code,423)
         for route in ('/api/workbench/calibrate','/api/workbench/motor/jobs',
                       '/api/workbench/calibrations/cal_0123456789ab/predict',
-                      '/api/workbench/motor/jobs/scan_0123456789ab/export'):
+                      '/api/workbench/motor/jobs/scan_0123456789ab/export', '/external-bh-validation',
+                      '/measured-loop-loss', '/frequency-loss-validation', '/frequency-loss-validation/loops'):
             self.assertEqual(client.post(route).status_code,404) # Filter permits route resolution.
         self.assertEqual(client.get('/api/run').status_code,404)
 
