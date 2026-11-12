@@ -20,6 +20,7 @@ from modules.material_library import MaterialLibrary
 from modules.platform_material_exports import PlatformMaterialExports
 from modules.material_loss_reference import MaterialLossReference,reference_csv,reference_bundle,json_bytes as loss_json_bytes
 from modules.baosteel_catalog_check import read_catalog_check
+from modules.published_loss_checks import figure_frequency_csv, read_published_loss_checks
 from modules.material_input_view import MaterialInputView
 from modules.calibrated_motor_preparation import CalibratedMotorPreparation
 from modules.calibrated_motor_native import CalibratedMotorNative
@@ -224,13 +225,32 @@ def create_workbench(project,storage=None,root=None,script_history=None):
             _,check=read_catalog_check(project)
         except ValueError:
             check=None  # The optional comparison does not replace the original material reference.
-        return render_template('material_loss_reference.html',catalog_check=check)
+        try:
+            _,published=read_published_loss_checks(project)
+        except ValueError:
+            published=None
+        return render_template('material_loss_reference.html',catalog_check=check,published=published)
 
     @bp.get('/api/workbench/material-loss-reference/baosteel-check')
     def baosteel_catalog_check_download():
         if request.args:raise ValueError('宝钢附录对照不接受文件或查询参数')
         raw,_=read_catalog_check(project)
         return send_file(io.BytesIO(raw),as_attachment=True,download_name='baosteel_D1_catalog_check_v1.json',mimetype='application/json')
+
+    @bp.get('/api/workbench/material-loss-reference/published-checks')
+    def published_loss_checks_download():
+        if request.args:
+            raise ValueError('出版损耗核对不接受查询参数')
+        raw,_=read_published_loss_checks(project)
+        return send_file(io.BytesIO(raw),as_attachment=True,download_name='published_go_loss_checks_v1.json',mimetype='application/json')
+
+    @bp.get('/api/workbench/material-loss-reference/figure-frequency-csv')
+    def published_figure_frequency_download():
+        if request.args:
+            raise ValueError('出版图读频率表不接受查询参数')
+        _,checks=read_published_loss_checks(project)
+        return send_file(io.BytesIO(figure_frequency_csv(checks)),as_attachment=True,
+                         download_name='B30P105_Zhao_Hu_Fig9_readings.csv',mimetype='text/csv')
 
     @bp.get('/api/workbench/material-loss-reference')
     def material_loss_reference_data():

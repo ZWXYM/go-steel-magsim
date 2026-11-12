@@ -14,7 +14,9 @@ from unittest.mock import patch
 
 from flask import Flask
 from modules.baosteel_catalog_check import SOURCE as STANDARD_CHECK
+from modules.frequency_loss_validation import read_frequency_table
 from modules.material_loss_reference import MaterialLossReference, GRADES, reference_csv, reference_bundle
+from modules.published_loss_checks import SOURCE as PUBLISHED_CHECKS
 from modules.workbench_routes import create_workbench
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -145,6 +147,34 @@ class LossReferenceTests(unittest.TestCase):
         self.assertEqual(client.get(endpoint).status_code,400)
         self.assertNotIn('宝钢牌号典型值对照',client.get('/material-loss-reference').get_data(as_text=True))
         self.assertEqual(self.path.read_bytes(),original)
+
+    def test_published_measurements_are_downloadable_with_scope_and_frequency_units(self):
+        path = self.project / PUBLISHED_CHECKS
+        original = (PROJECT / PUBLISHED_CHECKS).read_bytes()
+        path.write_bytes(original)
+        client = self.client()
+        page = client.get('/material-loss-reference').get_data(as_text=True)
+        self.assertIn('B30P105 在 100 Hz 的正弦损耗', page)
+        self.assertIn('3.126', page)
+        self.assertIn('-18.3%', page)
+        self.assertIn('B27R095 在 25 A/m 直流偏磁下的损耗', page)
+        base = '/api/workbench/material-loss-reference/'
+        with client.get(base + 'published-checks') as response:
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, original)
+        with client.get(base + 'figure-frequency-csv') as response:
+            self.assertEqual(response.status_code, 200)
+            table = read_frequency_table(response.data)
+        self.assertEqual(table['input_energy_unit'], 'J/kg')
+        self.assertEqual(len(table['rows']), 28)
+        point = next(row for row in table['rows'] if row['frequency_Hz'] == 100 and row['peak_T'] == 1.7)
+        self.assertAlmostEqual(point['loss'], 3.126, places=12)
+        self.assertIsNone(point['standard_u'])
+        self.assertEqual(client.get(base + 'figure-frequency-csv?source=other').status_code, 400)
+        path.write_bytes(original + b'\n')
+        self.assertEqual(client.get(base + 'published-checks').status_code, 400)
+        self.assertNotIn('同牌号发表实测对照', client.get('/material-loss-reference').get_data(as_text=True))
+        self.assertEqual(client.get(base.rstrip('/')).status_code, 200)
 
 
 if __name__ == '__main__': unittest.main()

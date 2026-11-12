@@ -1,0 +1,92 @@
+{
+  "schema": "b30p105_aip_frequency_loss_2020_v1",
+  "grade": "B30P105",
+  "doi": "https://doi.org/10.1063/5.0020789",
+  "article": "https://aipp.silverchair-cdn.com/article-minimal/992207",
+  "figure_9_sha256": "3875ea7bba63418c19f787e672dae7fb72966a263891911a268dadbeb0840509",
+  "apparatus": "Epstein frame",
+  "direction": null,
+  "coil_id": null,
+  "matched_100hz": [
+    {
+      "Bm_T": 0.2,
+      "columns_a": 20,
+      "columns_b": 21,
+      "figure_resolution_W_kg": 0.002,
+      "figure_resolution_mJ_kg": 0.02,
+      "frequency_Hz": 100,
+      "measured_figure_W_kg": 0.05369,
+      "measured_figure_mJ_kg": 0.5369,
+      "model_minus_figure_W_kg": -0.018345850190295214,
+      "model_minus_figure_pct": -34.16995751591584,
+      "saved_catalog_coefficients_W_kg": 0.03534414980970479,
+      "x_pixel": 189.69073490745168,
+      "y_pixel_a": 288.17534206903537,
+      "y_pixel_b": 288.2722192458519
+    },
+    {
+      "Bm_T": 1.7,
+      "columns_a": 20,
+      "columns_b": 20,
+      "figure_resolution_W_kg": 0.05500000000000001,
+      "figure_resolution_mJ_kg": 0.55,
+      "frequency_Hz": 100,
+      "measured_figure_W_kg": 3.126,
+      "measured_figure_mJ_kg": 31.26,
+      "model_minus_figure_W_kg": -0.572385176248829,
+      "model_minus_figure_pct": -18.310466290749495,
+      "saved_catalog_coefficients_W_kg": 2.553614823751171,
+      "x_pixel": 189.69073490745168,
+      "y_pixel_a": 230.8634416757474,
+      "y_pixel_b": 230.87930814233093
+    }
+  ],
+  "other_study_50hz_comparison": [
+    {
+      "AIP_fig9_W_kg": 0.017145,
+      "AIP_minus_Li_Luo_pct": -19.894137963359427,
+      "Bm_AIP_T": 0.2,
+      "Bpeak_Li_Luo_T": 0.20000337162908144,
+      "Li_Luo_workbook_W_kg": 0.021402928030607605,
+      "frequency_Hz": 50
+    },
+    {
+      "AIP_fig9_W_kg": 1.0917999999999999,
+      "AIP_minus_Li_Luo_pct": -13.082247441048821,
+      "Bm_AIP_T": 1.7,
+      "Bpeak_Li_Luo_T": 1.7000439965758054,
+      "Li_Luo_workbook_W_kg": 1.2561300400162745,
+      "frequency_Hz": 50
+    }
+  ],
+  "new_solves": 0,
+  "model_changed": false,
+  "figure_points": 28,
+  "measured_harmonic_table_rows": 16,
+  "figure_trace_replay": [
+    {
+      "peak_T": 0.2,
+      "bracket_Hz": [
+        75.0,
+        125.0
+      ],
+      "errors_pct": {
+        "bracket_cycle_linear": -0.782268578878768,
+        "linear_lowest": -36.13335816725648,
+        "nonnegative_fit": 0.6742237273846242
+      }
+    },
+    {
+      "peak_T": 1.7,
+      "bracket_Hz": [
+        75.0,
+        125.0
+      ],
+      "errors_pct": {
+        "bracket_cycle_linear": -0.42914267434421544,
+        "linear_lowest": -30.147152911068474,
+        "nonnegative_fit": -0.13561492105561027
+      }
+    }
+  ]
+}

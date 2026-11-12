@@ -1,0 +1,79 @@
+{
+  "schema": "b27r095_sst_bias_frequency_comparison_v1",
+  "grade": "B27R095",
+  "doi": "https://doi.org/10.19595/j.cnki.1000-6753.tces.190603",
+  "article": "https://dgjsxb.ces-transaction.com/fileup/HTML/2020-9-1849.htm",
+  "figure_13_url": "https://dgjsxb.ces-transaction.com/fileup/HTML/images/163046559dd331be0221cadbb285afd2.jpg",
+  "figure_13_sha256": "47fa38d8e86f8629c15e3ff19a7f68f7ec3aa3121fa854182122837f2dd06686",
+  "table_4_sha256": "4de5308676f6f65bb0d7453078d500677883515f03707c6b744a26b52a3e4119",
+  "axis_basis": "Fig. 13 prints B/T. Section 4.2 explains the Fig. 12–13 sweep as peak AC component Bacm.",
+  "frequency_basis": "Section 4.2 identifies the Fig. 12–13 results at 50 Hz. Table 4 uses 4 Hz.",
+  "direction": null,
+  "coil_id": null,
+  "Hdc_A_m": 25,
+  "compared_per_cycle": [
+    {
+      "Bacm_T": 0.6,
+      "E4_mJ_kg": 2.05,
+      "E50_figure_mJ_kg": 4.02,
+      "E50_figure_resolution_mJ_kg": 0.2,
+      "E50_over_E4": 1.9609756097560975,
+      "E50_over_E4_reading_max": 2.0585365853658537,
+      "E50_over_E4_reading_min": 1.8634146341463416,
+      "P4_W_kg": "0.0082",
+      "P50_figure_W_kg": 0.201,
+      "table_4_row": 1
+    },
+    {
+      "Bacm_T": 0.8,
+      "E4_mJ_kg": 2.875,
+      "E50_figure_mJ_kg": 5.74,
+      "E50_figure_resolution_mJ_kg": 0.2,
+      "E50_over_E4": 1.9965217391304348,
+      "E50_over_E4_reading_max": 2.066086956521739,
+      "E50_over_E4_reading_min": 1.9269565217391305,
+      "P4_W_kg": "0.0115",
+      "P50_figure_W_kg": 0.287,
+      "table_4_row": 2
+    },
+    {
+      "Bacm_T": 1.0,
+      "E4_mJ_kg": 3.675,
+      "E50_figure_mJ_kg": 7.6,
+      "E50_figure_resolution_mJ_kg": 0.2,
+      "E50_over_E4": 2.068027210884354,
+      "E50_over_E4_reading_max": 2.122448979591837,
+      "E50_over_E4_reading_min": 2.0136054421768708,
+      "P4_W_kg": "0.0147",
+      "P50_figure_W_kg": 0.38,
+      "table_4_row": 3
+    },
+    {
+      "Bacm_T": 1.2,
+      "E4_mJ_kg": 4.6,
+      "E50_figure_mJ_kg": 9.74,
+      "E50_figure_resolution_mJ_kg": 0.2,
+      "E50_over_E4": 2.117391304347826,
+      "E50_over_E4_reading_max": 2.1608695652173915,
+      "E50_over_E4_reading_min": 2.0739130434782607,
+      "P4_W_kg": "0.0184",
+      "P50_figure_W_kg": 0.487,
+      "table_4_row": 4
+    },
+    {
+      "Bacm_T": 1.4,
+      "E4_mJ_kg": 5.7,
+      "E50_figure_mJ_kg": 12.3,
+      "E50_figure_resolution_mJ_kg": 0.2,
+      "E50_over_E4": 2.1578947368421053,
+      "E50_over_E4_reading_max": 2.192982456140351,
+      "E50_over_E4_reading_min": 2.1228070175438596,
+      "P4_W_kg": "0.0228",
+      "P50_figure_W_kg": 0.615,
+      "table_4_row": 5
+    }
+  ],
+  "new_solves": 0,
+  "figure_markers": 15,
+  "max_common_fig4_fig13_difference_W_kg": 0.0020000000000000018
+}

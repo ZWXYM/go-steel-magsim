@@ -1,0 +1,1123 @@
+{
+  "version": "published_go_loss_checks_v1",
+  "B30P105": {
+    "direction": null,
+    "coil_id": null,
+    "sample_identity_between_sources_confirmed": false,
+    "aip": {
+      "doi": "https://doi.org/10.1063/5.0020789",
+      "article": "https://aipp.silverchair-cdn.com/article-minimal/992207",
+      "figure_9_url": "https://aipp.silverchair-cdn.com/aipp/content_public/journal/adv/10/8/10.1063_5.0020789/3/085222_1_f9.jpeg",
+      "figure_9_sha256": "3875ea7bba63418c19f787e672dae7fb72966a263891911a268dadbeb0840509",
+      "article_sha256": "e63eccf37329c0548c8dc5e478d9a0b31792a030cadb42b0295dce3b5666228d",
+      "apparatus": "Epstein frame",
+      "actual_motor_id": "bhexec_84a6a610054a",
+      "actual_motor_electrical_frequency_Hz": 100,
+      "actual_material_sha256": "7e9bff89e99b2571a8406c6c70ecdedc6a9e4301c94068a75465ca91f44cac49",
+      "model_density_assumption_kg_m3": 7650.0,
+      "actual_coefficients": {
+        "Kc": 0.296088132032681,
+        "Kdc": 0.0,
+        "Ke": 0.0,
+        "Kh": 37.9868733077923,
+        "Y": 2.0
+      },
+      "matched_100hz": [
+        {
+          "Bm_T": 0.2,
+          "columns_a": 20,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.002,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 100,
+          "measured_figure_W_kg": 0.05369,
+          "measured_figure_mJ_kg": 0.5369,
+          "model_minus_figure_W_kg": -0.018345850190295214,
+          "model_minus_figure_pct": -34.16995751591584,
+          "saved_catalog_coefficients_W_kg": 0.03534414980970479,
+          "x_pixel": 189.69073490745168,
+          "y_pixel_a": 288.17534206903537,
+          "y_pixel_b": 288.2722192458519
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 20,
+          "columns_b": 20,
+          "figure_resolution_W_kg": 0.05500000000000001,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 100,
+          "measured_figure_W_kg": 3.126,
+          "measured_figure_mJ_kg": 31.26,
+          "model_minus_figure_W_kg": -0.572385176248829,
+          "model_minus_figure_pct": -18.310466290749495,
+          "saved_catalog_coefficients_W_kg": 2.553614823751171,
+          "x_pixel": 189.69073490745168,
+          "y_pixel_a": 230.8634416757474,
+          "y_pixel_b": 230.87930814233093
+        }
+      ],
+      "graph_points": [
+        {
+          "Bm_T": 0.2,
+          "columns_a": 19,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.001,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 50,
+          "measured_figure_W_kg": 0.017145,
+          "measured_figure_mJ_kg": 0.3429,
+          "model_minus_figure_W_kg": -0.003343358193614027,
+          "model_minus_figure_pct": -19.5004852354274,
+          "saved_catalog_coefficients_W_kg": 0.013801641806385974,
+          "x_pixel": 120.04457136155875,
+          "y_pixel_a": 310.2347118480776,
+          "y_pixel_b": 310.2551290621356
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 21,
+          "columns_b": 20,
+          "figure_resolution_W_kg": 0.0015,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 75,
+          "measured_figure_W_kg": 0.033105,
+          "measured_figure_mJ_kg": 0.4414,
+          "model_minus_figure_W_kg": -0.009499712466571227,
+          "model_minus_figure_pct": -28.695702965024093,
+          "saved_catalog_coefficients_W_kg": 0.023605287533428776,
+          "x_pixel": 154.86765313450522,
+          "y_pixel_a": 299.09525893284626,
+          "y_pixel_b": 299.0346443605647
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 20,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.002,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 100,
+          "measured_figure_W_kg": 0.05369,
+          "measured_figure_mJ_kg": 0.5369,
+          "model_minus_figure_W_kg": -0.018345850190295214,
+          "model_minus_figure_pct": -34.16995751591584,
+          "saved_catalog_coefficients_W_kg": 0.03534414980970479,
+          "x_pixel": 189.69073490745168,
+          "y_pixel_a": 288.17534206903537,
+          "y_pixel_b": 288.2722192458519
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 19,
+          "columns_b": 22,
+          "figure_resolution_W_kg": 0.0025,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 125,
+          "measured_figure_W_kg": 0.078,
+          "measured_figure_mJ_kg": 0.624,
+          "model_minus_figure_W_kg": -0.028981771364785996,
+          "model_minus_figure_pct": -37.15611713434102,
+          "saved_catalog_coefficients_W_kg": 0.049018228635214,
+          "x_pixel": 224.51381668039812,
+          "y_pixel_a": 278.3607419287261,
+          "y_pixel_b": 278.3178094344799
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 20,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.003,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 150,
+          "measured_figure_W_kg": 0.10642499999999999,
+          "measured_figure_mJ_kg": 0.7095,
+          "model_minus_figure_W_kg": -0.04179747599004356,
+          "model_minus_figure_pct": -39.27411415554951,
+          "saved_catalog_coefficients_W_kg": 0.06462752400995643,
+          "x_pixel": 259.3368984533446,
+          "y_pixel_a": 268.6764076627892,
+          "y_pixel_b": 268.5836199056948
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 20,
+          "columns_b": 22,
+          "figure_resolution_W_kg": 0.0035,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 175,
+          "measured_figure_W_kg": 0.13830250000000002,
+          "measured_figure_mJ_kg": 0.7903,
+          "model_minus_figure_W_kg": -0.05613046406606795,
+          "model_minus_figure_pct": -40.58528520169046,
+          "saved_catalog_coefficients_W_kg": 0.08217203593393207,
+          "x_pixel": 294.15998022629105,
+          "y_pixel_a": 259.4614799649852,
+          "y_pixel_b": 259.4574311492512
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 19,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.004,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 200,
+          "measured_figure_W_kg": 0.1746,
+          "measured_figure_mJ_kg": 0.873,
+          "model_minus_figure_W_kg": -0.07294823559285908,
+          "model_minus_figure_pct": -41.780203661431315,
+          "saved_catalog_coefficients_W_kg": 0.10165176440714092,
+          "x_pixel": 328.9830619992376,
+          "y_pixel_a": 250.09926096663088,
+          "y_pixel_b": 250.034848697766
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 19,
+          "columns_b": 22,
+          "figure_resolution_W_kg": 0.0045,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 225,
+          "measured_figure_W_kg": 0.21771000000000001,
+          "measured_figure_mJ_kg": 0.9676,
+          "model_minus_figure_W_kg": -0.09464329057041702,
+          "model_minus_figure_pct": -43.47218344146664,
+          "saved_catalog_coefficients_W_kg": 0.12306670942958299,
+          "x_pixel": 363.806143772184,
+          "y_pixel_a": 239.37505487836762,
+          "y_pixel_b": 239.29099118678758
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 20,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.005,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 250,
+          "measured_figure_W_kg": 0.265,
+          "measured_figure_mJ_kg": 1.06,
+          "model_minus_figure_W_kg": -0.11858312899874177,
+          "model_minus_figure_pct": -44.74835056556293,
+          "saved_catalog_coefficients_W_kg": 0.14641687100125825,
+          "x_pixel": 398.62922554513045,
+          "y_pixel_a": 228.88348623685835,
+          "y_pixel_b": 228.81822243884753
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 18,
+          "columns_b": 22,
+          "figure_resolution_W_kg": 0.0055,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 275,
+          "measured_figure_W_kg": 0.30604750000000003,
+          "measured_figure_mJ_kg": 1.1129,
+          "model_minus_figure_W_kg": -0.1343452508778333,
+          "model_minus_figure_pct": -43.89686270197708,
+          "saved_catalog_coefficients_W_kg": 0.17170224912216672,
+          "x_pixel": 433.4523073180769,
+          "y_pixel_a": 222.85577635634255,
+          "y_pixel_b": 222.8237629570643
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 20,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.006,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 300,
+          "measured_figure_W_kg": 0.34968,
+          "measured_figure_mJ_kg": 1.1656,
+          "model_minus_figure_W_kg": -0.15075715620769162,
+          "model_minus_figure_pct": -43.112890702268245,
+          "saved_catalog_coefficients_W_kg": 0.19892284379230837,
+          "x_pixel": 468.2753890910234,
+          "y_pixel_a": 216.93992125474605,
+          "y_pixel_b": 216.77327992735988
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 21,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.0065,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 325,
+          "measured_figure_W_kg": 0.4088175,
+          "measured_figure_mJ_kg": 1.2579,
+          "model_minus_figure_W_kg": -0.18073884498831672,
+          "model_minus_figure_pct": -44.210153672070476,
+          "saved_catalog_coefficients_W_kg": 0.22807865501168328,
+          "x_pixel": 503.09847086396985,
+          "y_pixel_a": 206.41667006012474,
+          "y_pixel_b": 206.3454390979156
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 19,
+          "columns_b": 22,
+          "figure_resolution_W_kg": 0.007,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 350,
+          "measured_figure_W_kg": 0.47243000000000007,
+          "measured_figure_mJ_kg": 1.3498,
+          "model_minus_figure_W_kg": -0.21326031721970873,
+          "model_minus_figure_pct": -45.14114624805975,
+          "saved_catalog_coefficients_W_kg": 0.25916968278029134,
+          "x_pixel": 537.9215526369163,
+          "y_pixel_a": 195.87913451478138,
+          "y_pixel_b": 196.01615077064753
+        },
+        {
+          "Bm_T": 0.2,
+          "columns_a": 19,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.0075,
+          "figure_resolution_mJ_kg": 0.02,
+          "frequency_Hz": 375,
+          "measured_figure_W_kg": 0.523875,
+          "measured_figure_mJ_kg": 1.397,
+          "model_minus_figure_W_kg": -0.2316790729018673,
+          "model_minus_figure_pct": -44.22411317620946,
+          "saved_catalog_coefficients_W_kg": 0.2921959270981327,
+          "x_pixel": 572.7446344098628,
+          "y_pixel_a": 190.58696535748876,
+          "y_pixel_b": 190.59766938148366
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 18,
+          "columns_b": 19,
+          "figure_resolution_W_kg": 0.027500000000000004,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 50,
+          "measured_figure_W_kg": 1.0917999999999999,
+          "measured_figure_mJ_kg": 21.836,
+          "model_minus_figure_W_kg": -0.09463137948861322,
+          "model_minus_figure_pct": -8.66746469029247,
+          "saved_catalog_coefficients_W_kg": 0.9971686205113867,
+          "x_pixel": 120.04457136155875,
+          "y_pixel_a": 266.5317164007157,
+          "y_pixel_b": 266.52282102571144
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 20,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.04125,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 75,
+          "measured_figure_W_kg": 1.99656,
+          "measured_figure_mJ_kg": 26.6208,
+          "model_minus_figure_W_kg": -0.29107797570977123,
+          "model_minus_figure_pct": -14.578974621838125,
+          "saved_catalog_coefficients_W_kg": 1.7054820242902287,
+          "x_pixel": 154.86765313450522,
+          "y_pixel_a": 248.47168298933045,
+          "y_pixel_b": 248.37604869963965
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 20,
+          "columns_b": 20,
+          "figure_resolution_W_kg": 0.05500000000000001,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 100,
+          "measured_figure_W_kg": 3.126,
+          "measured_figure_mJ_kg": 31.26,
+          "model_minus_figure_W_kg": -0.572385176248829,
+          "model_minus_figure_pct": -18.310466290749495,
+          "saved_catalog_coefficients_W_kg": 2.553614823751171,
+          "x_pixel": 189.69073490745168,
+          "y_pixel_a": 230.8634416757474,
+          "y_pixel_b": 230.87930814233093
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 19,
+          "columns_b": 22,
+          "figure_resolution_W_kg": 0.06875,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 125,
+          "measured_figure_W_kg": 4.4538625,
+          "measured_figure_mJ_kg": 35.6309,
+          "model_minus_figure_W_kg": -0.9122954811057884,
+          "model_minus_figure_pct": -20.48324305264899,
+          "saved_catalog_coefficients_W_kg": 3.541567018894211,
+          "x_pixel": 224.51381668039812,
+          "y_pixel_a": 214.33533700288737,
+          "y_pixel_b": 214.3318153193917
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 20,
+          "columns_b": 20,
+          "figure_resolution_W_kg": 0.0825,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 150,
+          "measured_figure_W_kg": 5.9927399999999995,
+          "measured_figure_mJ_kg": 39.9516,
+          "model_minus_figure_W_kg": -1.3234013902806483,
+          "model_minus_figure_pct": -22.083410765036504,
+          "saved_catalog_coefficients_W_kg": 4.669338609719351,
+          "x_pixel": 259.3368984533446,
+          "y_pixel_a": 197.9715946514818,
+          "y_pixel_b": 198.00110503342597
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 19,
+          "columns_b": 20,
+          "figure_resolution_W_kg": 0.09625000000000002,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 175,
+          "measured_figure_W_kg": 7.67613,
+          "measured_figure_mJ_kg": 43.8636,
+          "model_minus_figure_W_kg": -1.739200403773408,
+          "model_minus_figure_pct": -22.65725572356654,
+          "saved_catalog_coefficients_W_kg": 5.936929596226592,
+          "x_pixel": 294.15998022629105,
+          "y_pixel_a": 183.11275093155965,
+          "y_pixel_b": 183.25733606163698
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 19,
+          "columns_b": 20,
+          "figure_resolution_W_kg": 0.11000000000000001,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 200,
+          "measured_figure_W_kg": 9.54672,
+          "measured_figure_mJ_kg": 47.7336,
+          "model_minus_figure_W_kg": -2.2023800215840685,
+          "model_minus_figure_pct": -23.06949425126188,
+          "saved_catalog_coefficients_W_kg": 7.344339978415932,
+          "x_pixel": 328.9830619992376,
+          "y_pixel_a": 168.493664397981,
+          "y_pixel_b": 168.5913969906836
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 19,
+          "columns_b": 20,
+          "figure_resolution_W_kg": 0.12375000000000001,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 225,
+          "measured_figure_W_kg": 11.611305,
+          "measured_figure_mJ_kg": 51.6058,
+          "model_minus_figure_W_kg": -2.7197352437126323,
+          "model_minus_figure_pct": -23.423165989633652,
+          "saved_catalog_coefficients_W_kg": 8.891569756287367,
+          "x_pixel": 363.806143772184,
+          "y_pixel_a": 153.8306759343689,
+          "y_pixel_b": 153.95319909427323
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 20,
+          "columns_b": 19,
+          "figure_resolution_W_kg": 0.1375,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 250,
+          "measured_figure_W_kg": 13.86335,
+          "measured_figure_mJ_kg": 55.4534,
+          "model_minus_figure_W_kg": -3.2847310701590935,
+          "model_minus_figure_pct": -23.693631554848526,
+          "saved_catalog_coefficients_W_kg": 10.578618929840907,
+          "x_pixel": 398.62922554513045,
+          "y_pixel_a": 139.40317896917443,
+          "y_pixel_b": 139.26547575354036
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 20,
+          "columns_b": 18,
+          "figure_resolution_W_kg": 0.15125,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 275,
+          "measured_figure_W_kg": 16.2727675,
+          "measured_figure_mJ_kg": 59.1737,
+          "model_minus_figure_W_kg": -3.867280000923458,
+          "model_minus_figure_pct": -23.7653490773678,
+          "saved_catalog_coefficients_W_kg": 12.405487499076543,
+          "x_pixel": 433.4523073180769,
+          "y_pixel_a": 125.30376424872597,
+          "y_pixel_b": 125.21335625706652
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 19,
+          "columns_b": 22,
+          "figure_resolution_W_kg": 0.165,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 300,
+          "measured_figure_W_kg": 18.85788,
+          "measured_figure_mJ_kg": 62.8596,
+          "model_minus_figure_W_kg": -4.485704536005722,
+          "model_minus_figure_pct": -23.78689723344152,
+          "saved_catalog_coefficients_W_kg": 14.37217546399428,
+          "x_pixel": 468.2753890910234,
+          "y_pixel_a": 111.31340629418514,
+          "y_pixel_b": 111.31231964507133
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 19,
+          "columns_b": 20,
+          "figure_resolution_W_kg": 0.17875000000000002,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 325,
+          "measured_figure_W_kg": 21.5922525,
+          "measured_figure_mJ_kg": 66.4377,
+          "model_minus_figure_W_kg": -5.113569675405888,
+          "model_minus_figure_pct": -23.682428108905672,
+          "saved_catalog_coefficients_W_kg": 16.478682824594113,
+          "x_pixel": 503.09847086396985,
+          "y_pixel_a": 97.76310828789714,
+          "y_pixel_b": 97.78677813230834
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 19,
+          "columns_b": 22,
+          "figure_resolution_W_kg": 0.19250000000000003,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 350,
+          "measured_figure_W_kg": 24.479875,
+          "measured_figure_mJ_kg": 69.9425,
+          "model_minus_figure_W_kg": -5.754865419123952,
+          "model_minus_figure_pct": -23.508557209233917,
+          "saved_catalog_coefficients_W_kg": 18.725009580876048,
+          "x_pixel": 537.9215526369163,
+          "y_pixel_a": 84.52376644507319,
+          "y_pixel_b": 84.50500245056158
+        },
+        {
+          "Bm_T": 1.7,
+          "columns_a": 19,
+          "columns_b": 21,
+          "figure_resolution_W_kg": 0.20625000000000002,
+          "figure_resolution_mJ_kg": 0.55,
+          "frequency_Hz": 375,
+          "measured_figure_W_kg": 27.39405,
+          "measured_figure_mJ_kg": 73.0508,
+          "model_minus_figure_W_kg": -6.282894267159914,
+          "model_minus_figure_pct": -22.935251513229748,
+          "saved_catalog_coefficients_W_kg": 21.111155732840086,
+          "x_pixel": 572.7446344098628,
+          "y_pixel_a": 72.76419225509967,
+          "y_pixel_b": 72.74369172937485
+        }
+      ],
+      "other_study_50hz_comparison": [
+        {
+          "AIP_fig9_W_kg": 0.017145,
+          "AIP_minus_Li_Luo_pct": -19.894137963359427,
+          "Bm_AIP_T": 0.2,
+          "Bpeak_Li_Luo_T": 0.20000337162908144,
+          "Li_Luo_workbook_W_kg": 0.021402928030607605,
+          "frequency_Hz": 50
+        },
+        {
+          "AIP_fig9_W_kg": 1.0917999999999999,
+          "AIP_minus_Li_Luo_pct": -13.082247441048821,
+          "Bm_AIP_T": 1.7,
+          "Bpeak_Li_Luo_T": 1.7000439965758054,
+          "Li_Luo_workbook_W_kg": 1.2561300400162745,
+          "frequency_Hz": 50
+        }
+      ],
+      "harmonic_source_table_rows": [
+        {
+          "Bm_T": 1.7,
+          "author_model_mJ_kg": "23.2546",
+          "frequency_Hz": null,
+          "harmonic_content": 0.3,
+          "harmonic_order": 3,
+          "measured_mJ_kg": "22.7052",
+          "minor_loops": false,
+          "phase_deg": 0,
+          "recomputed_error_percent": 2.4197100223737293,
+          "reported_error_percent": "2.42",
+          "table": "II"
+        },
+        {
+          "Bm_T": 1.7,
+          "author_model_mJ_kg": "23.8435",
+          "frequency_Hz": null,
+          "harmonic_content": 0.3,
+          "harmonic_order": 3,
+          "measured_mJ_kg": "23.4491",
+          "minor_loops": false,
+          "phase_deg": 45,
+          "recomputed_error_percent": 1.681940884724787,
+          "reported_error_percent": "1.68",
+          "table": "II"
+        },
+        {
+          "Bm_T": 1.7,
+          "author_model_mJ_kg": "26.5182",
+          "frequency_Hz": null,
+          "harmonic_content": 0.3,
+          "harmonic_order": 3,
+          "measured_mJ_kg": "25.1444",
+          "minor_loops": false,
+          "phase_deg": 90,
+          "recomputed_error_percent": 5.4636420037861315,
+          "reported_error_percent": "5.46",
+          "table": "II"
+        },
+        {
+          "Bm_T": 1.7,
+          "author_model_mJ_kg": "22.7149",
+          "frequency_Hz": null,
+          "harmonic_content": 0.1,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "21.89",
+          "minor_loops": false,
+          "phase_deg": 0,
+          "recomputed_error_percent": 3.7683873915029693,
+          "reported_error_percent": "3.77",
+          "table": "III"
+        },
+        {
+          "Bm_T": 1.7,
+          "author_model_mJ_kg": "22.8735",
+          "frequency_Hz": null,
+          "harmonic_content": 0.1,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "22.3669",
+          "minor_loops": false,
+          "phase_deg": 45,
+          "recomputed_error_percent": 2.2649540168731472,
+          "reported_error_percent": "2.27",
+          "table": "III"
+        },
+        {
+          "Bm_T": 1.7,
+          "author_model_mJ_kg": "23.7898",
+          "frequency_Hz": null,
+          "harmonic_content": 0.1,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "23.151",
+          "minor_loops": false,
+          "phase_deg": 90,
+          "recomputed_error_percent": 2.759276057189754,
+          "reported_error_percent": "2.76",
+          "table": "III"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "22.8153",
+          "frequency_Hz": null,
+          "harmonic_content": 0.2,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "21.9667",
+          "minor_loops": true,
+          "phase_deg": 0,
+          "recomputed_error_percent": 3.8631200863124637,
+          "reported_error_percent": "3.86",
+          "table": "IV"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "22.991",
+          "frequency_Hz": null,
+          "harmonic_content": 0.2,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "22.3519",
+          "minor_loops": true,
+          "phase_deg": 45,
+          "recomputed_error_percent": 2.8592647604901598,
+          "reported_error_percent": "2.86",
+          "table": "IV"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "23.9664",
+          "frequency_Hz": null,
+          "harmonic_content": 0.2,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "23.2673",
+          "minor_loops": true,
+          "phase_deg": 90,
+          "recomputed_error_percent": 3.0046460053379636,
+          "reported_error_percent": "3.01",
+          "table": "IV"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "25.9105",
+          "frequency_Hz": null,
+          "harmonic_content": 0.2,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "24.9511",
+          "minor_loops": true,
+          "phase_deg": 135,
+          "recomputed_error_percent": 3.8451210567870757,
+          "reported_error_percent": "3.85",
+          "table": "IV"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "29.126",
+          "frequency_Hz": null,
+          "harmonic_content": 0.2,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "27.7348",
+          "minor_loops": true,
+          "phase_deg": 180,
+          "recomputed_error_percent": 5.016080880338059,
+          "reported_error_percent": "5.02",
+          "table": "IV"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "28.6634",
+          "frequency_Hz": null,
+          "harmonic_content": 0.3,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "27.6464",
+          "minor_loops": true,
+          "phase_deg": 0,
+          "recomputed_error_percent": 3.6785982985126453,
+          "reported_error_percent": "3.68",
+          "table": "V"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "28.857",
+          "frequency_Hz": null,
+          "harmonic_content": 0.3,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "28.0073",
+          "minor_loops": true,
+          "phase_deg": 45,
+          "recomputed_error_percent": 3.033851888614754,
+          "reported_error_percent": "3.03",
+          "table": "V"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "30.0661",
+          "frequency_Hz": null,
+          "harmonic_content": 0.3,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "29.1886",
+          "minor_loops": true,
+          "phase_deg": 90,
+          "recomputed_error_percent": 3.006310682937859,
+          "reported_error_percent": "3.01",
+          "table": "V"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "32.4444",
+          "frequency_Hz": null,
+          "harmonic_content": 0.3,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "31.3374",
+          "minor_loops": true,
+          "phase_deg": 135,
+          "recomputed_error_percent": 3.5325202473721498,
+          "reported_error_percent": "3.53",
+          "table": "V"
+        },
+        {
+          "Bm_T": 1.6,
+          "author_model_mJ_kg": "36.3388",
+          "frequency_Hz": null,
+          "harmonic_content": 0.3,
+          "harmonic_order": 5,
+          "measured_mJ_kg": "35.1756",
+          "minor_loops": true,
+          "phase_deg": 180,
+          "recomputed_error_percent": 3.306837694310829,
+          "reported_error_percent": "3.31",
+          "table": "V"
+        }
+      ]
+    },
+    "li_luo": {
+      "measurement_doi": "https://doi.org/10.1038/s41598-024-55155-w",
+      "workbook_sha256": "eb397a4f667ee6d089c2501e19c6afb41c0a50e87774a78c804292428ebe769b",
+      "d1_source": {
+        "appendix_page_header": "Q/BQB 485-2022 on pages containing Table D.1",
+        "cover_edition": "Q/BQB 485-2023",
+        "direction_scope": "General measurement directions described by 8.5; exact specimen and direction are not given per appendix row.",
+        "loss_abscissa": "peak magnetic polarization J, not B; definition section 3.1 and note 1 to section 7.1.8",
+        "original_pdf_pages": [
+          26,
+          27
+        ],
+        "original_printed_pages": [
+          22,
+          23
+        ],
+        "sha256": "8398884524bde5e6cf6e3baf69f521090198e0d4ab0829dee2e6babe9f47498c",
+        "table": "D.1 (informative Annex D)",
+        "typical_not_guaranteed": true,
+        "url": "https://ecommerce.ibaosteel.com/baosteel/manufacturerStandard/pdf2023/BQB%20485-2023.pdf",
+        "visual_check": true
+      },
+      "J_matched_catalog": [
+        {
+          "J_peak_T": 1.5,
+          "bracket_J_T": [
+            1.4998991485836541,
+            1.5998046160584776
+          ],
+          "bracket_measurements": [
+            15,
+            16
+          ],
+          "catalog_D1_typical_W_kg": 0.74,
+          "difference_W_kg": 0.14404359005638678,
+          "frequency_Hz": 50,
+          "workbook_interpolated_Ps_W_kg": 0.8840435900563868,
+          "workbook_minus_typical_percent": 19.46535000761984
+        },
+        {
+          "J_peak_T": 1.7,
+          "bracket_J_T": [
+            1.6998158740499132,
+            1.7994103482517199
+          ],
+          "bracket_measurements": [
+            17,
+            18
+          ],
+          "catalog_D1_typical_W_kg": 0.99,
+          "difference_W_kg": 0.2667320102926616,
+          "frequency_Hz": 50,
+          "workbook_interpolated_Ps_W_kg": 1.2567320102926616,
+          "workbook_minus_typical_percent": 26.942627302289047
+        }
+      ]
+    }
+  },
+  "B27R095": {
+    "doi": "https://doi.org/10.19595/j.cnki.1000-6753.tces.190603",
+    "article": "https://dgjsxb.ces-transaction.com/fileup/HTML/2020-9-1849.htm",
+    "table_4_sha256": "4de5308676f6f65bb0d7453078d500677883515f03707c6b744a26b52a3e4119",
+    "figure_13_url": "https://dgjsxb.ces-transaction.com/fileup/HTML/images/163046559dd331be0221cadbb285afd2.jpg",
+    "figure_13_sha256": "47fa38d8e86f8629c15e3ff19a7f68f7ec3aa3121fa854182122837f2dd06686",
+    "Hdc_A_m": 25,
+    "direction": null,
+    "coil_id": null,
+    "axis_basis": "Fig. 13 prints B/T. Section 4.2 explains the Fig. 12–13 sweep as peak AC component Bacm.",
+    "frequency_basis": "Section 4.2 identifies the Fig. 12–13 results at 50 Hz. Table 4 uses 4 Hz.",
+    "compared_per_cycle": [
+      {
+        "Bacm_T": 0.6,
+        "E4_mJ_kg": 2.05,
+        "E50_figure_mJ_kg": 4.02,
+        "E50_figure_resolution_mJ_kg": 0.2,
+        "E50_over_E4": 1.9609756097560975,
+        "E50_over_E4_reading_max": 2.0585365853658537,
+        "E50_over_E4_reading_min": 1.8634146341463416,
+        "P4_W_kg": "0.0082",
+        "P50_figure_W_kg": 0.201,
+        "table_4_row": 1
+      },
+      {
+        "Bacm_T": 0.8,
+        "E4_mJ_kg": 2.875,
+        "E50_figure_mJ_kg": 5.74,
+        "E50_figure_resolution_mJ_kg": 0.2,
+        "E50_over_E4": 1.9965217391304348,
+        "E50_over_E4_reading_max": 2.066086956521739,
+        "E50_over_E4_reading_min": 1.9269565217391305,
+        "P4_W_kg": "0.0115",
+        "P50_figure_W_kg": 0.287,
+        "table_4_row": 2
+      },
+      {
+        "Bacm_T": 1.0,
+        "E4_mJ_kg": 3.675,
+        "E50_figure_mJ_kg": 7.6,
+        "E50_figure_resolution_mJ_kg": 0.2,
+        "E50_over_E4": 2.068027210884354,
+        "E50_over_E4_reading_max": 2.122448979591837,
+        "E50_over_E4_reading_min": 2.0136054421768708,
+        "P4_W_kg": "0.0147",
+        "P50_figure_W_kg": 0.38,
+        "table_4_row": 3
+      },
+      {
+        "Bacm_T": 1.2,
+        "E4_mJ_kg": 4.6,
+        "E50_figure_mJ_kg": 9.74,
+        "E50_figure_resolution_mJ_kg": 0.2,
+        "E50_over_E4": 2.117391304347826,
+        "E50_over_E4_reading_max": 2.1608695652173915,
+        "E50_over_E4_reading_min": 2.0739130434782607,
+        "P4_W_kg": "0.0184",
+        "P50_figure_W_kg": 0.487,
+        "table_4_row": 4
+      },
+      {
+        "Bacm_T": 1.4,
+        "E4_mJ_kg": 5.7,
+        "E50_figure_mJ_kg": 12.3,
+        "E50_figure_resolution_mJ_kg": 0.2,
+        "E50_over_E4": 2.1578947368421053,
+        "E50_over_E4_reading_max": 2.192982456140351,
+        "E50_over_E4_reading_min": 2.1228070175438596,
+        "P4_W_kg": "0.0228",
+        "P50_figure_W_kg": 0.615,
+        "table_4_row": 5
+      }
+    ],
+    "measured_markers": [
+      {
+        "B_figure_T": 0.3,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.079,
+        "center_pixel_threshold_120": [
+          154,
+          541
+        ],
+        "center_pixel_threshold_185": [
+          154,
+          541
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 0.4,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.118,
+        "center_pixel_threshold_120": [
+          198,
+          523
+        ],
+        "center_pixel_threshold_185": [
+          198,
+          523
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 0.5,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.158,
+        "center_pixel_threshold_120": [
+          243,
+          504
+        ],
+        "center_pixel_threshold_185": [
+          243,
+          504
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 0.6,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.201,
+        "center_pixel_threshold_120": [
+          288,
+          484
+        ],
+        "center_pixel_threshold_185": [
+          288,
+          484
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 0.7,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.243,
+        "center_pixel_threshold_120": [
+          332,
+          464
+        ],
+        "center_pixel_threshold_185": [
+          332,
+          464
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 0.8,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.287,
+        "center_pixel_threshold_120": [
+          377,
+          444
+        ],
+        "center_pixel_threshold_185": [
+          377,
+          443
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 0.9,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.332,
+        "center_pixel_threshold_120": [
+          421,
+          422
+        ],
+        "center_pixel_threshold_185": [
+          421,
+          422
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 1.0,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.38,
+        "center_pixel_threshold_120": [
+          466,
+          399
+        ],
+        "center_pixel_threshold_185": [
+          466,
+          400
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 1.1,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.43,
+        "center_pixel_threshold_120": [
+          511,
+          376
+        ],
+        "center_pixel_threshold_185": [
+          511,
+          376
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 1.2,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.487,
+        "center_pixel_threshold_120": [
+          555,
+          349
+        ],
+        "center_pixel_threshold_185": [
+          555,
+          350
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 1.3,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.547,
+        "center_pixel_threshold_120": [
+          600,
+          321
+        ],
+        "center_pixel_threshold_185": [
+          600,
+          321
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 1.4,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.615,
+        "center_pixel_threshold_120": [
+          644,
+          289
+        ],
+        "center_pixel_threshold_185": [
+          645,
+          289
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 1.5,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.69,
+        "center_pixel_threshold_120": [
+          689,
+          254
+        ],
+        "center_pixel_threshold_185": [
+          689,
+          254
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 1.6,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.768,
+        "center_pixel_threshold_120": [
+          734,
+          217
+        ],
+        "center_pixel_threshold_185": [
+          734,
+          217
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      },
+      {
+        "B_figure_T": 1.7,
+        "Hdc_A_m": 25,
+        "P_t_W_kg": 0.862,
+        "center_pixel_threshold_120": [
+          778,
+          173
+        ],
+        "center_pixel_threshold_185": [
+          779,
+          173
+        ],
+        "figure_resolution_W_kg": 0.01,
+        "frequency_Hz": 50
+      }
+    ],
+    "common_graph_points": [
+      {
+        "B_figure_T": 0.8,
+        "difference_W_kg": -0.0010000000000000009,
+        "fig_13_W_kg": 0.287,
+        "fig_4_W_kg": 0.288
+      },
+      {
+        "B_figure_T": 1.0,
+        "difference_W_kg": -0.0020000000000000018,
+        "fig_13_W_kg": 0.38,
+        "fig_4_W_kg": 0.382
+      },
+      {
+        "B_figure_T": 1.4,
+        "difference_W_kg": -0.0010000000000000009,
+        "fig_13_W_kg": 0.615,
+        "fig_4_W_kg": 0.616
+      },
+      {
+        "B_figure_T": 1.6,
+        "difference_W_kg": -0.0020000000000000018,
+        "fig_13_W_kg": 0.768,
+        "fig_4_W_kg": 0.77
+      }
+    ]
+  }
+}

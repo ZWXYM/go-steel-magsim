@@ -6,6 +6,30 @@
 <section id="lossDetail" class="card" hidden><h2 id="lossTitle"></h2><p id="lossInputs" class="muted"></p><h3>原程序采用的厂家典型值</h3><div class="tablewrap"><table><thead><tr><th>磁密 T</th><th>频率 Hz</th><th>比损耗 W/kg</th><th>文档与页码</th></tr></thead><tbody id="lossPoints"></tbody></table></div>
 <section id="lossAlternatePanel" hidden><h3>另一版手册值（未加入原拟合）</h3><p class="muted">文档版本不同，数值可能不同；不作为同一批样品重复测量。</p><div class="tablewrap"><table><thead><tr><th>磁密 T</th><th>频率 Hz</th><th>比损耗 W/kg</th><th>文档与页码</th></tr></thead><tbody id="lossAlternates"></tbody></table></div></section>
 <h3>原程序保存的估计系数</h3><p><code id="lossFormula"></code></p><p class="muted">Kc来自经典薄片公式，Kh/Ke来自原非负拟合，磁密指数固定为2；体积系数=质量系数×假定密度。电机工程估计采用体积系数。</p><div class="tablewrap"><table><thead><tr><th>系数</th><th>质量系数</th><th>质量单位</th><th>体积系数</th><th>体积单位</th></tr></thead><tbody id="lossCoefficients"></tbody></table></div><p id="lossFit" class="muted"></p><p id="lossWarnings" class="notice"></p><details><summary>原资料身份与快照</summary><div id="lossSources" class="hash"></div></details></section>
+{% if published %}
+{% set b30 = published.B30P105 %}
+{% set b95 = published.B27R095 %}
+<section class="card" id="published-loss"><h2>同牌号发表实测对照</h2>
+<h3>B30P105 在 100 Hz 的正弦损耗</h3>
+<p>用 Zhao 与 Hu 的 Epstein 图 9 实测虚线，在相同 B 峰值与频率下复算 {{ b30.aip.actual_motor_id }} 保存的目录材料系数。两条实测曲线使用各自的纵轴，图读每周期能量乘以频率得到 W/kg。</p>
+<div class="tablewrap" tabindex="0" role="region" aria-label="B30P105 100 Hz 正弦损耗"><table><thead><tr><th>B 峰值 / T</th><th>实测图读 / W·kg⁻¹</th><th>图读分辨率 / W·kg⁻¹</th><th>保存系数复算 / W·kg⁻¹</th><th>相对差值</th></tr></thead><tbody>
+{% for row in b30.aip.matched_100hz %}<tr><td>{{ row.Bm_T }}</td><td>{{ '%.4g'|format(row.measured_figure_W_kg) }}</td><td>{{ '%.3g'|format(row.figure_resolution_W_kg) }}</td><td>{{ '%.4g'|format(row.saved_catalog_coefficients_W_kg) }}</td><td>{{ '%+.1f'|format(row.model_minus_figure_pct) }}%</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="muted">图读分辨率用于描述像素读数。论文试样的方向和卷号未给出，电机插片实际 B 波形尚未绑定到这两档正弦实验。</p>
+<p><a href="{{ b30.aip.doi }}">AIP 原文与图 9</a> · <a href="{{ url_for('.published_figure_frequency_download') }}">下载 28 点图读 CSV</a> · <a href="/frequency-loss-validation">多频损耗复核</a></p>
+<h3>B30P105 在 50 Hz 的实测与厂家典型值</h3>
+<p>Li 与 Luo 的原工作簿按 J = B − μ₀H 求每周期峰值，再对厂家典型 J 点内插工作簿的比损耗。</p>
+<div class="tablewrap" tabindex="0" role="region" aria-label="B30P105 50 Hz 实测与典型值"><table><thead><tr><th>J 峰值 / T</th><th>工作簿内插 / W·kg⁻¹</th><th>厂家典型 / W·kg⁻¹</th><th>相对差值</th></tr></thead><tbody>
+{% for row in b30.li_luo.J_matched_catalog %}<tr><td>{{ row.J_peak_T }}</td><td>{{ '%.4f'|format(row.workbook_interpolated_Ps_W_kg) }}</td><td>{{ '%.2f'|format(row.catalog_D1_typical_W_kg) }}</td><td>{{ '%+.1f'|format(row.workbook_minus_typical_percent) }}%</td></tr>{% endfor %}
+</tbody></table></div>
+<p><a href="{{ b30.li_luo.measurement_doi }}">Li 与 Luo 实验和工作簿</a> · <a href="{{ b30.li_luo.d1_source.url }}">宝钢表 D.1</a></p>
+<h3>B27R095 在 25 A/m 直流偏磁下的损耗</h3>
+<p>将表 4 的 4 Hz 原值和图 13 的 50 Hz 实测星号按交流磁密峰值配对。图 13 印为 B/T，第 4.2 节给出交流分量峰值的解释。50 Hz 图读分辨率约 0.01 W/kg。</p>
+<div class="tablewrap" tabindex="0" role="region" aria-label="B27R095 偏磁每周期损耗"><table><thead><tr><th>交流磁密峰值 / T</th><th>4 Hz 原表 / mJ·kg⁻¹</th><th>50 Hz 图读 / mJ·kg⁻¹</th><th>每周期损耗倍数</th></tr></thead><tbody>
+{% for row in b95.compared_per_cycle %}<tr><td>{{ row.Bacm_T }}</td><td>{{ '%.3f'|format(row.E4_mJ_kg) }}</td><td>{{ '%.2f'|format(row.E50_figure_mJ_kg) }}</td><td>{{ '%.2f'|format(row.E50_over_E4) }}</td></tr>{% endfor %}
+</tbody></table></div>
+<p><a href="{{ b95.article }}">B27R095 单片实验原文</a> · <a href="{{ url_for('.published_loss_checks_download') }}">下载出版实测与复核 JSON</a></p></section>
+{% endif %}
 {% if catalog_check %}
 <section class="card"><h2>宝钢牌号典型值对照</h2>
 <p>对照来自<a href="{{ catalog_check.source.url }}">宝钢标准 PDF 表 D.1</a>（印刷第 22、23 页）。表中给出磁极化 J；在 H = 800 A/m 时按 B = J + μ₀H 换算。系统参考曲线来自日钢/JFE 图谱和历史单调处理，以下差值反映两套来源的区别。</p>
