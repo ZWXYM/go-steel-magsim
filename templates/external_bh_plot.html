@@ -1,0 +1,17 @@
+{% if plot_options %}
+<details class="bh-plot" data-bh-plot="{{ plot_url }}">
+  <summary>查看 B–H 曲线与原采样点</summary>
+  <div class="actions">
+    <label>方向<select data-bh-direction>
+      {% for direction, ranges in plot_options.items() %}
+      <option value="{{ direction }}" data-focus="{{ 'yes' if 'focus' in ranges else 'no' }}"{% if direction == 'TD' %} selected{% endif %}>{{ '轧向 RD' if direction == 'RD' else '横向 TD' }}</option>
+      {% endfor %}
+    </select></label>
+    <label>H 范围<select data-bh-scope><option value="common">全可比范围</option><option value="focus">指定区间</option></select></label>
+  </div>
+  <p class="muted" role="status" data-bh-status></p>
+  <svg viewBox="0 0 660 365" role="img" aria-label="原表和保存 B–H 曲线对照" data-bh-svg hidden></svg>
+  <ul class="bh-legend" data-bh-legend></ul>
+</details>
+<script src="/static/js/external_bh_plot.js" defer></script>
+{% endif %}

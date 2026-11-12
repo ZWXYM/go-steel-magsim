@@ -195,6 +195,25 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertIn('指定区间', page)
         self.assertIn('区间原点：1', page)
 
+    def test_chart_clips_comparison_curves_without_inventing_measurement_rows(self):
+        result = self._post_pair(focus_h_min='100', focus_h_max='400')
+        path = result.location+'/plot-data'
+        response = self.client.get(path, query_string=dict(direction='TD', scope='focus'))
+        self.assertEqual(response.status_code, 200)
+        plot = response.json
+        self.assertEqual(plot['H_range_A_per_m'], [100,400])
+        self.assertEqual(plot['original_points_in_range'], 1)
+        self.assertEqual(len(plot['points']), 1)
+        h, b, row = plot['points'][0]
+        self.assertEqual((h,row), (400,3))
+        self.assertAlmostEqual(b, .8+4e-7*3.141592653589793*400)
+        self.assertEqual([series['key'] for series in plot['series']], ['measured','fit','holdout'])
+        for series in plot['series']:
+            self.assertEqual([p[0] for p in series['line']], [100,400])
+        self.assertEqual(self.client.get(path, query_string=dict(direction='ND')).status_code, 404)
+        self.assertEqual(self.client.get(path, query_string=dict(direction='RD',scope='unknown')).status_code, 404)
+        self.assertEqual(len(self.store.records()), 1)
+
     def test_single_confirmation_cannot_be_replaced_by_pair_confirmation(self):
         result = self.client.post('/external-bh-validation', data=dict(
             selection=self.selection, source_reference='TD fixture', curve_kind='normal_peak',
@@ -244,6 +263,12 @@ class ExternalBHIntakeTest(unittest.TestCase):
             self.assertEqual(report['directions']['TD']['H_range_A_per_m'], [10,800])
             self.assertEqual(set(report['directions']), {'RD','TD'})
             self.assertFalse(any(member.endswith('.amat') for member in z.namelist()))
+        plot = self.client.get(ready.location+'/plot-data', query_string=dict(direction='TD')).json
+        self.assertEqual(plot['H_range_A_per_m'], [10,800])
+        self.assertEqual([p[0] for p in plot['points']], [10,400,800])
+        self.assertEqual([series['key'] for series in plot['series']], ['measured','candidate'])
+        self.assertEqual(plot['series'][1]['line'][0][0], 10)
+        self.assertEqual(self.client.get(ready.location+'/plot-data', query_string=dict(direction='TD',scope='focus')).status_code, 404)
         self.assertEqual(self.store.read(orig_id)[1], initial_archive)
 
     def test_archive_accepts_one_original_without_physical_axis_claim(self):

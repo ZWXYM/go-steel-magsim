@@ -28,7 +28,8 @@
       <td>{{ n(row.max_abs_monotone_shift_T) }}</td><td>{{ n(row.max_abs_candidate_point_error_T) }}</td><td>{{ n(row.rmse_uniform_H_T) }}</td></tr>
     {% endfor %}</tbody></table>
   </div>
-  <p>来源：{{ report.source.source_reference }} · <a href="{{ url_for('.result', artifact=report.source_package.id) }}">打开原表核对记录</a>。下载包内保留原档、候选节点和逐点差值。</p>
+  {% include 'external_bh_plot.html' %}
+  <p class="source-reference">来源：{{ report.source.source_reference }} · <a href="{{ url_for('.result', artifact=report.source_package.id) }}">打开原表核对记录</a>。下载包内保留原档、候选节点和逐点差值。</p>
   <div class="actions"><a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载候选和原表证据</a></div>
 {% endif %}
 </section></main>

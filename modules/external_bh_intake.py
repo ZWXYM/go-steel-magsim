@@ -6,11 +6,12 @@ import re
 import zipfile
 from pathlib import PureWindowsPath
 
-from flask import Blueprint, abort, redirect, render_template, request, url_for
+from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from modules.calibration_regularized import default_eligible
 from modules.external_bh_validation import MAX_CURVE_BYTES, compare_curves, field_weighted_errors, read_measurement_csv
+from modules.external_bh_plot import comparison_plot_curves, curve_windows, measured_chart
 from modules.measured_curve_candidate import (CANDIDATE_FILENAME, CANDIDATE_VERSION, MAX_NODES,
                                                  build_measured_candidate, candidate_eligible)
 from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
@@ -255,7 +256,7 @@ class ExternalBHIntake:
                                             '仅在已采样 H 内重建，原校准和电机输入不变。',
                                             source_filename=CANDIDATE_FILENAME)
 
-    def read_candidate(self, artifact):
+    def _read_candidate_with_bytes(self, artifact):
         record, blob = self.packages.read(artifact)
         if record.get('source_filename') != CANDIDATE_FILENAME:
             raise ValueError('工作包类型不符')
@@ -263,7 +264,39 @@ class ExternalBHIntake:
             report = json.loads(archive.read('measured_candidate.json'))
         if report.get('version') != CANDIDATE_VERSION:
             raise ValueError('实测候选版本不符')
+        return record, report, blob
+
+    def read_candidate(self, artifact):
+        record, report, _ = self._read_candidate_with_bytes(artifact)
         return record, report
+
+    def _candidate_plot_inputs(self, artifact):
+        record, report, blob = self._read_candidate_with_bytes(artifact)
+        with zipfile.ZipFile(io.BytesIO(blob)) as z:
+            source = z.read('source/original_comparison.zip')
+        if sha256(source) != report['source_package']['sha256']:
+            raise ValueError('候选原表档案哈希不符')
+        with zipfile.ZipFile(io.BytesIO(source)) as z:
+            source_report = json.loads(z.read('external_bh_report.json'))
+        return record, report, blob, source, curve_windows(source_report, candidate=report['directions'])
+
+    def comparison_plot(self, artifact, direction, scope):
+        _, report, blob = self._read_with_bytes(artifact)
+        bounds = curve_windows(report)[direction][scope]
+        with zipfile.ZipFile(io.BytesIO(blob)) as z:
+            raw = z.read(f'original/{direction}.csv')
+            curves = comparison_plot_curves(z.read('model_curves.csv'), report, direction)
+        return measured_chart(raw, direction, bounds, curves)
+
+    def candidate_plot(self, artifact, direction, scope):
+        _, _, blob, source, windows = self._candidate_plot_inputs(artifact)
+        bounds = windows[direction][scope]
+        with zipfile.ZipFile(io.BytesIO(blob)) as z:
+            table = read_measurement_csv(z.read(f'candidate/{direction}.csv'), direction)
+        with zipfile.ZipFile(io.BytesIO(source)) as z:
+            raw = z.read(f'original/{direction}.csv')
+        h, b = ([p[key] for p in table['points']] for key in ('H_A_per_m', 'input_B_T'))
+        return measured_chart(raw, direction, bounds, [('candidate', '实测区间候选', h, b)])
 
 
 def create_external_bh_routes(intake):
@@ -306,7 +339,8 @@ def create_external_bh_routes(intake):
         except (ValueError, OSError, KeyError, TypeError):
             abort(404)
         return render_template('external_bh_validation.html', record=record, report=report,
-                               candidate_available=candidate_eligible(report), **labels)
+                               candidate_available=candidate_eligible(report), plot_options=curve_windows(report),
+                               plot_url=url_for('.comparison_plot', artifact=artifact), **labels)
 
     @bp.post('/external-bh-validation/<artifact>/candidate')
     def save_candidate(artifact):
@@ -320,9 +354,24 @@ def create_external_bh_routes(intake):
     @bp.get('/measured-bh-candidate/<artifact>')
     def candidate_result(artifact):
         try:
-            record, report = intake.read_candidate(artifact)
-        except (ValueError, OSError, KeyError, TypeError):
+            record, report, _, _, options = intake._candidate_plot_inputs(artifact)
+        except (ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile):
             abort(404)
-        return render_template('measured_bh_candidate.html', record=record, report=report)
+        return render_template('measured_bh_candidate.html', record=record, report=report, plot_options=options,
+                               plot_url=url_for('.candidate_plot', artifact=artifact))
+
+    def plot_data(read, artifact):
+        try:
+            return jsonify(read(artifact, request.args.get('direction'), request.args.get('scope', 'common')))
+        except (ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile):
+            abort(404)
+
+    @bp.get('/external-bh-validation/<artifact>/plot-data')
+    def comparison_plot(artifact):
+        return plot_data(intake.comparison_plot, artifact)
+
+    @bp.get('/measured-bh-candidate/<artifact>/plot-data')
+    def candidate_plot(artifact):
+        return plot_data(intake.candidate_plot, artifact)
 
     return bp
