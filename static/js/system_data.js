@@ -174,18 +174,39 @@
   }catch(error){$('packageBuildStatus').textContent='未确认生成：'+error.message+'。可先刷新完整工作包目录检查，不自动重复生成。'}
   finally{building=false;formDisabled(!catalog.package_build_available);$('dataRefresh').disabled=false}
  }
+ async function readPackages(){
+  const status=$('dataPackageStatus');
+  $('dataPackages').replaceChildren();if(status)status.textContent='正在核对已登记工作包…';
+  try{
+   const response=await fetch('/api/workbench/system-data/packages',{method:'GET',cache:'no-store'}),data=await response.json();
+   if(!response.ok)throw Error(data.error||'读取失败');
+   if(data.schema!=='go_steel_saved_workpacks_v1'||!Array.isArray(data.packages))throw Error('工作包清单格式不符');
+   packages(data.packages);
+   if(status)status.textContent='可读取 '+data.packages.filter(row=>row.readable&&validPack(row.id)).length+' / '+data.packages.length+' 份保存工作包。';
+   return data.packages;
+  }catch(error){
+   if(status)status.textContent='工作包清单暂不可读取：'+error.message;
+   return null;
+  }
+ }
  async function refresh(){
   if(busy||building)return;busy=true;clearComparison();formDisabled(true);$('dataRefresh').disabled=true;$('dataStatus').textContent='正在读取…';$('dataCounts').textContent='';
-  for(const id of ['dataPackages','dataCalibrations','dataDatasets'])$(id).replaceChildren();
+  for(const id of ['dataCalibrations','dataDatasets'])$(id).replaceChildren();
+  const packageRead=readPackages();
   try{
-   const response=await fetch('/api/workbench/system-data',{method:'GET',cache:'no-store'}),data=await response.json();if(!response.ok)throw Error(data.error||'读取失败');
-   if(data.schema!=='go_steel_system_data_v1'||!['packages','calibrations','datasets'].every(key=>Array.isArray(data[key])))throw Error('数据清单格式不符');
-   packages(data.packages);calibrations(data.calibrations);datasets(data.datasets);
+   const response=await fetch('/api/workbench/system-data?include_packages=0',{method:'GET',cache:'no-store'}),data=await response.json();if(!response.ok)throw Error(data.error||'读取失败');
+   if(data.schema!=='go_steel_system_data_v1'||!['calibrations','datasets'].every(key=>Array.isArray(data[key])))throw Error('数据清单格式不符');
+   calibrations(data.calibrations);datasets(data.datasets);
+   const saved=await packageRead;
+   if(saved===null&&Array.isArray(data.packages)&&data.packages.length){
+    packages(data.packages);if($('dataPackageStatus'))$('dataPackageStatus').textContent='已从完整清单读取保存工作包。';
+   }
+   data.packages=saved??(Array.isArray(data.packages)?data.packages:[]);
    buildOptions(data);catalog=data;comparisonOptions(data.calibrations);
    const counts=data.counts;$('dataCounts').textContent=(counts.complete?'当前':'可读取部分')+'：'+counts.dataset_count+' 数据集、'+counts.row_count+' 保存记录、'+counts.original_accepted_count+' 原判据通过、'+counts.native_csv_accepted_count+' 原生CSV通过。记录包含重复材料及不同版本。';
    $('dataStatus').textContent='读取时间：'+data.created_utc+'。'+data.scope;
-  }catch(error){catalog=null;formDisabled(true);comparisonOptions([]);for(const id of ['dataPackages','dataCalibrations','dataDatasets','packageMoreBatches'])if($(id))$(id).replaceChildren();$('dataCounts').textContent='';$('dataStatus').textContent='暂不可读取：'+error.message}
-  finally{busy=false;$('dataRefresh').disabled=false;compareControls()}
+  }catch(error){catalog=null;formDisabled(true);comparisonOptions([]);for(const id of ['dataCalibrations','dataDatasets','packageMoreBatches','packageReferenceEvidence'])if($(id))$(id).replaceChildren();$('dataCounts').textContent='';$('dataStatus').textContent='当前数据清单暂不可读取：'+error.message}
+  finally{await packageRead;busy=false;$('dataRefresh').disabled=false;compareControls()}
  }
  $('dataRefresh').addEventListener('click',refresh);$('packageBuild').addEventListener('click',build);
  if($('compareCalibrations')){

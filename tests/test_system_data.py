@@ -156,6 +156,21 @@ class SystemDataTests(unittest.TestCase):
             self.assertEqual(index.json['counts']['row_count'],4)
         self.assertEqual(before,{p.relative_to(self.root).as_posix():p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
 
+    def test_saved_package_catalog_does_not_open_motor_data_and_core_can_skip_it(self):
+        record=self.store.register(self.source,'保存工作包')
+        app=Flask('split data catalog');app.register_blueprint(create_system_data_routes(self.data))
+        client=app.test_client()
+        with patch.object(self.data.optimization,'datasets',side_effect=AssertionError('Saved ZIPs do not need motor data')):
+            response=client.get('/api/workbench/system-data/packages')
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.json['schema'],'go_steel_saved_workpacks_v1')
+        self.assertEqual(response.json['packages'],[dict(record,readable=True)])
+        self.assertIn('no-store',response.headers['Cache-Control'])
+        with patch.object(self.data.packages,'records',side_effect=AssertionError('Package catalog is loaded separately')):
+            core=client.get('/api/workbench/system-data?include_packages=0').json
+        self.assertEqual(core['packages'],[]);self.assertEqual(core['counts']['row_count'],4)
+        self.assertEqual(client.get('/api/workbench/system-data').json['packages'],[dict(record,readable=True)])
+
     def test_build_endpoint_validates_input_as_json_in_cpu_preview_without_native_dispatch(self):
         from modules.workbench_routes import create_workbench
         app=Flask('workbench data build',template_folder=str(PROJECT/'templates'))

@@ -14,7 +14,7 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
-from flask import Blueprint, jsonify, render_template, send_file
+from flask import Blueprint, jsonify, render_template, request, send_file
 from modules.motor_dataset_export import dataset_usage
 
 MAX_PACKAGE_BYTES = 100 * 1024 * 1024
@@ -175,7 +175,7 @@ class SystemData:
         self.packages = WorkpackStore(self.storage / 'system_data')
         self.batches, self.builder = batches, builder
 
-    def snapshot(self):
+    def snapshot(self, *, include_packages=True):
         datasets, calibrations, batches = [], [], []
         try:
             catalog = self.optimization.datasets()
@@ -222,7 +222,8 @@ class SystemData:
                     batches.append(dict(id=row['id'], available=False, error=str(error)))
         readable = [row for row in datasets if row['readable']]
         return dict(schema='go_steel_system_data_v1', created_utc=datetime.now(timezone.utc).isoformat(),
-            datasets=datasets, calibrations=calibrations, calibrated_batches=batches, packages=self.packages.records(),
+            datasets=datasets, calibrations=calibrations, calibrated_batches=batches,
+            packages=self.packages.records() if include_packages else [],
             optimizations=self.builder.optimization_exports.catalog() if self.builder is not None else [],
             constraint_studies=self.builder.constraint_exports.catalog() if self.builder is not None else [],
             saved_predictions=self.builder.prediction_exports.catalog() if self.builder is not None else [],
@@ -244,7 +245,13 @@ def create_system_data_routes(data):
 
     @bp.get('/api/workbench/system-data')
     def snapshot():
-        response = jsonify(data.snapshot())
+        response = jsonify(data.snapshot(include_packages=request.args.get('include_packages') != '0'))
+        response.cache_control.no_store = True
+        return response
+
+    @bp.get('/api/workbench/system-data/packages')
+    def saved_packages():
+        response = jsonify(schema='go_steel_saved_workpacks_v1', packages=data.packages.records())
         response.cache_control.no_store = True
         return response
 
@@ -257,7 +264,6 @@ def create_system_data_routes(data):
 
     @bp.get('/api/workbench/system-data/calibration-comparison')
     def calibration_comparison():
-        from flask import request
         from modules.calibration_comparison import compare_calibrations, comparison_bundle, comparison_csv
         keys = ('baseline', 'candidate', 'baseline_sha256', 'candidate_sha256')
         args = request.args
@@ -290,7 +296,6 @@ def create_system_data_routes(data):
 
     @bp.post('/api/workbench/system-data/packages')
     def build_package():
-        from flask import request
         if data.builder is None:
             raise ValueError('当前实例未配置数据包生成器')
         record = data.builder.build(request.get_json())

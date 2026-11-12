@@ -27,12 +27,17 @@ function all(node){return [node,...node.children.flatMap(all)]}
 function text(node){return all(node).map(n=>n.textContent).join(' ')}
 async function flush(){for(let i=0;i<12;i++)await Promise.resolve()}
 (async()=>{
- const nodes=new Map(),calls=[];let handler=()=>structuredClone(fixture),buildHandler=()=>({id:'pack_1111111111111111',member_count:20,sha256:'1'.repeat(64),title:'new snapshot'}),compareHandler;
+ const nodes=new Map(),calls=[];let finishInitial,handler=()=>new Promise(resolve=>finishInitial=resolve);
+ const core=()=>({...structuredClone(fixture),packages:[]});
+ const shelf=()=>({schema:'go_steel_saved_workpacks_v1',packages:structuredClone(fixture.packages)});
+ let packageHandler=shelf,buildHandler=()=>({id:'pack_1111111111111111',member_count:20,sha256:'1'.repeat(64),title:'new snapshot'}),compareHandler;
  const document={getElementById:id=>{if(!nodes.has(id))nodes.set(id,new Node('root'));return nodes.get(id)},createElement:tag=>new Node(tag)};
- const context={document,fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>options.method==='POST'?buildHandler():url.includes('/calibration-comparison?')?compareHandler():handler()}},Number};
+ const context={document,fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>options.method==='POST'?buildHandler():url.includes('/calibration-comparison?')?compareHandler():url.endsWith('/packages')?packageHandler():handler()}},Number};
  context.window=context;vm.runInNewContext(script,context);await flush();
  const links=()=>[...nodes.values()].flatMap(all).filter(n=>n.tag==='a').map(n=>n.href);
  assert(links().includes('/api/workbench/system-data/packages/pack_0123456789abcdef/download'));
+ assert(nodes.get('packageBuild').disabled);assert(!links().some(href=>href.includes('/datasets/')));
+ finishInitial(core());handler=core;await flush();
  assert(links().includes('/api/workbench/optimization/datasets/scan_aaaaaaaaaaaa/bundle'));
  assert(links().includes('/material-library?calibration=cal_bbbbbbbbbbbb'));
  assert.match(text(nodes.get('dataCalibrations')),/拟合平均RMSE 0.010000 T；整材料留出平均RMSE 0.040000/);
@@ -68,14 +73,16 @@ async function flush(){for(let i=0;i<12;i++)await Promise.resolve()}
  assert.deepEqual(onlyReference,{calibration:null,batch:null,datasets:[],optimization:null,constraint_study:null,reference_evidence:[{id:'pack_2468ace02468ace0',sha256:'e'.repeat(64)}]});
  let completeBuild;buildHandler=()=>new Promise(resolve=>completeBuild=resolve);const building=nodes.get('packageBuild').listeners.click();await flush();const beforePending=calls.length;await nodes.get('packageBuild').listeners.click();await nodes.get('dataRefresh').listeners.click();assert.equal(calls.length,beforePending);assert.equal(nodes.get('dataRefresh').disabled,true);completeBuild({id:'pack_2222222222222222',title:'second',member_count:2,sha256:'2'.repeat(64)});await building;
  buildHandler=()=>{throw Error('response lost')};await nodes.get('packageBuild').listeners.click();assert.match(nodes.get('packageBuildStatus').textContent,/response lost.*不自动重复生成/);assert.equal(nodes.get('packageBuildResult').children.length,0);
- handler=()=>({...structuredClone(fixture),packages:[{id:'pack_0123456789abcdef',readable:false,error:'changed bytes'}],datasets:[{id:'scan_aaaaaaaaaaaa',readable:false,error:'broken source'}],counts:{...fixture.counts,complete:false,dataset_count:0,row_count:0,original_accepted_count:0,native_csv_accepted_count:0}});
+ handler=()=>({...core(),datasets:[{id:'scan_aaaaaaaaaaaa',readable:false,error:'broken source'}],counts:{...fixture.counts,complete:false,dataset_count:0,row_count:0,original_accepted_count:0,native_csv_accepted_count:0}});
+ packageHandler=()=>({...shelf(),packages:[{id:'pack_0123456789abcdef',readable:false,error:'changed bytes'}]});
  await nodes.get('dataRefresh').listeners.click();assert.match(text(nodes.get('dataPackages')),/changed bytes/);assert.match(text(nodes.get('dataDatasets')),/broken source/);
  assert(!links().some(link=>link.includes('/packages/')||link.includes('/datasets/')));assert.match(nodes.get('dataCounts').textContent,/可读取部分/);
- handler=()=>{throw Error('unavailable')};await nodes.get('dataRefresh').listeners.click();assert.match(nodes.get('dataStatus').textContent,/unavailable/);assert.equal(nodes.get('dataCounts').textContent,'');assert.equal(links().length,0);
- let finish;handler=()=>new Promise(resolve=>finish=resolve);const pending=nodes.get('dataRefresh').listeners.click();await flush();const count=calls.length;await nodes.get('dataRefresh').listeners.click();assert.equal(calls.length,count);assert.equal(nodes.get('dataRefresh').disabled,true);finish(structuredClone(fixture));await pending;assert.equal(nodes.get('dataRefresh').disabled,false);
- assert(calls.every(call=>call.url==='/api/workbench/system-data'&&call.options.method==='GET'&&call.options.cache==='no-store'||call.url==='/api/workbench/system-data/packages'&&call.options.method==='POST'));
+ handler=()=>{throw Error('unavailable')};packageHandler=shelf;await nodes.get('dataRefresh').listeners.click();assert.match(nodes.get('dataStatus').textContent,/unavailable/);assert.equal(nodes.get('dataCounts').textContent,'');assert(links().includes('/api/workbench/system-data/packages/pack_0123456789abcdef/download'));assert(!links().some(href=>href.includes('/datasets/')));
+ handler=core;packageHandler=()=>{throw Error('saved packages unavailable')};await nodes.get('dataRefresh').listeners.click();assert.match(nodes.get('dataPackageStatus').textContent,/saved packages unavailable/);assert(!links().some(href=>href.includes('/packages/')));assert(links().some(href=>href.includes('/datasets/')));
+ packageHandler=shelf;let finish;handler=()=>new Promise(resolve=>finish=resolve);const pending=nodes.get('dataRefresh').listeners.click();await flush();const count=calls.length;await nodes.get('dataRefresh').listeners.click();assert.equal(calls.length,count);assert.equal(nodes.get('dataRefresh').disabled,true);finish(core());await pending;assert.equal(nodes.get('dataRefresh').disabled,false);
+ assert(calls.every(call=>['/api/workbench/system-data?include_packages=0','/api/workbench/system-data/packages'].includes(call.url)&&call.options.method==='GET'&&call.options.cache==='no-store'||call.url==='/api/workbench/system-data/packages'&&call.options.method==='POST'));
  const first=fixture.calibrations[0],second={...first,id:'cal_cccccccccccc',report_sha256:'d'.repeat(64),calibration_version:'fit_v3'};
- handler=()=>({...structuredClone(fixture),calibrations:[first,second]});await nodes.get('dataRefresh').listeners.click();
+ handler=()=>({...core(),calibrations:[first,second]});await nodes.get('dataRefresh').listeners.click();
  nodes.get('compareBaseline').value=first.id;nodes.get('compareCandidate').value=second.id;nodes.get('compareCandidate').listeners.change();
  const payload={version:'saved_calibration_comparison_v1',baseline:{...first,material_holdout_mean_rmse_T:.04,material_holdout_max_abs_B800_error_T:.1},candidate:{...second,material_holdout_mean_rmse_T:.03,material_holdout_max_abs_B800_error_T:.06},improved_holdout_directions:1,worsened_holdout_directions:0,rows:[{grade:'B23R075',direction:'RD',holdout_delta_rmse_T:-.01}]};
  compareHandler=()=>payload;await nodes.get('compareCalibrations').listeners.click();
