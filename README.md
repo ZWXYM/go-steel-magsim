@@ -1,5 +1,7 @@
 # GO-Steel MagSim — 取向硅钢微磁仿真与材料校准
 
+B27R090 的[同牌号谐波实测对照](calibration/compumag_b27r090_harmonic_cases_20261112/README.md)请连同[工况更正](calibration/compumag_b27r090_case_iii_erratum_20261112/README.md)阅读：Case III 还包含七次谐波，表中数值不变。
+
 四个已确认牌号的[101点转矩基线与组合包](docs/four_sample_baseline_20261111.md)已完成；新校准材料任务默认推荐101点，旧协议可显式选择。三正式结果可零求解回用比较，B23保留原控制身份。
 
 四个拟合材料可选择[厂家目录铁损工程估计](docs/catalog_motor_loss_20261111.md)，使用独立模型和同一 101 点工况，输出官方转矩和损耗 CSV。
