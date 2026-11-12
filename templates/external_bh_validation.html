@@ -18,6 +18,8 @@
     <h2>{{ report.model.grade ~ ' 模型 · 原表比较' if report.model else '原表归档' }}</h2>
     <p>{{ source_labels[report.source.source_kind] }} · {{ curve_labels[report.source.curve_kind] }} · {{ record.id }}</p>
     {% if report.model %}
+    {% set directions = report.comparison.keys() | sort %}
+    {% if report.get('comparison_scope') == 'single_direction' %}<p>本记录只核对 {{ directions | join('、') }} 原表，未建立 RD/TD 配对。</p>{% endif %}
     {% if report.get('declared_grade_status') == 'not_recorded' %}<p>原表未注明牌号。本页保留数值对照，试样与所选模型的对应关系待核对。</p>{% endif %}
     {% set secondary = report.get('comparison_model') %}
     {% set versions = [(report.model, ''), (secondary, 'secondary_')] if secondary else [(report.model, '')] %}
@@ -26,7 +28,7 @@
       <table>
         <thead><tr><th>方向</th>{% if secondary %}<th>校准记录</th>{% endif %}<th>原表点数</th><th>共同 H 范围（A/m）</th><th>比较点数</th><th>拟合 RMSE</th><th>留出 RMSE</th><th>拟合 MAE</th><th>留出 MAE</th></tr></thead>
         <tbody>
-          {% for direction in ('RD', 'TD') %}
+          {% for direction in directions %}
           {% set row = report.comparison[direction] %}
           {% for identity, prefix in versions %}
           <tr>
@@ -42,13 +44,13 @@
         </tbody>
       </table>
     </div>
-    {% if report.comparison.RD.get('field_weighted') %}
+    {% if directions and report.comparison[directions[0]].get('field_weighted') %}
     <details open>
       <summary>按物理 H 区间计权</summary>
       <p class="muted">对原表和保存曲线分段线性插值，按 H 区间长度积分，避免采样密集处获得更多权重。只计共同覆盖区间；请结合原表间隔和上面的原点误差解释。</p>
       <div class="table-wrap"><table>
         <thead><tr><th>方向</th><th>区段</th><th>实际 H 范围（A/m）</th><th>区段内最大原表插值跨度（A/m）</th>{% if secondary %}<th>校准记录</th>{% endif %}<th>拟合 RMSE（T）</th><th>留出 RMSE（T）</th><th>拟合 MAE（T）</th><th>留出 MAE（T）</th></tr></thead>
-        <tbody>{% for direction in ('RD', 'TD') %}
+        <tbody>{% for direction in directions %}
         {% for key, label in [('common','全共同范围'), ('up_to_800','至 800 A/m'), ('from_800','从 800 A/m')] %}
         {% set band = report.comparison[direction].field_weighted.bands[key] %}
         {% for identity, prefix in versions %}
@@ -64,7 +66,7 @@
       <table>
         <thead><tr><th>方向</th>{% if secondary %}<th>校准记录</th>{% endif %}<th>原表 B800</th><th>取值方式</th><th>拟合 B800</th><th>留出 B800</th><th>拟合误差</th><th>留出误差</th></tr></thead>
         <tbody>
-          {% for direction in ('RD', 'TD') %}
+          {% for direction in directions %}
           {% set point = report.comparison[direction].B800 %}
           {% for identity, prefix in versions %}
           <tr><th scope="row">{{ direction }}</th>{% if secondary %}<td>{{ identity.calibration_id }}</td>{% endif %}
@@ -105,7 +107,7 @@
         <dt>激励</dt><dd>{{ excitation_labels[report.source.excitation] }}{% if report.source.frequency_hz is not none %} · {{ number(report.source.frequency_hz) }} Hz{% endif %}</dd>
         <dt>温度（℃）</dt><dd>{{ number(report.source.temperature_C) }}</dd>
         <dt>其他条件</dt><dd>{{ report.source.conditions or '未记录' }}</dd>
-        <dt>方向与配对</dt><dd>{{ '上传者声明可比' if report.source.direction_and_pairing_declared else '待核对' }}</dd>
+        <dt>方向与配对</dt><dd>{% if report.get('comparison_scope') == 'single_direction' %}上传者确认 {{ report.source.direction }}；未配对{% else %}{{ '上传者声明可比' if report.source.direction_and_pairing_declared else '待核对' }}{% endif %}</dd>
         <dt>试样独立性</dt><dd>待根据原始测量记录核验</dd>
         {% for direction, file in report.inputs.items() %}
         <dt>{{ direction }} 上传文件</dt><dd>{{ file.original_filename }} · {{ file.bytes }} 字节<br>SHA-256 {{ file.sha256 }}</dd>
@@ -120,7 +122,7 @@
 {% else %}
   <section>
     <h2>添加原表</h2>
-    <p class="muted">RD 为轧向，TD 为横向。比较使用两份 UTF-8 CSV。列名需标注单位，例如 <code>H_A_per_m,B_T</code> 或 <code>H_kA_per_m,J_mT</code>。可对来源或条件待查的文件仅归档。</p>
+    <p class="muted">RD 为轧向，TD 为横向。可只上传一个方向，或同时上传同条件的两份 UTF-8 CSV。列名需标注单位，例如 <code>H_A_per_m,B_T</code> 或 <code>H_kA_per_m,J_mT</code>。可对来源或条件待查的文件仅归档。</p>
     {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
     {% if not groups %}<p class="muted">暂无同时具有拟合和整牌号留出的校准记录。可<a href="/workbench#cal">建立校准</a>，也可归档原表。</p>{% endif %}
     <form method="post" action="{{ url_for('.save') }}" enctype="multipart/form-data">
@@ -161,7 +163,8 @@
       </div>
       <label>应力、退火和其他测量条件<textarea name="conditions" maxlength="1200">{{ form.get('conditions', '') }}</textarea></label>
       <p class="muted">已知原表牌号时请按原标注填写。该牌号须与所选模型一致才能比较；其他牌号可仅归档。</p>
-      <label class="check"><input type="checkbox" name="paired" value="yes"{% if form.get('paired') == 'yes' %} checked{% endif %}>确认方向及两份原表的可比条件</label>
+      <label class="check"><input type="checkbox" name="single_direction_confirmed" value="yes"{% if form.get('single_direction_confirmed') == 'yes' %} checked{% endif %}>只上传一份时，确认原表的测量方向</label>
+      <label class="check"><input type="checkbox" name="paired" value="yes"{% if form.get('paired') == 'yes' %} checked{% endif %}>上传两份时，确认方向及两份原表的可比条件</label>
       <div class="actions">
         <button name="mode" value="compare"{% if not groups %} disabled{% endif %}>比较并保存</button>
         <button class="secondary" name="mode" value="archive">仅归档原表</button>

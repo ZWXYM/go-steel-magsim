@@ -1,4 +1,4 @@
-"""Archive paired source tables and compare them with two saved material curves."""
+"""Archive source tables and compare confirmed directions with saved material curves."""
 import io
 import json
 import math
@@ -146,9 +146,16 @@ class ExternalBHIntake:
                                                 archive_path=member, sha256=sha256(blob), bytes=len(blob))
         title = '磁化曲线原表'
         if mode == 'compare':
-            if (set(uploads) != set(DIRECTIONS) or source['curve_kind'] == 'unspecified'
-                    or not source['direction_and_pairing_declared']):
-                raise ValueError('比较需要 RD 和 TD 两份原表、明确曲线类型，以及对方向和配对条件的确认')
+            if source['curve_kind'] == 'unspecified':
+                raise ValueError('比较前请选择原表的曲线种类')
+            directions = [direction for direction in DIRECTIONS if direction in uploads]
+            if len(directions) == 1:
+                if form.get('single_direction_confirmed') != 'yes':
+                    raise ValueError('请确认单份原表的测量方向，或仅归档原表')
+                source.update(direction=directions[0], direction_and_pairing_declared=False)
+                summary['comparison_scope'] = 'single_direction'
+            elif not source['direction_and_pairing_declared']:
+                raise ValueError('同时比较 RD 和 TD 时，请确认两份原表的方向及可比条件')
             identity, models = self._models(form.get('selection', ''))
             reported_grade = source['reported_grade']
             if reported_grade and reported_grade.casefold() != identity['grade'].casefold():
@@ -168,7 +175,7 @@ class ExternalBHIntake:
             if comparison_identity:
                 summary['comparison_model'] = comparison_identity
             saved_rows = []
-            for direction in DIRECTIONS:
+            for direction in directions:
                 measurement = read_measurement_csv(uploads[direction][1], direction)
                 curves = {name: model['curves'][direction] for name, model in models.items()}
                 compared = compare_curves(measurement, curves)
@@ -179,7 +186,7 @@ class ExternalBHIntake:
                     saved_rows.extend(dict(model=name, direction=direction, H_A_per_m=h, B_T=b)
                                       for h, b in zip(curve['H'], curve['B']))
             files['model_curves.csv'] = csv_bytes(saved_rows)
-            title = 'RD/TD 原表比较 · ' + identity['grade']
+            title = '/'.join(directions) + ' 原表比较 · ' + identity['grade']
         files['external_bh_report.json'] = json_bytes(summary)
         description = SOURCE_LABELS[source['source_kind']] + '。' + (
             '保留上传字节、物理 H 比较、两种训练范围和保存曲线。' if mode == 'compare' else '保留上传字节和自报来源。')

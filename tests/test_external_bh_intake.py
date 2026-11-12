@@ -10,6 +10,7 @@ from flask import Flask
 
 from modules.external_bh_intake import ExternalBHIntake, create_external_bh_routes
 from modules.system_data import WorkpackStore, json_bytes, sha256
+from modules.system_data_reference_evidence import collect_reference_package
 
 
 CALIBRATION = 'cal_123456789abc'
@@ -145,6 +146,42 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertEqual(self.intake.read(first_id)[1], first_report)
         self.assertEqual(first_report['comparison']['RD']['compared_points'], 2)
         self.assertEqual(self._post_pair(secondary_selection=CALIBRATION+'|'+'a'*64).status_code, 400)
+
+    def test_td_only_compares_two_versions_and_stays_unpaired(self):
+        alternate = self.library.add_report(ALTERNATE, 'e' * 64)
+        result = self.client.post('/external-bh-validation', data=dict(
+            selection=self.selection, secondary_selection=ALTERNATE+'|'+sha256(alternate.read_bytes()),
+            reported_grade=GRADE, source_kind='demonstration', source_reference='TD fixture',
+            curve_kind='normal_peak', mode='compare', single_direction_confirmed='yes',
+            TD=(io.BytesIO(TD), 'TD.csv')))
+        self.assertEqual(result.status_code, 303)
+        artifact = result.location.rsplit('/', 1)[1]
+        record, report = self.intake.read(artifact)
+        self.assertEqual(report['comparison_scope'], 'single_direction')
+        self.assertEqual(report['source']['direction'], 'TD')
+        self.assertFalse(report['source']['direction_and_pairing_declared'])
+        self.assertFalse(report['specimen_independence_verified'])
+        self.assertEqual(set(report['comparison']), {'TD'})
+        self.assertEqual(report['comparison']['TD']['field_weighted']['bands']['common']['H_range_A_per_m'], [30,800])
+        self.assertAlmostEqual(report['comparison']['TD']['B800']['input_B_T'], 1.1+4e-7*3.141592653589793*800)
+        evidence, raw = collect_reference_package(self.store, dict(id=artifact, sha256=record['sha256']))
+        self.assertEqual(evidence['declared_direction'], 'TD')
+        self.assertEqual(set(evidence['originals']), {'original/TD.csv'})
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+            self.assertEqual(archive.read('original/TD.csv'), TD)
+            self.assertNotIn('comparison/RD.csv', archive.namelist())
+        page = self.client.get(result.location).get_data(as_text=True)
+        self.assertIn('未建立 RD/TD 配对', page)
+        self.assertIn('按物理 H 区间计权', page)
+        self.assertNotIn('<th scope="row">RD</th>', page)
+
+    def test_single_confirmation_cannot_be_replaced_by_pair_confirmation(self):
+        result = self.client.post('/external-bh-validation', data=dict(
+            selection=self.selection, source_reference='TD fixture', curve_kind='normal_peak',
+            paired='yes', mode='compare', TD=(io.BytesIO(TD), 'TD.csv')))
+        self.assertEqual(result.status_code, 400)
+        self.assertIn('请确认单份原表的测量方向', result.get_data(as_text=True))
+        self.assertEqual(self.store.records(), [])
 
     def test_archive_accepts_one_original_without_physical_axis_claim(self):
         raw = b'H,unknown\n12,0.18\n'
