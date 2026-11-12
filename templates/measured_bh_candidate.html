@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>实测区间曲线候选</title>
+  <link rel="stylesheet" href="/static/css/material_measurement.css">
+</head>
+<body>
+<header>
+  <h1>实测区间曲线候选</h1>
+  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/external-bh-validation">原表核对</a><a href="/system-data">系统数据与下载</a></nav>
+</header>
+<main><section>
+{% if error is defined %}
+  <p class="error" role="alert">{{ error }}</p>
+  <a href="{{ url_for('.result', artifact=source_artifact) }}">返回原表核对</a>
+{% else %}
+  <h2>{{ report.grade }} · {{ record.id }}</h2>
+  <p>以原初始磁化表生成，每方向最多 {{ report.max_nodes_per_direction }} 节点，保留第一个与最后一个实测 H。仅在表内分析；没有补零、外推或生成电机材料。</p>
+  <p>先对测得的 B 做最小二乘单调化，再优先保留线性插值误差大的实测 H 节点。下表误差是对输入原表的重建差，不能作为独立验证误差。</p>
+  {% macro n(value) %}{{ '%.7g' | format(value) }}{% endmacro %}
+  <div class="table-wrap">
+    <table><thead><tr><th>方向</th><th>实测 H 范围（A/m）</th><th>原点</th><th>候选节点</th><th>单调化调整点</th><th>最大单调调整（T）</th><th>最大重建差（T）</th><th>H 区间重建 RMSE（T）</th></tr></thead>
+    <tbody>{% for direction, row in report.directions.items() %}
+      <tr><th scope="row">{{ direction }}</th><td>{{ n(row.H_range_A_per_m[0]) }} 至 {{ n(row.H_range_A_per_m[1]) }}</td>
+      <td>{{ row.source_points }}</td><td>{{ row.candidate_nodes }}</td><td>{{ row.altered_source_points }}</td>
+      <td>{{ n(row.max_abs_monotone_shift_T) }}</td><td>{{ n(row.max_abs_candidate_point_error_T) }}</td><td>{{ n(row.rmse_uniform_H_T) }}</td></tr>
+    {% endfor %}</tbody></table>
+  </div>
+  <p>来源：{{ report.source.source_reference }} · <a href="{{ url_for('.result', artifact=report.source_package.id) }}">打开原表核对记录</a>。下载包内保留原档、候选节点和逐点差值。</p>
+  <div class="actions"><a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载候选和原表证据</a></div>
+{% endif %}
+</section></main>
+</body>
+</html>

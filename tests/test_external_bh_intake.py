@@ -11,6 +11,7 @@ from flask import Flask
 from modules.external_bh_intake import ExternalBHIntake, create_external_bh_routes
 from modules.system_data import WorkpackStore, json_bytes, sha256
 from modules.system_data_reference_evidence import collect_reference_package
+from modules.workbench_cpu_policy import install_cpu_policy
 
 
 CALIBRATION = 'cal_123456789abc'
@@ -213,6 +214,37 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertEqual(report['source']['excitation'], 'dc')
         self.assertIsNone(report['source']['frequency_hz'])
         self.assertIn('直流磁化曲线', self.client.get(saved.location).get_data(as_text=True))
+
+    def test_measured_candidate_route_keeps_source_immutable_and_rejects_proxy(self):
+        install_cpu_policy(self.client.application)
+        proxy = self._post_pair(source_kind='reference', reported_grade=GRADE, curve_kind='initial')
+        proxy_id = proxy.location.rsplit('/', 1)[1]
+        proxy_record, _ = self.store.read(proxy_id)
+        self.assertNotIn('制作实测区间候选', self.client.get(proxy.location).get_data(as_text=True))
+        self.assertEqual(self.client.post(proxy.location+'/candidate',
+                                         data={'source_sha256':proxy_record['sha256']}).status_code, 400)
+        original = self._post_pair(source_kind='published_measurement', reported_grade=GRADE, curve_kind='initial')
+        self.assertEqual(original.status_code, 303)
+        self.assertIn('制作实测区间候选', self.client.get(original.location).get_data(as_text=True))
+        orig_id = original.location.rsplit('/', 1)[1]
+        record, initial_archive = self.store.read(orig_id)
+        request_path = original.location+'/candidate'
+        self.assertEqual(self.client.post(request_path, data={'source_sha256':'0'*64}).status_code, 400)
+        ready = self.client.post(request_path, data={'source_sha256':record['sha256']})
+        self.assertEqual(ready.status_code, 303)
+        self.assertEqual(self.client.post(request_path, data={'source_sha256':record['sha256']}).location, ready.location)
+        body = self.client.get(ready.location).get_data(as_text=True)
+        self.assertIn('仅在表内分析', body)
+        _, output = self.store.read(ready.location.rsplit('/',1)[1])
+        with zipfile.ZipFile(io.BytesIO(output)) as z:
+            self.assertEqual(z.read('source/original_comparison.zip'), initial_archive)
+            report = json.loads(z.read('measured_candidate.json'))
+            self.assertFalse(report['motor_eligible'])
+            self.assertFalse(report['extrapolation'])
+            self.assertEqual(report['directions']['TD']['H_range_A_per_m'], [10,800])
+            self.assertEqual(set(report['directions']), {'RD','TD'})
+            self.assertFalse(any(member.endswith('.amat') for member in z.namelist()))
+        self.assertEqual(self.store.read(orig_id)[1], initial_archive)
 
     def test_archive_accepts_one_original_without_physical_axis_claim(self):
         raw = b'H,unknown\n12,0.18\n'

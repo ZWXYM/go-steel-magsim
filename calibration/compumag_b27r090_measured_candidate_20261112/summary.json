@@ -1,0 +1,154 @@
+{
+  "candidate_training_scope": "Initial tables. Other published conditions not used to choose nodes. Shared publication, no confirmed independent coils.",
+  "directions": {
+    "RD": {
+      "H_range_A_per_m": [
+        4.392352272,
+        996.2568528
+      ],
+      "altered_source_points": 2,
+      "candidate_nodes": 26,
+      "max_abs_candidate_point_error_T": 0.009103762302314244,
+      "max_abs_monotone_shift_T": 0.00843528250000003,
+      "rmse_original_points_T": 0.0031565190899751567,
+      "rmse_uniform_H_T": 0.0005430156272839314,
+      "source_points": 35,
+      "source_sha256": "9be2f5afa1bc0f7b9d2e7d114110328b29acd2af4429ccf17088d105bc8627f1"
+    },
+    "TD": {
+      "H_range_A_per_m": [
+        155.4528176,
+        11223.97368
+      ],
+      "altered_source_points": 0,
+      "candidate_nodes": 26,
+      "max_abs_candidate_point_error_T": 0.0032600742204640376,
+      "max_abs_monotone_shift_T": 0.0,
+      "rmse_original_points_T": 0.0009351625384113591,
+      "rmse_uniform_H_T": 0.0013088441250493992,
+      "source_points": 33,
+      "source_sha256": "9b892ee2b5d2d39ea3346f2876ea6d48447c4288922f7c0069209286e60fcebe"
+    }
+  },
+  "extrapolation": false,
+  "grade": "B27R090",
+  "integrated_error_scope": "Shared H only; scalar Simpson integration.",
+  "motor_eligible": false,
+  "new_Maxwell": 0,
+  "new_MuMax": 0,
+  "old_grid_same_budget_check": {
+    "RD": {
+      "adaptive_26_focus_rmse_T": 0.0,
+      "adaptive_same_budget_nodes": 10,
+      "adaptive_same_focus_rmse_T": 0.01827199974160585,
+      "adaptive_same_full_rmse_T": 0.01680558490995269,
+      "fixed_focus_rmse_T": 0.010907743837687769,
+      "fixed_full_rmse_T": 0.012648165674925759,
+      "fixed_nodes": 10
+    },
+    "TD": {
+      "adaptive_26_focus_rmse_T": 0.0004028292004101957,
+      "adaptive_same_budget_nodes": 12,
+      "adaptive_same_focus_rmse_T": 0.0066675790385945346,
+      "adaptive_same_full_rmse_T": 0.009469601574576048,
+      "fixed_focus_rmse_T": 0.2945208555968904,
+      "fixed_full_rmse_T": 0.047084827727225186,
+      "fixed_nodes": 12
+    }
+  },
+  "other_grade_generalization_verified": false,
+  "retained_original_measured_tables": true,
+  "schema": "p21e_b27r090_measured_interval_candidate_check_v1",
+  "sensitivity_other_excitation_same_publication": [
+    {
+      "V4_holdout_focus_rmse_T": 0.14475674322242213,
+      "V4_holdout_full_rmse_T": 0.11911027352527727,
+      "candidate_focus_rmse_T": 0.001926360799280989,
+      "candidate_full_rmse_T": 0.008495392033139109,
+      "condition": "dc",
+      "direction": "RD",
+      "shared_H_range_A_per_m": [
+        4.444272118,
+        964.3478823
+      ],
+      "shared_focus_A_per_m": [
+        100,
+        400
+      ]
+    },
+    {
+      "V4_holdout_focus_rmse_T": 0.14597164315952016,
+      "V4_holdout_full_rmse_T": 0.11775544150144006,
+      "candidate_focus_rmse_T": 0.00365914513577263,
+      "candidate_full_rmse_T": 0.00799982974343297,
+      "condition": "case_I",
+      "direction": "RD",
+      "shared_H_range_A_per_m": [
+        4.392352272,
+        996.2568528
+      ],
+      "shared_focus_A_per_m": [
+        100,
+        400
+      ]
+    },
+    {
+      "V4_holdout_focus_rmse_T": 0.15621632315294878,
+      "V4_holdout_full_rmse_T": 0.1299988132754602,
+      "candidate_focus_rmse_T": 0.011953005651079618,
+      "candidate_full_rmse_T": 0.01398853380646364,
+      "condition": "5Hz",
+      "direction": "RD",
+      "shared_H_range_A_per_m": [
+        4.392352272,
+        996.2568528
+      ],
+      "shared_focus_A_per_m": [
+        100,
+        400
+      ]
+    },
+    {
+      "V4_holdout_focus_rmse_T": 0.7239615528630369,
+      "V4_holdout_full_rmse_T": 0.3525092179419402,
+      "candidate_focus_rmse_T": 0.009099434924940622,
+      "candidate_full_rmse_T": 0.0021879643436733555,
+      "condition": "dc",
+      "direction": "TD",
+      "shared_H_range_A_per_m": [
+        155.4528176,
+        11223.97368
+      ],
+      "shared_focus_A_per_m": [
+        155.4528176,
+        400
+      ]
+    },
+    {
+      "V4_holdout_focus_rmse_T": 0.7194063097803899,
+      "V4_holdout_full_rmse_T": 0.3555692379283243,
+      "candidate_focus_rmse_T": 0.02394948500370518,
+      "candidate_full_rmse_T": 0.004651880731629129,
+      "condition": "case_I",
+      "direction": "TD",
+      "shared_H_range_A_per_m": [
+        165.2033663,
+        11223.97368
+      ],
+      "shared_focus_A_per_m": [
+        165.2033663,
+        400
+      ]
+    }
+  ],
+  "source": {
+    "confirmed_independent_coil": false,
+    "sha256": "3b2288ed8f58e7c5b79d3fb96bf5c23d5145ef1b9a40184d043aad98ca8b22e0",
+    "source_kind": "published_measurement",
+    "tables": [
+      "A2.13",
+      "A2.14"
+    ],
+    "url": "https://www.compumag.org/wp/wp-content/uploads/2021/04/problem21_inputdata_P21e.pdf"
+  }
+}

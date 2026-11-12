@@ -121,6 +121,13 @@
       <a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载原表和核对记录</a>
       <a href="{{ url_for('.page') }}">核对另一组原表</a>
     </div>
+    {% if candidate_available %}
+    <form method="post" action="{{ url_for('.save_candidate', artifact=record.id) }}">
+      <input type="hidden" name="source_sha256" value="{{ record.sha256 }}">
+      <p class="muted">可用实测初始曲线制作仅限实测 H 区间的候选。已保存校准和电机参数保持。</p>
+      <button class="secondary">制作实测区间候选</button>
+    </form>
+    {% endif %}
   </section>
 {% else %}
   <section>

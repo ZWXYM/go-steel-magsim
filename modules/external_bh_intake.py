@@ -11,6 +11,8 @@ from werkzeug.exceptions import RequestEntityTooLarge
 
 from modules.calibration_regularized import default_eligible
 from modules.external_bh_validation import MAX_CURVE_BYTES, compare_curves, field_weighted_errors, read_measurement_csv
+from modules.measured_curve_candidate import (CANDIDATE_FILENAME, CANDIDATE_VERSION, MAX_NODES,
+                                                 build_measured_candidate, candidate_eligible)
 from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
 
 
@@ -208,7 +210,7 @@ class ExternalBHIntake:
             '保留上传字节、物理 H 比较、两种训练范围和保存曲线。' if mode == 'compare' else '保留上传字节和自报来源。')
         return self.packages.register_bytes(workpack_bytes(files), title, description, source_filename=PACKAGE_FILENAME)
 
-    def read(self, artifact):
+    def _read_with_bytes(self, artifact):
         record, blob = self.packages.read(artifact)
         if record.get('source_filename') != PACKAGE_FILENAME:
             raise ValueError('工作包类型不符')
@@ -216,6 +218,51 @@ class ExternalBHIntake:
             report = json.loads(archive.read('external_bh_report.json'))
         if report['version'] != VERSION:
             raise ValueError('磁化曲线原表版本不符')
+        return record, report, blob
+
+    def read(self, artifact):
+        record, report, _ = self._read_with_bytes(artifact)
+        return record, report
+
+    def create_candidate(self, artifact, expected_sha):
+        record, report, original_zip = self._read_with_bytes(artifact)
+        if record['sha256'] != expected_sha:
+            raise ValueError('来源记录身份不符，请重新打开原表核对页')
+        if not candidate_eligible(report):
+            raise ValueError('仅有明确牌号及测量方向的实测初始磁化表可制作候选')
+        summary = dict(version=CANDIDATE_VERSION, grade=report['model']['grade'], source=report['source'],
+                       source_package=dict(id=artifact, sha256=expected_sha, member='source/original_comparison.zip'),
+                       max_nodes_per_direction=MAX_NODES, H_axis='physical_A_per_m', directions={},
+                       use_scope='measured_range_analysis_only', extrapolation=False, motor_eligible=False,
+                       independently_validated=False)
+        files = {'source/original_comparison.zip': original_zip}
+        with zipfile.ZipFile(io.BytesIO(original_zip)) as archive:
+            for direction in DIRECTIONS:
+                if direction not in report['inputs']:
+                    continue
+                member = f'original/{direction}.csv'
+                raw = archive.read(member)
+                digest = sha256(raw)
+                if digest != report['inputs'][direction]['sha256']:
+                    raise ValueError('候选来源原表哈希不符')
+                table = read_measurement_csv(raw, direction)
+                metrics, nodes, trace = build_measured_candidate(table)
+                summary['directions'][direction] = dict(metrics, source_sha256=digest)
+                files[f'candidate/{direction}.csv'] = csv_bytes(nodes)
+                files[f'audit/{direction}.csv'] = csv_bytes(trace)
+        files['measured_candidate.json'] = json_bytes(summary)
+        return self.packages.register_bytes(workpack_bytes(files), '实测区间曲线候选 · '+summary['grade'],
+                                            '仅在已采样 H 内重建，原校准和电机输入不变。',
+                                            source_filename=CANDIDATE_FILENAME)
+
+    def read_candidate(self, artifact):
+        record, blob = self.packages.read(artifact)
+        if record.get('source_filename') != CANDIDATE_FILENAME:
+            raise ValueError('工作包类型不符')
+        with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+            report = json.loads(archive.read('measured_candidate.json'))
+        if report.get('version') != CANDIDATE_VERSION:
+            raise ValueError('实测候选版本不符')
         return record, report
 
 
@@ -258,6 +305,24 @@ def create_external_bh_routes(intake):
             record, report = intake.read(artifact)
         except (ValueError, OSError, KeyError, TypeError):
             abort(404)
-        return render_template('external_bh_validation.html', record=record, report=report, **labels)
+        return render_template('external_bh_validation.html', record=record, report=report,
+                               candidate_available=candidate_eligible(report), **labels)
+
+    @bp.post('/external-bh-validation/<artifact>/candidate')
+    def save_candidate(artifact):
+        request.max_content_length = 16 * 1024
+        try:
+            record = intake.create_candidate(artifact, request.form.get('source_sha256', ''))
+        except (ValueError, OSError, KeyError, TypeError) as error:
+            return render_template('measured_bh_candidate.html', error=str(error), source_artifact=artifact), 400
+        return redirect(url_for('.candidate_result', artifact=record['id']), code=303)
+
+    @bp.get('/measured-bh-candidate/<artifact>')
+    def candidate_result(artifact):
+        try:
+            record, report = intake.read_candidate(artifact)
+        except (ValueError, OSError, KeyError, TypeError):
+            abort(404)
+        return render_template('measured_bh_candidate.html', record=record, report=report)
 
     return bp
