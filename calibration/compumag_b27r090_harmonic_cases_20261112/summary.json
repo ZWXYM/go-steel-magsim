@@ -1,0 +1,323 @@
+{
+  "SST_frequency_Hz": null,
+  "SST_harmonic_amplitudes": null,
+  "changed_default": false,
+  "conditions": {
+    "case_II": "基波与三次谐波，无直流偏置。",
+    "case_III": "基波与三、五次谐波，无直流偏置。"
+  },
+  "curve_checks": [
+    {
+      "common_range_A_per_m": [
+        4.392352272,
+        996.2568528
+      ],
+      "common_rmse_T": {
+        "V2_holdout": 0.08115887402688578,
+        "V4_holdout": 0.11836045176519354,
+        "candidate": 0.00866595610180272
+      },
+      "comparison_focus_A_per_m": [
+        100.0,
+        400.0
+      ],
+      "condition": "case_II",
+      "direction": "RD",
+      "focus_rmse_T": {
+        "V2_holdout": 0.1042370684998544,
+        "V4_holdout": 0.14633480100104157,
+        "candidate": 0.0038070811296064795
+      },
+      "focus_source_points": 3,
+      "points": 37
+    },
+    {
+      "common_range_A_per_m": [
+        165.0457193,
+        11223.97368
+      ],
+      "common_rmse_T": {
+        "V2_holdout": 0.38829594771459325,
+        "V4_holdout": 0.3559853287733525,
+        "candidate": 0.0050772103391459366
+      },
+      "comparison_focus_A_per_m": [
+        165.0457193,
+        400.0
+      ],
+      "condition": "case_II",
+      "direction": "TD",
+      "focus_rmse_T": {
+        "V2_holdout": 0.7607277944292026,
+        "V4_holdout": 0.7203905535190434,
+        "candidate": 0.02511750471593746
+      },
+      "focus_source_points": 23,
+      "points": 33
+    },
+    {
+      "common_range_A_per_m": [
+        4.392352272,
+        996.2568528
+      ],
+      "common_rmse_T": {
+        "V2_holdout": 0.08179015216118725,
+        "V4_holdout": 0.11899695818063674,
+        "candidate": 0.012511938993838593
+      },
+      "comparison_focus_A_per_m": [
+        100.0,
+        400.0
+      ],
+      "condition": "case_III",
+      "direction": "RD",
+      "focus_rmse_T": {
+        "V2_holdout": 0.10364909303565643,
+        "V4_holdout": 0.1457392455074014,
+        "candidate": 0.003641069577888529
+      },
+      "focus_source_points": 3,
+      "points": 37
+    },
+    {
+      "common_range_A_per_m": [
+        167.9207736,
+        9938.355868
+      ],
+      "common_rmse_T": {
+        "V2_holdout": 0.39865128476960704,
+        "V4_holdout": 0.36363208611619496,
+        "candidate": 0.005683903016488345
+      },
+      "comparison_focus_A_per_m": [
+        167.9207736,
+        400.0
+      ],
+      "condition": "case_III",
+      "direction": "TD",
+      "focus_rmse_T": {
+        "V2_holdout": 0.7735254539148809,
+        "V4_holdout": 0.7331400193697323,
+        "candidate": 0.03250082857288372
+      },
+      "focus_source_points": 23,
+      "points": 33
+    }
+  ],
+  "grade": "B27R090",
+  "loss_at_shared_B": [
+    {
+      "case_I": {
+        "RD_W_kg": 0.012086674495295841,
+        "TD_W_kg": 0.20901876373635,
+        "TD_over_RD": 17.293322809156525
+      },
+      "case_II": {
+        "RD_W_kg": 0.011197307793618314,
+        "TD_W_kg": 0.19892013603259245,
+        "TD_over_RD": 17.764996702686254
+      },
+      "case_III": {
+        "RD_W_kg": 0.01115879688738906,
+        "TD_W_kg": 0.19449674864119576,
+        "TD_over_RD": 17.429903116258277
+      },
+      "peak_B_T": 0.2
+    },
+    {
+      "case_I": {
+        "RD_W_kg": 0.06966997659543497,
+        "TD_W_kg": 0.7181889038053565,
+        "TD_over_RD": 10.308441869814189
+      },
+      "case_II": {
+        "RD_W_kg": 0.06432830703486621,
+        "TD_W_kg": 0.6854972351247135,
+        "TD_over_RD": 10.656229997676935
+      },
+      "case_III": {
+        "RD_W_kg": 0.06439144357905095,
+        "TD_W_kg": 0.6817693352050442,
+        "TD_over_RD": 10.587887105964034
+      },
+      "peak_B_T": 0.5
+    },
+    {
+      "case_I": {
+        "RD_W_kg": 0.27706586070535444,
+        "TD_W_kg": 1.6302318664346744,
+        "TD_over_RD": 5.883914612520031
+      },
+      "case_II": {
+        "RD_W_kg": 0.25869174640790643,
+        "TD_W_kg": 1.576235961729215,
+        "TD_over_RD": 6.093104954511375
+      },
+      "case_III": {
+        "RD_W_kg": 0.25858914067860145,
+        "TD_W_kg": 1.60114696634695,
+        "TD_over_RD": 6.191856943973544
+      },
+      "peak_B_T": 1
+    },
+    {
+      "case_I": {
+        "RD_W_kg": 0.6352526840772073,
+        "TD_W_kg": 3.819322007982601,
+        "TD_over_RD": 6.012287871763496
+      },
+      "case_II": {
+        "RD_W_kg": 0.6046457483778049,
+        "TD_W_kg": 3.7400886538285167,
+        "TD_over_RD": 6.185586624668651
+      },
+      "case_III": {
+        "RD_W_kg": 0.6170581038894873,
+        "TD_W_kg": 3.8303960341196595,
+        "TD_over_RD": 6.207512728502579
+      },
+      "peak_B_T": 1.5
+    },
+    {
+      "case_I": {
+        "RD_W_kg": 0.7393664556912385,
+        "TD_W_kg": 4.3058479999487185,
+        "TD_over_RD": 5.823699421044404
+      },
+      "case_II": {
+        "RD_W_kg": 0.7068295966058358,
+        "TD_W_kg": 4.188816432948803,
+        "TD_over_RD": 5.926204071056607
+      },
+      "case_III": {
+        "RD_W_kg": 0.7251885482725173,
+        "TD_W_kg": 4.252678616977488,
+        "TD_over_RD": 5.864238517152344
+      },
+      "peak_B_T": 1.6
+    }
+  ],
+  "numeric_cells_checked": 560,
+  "schema": "compumag_p21e_B27R090_harmonic_summary_v1",
+  "scope": "Same publication, unused conditions. Loss values not assigned to another frequency or motor.",
+  "shared_loss_B_range_T": [
+    0.100228462,
+    1.641101287
+  ],
+  "source_pdf_sha256": "3b2288ed8f58e7c5b79d3fb96bf5c23d5145ef1b9a40184d043aad98ca8b22e0",
+  "source_url": "https://www.compumag.org/wp/wp-content/uploads/2021/04/problem21_inputdata_P21e.pdf",
+  "tables": [
+    {
+      "abscissa_range": [
+        2.971248652,
+        1078.008326
+      ],
+      "condition": "case_II",
+      "direction": "RD",
+      "figure": "A2.5",
+      "filename": "case_II_RD_BH.csv",
+      "quantity": "BH",
+      "rows": 37,
+      "sha256": "c711009b899b2364aabe2cf5d631f3156a2040beebf6ad7eb8d078a52f598553",
+      "source_page": 8
+    },
+    {
+      "abscissa_range": [
+        165.0457193,
+        13988.89946
+      ],
+      "condition": "case_II",
+      "direction": "TD",
+      "figure": "A2.6",
+      "filename": "case_II_TD_BH.csv",
+      "quantity": "BH",
+      "rows": 33,
+      "sha256": "9141bf11c4bb6a9f0dc98cccbcf084ee82d33139e5d3dec2dfeead4baf3dc383",
+      "source_page": 8
+    },
+    {
+      "abscissa_range": [
+        0.100051974,
+        1.901353965
+      ],
+      "condition": "case_II",
+      "direction": "RD",
+      "figure": "A2.7",
+      "filename": "case_II_RD_loss.csv",
+      "quantity": "loss",
+      "rows": 37,
+      "sha256": "5593640ce523f80582407d0be241bda7d80150ee0713f7345513051f85a04440",
+      "source_page": 9
+    },
+    {
+      "abscissa_range": [
+        0.100204956,
+        1.716936626
+      ],
+      "condition": "case_II",
+      "direction": "TD",
+      "figure": "A2.8",
+      "filename": "case_II_TD_loss.csv",
+      "quantity": "loss",
+      "rows": 33,
+      "sha256": "0d61d7bd8450cc183e743fc3ed78e647678a44e52f7b031e3a5673e3aab1d822",
+      "source_page": 9
+    },
+    {
+      "abscissa_range": [
+        3.039063594,
+        1063.793373
+      ],
+      "condition": "case_III",
+      "direction": "RD",
+      "figure": "A2.9",
+      "filename": "case_III_RD_BH.csv",
+      "quantity": "BH",
+      "rows": 37,
+      "sha256": "fc2476a024634cf3b429addb35f1d0e6a30273706bebcad4395314357af9137d",
+      "source_page": 10
+    },
+    {
+      "abscissa_range": [
+        167.9207736,
+        9938.355868
+      ],
+      "condition": "case_III",
+      "direction": "TD",
+      "figure": "A2.10",
+      "filename": "case_III_TD_BH.csv",
+      "quantity": "BH",
+      "rows": 33,
+      "sha256": "3763e666929d6f57b2e2b82178165df651b410cf26267e2ee813085b41e77cdf",
+      "source_page": 10
+    },
+    {
+      "abscissa_range": [
+        0.100025641,
+        1.901392295
+      ],
+      "condition": "case_III",
+      "direction": "RD",
+      "figure": "A2.11",
+      "filename": "case_III_RD_loss.csv",
+      "quantity": "loss",
+      "rows": 37,
+      "sha256": "8a4017b5637ae4ab9e9e2b96477fda8d0d0677ef4913d5d725e331de2268e821",
+      "source_page": 11
+    },
+    {
+      "abscissa_range": [
+        0.100228462,
+        1.641101287
+      ],
+      "condition": "case_III",
+      "direction": "TD",
+      "figure": "A2.12",
+      "filename": "case_III_TD_loss.csv",
+      "quantity": "loss",
+      "rows": 33,
+      "sha256": "481463396aa084f0c07e5b344a2827b0ca1a5f44c3fcde28a589c03c6a2ace0f",
+      "source_page": 11
+    }
+  ]
+}
