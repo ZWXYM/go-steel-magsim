@@ -1,0 +1,588 @@
+{
+  "schema": "b27r090_saved_candidate_normal_entry_review_v1",
+  "grade": "B27R090",
+  "source": "ICS TEAM Problem 21e",
+  "original_source": "https://www.compumag.org/wp/wp-content/uploads/2021/04/problem21_inputdata_P21e.pdf",
+  "same_report": true,
+  "independent_specimens_verified": false,
+  "independent_metric_checks": 360,
+  "motor_material_generated": false,
+  "new_solves": 0,
+  "validation": [
+    {
+      "condition": "dc",
+      "calibration_version": "fixed_h_nested_transfer_v2",
+      "secondary_calibration_version": "fixed_h_reference_dominant_transfer_v4",
+      "directions": {
+        "RD": {
+          "common": {
+            "H_range_A_per_m": [
+              4.444272118,
+              964.3478823
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.005837361139306979,
+                "rmse_T": 0.008495392033139143
+              },
+              "fit": {
+                "mae_T": 0.1164345416956105,
+                "rmse_T": 0.13004183868916694
+              },
+              "holdout": {
+                "mae_T": 0.0642070868557313,
+                "rmse_T": 0.08330076174708116
+              },
+              "secondary_fit": {
+                "mae_T": 0.1164345416956105,
+                "rmse_T": 0.13004183868916694
+              },
+              "secondary_holdout": {
+                "mae_T": 0.10658754058715152,
+                "rmse_T": 0.11911027352527727
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              100.0,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.0015520407433838833,
+                "rmse_T": 0.0019263607992810391
+              },
+              "fit": {
+                "mae_T": 0.15465071494543567,
+                "rmse_T": 0.15744530031750237
+              },
+              "holdout": {
+                "mae_T": 0.09826578593153497,
+                "rmse_T": 0.10288152378332606
+              },
+              "secondary_fit": {
+                "mae_T": 0.15465071494543567,
+                "rmse_T": 0.15744530031750237
+              },
+              "secondary_holdout": {
+                "mae_T": 0.14153602861266987,
+                "rmse_T": 0.14475674322242216
+              }
+            },
+            "original_points": 3
+          }
+        },
+        "TD": {
+          "common": {
+            "H_range_A_per_m": [
+              155.4528176,
+              11223.97368
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.0014951805414221621,
+                "rmse_T": 0.002187964343673354
+              },
+              "fit": {
+                "mae_T": 0.3520315481687598,
+                "rmse_T": 0.3598489951685067
+              },
+              "holdout": {
+                "mae_T": 0.3759089741492311,
+                "rmse_T": 0.38487666764624967
+              },
+              "secondary_fit": {
+                "mae_T": 0.3520315481687598,
+                "rmse_T": 0.3598489951685067
+              },
+              "secondary_holdout": {
+                "mae_T": 0.34469804081041455,
+                "rmse_T": 0.3525092179419402
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              155.4528176,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.006604557839282439,
+                "rmse_T": 0.009099434924940615
+              },
+              "fit": {
+                "mae_T": 0.6564901603240381,
+                "rmse_T": 0.7389306687684732
+              },
+              "holdout": {
+                "mae_T": 0.6868043039752775,
+                "rmse_T": 0.7651413673151035
+              },
+              "secondary_fit": {
+                "mae_T": 0.6564901603240381,
+                "rmse_T": 0.7389306687684732
+              },
+              "secondary_holdout": {
+                "mae_T": 0.6404720535290904,
+                "rmse_T": 0.7239615528630368
+              }
+            },
+            "original_points": 22
+          }
+        }
+      }
+    },
+    {
+      "condition": "case_I",
+      "calibration_version": "fixed_h_nested_transfer_v2",
+      "secondary_calibration_version": "fixed_h_reference_dominant_transfer_v4",
+      "directions": {
+        "RD": {
+          "common": {
+            "H_range_A_per_m": [
+              4.392352272,
+              996.2568528
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.005556454711962842,
+                "rmse_T": 0.00799982974343299
+              },
+              "fit": {
+                "mae_T": 0.11697697707468904,
+                "rmse_T": 0.12853364220891736
+              },
+              "holdout": {
+                "mae_T": 0.06503143241490067,
+                "rmse_T": 0.08067123149708166
+              },
+              "secondary_fit": {
+                "mae_T": 0.11697697707468904,
+                "rmse_T": 0.12853364220891736
+              },
+              "secondary_holdout": {
+                "mae_T": 0.10741734942142421,
+                "rmse_T": 0.11775544150144007
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              100.0,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.0032570129250912034,
+                "rmse_T": 0.0036591451357726526
+              },
+              "fit": {
+                "mae_T": 0.15633888691936987,
+                "rmse_T": 0.15872896733184497
+              },
+              "holdout": {
+                "mae_T": 0.09995395790546913,
+                "rmse_T": 0.10388104183729133
+              },
+              "secondary_fit": {
+                "mae_T": 0.15633888691936987,
+                "rmse_T": 0.15872896733184497
+              },
+              "secondary_holdout": {
+                "mae_T": 0.14322420058660407,
+                "rmse_T": 0.1459716431595202
+              }
+            },
+            "original_points": 3
+          }
+        },
+        "TD": {
+          "common": {
+            "H_range_A_per_m": [
+              165.2033663,
+              11223.97368
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.0032749209017087252,
+                "rmse_T": 0.004651880731629155
+              },
+              "fit": {
+                "mae_T": 0.35525680277490057,
+                "rmse_T": 0.3628808116720339
+              },
+              "holdout": {
+                "mae_T": 0.3791307278726164,
+                "rmse_T": 0.387899369117687
+              },
+              "secondary_fit": {
+                "mae_T": 0.35525680277490057,
+                "rmse_T": 0.3628808116720339
+              },
+              "secondary_holdout": {
+                "mae_T": 0.3479327217969251,
+                "rmse_T": 0.3555692379283243
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              165.2033663,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.020810804762867428,
+                "rmse_T": 0.02394948500370518
+              },
+              "fit": {
+                "mae_T": 0.6388823694241009,
+                "rmse_T": 0.7340505209971239
+              },
+              "holdout": {
+                "mae_T": 0.6692989254074566,
+                "rmse_T": 0.7597784985909327
+              },
+              "secondary_fit": {
+                "mae_T": 0.6388823694241009,
+                "rmse_T": 0.7340505209971239
+              },
+              "secondary_holdout": {
+                "mae_T": 0.622947588209013,
+                "rmse_T": 0.7194063097803899
+              }
+            },
+            "original_points": 23
+          }
+        }
+      }
+    },
+    {
+      "condition": "case_II",
+      "calibration_version": "fixed_h_nested_transfer_v2",
+      "secondary_calibration_version": "fixed_h_reference_dominant_transfer_v4",
+      "directions": {
+        "RD": {
+          "common": {
+            "H_range_A_per_m": [
+              4.392352272,
+              996.2568528
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.005642869205827488,
+                "rmse_T": 0.008665956101802737
+              },
+              "fit": {
+                "mae_T": 0.11756366190849722,
+                "rmse_T": 0.1292134356349368
+              },
+              "holdout": {
+                "mae_T": 0.06546968662255603,
+                "rmse_T": 0.08115887402688583
+              },
+              "secondary_fit": {
+                "mae_T": 0.11756366190849722,
+                "rmse_T": 0.1292134356349368
+              },
+              "secondary_holdout": {
+                "mae_T": 0.10789393111320612,
+                "rmse_T": 0.11836045176519358
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              100.0,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.00343319209649274,
+                "rmse_T": 0.0038070811296064544
+              },
+              "fit": {
+                "mae_T": 0.15670931516447734,
+                "rmse_T": 0.15909364957506347
+              },
+              "holdout": {
+                "mae_T": 0.10032438615057658,
+                "rmse_T": 0.10423706849985438
+              },
+              "secondary_fit": {
+                "mae_T": 0.15670931516447734,
+                "rmse_T": 0.15909364957506347
+              },
+              "secondary_holdout": {
+                "mae_T": 0.14359462883171156,
+                "rmse_T": 0.1463348010010416
+              }
+            },
+            "original_points": 3
+          }
+        },
+        "TD": {
+          "common": {
+            "H_range_A_per_m": [
+              165.0457193,
+              11223.97368
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.0037427789401067906,
+                "rmse_T": 0.005077210339145907
+              },
+              "fit": {
+                "mae_T": 0.3556820521874302,
+                "rmse_T": 0.3632972976242527
+              },
+              "holdout": {
+                "mae_T": 0.3795560337032239,
+                "rmse_T": 0.38829594771459325
+              },
+              "secondary_fit": {
+                "mae_T": 0.3556820521874302,
+                "rmse_T": 0.3632972976242527
+              },
+              "secondary_holdout": {
+                "mae_T": 0.3483578181852198,
+                "rmse_T": 0.35598532877335254
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              165.0457193,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.021615519484192946,
+                "rmse_T": 0.025117504715937492
+              },
+              "fit": {
+                "mae_T": 0.6391789891721218,
+                "rmse_T": 0.7350255787402749
+              },
+              "holdout": {
+                "mae_T": 0.6695938107641188,
+                "rmse_T": 0.7607277944292027
+              },
+              "secondary_fit": {
+                "mae_T": 0.6391789891721218,
+                "rmse_T": 0.7350255787402749
+              },
+              "secondary_holdout": {
+                "mae_T": 0.6232427828588025,
+                "rmse_T": 0.7203905535190434
+              }
+            },
+            "original_points": 23
+          }
+        }
+      }
+    },
+    {
+      "condition": "case_III_corrected",
+      "calibration_version": "fixed_h_nested_transfer_v2",
+      "secondary_calibration_version": "fixed_h_reference_dominant_transfer_v4",
+      "directions": {
+        "RD": {
+          "common": {
+            "H_range_A_per_m": [
+              4.392352272,
+              996.2568528
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.00629743282510928,
+                "rmse_T": 0.012511938993838593
+              },
+              "fit": {
+                "mae_T": 0.11793906695810491,
+                "rmse_T": 0.13006632155275358
+              },
+              "holdout": {
+                "mae_T": 0.06507833262618626,
+                "rmse_T": 0.08179015216118725
+              },
+              "secondary_fit": {
+                "mae_T": 0.11793906695810491,
+                "rmse_T": 0.13006632155275358
+              },
+              "secondary_holdout": {
+                "mae_T": 0.10778580822273352,
+                "rmse_T": 0.11899695818063676
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              100.0,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.0032099951112881343,
+                "rmse_T": 0.0036410695778885094
+              },
+              "fit": {
+                "mae_T": 0.15611164043903314,
+                "rmse_T": 0.15849767167884135
+              },
+              "holdout": {
+                "mae_T": 0.09972671142513238,
+                "rmse_T": 0.10364909303565643
+              },
+              "secondary_fit": {
+                "mae_T": 0.15611164043903314,
+                "rmse_T": 0.15849767167884135
+              },
+              "secondary_holdout": {
+                "mae_T": 0.1429969541062673,
+                "rmse_T": 0.14573924550740144
+              }
+            },
+            "original_points": 3
+          }
+        },
+        "TD": {
+          "common": {
+            "H_range_A_per_m": [
+              167.9207736,
+              9938.355868
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.003051958819189529,
+                "rmse_T": 0.005683903016488344
+              },
+              "fit": {
+                "mae_T": 0.36296691982115736,
+                "rmse_T": 0.37096371936994693
+              },
+              "holdout": {
+                "mae_T": 0.39010049712031886,
+                "rmse_T": 0.39865128476960704
+              },
+              "secondary_fit": {
+                "mae_T": 0.36296691982115736,
+                "rmse_T": 0.37096371936994693
+              },
+              "secondary_holdout": {
+                "mae_T": 0.3556372186124941,
+                "rmse_T": 0.3636320861161949
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              167.9207736,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.027245259221860003,
+                "rmse_T": 0.03250082857288372
+              },
+              "fit": {
+                "mae_T": 0.6509757180844209,
+                "rmse_T": 0.7477635695024123
+              },
+              "holdout": {
+                "mae_T": 0.6814225980809703,
+                "rmse_T": 0.773525453914881
+              },
+              "secondary_fit": {
+                "mae_T": 0.6509757180844209,
+                "rmse_T": 0.7477635695024123
+              },
+              "secondary_holdout": {
+                "mae_T": 0.6350659257055942,
+                "rmse_T": 0.7331400193697324
+              }
+            },
+            "original_points": 23
+          }
+        }
+      }
+    },
+    {
+      "condition": "five_hz_RD",
+      "calibration_version": "fixed_h_nested_transfer_v2",
+      "secondary_calibration_version": "fixed_h_reference_dominant_transfer_v4",
+      "directions": {
+        "RD": {
+          "common": {
+            "H_range_A_per_m": [
+              4.392352272,
+              996.2568528
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.011732473761066032,
+                "rmse_T": 0.0139885338064636
+              },
+              "fit": {
+                "mae_T": 0.12939627354957328,
+                "rmse_T": 0.14074221370503417
+              },
+              "holdout": {
+                "mae_T": 0.07747184023218531,
+                "rmse_T": 0.0921169495435999
+              },
+              "secondary_fit": {
+                "mae_T": 0.12939627354957328,
+                "rmse_T": 0.14074221370503417
+              },
+              "secondary_holdout": {
+                "mae_T": 0.11986891205441608,
+                "rmse_T": 0.12999881327546023
+              }
+            },
+            "original_points": null
+          },
+          "focus": {
+            "H_range_A_per_m": [
+              100.0,
+              400.0
+            ],
+            "metrics": {
+              "candidate": {
+                "mae_T": 0.01106431351060909,
+                "rmse_T": 0.011953005651079637
+              },
+              "fit": {
+                "mae_T": 0.16619260153837892,
+                "rmse_T": 0.16894965163094314
+              },
+              "holdout": {
+                "mae_T": 0.10980767252447814,
+                "rmse_T": 0.11417036835699704
+              },
+              "secondary_fit": {
+                "mae_T": 0.16619260153837892,
+                "rmse_T": 0.16894965163094314
+              },
+              "secondary_holdout": {
+                "mae_T": 0.1530779152056131,
+                "rmse_T": 0.15621632315294884
+              }
+            },
+            "original_points": 2
+          }
+        }
+      }
+    }
+  ]
+}

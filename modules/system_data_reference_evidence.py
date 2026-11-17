@@ -15,7 +15,7 @@ REFERENCE_PACKS = {
                                   {'measured_loop_workbook_v1'}, 'original/workbook.xlsx'),
     'frequency_loss_validation.zip': ('frequency_holdout', 'frequency_loss_report.json',
                                       {'frequency_loss_validation_v1', 'frequency_loss_validation_v2',
-                                       'frequency_loss_validation_v3_cycles'},
+                                       'frequency_loss_validation_v3_cycles', 'frequency_loss_validation_v4_shared_B_fit'},
                                       'original/loss_table.csv'),
 }
 

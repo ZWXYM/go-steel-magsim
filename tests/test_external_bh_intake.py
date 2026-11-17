@@ -234,6 +234,51 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertIn('指定区间', page)
         self.assertIn('区间原点：1', page)
 
+    def test_review_candidate_uses_another_table_on_common_support_and_embeds_both_sources(self):
+        fit = self._post_pair(source_kind='published_measurement',curve_kind='initial',reported_grade=GRADE)
+        fit_id = fit.location.rsplit('/',1)[1]
+        fit_record,_ = self.intake.read(fit_id)
+        candidate = self.client.post(fit.location+'/candidate',data={'source_sha256':fit_record['sha256']})
+        self.assertEqual(candidate.status_code,303)
+        candidate_id = candidate.location.rsplit('/',1)[1]
+        candidate_row,candidate_blob = self.store.read(candidate_id)
+        choice = candidate_id+'|'+candidate_row['sha256']
+        same = self.client.post(fit.location+'/candidate-review',data={'source_sha256':fit_record['sha256'],'candidate':choice})
+        self.assertEqual(same.status_code,400)
+        self.assertIn('建模原点相同',same.get_data(as_text=True))
+
+        observed = b'H_A_per_m,B_T\n10,.05\n400,1.5\n900,1.9\n1300,2\n'
+        response = self.client.post('/external-bh-validation',data=dict(
+            mode='compare', source_reference='different test procedure',source_kind='published_measurement',
+            curve_kind='normal_peak',selection=self.selection,reported_grade=GRADE,single_direction_confirmed='yes',
+            RD=(io.BytesIO(observed),'rd.csv'),focus_h_min='25',focus_h_max='450'))
+        self.assertEqual(response.status_code,303)
+        self.assertIn(choice,self.client.get(response.location).get_data(as_text=True))
+        reference_id=response.location.rsplit('/',1)[1]
+        record,original = self.store.read(reference_id)
+        fields={'source_sha256':record['sha256'],'candidate':choice}
+        creation=self.client.post(response.location+'/candidate-review',data=fields)
+        self.assertEqual(creation.status_code,303)
+        self.assertEqual(self.client.post(response.location+'/candidate-review',data=fields).location,creation.location)
+        review_id=creation.location.rsplit('/',1)[1]
+        _,review,archive=self.intake.read_candidate_review(review_id)
+        self.assertFalse(review['specimen_independence_verified'])
+        self.assertFalse(review['native_material_generated'])
+        self.assertEqual(set(review['comparison']),{'RD'})
+        rd=review['comparison']['RD']
+        self.assertEqual(rd['overlap_H_range_A_per_m'],[20,1000])
+        self.assertEqual(rd['compared_points'],2)
+        self.assertEqual(rd['field_weighted']['bands']['focus']['H_range_A_per_m'],[25,450])
+        self.assertEqual(set(rd['metrics']),{'candidate','fit','holdout'})
+        with zipfile.ZipFile(io.BytesIO(archive)) as z:
+            self.assertEqual(z.read('source/reference.zip'),original)
+            self.assertEqual(z.read('source/candidate.zip'),candidate_blob)
+        chart=self.client.get(creation.location+'/plot-data',query_string={'direction':'RD','scope':'focus'}).json
+        self.assertEqual(chart['points'],[[400,1.5,3]])
+        self.assertIn('candidate',[series['key'] for series in chart['series']])
+        self.assertIn('同一份复核原表',self.client.get(creation.location).get_data(as_text=True))
+        self.assertEqual(self.client.post(response.location+'/candidate-review',data=dict(fields,candidate=candidate_id+'|'+'a'*64)).status_code,400)
+
     def test_chart_clips_comparison_curves_without_inventing_measurement_rows(self):
         result = self._post_pair(focus_h_min='100', focus_h_max='400')
         path = result.location+'/plot-data'

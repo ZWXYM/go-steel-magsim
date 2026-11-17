@@ -82,6 +82,15 @@ def comparison_plot_curves(blob, report, direction):
     labels = {'fit': primary+' 拟合', 'holdout': primary+' 整牌号留出'}
     if secondary:
         labels.update(secondary_fit=other+' 拟合',secondary_holdout=other+' 整牌号留出')
+    curves = read_saved_model_curves(blob, direction, labels)
+    if secondary and curves['fit'] == curves['secondary_fit']:
+        labels['fit'] = primary+'/'+other+' 拟合（重合）'
+        del labels['secondary_fit']
+    return [(key,label,*curves[key]) for key,label in labels.items()]
+
+
+def read_saved_model_curves(blob, direction, labels):
+    """Read numeric nodes for one direction while retaining the saved model roles."""
     curves = {key: ([], []) for key in labels}
     rows = csv.DictReader(io.StringIO(blob.decode('utf-8-sig'), newline=''), strict=True)
     try:
@@ -92,7 +101,4 @@ def comparison_plot_curves(blob, report, direction):
                 b.append(float(row['B_T']))
     except csv.Error as error:
         raise ValueError('保存的模型曲线表格式无效') from error
-    if secondary and curves['fit'] == curves['secondary_fit']:
-        labels['fit'] = primary+'/'+other+' 拟合（重合）'
-        del labels['secondary_fit']
-    return [(key,label,*curves[key]) for key,label in labels.items()]
+    return curves

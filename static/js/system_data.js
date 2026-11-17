@@ -10,6 +10,10 @@
   ['measured_loop_workbook.zip',['查看回线工作簿复算','/measured-loop-workbook/']],
   ['frequency_loss_validation.zip',['查看多频复核','/frequency-loss-validation/']],
  ]);
+ const candidateViews=new Map([
+  ['measured_bh_candidate.zip',['查看实测区间候选','/measured-bh-candidate/']],
+  ['measured_bh_candidate_review.zip',['查看候选复核','/measured-bh-candidate-review/']],
+ ]);
  const referencePackages=rows=>rows.filter(row=>row.readable&&validPack(row.id)&&/^[a-f0-9]{64}$/.test(row.sha256)&&packageViews.has(row.source_filename));
  if(typeof module==='object'&&module.exports)module.exports={validDataset,validCal,validPack,numeric};
  if(!root.document)return;
@@ -25,7 +29,7 @@
    item.append(element('strong',row.title),element('small',row.created_utc+' · '+row.member_count+' 文件 · '+row.bytes+' 字节 · 冻结快照'));
    item.append(element('p',row.description),element('span','SHA-256：'+row.sha256,'sha'));
    item.append(link('下载完整工作包','/api/workbench/system-data/packages/'+row.id+'/download'));
-   const view=packageViews.get(row.source_filename);
+   const view=packageViews.get(row.source_filename)||candidateViews.get(row.source_filename);
    if(view)item.append(link(view[0],view[1]+row.id));
   }
  }

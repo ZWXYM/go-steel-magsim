@@ -16,12 +16,13 @@ from modules.external_bh_intake import SOURCE_LABELS
 from modules.external_bh_validation import MAX_CURVE_BYTES
 from modules.loop_frequency_series import SERIES_FILENAME, available_cycles, collect_loop_series
 from modules.measured_loop_loss import DIRECTION_LABELS
+from modules.shared_loss_fit import VERSION as SHARED_FIT_VERSION, fit_shared_loss
 from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
 
 
 VERSION = 'frequency_loss_validation_v2'
 LOOP_SERIES_REPORT_VERSION = 'frequency_loss_validation_v3_cycles'
-READABLE_VERSIONS = {VERSION, LOOP_SERIES_REPORT_VERSION, 'frequency_loss_validation_v1'}
+READABLE_VERSIONS = {VERSION, LOOP_SERIES_REPORT_VERSION, SHARED_FIT_VERSION, 'frequency_loss_validation_v1'}
 PACKAGE_FILENAME = 'frequency_loss_validation.zip'
 SOURCE_KINDS = dict(SOURCE_LABELS, reference_statistics='公开测量参考统计')
 AMPLITUDE_COLUMNS = {'peak_B_T': 'B', 'peak_J_T': 'J', 'peak_polarization_J_T': 'J'}
@@ -256,6 +257,19 @@ class FrequencyLossValidation:
                    for result in evaluations for method, error in result['estimates'].items()]
         files = {'original/loss_table.csv': blob, 'frequency_loss_report.json': json_bytes(report),
                  'holdout_comparison.csv': csv_bytes(compare), **(cycle_files or {})}
+        kc = form.get('fixed_classical_kc','').strip()
+        if form.get('shared_B_fit') == 'yes':
+            try:
+                fixed_kc = float(kc) if kc else None
+            except ValueError as error:
+                raise ValueError('固定 Kc 须为非负有限数值') from error
+            shared = fit_shared_loss(table,holdout,fixed_kc)
+            report.update(version=SHARED_FIT_VERSION,shared_B_fit=shared)
+            files['frequency_loss_report.json'] = json_bytes(report)
+            files['shared_B_holdout_comparison.csv'] = csv_bytes([
+                dict(model=key, **point) for key,variant in shared['fits'].items() for point in variant['holdout_points']])
+        elif kc:
+            raise ValueError('输入固定 Kc 时须选择共用系数拟合')
         title = '多频损耗留出复核 · ' + source['specimen_id'][:120]
         return self.packages.register_bytes(workpack_bytes(files), title, SOURCE_KINDS[source_kind] + ' · 同试样频率留出',
                                             source_filename=PACKAGE_FILENAME)

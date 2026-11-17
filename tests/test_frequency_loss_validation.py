@@ -11,6 +11,7 @@ from flask import Flask
 from modules.frequency_loss_validation import (
     FrequencyLossValidation, create_frequency_loss_routes, evaluate_frequency_holdout, read_frequency_table,
 )
+from modules.system_data_reference_evidence import collect_reference_package
 from modules.system_data import WorkpackStore
 
 
@@ -31,6 +32,49 @@ def sample_table(heldout_loss=None, heldout_u='.02', *, varied_identity=None):
 
 
 class FrequencyLossTest(unittest.TestCase):
+    def test_shared_B_fit_excludes_all_holdout_rows_and_preserves_coefficient_basis(self):
+        header = 'frequency_Hz,peak_B_T,specific_loss_W_per_kg\n'
+        kh,kc,ke = .004,.00005,.0003
+
+        def loss_table(holdout_multiplier):
+            return (header+''.join(f'{f},{b},{(kh*f*b*b+kc*f*f*b*b+ke*(f*b)**1.5)*(holdout_multiplier if f==100 else 1)}\n'
+                    for b in (.2,1.7) for f in (50,75,100,150,200))).encode()
+
+        with tempfile.TemporaryDirectory() as folder:
+            store = WorkpackStore(Path(folder))
+            service = FrequencyLossValidation(store)
+            app = Flask(__name__,template_folder=str(Path(__file__).resolve().parents[1]/'templates'))
+            app.register_blueprint(create_frequency_loss_routes(service))
+            client = app.test_client()
+            form = dict(source_reference='Known analytic fixture',specimen_id='one',one_series='yes',
+                        holdout_frequency_Hz='100',shared_B_fit='yes',fixed_classical_kc=str(kc))
+            original=loss_table(1)
+            submitted=client.post('/frequency-loss-validation',data=dict(form,loss_table=(io.BytesIO(original),'loss.csv')))
+            self.assertEqual(submitted.status_code,303)
+            identity=submitted.location.rsplit('/',1)[1]
+            record,baseline=service.read(identity)
+            modified=service.save(form,'changed.csv',loss_table(2))
+            _,changed=service.read(modified['id'])
+            for key,model in baseline['shared_B_fit']['fits'].items():
+                got=model['coefficients_mass']
+                self.assertEqual(got,changed['shared_B_fit']['fits'][key]['coefficients_mass'])
+                for name,expected in zip(('Kh','Kc','Ke'),(kh,kc,ke)):
+                    self.assertAlmostEqual(got[name],expected,places=12)
+                self.assertAlmostEqual(model['mean_absolute_relative_pct'],0,places=9)
+                self.assertAlmostEqual(changed['shared_B_fit']['fits'][key]['mean_absolute_relative_pct'],50,places=9)
+            self.assertEqual(baseline['shared_B_fit']['holdout_source_rows'],[4,9])
+            content=client.get(submitted.location).get_data(as_text=True)
+            self.assertIn('跨峰值的共用损耗系数',content)
+            self.assertIn('固定 Kc',content)
+            _, blob = collect_reference_package(store,dict(id=identity,sha256=record['sha256']))
+            with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+                self.assertEqual(archive.read('original/loss_table.csv'),original)
+                self.assertEqual(len(archive.read('shared_B_holdout_comparison.csv').splitlines()),5)
+            for wrong in (b'peak_J_T',b'volume_loss_W_per_m3'):
+                column = b'peak_B_T' if wrong.startswith(b'peak') else b'specific_loss_W_per_kg'
+                with self.assertRaisesRegex(ValueError,'需要 B 峰值和质量损耗'):
+                    service.save(form,'wrong.csv',original.replace(column,wrong))
+
     def test_analytic_law_and_holdout_values_do_not_train_model(self):
         [baseline] = evaluate_frequency_holdout(read_frequency_table(sample_table()), 100)
         [changed] = evaluate_frequency_holdout(read_frequency_table(sample_table(4, '.0001')), 100)

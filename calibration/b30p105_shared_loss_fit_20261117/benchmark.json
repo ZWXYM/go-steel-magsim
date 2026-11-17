@@ -1,0 +1,217 @@
+{
+  "schema": "b30p105_fixed_exponent_loss_candidate_comparison_v1",
+  "protocol": {
+    "schema": "b30p105_loss_candidate_fit_protocol_v1",
+    "created_before_new_fits": true,
+    "units": "W/kg",
+    "source": "Zhao and Hu 2020, AIP Advances Fig. 9 measured plot traces",
+    "source_sha256": "3875ea7bba63418c19f787e672dae7fb72966a263891911a268dadbeb0840509",
+    "sample_frequency_grid_Hz": [
+      50,
+      75,
+      100,
+      125,
+      150,
+      175,
+      200,
+      225,
+      250,
+      275,
+      300,
+      325,
+      350,
+      375
+    ],
+    "sample_B_T": [
+      0.2,
+      1.7
+    ],
+    "held_out_frequency_Hz": 100,
+    "models": [
+      "saved unmodified catalog model",
+      "nonnegative Kh/Kc/Ke",
+      "nonnegative Kh/Ke with fixed original classical Kc"
+    ],
+    "model_formula": "Kh*f*B^2 + Kc*f^2*B^2 + Ke*(f*B)^1.5",
+    "weights": "relative squared accuracy: least squares weighted by inverse plotted loss",
+    "independent_checks": [
+      "held-out 100 Hz at both measured amplitudes",
+      "alternately withhold complete B amplitude for diagnostic",
+      "unfitted external Li & Luo 50 Hz .2–1.7 T B support"
+    ],
+    "no_motor_coefficient_change": true,
+    "no_new_solves": true
+  },
+  "grade": "B30P105",
+  "external_sha256": "eb397a4f667ee6d089c2501e19c6afb41c0a50e87774a78c804292428ebe769b",
+  "external_frequency_Hz": 50,
+  "external_B_support_T": [
+    0.2,
+    1.7
+  ],
+  "compared_as_sinusoidal_material_model": true,
+  "source_specimen_direction": null,
+  "motor_coefficients_changed": false,
+  "new_solves": 0,
+  "trials": {
+    "100_Hz": {
+      "training_points": 26,
+      "heldout_points": 2,
+      "models": {
+        "saved_catalog": {
+          "mass_coefficients": {
+            "Kh": 0.004965604353959778,
+            "Kc": 3.870433098466418e-05,
+            "Ke": 0.0
+          },
+          "held_out_error": {
+            "mean_abs_pct": 26.24021190333267,
+            "max_abs_pct": 34.16995751591585,
+            "mean_absolute_W_kg": 0.2953655132195621,
+            "row_count": 2
+          },
+          "external_50Hz_error": {
+            "mean_abs_pct": 18.837887726164354,
+            "max_abs_pct": 35.51299555491055,
+            "mean_absolute_W_kg": 0.05772247554953912,
+            "row_count": 15
+          }
+        },
+        "three_terms": {
+          "mass_coefficients": {
+            "Kh": 0.003029096355237222,
+            "Kc": 5.3915009115575985e-05,
+            "Ke": 0.0002437096881500943
+          },
+          "held_out_error": {
+            "mean_abs_pct": 4.10273884377289,
+            "max_abs_pct": 4.870692352595674,
+            "mean_absolute_W_kg": 0.07702414459423768,
+            "row_count": 2
+          },
+          "external_50Hz_error": {
+            "mean_abs_pct": 9.189638018475101,
+            "max_abs_pct": 12.730334882083117,
+            "mean_absolute_W_kg": 0.03620355260667556,
+            "row_count": 15
+          }
+        },
+        "fixed_classical": {
+          "mass_coefficients": {
+            "Kh": 0.004090106841872124,
+            "Kc": 3.870433098466418e-05,
+            "Ke": 0.00031511610853571443
+          },
+          "held_out_error": {
+            "mean_abs_pct": 7.931863281452329,
+            "max_abs_pct": 11.802945317557324,
+            "mean_absolute_W_kg": 0.06663851153527703,
+            "row_count": 2
+          },
+          "external_50Hz_error": {
+            "mean_abs_pct": 1.7935348348802393,
+            "max_abs_pct": 4.114989478525633,
+            "mean_absolute_W_kg": 0.008137246467116435,
+            "row_count": 15
+          }
+        }
+      }
+    },
+    "0.2_T": {
+      "training_points": 14,
+      "heldout_points": 14,
+      "models": {
+        "saved_catalog": {
+          "mass_coefficients": {
+            "Kh": 0.004965604353959778,
+            "Kc": 3.870433098466418e-05,
+            "Ke": 0.0
+          },
+          "held_out_error": {
+            "mean_abs_pct": 39.28339759835673,
+            "max_abs_pct": 45.14114624805974,
+            "mean_absolute_W_kg": 0.09678956640205812,
+            "row_count": 14
+          },
+          "external_50Hz_error": null
+        },
+        "three_terms": {
+          "mass_coefficients": {
+            "Kh": 0.0020189938412408176,
+            "Kc": 3.4830455439768456e-05,
+            "Ke": 0.0006956196701083495
+          },
+          "held_out_error": {
+            "mean_abs_pct": 43.59262915743944,
+            "max_abs_pct": 72.16948762923181,
+            "mean_absolute_W_kg": 0.07906531190609943,
+            "row_count": 14
+          },
+          "external_50Hz_error": null
+        },
+        "fixed_classical": {
+          "mass_coefficients": {
+            "Kh": 0.0025480657246296817,
+            "Kc": 3.870433098466418e-05,
+            "Ke": 0.000571419554519463
+          },
+          "held_out_error": {
+            "mean_abs_pct": 31.650716968523323,
+            "max_abs_pct": 57.69284028071409,
+            "mean_absolute_W_kg": 0.05473297995780857,
+            "row_count": 14
+          },
+          "external_50Hz_error": null
+        }
+      }
+    },
+    "1.7_T": {
+      "training_points": 14,
+      "heldout_points": 14,
+      "models": {
+        "saved_catalog": {
+          "mass_coefficients": {
+            "Kh": 0.004965604353959778,
+            "Kc": 3.870433098466418e-05,
+            "Ke": 0.0
+          },
+          "held_out_error": {
+            "mean_abs_pct": 21.046113577289624,
+            "max_abs_pct": 23.786897233441508,
+            "mean_absolute_W_kg": 2.7602965743344123,
+            "row_count": 14
+          },
+          "external_50Hz_error": null
+        },
+        "three_terms": {
+          "mass_coefficients": {
+            "Kh": 0.0006148357251286902,
+            "Kc": 5.4266424842647775e-05,
+            "Ke": 0.00032999025463534916
+          },
+          "held_out_error": {
+            "mean_abs_pct": 10.820252545697143,
+            "max_abs_pct": 32.26604994217199,
+            "mean_absolute_W_kg": 0.5936060954409831,
+            "row_count": 14
+          },
+          "external_50Hz_error": null
+        },
+        "fixed_classical": {
+          "mass_coefficients": {
+            "Kh": 0.0,
+            "Kc": 3.870433098466418e-05,
+            "Ke": 0.00044449413781261324
+          },
+          "held_out_error": {
+            "mean_abs_pct": 25.39285995519819,
+            "max_abs_pct": 42.482905673877745,
+            "mean_absolute_W_kg": 2.4927745505691283,
+            "row_count": 14
+          },
+          "external_50Hz_error": null
+        }
+      }
+    }
+  }
+}

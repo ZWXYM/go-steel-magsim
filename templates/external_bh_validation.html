@@ -132,6 +132,18 @@
       <button class="secondary">制作实测区间候选</button>
     </form>
     {% endif %}
+    {% if review_choices %}
+    <form method="post" action="{{ url_for('.save_candidate_review', artifact=record.id) }}">
+      <input type="hidden" name="source_sha256" value="{{ record.sha256 }}">
+      <label>用另一份原表制作的同牌号候选
+        <select name="candidate" required><option value="">选择已保存候选</option>
+        {% for item in review_choices %}<option value="{{ item.id }}|{{ item.sha256 }}">{{ item.id }} · {{ item.created_utc }}</option>{% endfor %}
+        </select>
+      </label>
+      <p class="muted">沿用本记录的模型和重点 H 区间。候选与模型共同覆盖的 H 范围内，保存逐点差值和区间误差。</p>
+      <button class="secondary">用当前原表复核候选</button>
+    </form>
+    {% endif %}
   </section>
 {% else %}
   <section>

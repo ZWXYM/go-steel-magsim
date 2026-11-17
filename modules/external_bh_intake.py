@@ -12,9 +12,11 @@ from werkzeug.exceptions import RequestEntityTooLarge
 from modules.calibration_regularized import default_eligible
 from modules.external_bh_validation import MAX_CURVE_BYTES, compare_curves, field_weighted_errors, read_measurement_csv
 from modules.external_bh_plot import comparison_plot_curves, curve_windows, measured_chart
+from modules.measured_candidate_review import (FILENAME as REVIEW_FILENAME, REPORT as REVIEW_REPORT,
+                                                VERSION as REVIEW_VERSION, build_review, review_plot, reviewable_reference)
 from modules.measured_curve_candidate import (CANDIDATE_FILENAME, CANDIDATE_VERSION, MAX_NODES,
                                                  build_measured_candidate, candidate_eligible)
-from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
+from modules.system_data import PACK_ID, SHA256, csv_bytes, json_bytes, sha256, workpack_bytes
 
 
 VERSION = 'external_bh_validation_v1'
@@ -287,6 +289,39 @@ class ExternalBHIntake:
         record, report, _ = self._read_candidate_with_bytes(artifact)
         return record, report
 
+    def candidate_review_choices(self, reference):
+        if not reviewable_reference(reference):
+            return []
+        title = '实测区间曲线候选 · '+reference['model']['grade']
+        return [row for row in self.packages.records() if row['readable'] and row['source_filename']==CANDIDATE_FILENAME
+                and row['title']==title]
+
+    def save_candidate_review(self, reference_id, expected, selected):
+        identity, _, digest = selected.partition('|')
+        if not PACK_ID.fullmatch(identity) or not SHA256.fullmatch(digest):
+            raise ValueError('请选择一个同牌号的已保存候选')
+        reference, report, ref_blob = self._read_with_bytes(reference_id)
+        candidate, candidate_report, candidate_blob = self._read_candidate_with_bytes(identity)
+        if reference['sha256'] != expected or candidate['sha256'] != digest:
+            raise ValueError('原表或候选的保存内容已变化，请刷新')
+        blob = build_review(reference,ref_blob,report,candidate,candidate_blob,candidate_report)
+        return self.packages.register_bytes(blob,'实测区间候选复核 · '+report['model']['grade'],
+            '另一份原表、实测候选与已有模型，在共同物理 H 内比较。',source_filename=REVIEW_FILENAME)
+
+    def read_candidate_review(self, artifact):
+        record, blob = self.packages.read(artifact)
+        if record.get('source_filename') != REVIEW_FILENAME:
+            raise ValueError('工作包类型不符')
+        with zipfile.ZipFile(io.BytesIO(blob)) as z:
+            report = json.loads(z.read(REVIEW_REPORT))
+        if report.get('version') != REVIEW_VERSION:
+            raise ValueError('候选复核版本不符')
+        return record, report, blob
+
+    def candidate_review_plot(self, artifact, direction, scope):
+        _, report, blob = self.read_candidate_review(artifact)
+        return review_plot(blob,report,direction,scope)
+
     def _candidate_plot_inputs(self, artifact):
         record, report, blob = self._read_candidate_with_bytes(artifact)
         with zipfile.ZipFile(io.BytesIO(blob)) as z:
@@ -361,7 +396,8 @@ def create_external_bh_routes(intake):
         except (ValueError, OSError, KeyError, TypeError):
             abort(404)
         return render_template('external_bh_validation.html', record=record, report=report,
-                               candidate_available=candidate_eligible(report), plot_options=curve_windows(report),
+                               candidate_available=candidate_eligible(report), review_choices=intake.candidate_review_choices(report),
+                               plot_options=curve_windows(report),
                                plot_url=url_for('.comparison_plot', artifact=artifact), **labels)
 
     @bp.post('/external-bh-validation/<artifact>/candidate')
@@ -372,6 +408,24 @@ def create_external_bh_routes(intake):
         except (ValueError, OSError, KeyError, TypeError) as error:
             return render_template('measured_bh_candidate.html', error=str(error), source_artifact=artifact), 400
         return redirect(url_for('.candidate_result', artifact=record['id']), code=303)
+
+    @bp.post('/external-bh-validation/<artifact>/candidate-review')
+    def save_candidate_review(artifact):
+        request.max_content_length = 16 * 1024
+        try:
+            review = intake.save_candidate_review(artifact,request.form.get('source_sha256',''),request.form.get('candidate',''))
+        except (ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile) as error:
+            return render_template('measured_bh_candidate_review.html',error=str(error),reference=artifact),400
+        return redirect(url_for('.candidate_review_result', artifact=review['id']),code=303)
+
+    @bp.get('/measured-bh-candidate-review/<artifact>')
+    def candidate_review_result(artifact):
+        try:
+            record, report, _ = intake.read_candidate_review(artifact)
+        except (ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile):
+            abort(404)
+        return render_template('measured_bh_candidate_review.html',record=record,report=report,plot_options=curve_windows(report),
+                               plot_url=url_for('.candidate_review_plot',artifact=artifact),**labels)
 
     @bp.get('/measured-bh-candidate/<artifact>')
     def candidate_result(artifact):
@@ -395,5 +449,9 @@ def create_external_bh_routes(intake):
     @bp.get('/measured-bh-candidate/<artifact>/plot-data')
     def candidate_plot(artifact):
         return plot_data(intake.candidate_plot, artifact)
+
+    @bp.get('/measured-bh-candidate-review/<artifact>/plot-data')
+    def candidate_review_plot(artifact):
+        return plot_data(intake.candidate_review_plot,artifact)
 
     return bp

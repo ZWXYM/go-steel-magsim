@@ -42,6 +42,18 @@
         <tbody>{% for row in report.evaluations %}<tr><td>{{ number(row.peak_T) }}</td><td>{{ number(row.actual_loss) }}</td><td>{{ number(row.actual_standard_u) }}</td>{% if row.estimates.nonnegative_fit is defined %}<td>{{ number(row.estimates.nonnegative_fit.predicted) }}</td><td>{{ number(row.estimates.nonnegative_fit.signed_relative_error_pct) }}%</td>{% else %}<td>—</td><td>—</td>{% endif %}<td>{{ number(row.estimates.linear_lowest.signed_relative_error_pct) }}%</td><td>{{ number(row.estimates.bracket_cycle_linear.signed_relative_error_pct) }}%</td></tr>{% endfor %}</tbody>
       </table>
     </div>
+    {% if report.shared_B_fit is defined %}
+    <details open><summary>跨峰值的共用损耗系数</summary>
+      <p><code>{{ report.shared_B_fit.formula }}</code>，输出 W/kg。按训练点损耗的倒数加权。表里有实测 B 时采用实测 B，留出的 {{ holdout }} Hz 未参与拟合。</p>
+      <div class="table-wrap"><table><thead><tr><th>拟合方式</th><th>Kh</th><th>Kc</th><th>Ke</th><th>平均绝对相对误差</th></tr></thead><tbody>
+        {% for key, fit in report.shared_B_fit.fits.items() %}<tr><th scope="row">{{ '固定 Kc' if key == 'fixed_classical' else '三项非负拟合' }}</th><td>{{ number(fit.coefficients_mass.Kh) }}</td><td>{{ number(fit.coefficients_mass.Kc) }}</td><td>{{ number(fit.coefficients_mass.Ke) }}</td><td>{{ number(fit.mean_absolute_relative_pct) }}%</td></tr>{% endfor %}
+      </tbody></table></div>
+      <p class="muted">单位 {{ report.shared_B_fit.coefficient_units | dictsort | map('join', ' ') | join('，') }}。</p>
+      <div class="table-wrap"><table><thead><tr><th>拟合方式</th><th>采用的 B 峰值（T）</th><th>留出原值（W/kg）</th><th>共用系数计算（W/kg）</th><th>相对误差</th></tr></thead><tbody>
+        {% for key, fit in report.shared_B_fit.fits.items() %}{% for point in fit.holdout_points %}<tr><th scope="row">{{ '固定 Kc' if key == 'fixed_classical' else '三项非负拟合' }}</th><td>{{ number(point.used_B_T) }}</td><td>{{ number(point.observed_W_kg) }}</td><td>{{ number(point.predicted_W_kg) }}</td><td>{{ number(point.relative_error_pct) }}%</td></tr>{% endfor %}{% endfor %}
+      </tbody></table></div>
+    </details>
+    {% endif %}
     <details>
       <summary>训练频率、权重与插值区间</summary>
       <p class="muted">非负拟合采用 f、f<sup>1.5</sup> 和 f² 三项；训练点均有标准不确定度时按其倒数加权。最低频对照按频率正比换算；相邻频率对照先在最近两训练点之间插值每周期损耗，再乘留出频率。</p>
@@ -88,7 +100,9 @@
         <label>测量方法<input name="method" maxlength="1200" value="{{ form.get('method', '') }}"></label>
         <label>其他试验条件<input name="conditions" maxlength="1200" value="{{ form.get('conditions', '') }}"></label>
       </div>
-      <label class="check"><input type="checkbox" name="one_series" value="yes" required{% if form.get('one_series') == 'yes' %} checked{% endif %}>确认原表只含一个试样、一个方向和一个统计版本</label>
+      <label class="check"><input type="checkbox" name="one_series" value="yes" required{% if form.get('one_series') == 'yes' %} checked{% endif %}>确认原表来自同一试样或同一发表测量系列，方向与统计版本一致</label>
+      <label class="check"><input type="checkbox" name="shared_B_fit" value="yes"{% if form.get('shared_B_fit') == 'yes' %} checked{% endif %}>同时拟合一组共用损耗系数（至少两档 B 峰值及质量损耗）</label>
+      <label>固定 Kc（W kg⁻¹ Hz⁻² T⁻²，可选）<input name="fixed_classical_kc" type="number" step="any" min="0" value="{{ form.get('fixed_classical_kc', '') }}"></label>
       <button>留出复核并保存</button>
     </form>
   </section>

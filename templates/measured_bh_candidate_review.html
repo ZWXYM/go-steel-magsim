@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>实测区间候选复核</title>
+  <link rel="stylesheet" href="/static/css/material_measurement.css">
+</head>
+<body>
+<header>
+  <h1>实测区间候选复核</h1>
+  <nav aria-label="系统导航"><a href="/system">系统首页</a><a href="/external-bh-validation">原表核对</a><a href="/system-data">系统数据与下载</a></nav>
+</header>
+<main><section>
+{% if error is defined %}
+  <p class="error" role="alert">{{ error }}</p>
+  <a href="{{ url_for('.result', artifact=reference) }}">返回原表核对</a>
+{% else %}
+  {% macro n(value) %}{{ '%.6g'|format(value) if value is not none else '—' }}{% endmacro %}
+  {% set names = {'fit': report.model.calibration_id ~ ' 拟合', 'holdout': report.model.calibration_id ~ ' 整牌号留出', 'candidate': '实测区间候选'} %}
+  {% if report.get('comparison_model') %}
+  {% set other = report.comparison_model.calibration_id %}
+  {% set names = dict(names, secondary_fit=other ~ ' 拟合', secondary_holdout=other ~ ' 整牌号留出') %}
+  {% endif %}
+  <h2>{{ report.grade }} · {{ record.id }}</h2>
+  <p>候选与保存模型使用同一份复核原表和共同物理 H 范围。原点和 H 区间误差分别计算。试样批次的独立性仍以原始测量记录为准。</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="候选和原模型误差">
+    <table><thead><tr><th>方向</th><th>对照模型</th><th>共同 H（A/m）</th><th>原点数</th><th>原点 RMSE（T）</th><th>区间 RMSE（T）</th><th>重点区间 H（A/m）</th><th>重点区间 RMSE（T）</th></tr></thead><tbody>
+    {% for direction, row in report.comparison.items() %}
+      {% set bands = row.field_weighted.bands %}
+      {% set common = bands.common %}
+      {% set focus = bands.get('focus') %}
+      {% for key, label in names.items() %}
+      <tr><th scope="row">{{ direction }}</th><td>{{ label }}</td>
+      <td>{% if common.H_range_A_per_m %}{{ n(common.H_range_A_per_m[0]) }} 至 {{ n(common.H_range_A_per_m[1]) }}{% else %}无共同区间{% endif %}</td>
+      <td>{{ row.compared_points }}</td><td>{{ n(row.metrics[key].rmse_T if row.metrics[key] else none) }}</td><td>{{ n(common.metrics[key].rmse_T if common.metrics[key] else none) }}</td>
+      <td>{% if focus and focus.H_range_A_per_m %}{{ n(focus.H_range_A_per_m[0]) }} 至 {{ n(focus.H_range_A_per_m[1]) }}{% else %}—{% endif %}</td>
+      <td>{{ n(focus.metrics[key].rmse_T if focus and focus.metrics[key] else none) }}</td></tr>
+      {% endfor %}
+    {% endfor %}
+    </tbody></table>
+  </div>
+  {% include 'external_bh_plot.html' %}
+  <details open><summary>原表与候选来源</summary>
+    <dl>
+      <dt>复核原表</dt><dd><a href="{{ url_for('.result', artifact=report.original_reference.id) }}">{{ report.original_reference.id }}</a> · {{ source_labels[report.source.source_kind] }} · {{ curve_labels[report.source.curve_kind] }}<br>{{ report.source.source_reference }}<br>{{ report.source.specimen_id or '试样编号未记录' }} · {{ report.source.conditions or '其他条件未记录' }}</dd>
+      <dt>候选原表</dt><dd><a href="{{ url_for('.candidate_result', artifact=report.original_candidate.id) }}">{{ report.original_candidate.id }}</a> · {{ source_labels[report.candidate_source.source_kind] }} · {{ curve_labels[report.candidate_source.curve_kind] }}<br>{{ report.candidate_source.source_reference }}<br>{{ report.candidate_source.specimen_id or '试样编号未记录' }} · {{ report.candidate_source.conditions or '其他条件未记录' }}</dd>
+    </dl>
+  </details>
+  <div class="actions"><a class="button" href="/api/workbench/system-data/packages/{{ record.id }}/download">下载候选复核与两份源记录</a></div>
+{% endif %}
+</section></main>
+</body>
+</html>
