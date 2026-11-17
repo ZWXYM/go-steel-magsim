@@ -25,7 +25,9 @@
     };
     svg.replaceChildren();
     legend.replaceChildren();
-    svg.setAttribute('aria-label', data.direction+' 原表和保存 B–H 曲线对照');
+    svg.setAttribute('aria-label', data.source_direction==='unspecified'
+      ? '方向未注明的原表与 '+data.direction+' 模型 B–H 对照'
+      : data.direction+' 原表和保存 B–H 曲线对照');
     add(svg,'rect',{x:70,y:33,width:562,height:277,fill:'#ffffff',stroke:'#64748b'});
     for (let i=0;i<=5;i++) {
       const hx=lo+(hi-lo)*i/5, by=y0+(top-y0)*i/5;

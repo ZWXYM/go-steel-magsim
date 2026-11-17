@@ -8,7 +8,8 @@ from modules.system_data import PACK_ID, SHA256
 
 MAX_REFERENCE_PACKS = 12
 REFERENCE_PACKS = {
-    'external_bh_validation.zip': ('magnetization_table', 'external_bh_report.json', {'external_bh_validation_v1'}, None),
+    'external_bh_validation.zip': ('magnetization_table', 'external_bh_report.json',
+                                   {'external_bh_validation_v1', 'external_bh_validation_v2_unspecified_direction'}, None),
     'measured_loop_loss.zip': ('ordered_loop', 'loop_loss_report.json', {'measured_loop_loss_v1'}, 'original/cycle.csv'),
     'measured_loop_workbook.zip': ('loop_workbook', 'loop_workbook_report.json',
                                   {'measured_loop_workbook_v1'}, 'original/workbook.xlsx'),
@@ -54,7 +55,13 @@ def collect_reference_package(store, item):
             if one_original:
                 inputs = {one_original: report['original']}
             else:
-                if not report['inputs'] or set(report['inputs']) - {'RD', 'TD'}:
+                directions = set(report['inputs'])
+                if report['version'] == 'external_bh_validation_v2_unspecified_direction':
+                    valid = (directions == {'unspecified'} and source.get('direction') == 'unspecified'
+                             and source.get('direction_and_pairing_declared') is False)
+                else:
+                    valid = bool(directions) and directions <= {'RD', 'TD'}
+                if not valid:
                     raise ValueError('磁化曲线原表方向不符')
                 inputs = {f'original/{key}.csv': value for key, value in report['inputs'].items()}
             originals = {}

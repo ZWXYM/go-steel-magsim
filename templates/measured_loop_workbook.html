@@ -29,6 +29,18 @@
         </tbody>
       </table>
     </div>
+    {% if peak_series %}
+    <details><summary>下载同条件的 H–B 峰值表</summary>
+      <p>按原样品标签、线圈、波形和频率分组。两种峰值取法分别保留原工作表和行号，可用于<a href="/external-bh-validation">磁化曲线数值对照</a>。使用原工作簿注明的方向。</p>
+      <ul>
+      {% for index, item in peak_series.items() %}
+        <li>{{ item.identity[0] }} · {{ item.identity[1] }} · {{ item.identity[2] }} · {{ number(item.identity[3]) }} Hz · {{ item.rows }} 点
+          {% for basis in item.options %}<br><a href="{{ url_for('.peaks', artifact=record.id, series=index, basis=basis) }}">{{ peak_labels[basis] }} CSV</a>{% endfor %}
+        </li>
+      {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
     <details><summary>来源与原文件</summary>
       <dl><dt>来源</dt><dd>{{ source.source_reference }}</dd><dt>工作簿</dt><dd>{{ report.original.filename }}</dd><dt>原表 SHA-256</dt><dd>{{ report.original.sha256 }}</dd></dl>
     </details>

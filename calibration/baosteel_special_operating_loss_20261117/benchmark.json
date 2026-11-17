@@ -1,0 +1,43 @@
+{
+  "schema": "baosteel_special_operating_loss_2020_v1",
+  "source_url": "https://ecommerce.ibaosteel.com/portal/eleSteel/cn/pdf/technicalManual1118.pdf",
+  "source_sha256": "2932c0c761c69768e4f250628cdddbec638fb5c4d83de1d6ee19149a86a3aabf",
+  "source_document": "Baosteel GO electrical steel application technology, November 2020",
+  "printed_page": 17,
+  "pdf_page": 18,
+  "frequency_Hz": null,
+  "direction": null,
+  "harmonic_amplitudes": null,
+  "B23R075_endpoint_comparisons": [
+    {
+      "condition": "dc_bias",
+      "working_B_T": 1.7,
+      "start_W_kg": 0.7175,
+      "end_W_kg": 0.9988,
+      "relative_change_pct": 39.20557491289198
+    },
+    {
+      "condition": "dc_bias",
+      "working_B_T": 1.78,
+      "start_W_kg": 0.8379,
+      "end_W_kg": 1.0768,
+      "relative_change_pct": 28.511755579424758
+    },
+    {
+      "condition": "harmonics",
+      "working_B_T": 1.7,
+      "start_W_kg": 0.733,
+      "end_W_kg": 0.7825,
+      "relative_change_pct": 6.753069577080484
+    },
+    {
+      "condition": "harmonics",
+      "working_B_T": 1.78,
+      "start_W_kg": 0.8496,
+      "end_W_kg": 0.9341,
+      "relative_change_pct": 9.945856873822967
+    }
+  ],
+  "max_vector_minus_rendered_marker_W_kg": 0.007000000000000006,
+  "plot_reading_count": 60
+}

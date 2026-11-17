@@ -176,6 +176,45 @@ class ExternalBHIntakeTest(unittest.TestCase):
         self.assertIn('按物理 H 区间计权', page)
         self.assertNotIn('<th scope="row">RD</th>', page)
 
+    def test_unknown_direction_uses_one_original_and_shared_support_without_candidate(self):
+        requested = b'H_A_per_m,B_T\n20,.4\n100,.8\n800,1.3\n990,1.5\n'
+        detail = self.library.detail
+
+        def different_support(artifact, key):
+            result = detail(artifact, key)
+            result['curves']['TD']['H'] = [85, 800, 950]
+            return result
+
+        self.library.detail = different_support
+        form = dict(selection=self.selection, reported_grade=GRADE, source_kind='published_measurement',
+                    source_reference='fixture with no measuring direction', curve_kind='initial', mode='compare')
+        result = self.client.post('/external-bh-validation', data=dict(form, unspecified=(io.BytesIO(requested), 'source.csv')))
+        self.assertEqual(result.status_code, 303)
+        artifact = result.location.rsplit('/', 1)[1]
+        record, report = self.intake.read(artifact)
+        self.assertEqual(report['source']['direction'], 'unspecified')
+        self.assertEqual(report['comparison_scope'], 'direction_unspecified')
+        self.assertEqual(set(report['inputs']), {'unspecified'})
+        self.assertFalse(report['specimen_independence_verified'])
+        for direction in ('RD', 'TD'):
+            row = report['comparison'][direction]
+            self.assertEqual(row['overlap_H_range_A_per_m'], [85, 950])
+            self.assertEqual(row['compared_points'], 2)
+            self.assertEqual(row['field_weighted']['bands']['common']['H_range_A_per_m'], [85, 950])
+            plot = self.client.get(result.location+'/plot-data', query_string={'direction': direction}).json
+            self.assertEqual(plot['source_direction'], 'unspecified')
+            self.assertEqual(plot['points'], [[100, .8, 3], [800, 1.3, 4]])
+        metadata, blob = collect_reference_package(self.store, dict(id=artifact, sha256=record['sha256']))
+        self.assertEqual(metadata['declared_direction'], 'unspecified')
+        with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+            self.assertEqual(archive.read('original/unspecified.csv'), requested)
+            self.assertNotIn('original/RD.csv', archive.namelist())
+        self.assertIn('原表方向未注明', self.client.get(result.location).get_data(as_text=True))
+        self.assertEqual(self.client.post(result.location+'/candidate', data={'source_sha256': record['sha256']}).status_code, 400)
+        mixed = self.client.post('/external-bh-validation', data=dict(form, RD=(io.BytesIO(RD), 'rd.csv'),
+                                 unspecified=(io.BytesIO(requested), 'source.csv')))
+        self.assertEqual(mixed.status_code, 400)
+
     def test_requested_interval_requires_both_bounds_and_keeps_originals(self):
         self.assertEqual(self._post_pair(focus_h_min='100').status_code, 400)
         self.assertEqual(self._post_pair(focus_h_min='100', focus_h_max='nan').status_code, 400)

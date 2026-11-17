@@ -118,7 +118,7 @@ def _model_curve(curve):
     return h, b
 
 
-def compare_curves(measurement, saved_curves):
+def compare_curves(measurement, saved_curves, *, limits=None):
     """Interpolate every saved curve over the same original sample rows."""
     if not saved_curves:
         raise ValueError('请选择可比较的保存曲线')
@@ -127,6 +127,8 @@ def compare_curves(measurement, saved_curves):
     h_max = max(measurement['points'][0]['H_A_per_m'], measurement['points'][-1]['H_A_per_m'])
     low = max(h_min, *(curve[0][0] for curve in curves.values()))
     high = min(h_max, *(curve[0][-1] for curve in curves.values()))
+    if limits is not None:
+        low, high = max(low, limits[0]), min(high, limits[1])
     errors = {name: [] for name in curves}
     rows = []
     for point in measurement['points']:
@@ -194,7 +196,7 @@ def _integrated_errors(residual, weights):
     return dict(rmse_T=rmse, mae_T=mae)
 
 
-def field_weighted_errors(measurement, saved_curves, *, focus=None):
+def field_weighted_errors(measurement, saved_curves, *, focus=None, limits=None):
     """Integrate the piecewise-linear B residual, uniformly in physical H."""
     if not saved_curves:
         raise ValueError('请选择可比较的保存曲线')
@@ -203,6 +205,8 @@ def field_weighted_errors(measurement, saved_curves, *, focus=None):
     h, b = (np.asarray(values, dtype=float) for values in zip(*((p['H_A_per_m'], p['input_B_T']) for p in original)))
     low = max(h[0], *(grid[0] for grid, _ in curves.values()))
     high = min(h[-1], *(grid[-1] for grid, _ in curves.values()))
+    if limits is not None:
+        low, high = max(low, limits[0]), min(high, limits[1])
     split = 800.
     ranges = {'common': (low, high), 'up_to_800': (low, min(high, split)), 'from_800': (max(low, split), high)}
     if focus is not None:

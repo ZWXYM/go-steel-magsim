@@ -20,7 +20,7 @@ from modules.material_library import MaterialLibrary
 from modules.platform_material_exports import PlatformMaterialExports
 from modules.material_loss_reference import MaterialLossReference,reference_csv,reference_bundle,json_bytes as loss_json_bytes
 from modules.baosteel_catalog_check import read_catalog_check
-from modules.published_loss_checks import figure_frequency_csv, read_published_loss_checks
+from modules.published_loss_checks import figure_frequency_csv, read_baosteel_special_loss, read_published_loss_checks
 from modules.material_input_view import MaterialInputView
 from modules.calibrated_motor_preparation import CalibratedMotorPreparation
 from modules.calibrated_motor_native import CalibratedMotorNative
@@ -229,13 +229,25 @@ def create_workbench(project,storage=None,root=None,script_history=None):
             _,published=read_published_loss_checks(project)
         except ValueError:
             published=None
-        return render_template('material_loss_reference.html',catalog_check=check,published=published)
+        try:
+            _,special_loss=read_baosteel_special_loss(project)
+        except ValueError:
+            special_loss=None
+        return render_template('material_loss_reference.html',catalog_check=check,published=published,special_loss=special_loss)
 
     @bp.get('/api/workbench/material-loss-reference/baosteel-check')
     def baosteel_catalog_check_download():
         if request.args:raise ValueError('宝钢附录对照不接受文件或查询参数')
         raw,_=read_catalog_check(project)
         return send_file(io.BytesIO(raw),as_attachment=True,download_name='baosteel_D1_catalog_check_v1.json',mimetype='application/json')
+
+    @bp.get('/api/workbench/material-loss-reference/baosteel-special-loss')
+    def baosteel_special_loss_download():
+        if request.args:
+            raise ValueError('宝钢特殊工况损耗不接受查询参数')
+        raw,_=read_baosteel_special_loss(project)
+        return send_file(io.BytesIO(raw),as_attachment=True,download_name='baosteel_special_operating_loss_2020_v1.json',
+                         mimetype='application/json')
 
     @bp.get('/api/workbench/material-loss-reference/published-checks')
     def published_loss_checks_download():

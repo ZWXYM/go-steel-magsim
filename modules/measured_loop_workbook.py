@@ -8,7 +8,7 @@ from pathlib import PureWindowsPath
 from xml.etree.ElementTree import ParseError
 
 from defusedxml.common import DefusedXmlException
-from flask import Blueprint, abort, redirect, render_template, request, url_for
+from flask import Blueprint, abort, redirect, render_template, request, send_file, url_for
 from openpyxl import DEFUSEDXML, load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 from werkzeug.exceptions import RequestEntityTooLarge
@@ -32,6 +32,11 @@ POINT_COLUMNS = ('Measurement', 'No.', 'H [A/m]', 'B [T]')
 DECIMAL = r'[0-9]+(?:\.[0-9]+)?'
 NOMINAL = re.compile(rf'({DECIMAL})\s*T')
 GROUP = re.compile(rf'({DECIMAL})\s*T\s*/\s*({DECIMAL})\s*Hz')
+PEAK_BASES = {
+    'reported': ('reported_Hmax_A_per_m', 'reported_Bmax_T', 'Results', 'results_row', 'Results 的 Hmax 与 Bmax'),
+    'concurrent': ('H_at_positive_B_peak_A_per_m', 'sampled_positive_B_peak_T', 'DataPoints', 'positive_peak_data_row',
+                   'DataPoints 正 B 峰值处的同一行 H、B'),
+}
 
 
 def _read_rows(sheet, columns, limit):
@@ -170,6 +175,32 @@ def replay_workbook(blob):
     return summaries, segments
 
 
+def peak_series(report):
+    """Group only compatible workbook rows, preserving the sheet and row behind every peak."""
+    grouped = {}
+    for cycle in report['cycles']:
+        key = (cycle['sample'], cycle['coil_system'], cycle['signal_form'], cycle['frequency_Hz'])
+        grouped.setdefault(key, []).append(cycle)
+    exports = {}
+    for index, (key, cycles) in enumerate(grouped.items(), 1):
+        if len(cycles) < 2:
+            continue
+        options = {}
+        for basis, (h_key, b_key, sheet, row_key, _) in PEAK_BASES.items():
+            ordered = sorted(cycles, key=lambda row: row[h_key])
+            h = [row[h_key] for row in ordered]
+            if h[0] < 0 or any(a >= b for a, b in zip(h, h[1:])):
+                continue
+            options[basis] = [dict(H_A_per_m=row[h_key], B_T=row[b_key], original_sheet=sheet,
+                                   original_row=row[row_key], measurement=row['measurement'],
+                                   nominal_B_T=row['nominal_B_T'], frequency_Hz=row['frequency_Hz'],
+                                   direction=report['source']['direction'], workbook_sha256=report['original']['sha256'])
+                              for row in ordered]
+        if options:
+            exports[index] = dict(identity=key, rows=len(cycles), options=options)
+    return exports
+
+
 class MeasuredLoopWorkbook:
     def __init__(self, packages):
         self.packages = packages
@@ -245,8 +276,21 @@ def create_measured_loop_workbook_routes(service):
     def result(artifact):
         try:
             record, report = service.read(artifact)
+            series = peak_series(report)
         except (ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile):
             abort(404)
-        return render_template('measured_loop_workbook.html', record=record, report=report, **labels)
+        return render_template('measured_loop_workbook.html', record=record, report=report,
+                               peak_series=series, peak_labels={k: columns[-1] for k, columns in PEAK_BASES.items()},
+                               **labels)
+
+    @bp.get('/measured-loop-workbook/<artifact>/peaks/<int:series>/<basis>.csv')
+    def peaks(artifact, series, basis):
+        try:
+            _, report = service.read(artifact)
+            rows = peak_series(report)[series]['options'][basis]
+        except (ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile):
+            abort(404)
+        return send_file(io.BytesIO(csv_bytes(rows)), mimetype='text/csv', as_attachment=True,
+                         download_name=f'{artifact}_peak_series_{series}_{basis}.csv')
 
     return bp

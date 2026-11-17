@@ -43,4 +43,13 @@
 <p class="muted">表 D.1 是厂家典型参考，未给出各行试样身份或损耗点的 H，不能把 J 的损耗点直接改作 B 的实测。100 Hz 是外推；此对照不改原校准曲线或电机系数。</p>
 <a href="/api/workbench/material-loss-reference/baosteel-check">下载四牌号来源对照 JSON</a></section>
 {% endif %}
+{% if special_loss %}
+<section class="card" id="baosteel-special-loss"><h2>B23R075 偏磁与谐波损耗</h2>
+<p>宝钢应用手册印刷第 {{ special_loss.printed_page }} 页给出两个工作磁密下的 Ps。偏磁比较取 0 与 300 A/m，谐波比较取正弦与原图最高组合 SIN+F5+F7+F11+F13。</p>
+<div class="tablewrap" tabindex="0" role="region" aria-label="B23R075 偏磁与谐波损耗"><table><thead><tr><th>工况</th><th>工作磁密 / T</th><th>起点图读 / W·kg⁻¹</th><th>终点图读 / W·kg⁻¹</th><th>相对变化</th></tr></thead><tbody>
+{% for row in special_loss.B23R075_endpoint_comparisons %}<tr><th scope="row">{{ '直流偏磁' if row.condition == 'dc_bias' else '高次谐波' }}</th><td>{{ '%.2f'|format(row.working_B_T) }}</td><td>{{ '%.3f'|format(row.start_W_kg) }}</td><td>{{ '%.3f'|format(row.end_W_kg) }}</td><td>{{ '%+.1f'|format(row.relative_change_pct) }}%</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="muted">图读分辨率约 0.01 W/kg。原页未给出测量方向、基波频率、谐波幅值和卷号。下载含同页 B23R080、B27R085 比较曲线。</p>
+<p><a href="{{ special_loss.source_url }}">宝钢应用手册</a> · <a href="{{ url_for('.baosteel_special_loss_download') }}">下载 60 个图读点及坐标核对 JSON</a></p></section>
+{% endif %}
 </main><script src="/static/js/material_loss_reference.js" defer></script></body></html>

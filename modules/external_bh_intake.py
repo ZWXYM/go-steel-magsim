@@ -18,8 +18,10 @@ from modules.system_data import csv_bytes, json_bytes, sha256, workpack_bytes
 
 
 VERSION = 'external_bh_validation_v1'
+UNSPECIFIED_VERSION = 'external_bh_validation_v2_unspecified_direction'
 PACKAGE_FILENAME = 'external_bh_validation.zip'
 DIRECTIONS = ('RD', 'TD')
+UPLOAD_DIRECTIONS = (*DIRECTIONS, 'unspecified')
 SOURCE_LABELS = {
     'measurement': '实验原表（用户提供）',
     'published_measurement': '公开实测',
@@ -150,9 +152,15 @@ class ExternalBHIntake:
         source = _source(form)
         if not uploads:
             raise ValueError('请添加原始 CSV 文件')
-        if set(uploads).difference(DIRECTIONS):
-            raise ValueError('原表方向须为 RD 或 TD')
-        summary = dict(version=VERSION, mode=mode, source=source, inputs={}, comparison={}, model=None,
+        if set(uploads).difference(UPLOAD_DIRECTIONS):
+            raise ValueError('请选择 RD、TD 或方向未注明的文件框')
+        unspecified = 'unspecified' in uploads
+        if unspecified and len(uploads) != 1:
+            raise ValueError('方向未注明的原表请单独上传')
+        if unspecified:
+            source.update(direction='unspecified', direction_and_pairing_declared=False)
+        summary = dict(version=UNSPECIFIED_VERSION if unspecified else VERSION, mode=mode,
+                       source=source, inputs={}, comparison={}, model=None,
                        specimen_independence_verified=False)
         files = {}
         for direction, (filename, blob) in uploads.items():
@@ -165,10 +173,12 @@ class ExternalBHIntake:
         title = '磁化曲线原表'
         if mode == 'compare':
             focus = _focus_range(form)
-            if source['curve_kind'] == 'unspecified':
+            if not unspecified and source['curve_kind'] == 'unspecified':
                 raise ValueError('比较前请选择原表的曲线种类')
-            directions = [direction for direction in DIRECTIONS if direction in uploads]
-            if len(directions) == 1:
+            directions = [direction for direction in DIRECTIONS if unspecified or direction in uploads]
+            if unspecified:
+                summary['comparison_scope'] = 'direction_unspecified'
+            elif len(directions) == 1:
                 if form.get('single_direction_confirmed') != 'yes':
                     raise ValueError('请确认单份原表的测量方向，或仅归档原表')
                 source.update(direction=directions[0], direction_and_pairing_declared=False)
@@ -193,19 +203,26 @@ class ExternalBHIntake:
                            method='Linear interpolation on physical H. All selected curves use the same original input rows in the common range. Errors are saved B minus input B.')
             if comparison_identity:
                 summary['comparison_model'] = comparison_identity
+            curve_sets = {direction: {name: model['curves'][direction] for name, model in models.items()}
+                          for direction in directions}
+            limits = None
+            unspecified_table = None
+            if unspecified:
+                unspecified_table = read_measurement_csv(uploads['unspecified'][1], '方向未注明')
+                grids = [curve['H'] for curves in curve_sets.values() for curve in curves.values()]
+                limits = (max(grid[0] for grid in grids), min(grid[-1] for grid in grids))
             saved_rows = []
-            for direction in directions:
-                measurement = read_measurement_csv(uploads[direction][1], direction)
-                curves = {name: model['curves'][direction] for name, model in models.items()}
-                compared = compare_curves(measurement, curves)
-                compared['field_weighted'] = field_weighted_errors(measurement, curves, focus=focus)
+            for direction, curves in curve_sets.items():
+                measurement = unspecified_table if unspecified else read_measurement_csv(uploads[direction][1], direction)
+                compared = compare_curves(measurement, curves, limits=limits)
+                compared['field_weighted'] = field_weighted_errors(measurement, curves, focus=focus, limits=limits)
                 files[f'comparison/{direction}.csv'] = csv_bytes(compared.pop('rows'))
                 summary['comparison'][direction] = compared
                 for name, curve in curves.items():
                     saved_rows.extend(dict(model=name, direction=direction, H_A_per_m=h, B_T=b)
                                       for h, b in zip(curve['H'], curve['B']))
             files['model_curves.csv'] = csv_bytes(saved_rows)
-            title = '/'.join(directions) + ' 原表比较 · ' + identity['grade']
+            title = ('方向未注明的原表' if unspecified else '/'.join(directions) + ' 原表') + '比较 · ' + identity['grade']
         files['external_bh_report.json'] = json_bytes(summary)
         description = SOURCE_LABELS[source['source_kind']] + '。' + (
             '保留上传字节、物理 H 比较、两种训练范围和保存曲线。' if mode == 'compare' else '保留上传字节和自报来源。')
@@ -217,7 +234,7 @@ class ExternalBHIntake:
             raise ValueError('工作包类型不符')
         with zipfile.ZipFile(io.BytesIO(blob)) as archive:
             report = json.loads(archive.read('external_bh_report.json'))
-        if report['version'] != VERSION:
+        if report['version'] not in (VERSION, UNSPECIFIED_VERSION):
             raise ValueError('磁化曲线原表版本不符')
         return record, report, blob
 
@@ -283,10 +300,15 @@ class ExternalBHIntake:
     def comparison_plot(self, artifact, direction, scope):
         _, report, blob = self._read_with_bytes(artifact)
         bounds = curve_windows(report)[direction][scope]
+        unspecified = report.get('comparison_scope') == 'direction_unspecified'
+        original = 'unspecified' if unspecified else direction
         with zipfile.ZipFile(io.BytesIO(blob)) as z:
-            raw = z.read(f'original/{direction}.csv')
+            raw = z.read(report['inputs'][original]['archive_path'])
             curves = comparison_plot_curves(z.read('model_curves.csv'), report, direction)
-        return measured_chart(raw, direction, bounds, curves)
+        chart = measured_chart(raw, direction, bounds, curves)
+        if unspecified:
+            chart['source_direction'] = 'unspecified'
+        return chart
 
     def candidate_plot(self, artifact, direction, scope):
         _, _, blob, source, windows = self._candidate_plot_inputs(artifact)
@@ -318,7 +340,7 @@ def create_external_bh_routes(intake):
         try:
             form = request.form.to_dict()
             uploads = {}
-            for direction in DIRECTIONS:
+            for direction in UPLOAD_DIRECTIONS:
                 files = [upload for upload in request.files.getlist(direction) if upload.filename]
                 if len(files) > 1:
                     raise ValueError(f'{direction} 只接受一份原表')

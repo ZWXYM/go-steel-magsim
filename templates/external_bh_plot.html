@@ -2,7 +2,7 @@
 <details class="bh-plot" data-bh-plot="{{ plot_url }}">
   <summary>查看 B–H 曲线与原采样点</summary>
   <div class="actions">
-    <label>方向<select data-bh-direction>
+    <label>{{ '模型方向' if unspecified_direction else '方向' }}<select data-bh-direction>
       {% for direction, ranges in plot_options.items() %}
       <option value="{{ direction }}" data-focus="{{ 'yes' if 'focus' in ranges else 'no' }}"{% if direction == 'TD' %} selected{% endif %}>{{ '轧向 RD' if direction == 'RD' else '横向 TD' }}</option>
       {% endfor %}

@@ -336,3 +336,5 @@ tests/test_loop_frequency_series.py -text
 calibration/reference_field_weighted_20261112/** -text
 
 go_steel_data/output/published_go_loss_checks_v1.json -text
+
+go_steel_data/output/baosteel_special_operating_loss_2020_v1.json -text

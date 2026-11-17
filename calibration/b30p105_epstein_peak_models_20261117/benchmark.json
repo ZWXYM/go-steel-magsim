@@ -1,0 +1,178 @@
+{
+  "schema": "b30p105_epstein_50hz_peak_comparisons_v1",
+  "grade": "B30P105",
+  "frequency_Hz": 50,
+  "direction": null,
+  "curve_kind": "normal_peak",
+  "source_workbook_sha256": "eb397a4f667ee6d089c2501e19c6afb41c0a50e87774a78c804292428ebe769b",
+  "source_doi": "https://doi.org/10.1038/s41598-024-55155-w",
+  "original_value_checks": 80,
+  "direction_inferred": false,
+  "native_solves": 0,
+  "model_comparisons": [
+    {
+      "basis": "reported",
+      "source_sheet": "Results",
+      "calibration_V4": "cal_eeb9d7859b04",
+      "calibration_V2": "cal_8fff23daed9e",
+      "comparison": {
+        "RD": {
+          "overlap_H_range_A_per_m": [
+            4.997870262632979,
+            31416.223404255317
+          ],
+          "compared_points": 20,
+          "metrics": {
+            "fit": {
+              "mae_T": 0.2294638032616466,
+              "rmse_T": 0.2657603347044911
+            },
+            "holdout": {
+              "mae_T": 0.27136305658406545,
+              "rmse_T": 0.31633504377564103
+            },
+            "secondary_fit": {
+              "mae_T": 0.2294638032616466,
+              "rmse_T": 0.2657603347044911
+            },
+            "secondary_holdout": {
+              "mae_T": 0.38216251453906114,
+              "rmse_T": 0.4300761990230737
+            }
+          },
+          "B800": {
+            "at_original_point": false,
+            "fit_B_T": 1.9010027211041152,
+            "fit_error_T": 0.06859975882100366,
+            "holdout_B_T": 1.900476900261272,
+            "holdout_error_T": 0.06807393797816053,
+            "input_B_T": 1.8324029622831115,
+            "secondary_fit_B_T": 1.9010027211041152,
+            "secondary_fit_error_T": 0.06859975882100366,
+            "secondary_holdout_B_T": 1.9613591254891796,
+            "secondary_holdout_error_T": 0.12895616320606806
+          }
+        },
+        "TD": {
+          "overlap_H_range_A_per_m": [
+            4.997870262632979,
+            31416.223404255317
+          ],
+          "compared_points": 20,
+          "metrics": {
+            "fit": {
+              "mae_T": 0.6715454326037077,
+              "rmse_T": 0.7819100987856731
+            },
+            "holdout": {
+              "mae_T": 0.6786202191572119,
+              "rmse_T": 0.7904144357277011
+            },
+            "secondary_fit": {
+              "mae_T": 0.6715454326037077,
+              "rmse_T": 0.7819100987856731
+            },
+            "secondary_holdout": {
+              "mae_T": 0.598805199311533,
+              "rmse_T": 0.7119373144036922
+            }
+          },
+          "B800": {
+            "at_original_point": false,
+            "fit_B_T": 1.5999818254963538,
+            "fit_error_T": -0.2324211367867577,
+            "holdout_B_T": 1.618021197846278,
+            "holdout_error_T": -0.21438176443683354,
+            "input_B_T": 1.8324029622831115,
+            "secondary_fit_B_T": 1.5999818254963538,
+            "secondary_fit_error_T": -0.2324211367867577,
+            "secondary_holdout_B_T": 1.7061385130729512,
+            "secondary_holdout_error_T": -0.12626444921016033
+          }
+        }
+      }
+    },
+    {
+      "basis": "concurrent",
+      "source_sheet": "DataPoints",
+      "calibration_V4": "cal_eeb9d7859b04",
+      "calibration_V2": "cal_8fff23daed9e",
+      "comparison": {
+        "RD": {
+          "overlap_H_range_A_per_m": [
+            4.311549409906915,
+            31507.126828457447
+          ],
+          "compared_points": 20,
+          "metrics": {
+            "fit": {
+              "mae_T": 0.07704264824137078,
+              "rmse_T": 0.1038001087350357
+            },
+            "holdout": {
+              "mae_T": 0.08440410560215594,
+              "rmse_T": 0.1172634122375249
+            },
+            "secondary_fit": {
+              "mae_T": 0.07704264824137078,
+              "rmse_T": 0.1038001087350357
+            },
+            "secondary_holdout": {
+              "mae_T": 0.19236860964152186,
+              "rmse_T": 0.2136189286113197
+            }
+          },
+          "B800": {
+            "at_original_point": false,
+            "fit_B_T": 1.9010027211041152,
+            "fit_error_T": 0.06841402016164588,
+            "holdout_B_T": 1.900476900261272,
+            "holdout_error_T": 0.06788819931880274,
+            "input_B_T": 1.8325887009424693,
+            "secondary_fit_B_T": 1.9010027211041152,
+            "secondary_fit_error_T": 0.06841402016164588,
+            "secondary_holdout_B_T": 1.9613591254891796,
+            "secondary_holdout_error_T": 0.12877042454671028
+          }
+        },
+        "TD": {
+          "overlap_H_range_A_per_m": [
+            4.311549409906915,
+            31507.126828457447
+          ],
+          "compared_points": 20,
+          "metrics": {
+            "fit": {
+              "mae_T": 0.6850189211038538,
+              "rmse_T": 0.7977510758699078
+            },
+            "holdout": {
+              "mae_T": 0.6909375650533112,
+              "rmse_T": 0.80525959874804
+            },
+            "secondary_fit": {
+              "mae_T": 0.6850189211038538,
+              "rmse_T": 0.7977510758699078
+            },
+            "secondary_holdout": {
+              "mae_T": 0.6167226856368445,
+              "rmse_T": 0.7330709709529077
+            }
+          },
+          "B800": {
+            "at_original_point": false,
+            "fit_B_T": 1.5999818254963538,
+            "fit_error_T": -0.23260687544611547,
+            "holdout_B_T": 1.618021197846278,
+            "holdout_error_T": -0.21456750309619133,
+            "input_B_T": 1.8325887009424693,
+            "secondary_fit_B_T": 1.5999818254963538,
+            "secondary_fit_error_T": -0.23260687544611547,
+            "secondary_holdout_B_T": 1.7061385130729512,
+            "secondary_holdout_error_T": -0.12645018786951812
+          }
+        }
+      }
+    }
+  ]
+}

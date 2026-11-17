@@ -9,7 +9,7 @@ from flask import Flask
 from openpyxl import Workbook
 
 from modules.measured_loop_workbook import (MeasuredLoopWorkbook, POINT_COLUMNS, RESULT_COLUMNS,
-                                            create_measured_loop_workbook_routes, replay_workbook)
+                                            create_measured_loop_workbook_routes, peak_series, replay_workbook)
 from modules.system_data import WorkpackStore, sha256
 from modules.system_data_reference_evidence import collect_reference_package
 
@@ -89,3 +89,33 @@ class MeasuredLoopWorkbookTest(unittest.TestCase):
         for change, message in ((mismatch, '测量标签'), (formula, '有限数值单元格'), (duplicate, '组合重复')):
             with self.subTest(change=change.__name__), self.assertRaisesRegex(ValueError, message):
                 replay_workbook(workbook_bytes(change))
+
+    def test_peak_download_keeps_separate_groups_and_original_sheet_rows(self):
+        def additional_cycle(results, data):
+            results.append((3, 'Epstein test', 'sample-tag', 'Sin', '1.2 T', 50, 1.2, 160, 1.8))
+            for index, (h, b) in enumerate(((-150, -1.2), (130, 0), (50, 1.2), (-140, 0)), 1):
+                data.append(('1.2T/50Hz', index, h, b))
+
+        raw = workbook_bytes(additional_cycle)
+        with tempfile.TemporaryDirectory() as temporary:
+            service = MeasuredLoopWorkbook(WorkpackStore(Path(temporary)))
+            record = service.save(dict(source_reference='original workbook', ordered_cycles='yes'), 'curves.xlsx', raw)
+            _, report = service.read(record['id'])
+            app = Flask(__name__, template_folder=str(Path(__file__).resolve().parents[1] / 'templates'))
+            app.register_blueprint(create_measured_loop_workbook_routes(service))
+            client = app.test_client()
+            url = '/measured-loop-workbook/' + record['id']
+            self.assertIn('下载同条件的 H–B 峰值表', client.get(url).get_data(as_text=True))
+            self.assertEqual(set(peak_series(report)), {1})
+            for basis, fields, source in (('reported', [125, 160], 'Results'), ('concurrent', [40, 50], 'DataPoints')):
+                with client.get(url+f'/peaks/1/{basis}.csv') as result:
+                    self.assertEqual(result.status_code, 200)
+                    self.assertIn('attachment;', result.headers['Content-Disposition'])
+                    rows = list(csv.DictReader(io.StringIO(result.data.decode('utf-8-sig'))))
+                self.assertEqual([float(row['H_A_per_m']) for row in rows], fields)
+                self.assertEqual([float(row['B_T']) for row in rows], [1, 1.2])
+                self.assertEqual({row['original_sheet'] for row in rows}, {source})
+                self.assertEqual({row['workbook_sha256'] for row in rows}, {sha256(raw)})
+                self.assertEqual({row['frequency_Hz'] for row in rows}, {'50'})
+                self.assertEqual([int(row['original_row']) for row in rows], [2, 4] if basis == 'reported' else [4, 14])
+            self.assertEqual(client.get(url+'/peaks/2/reported.csv').status_code, 404)

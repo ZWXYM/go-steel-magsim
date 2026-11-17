@@ -16,7 +16,7 @@ from flask import Flask
 from modules.baosteel_catalog_check import SOURCE as STANDARD_CHECK
 from modules.frequency_loss_validation import read_frequency_table
 from modules.material_loss_reference import MaterialLossReference, GRADES, reference_csv, reference_bundle
-from modules.published_loss_checks import SOURCE as PUBLISHED_CHECKS
+from modules.published_loss_checks import BAOSTEEL_SPECIAL_SOURCE, SOURCE as PUBLISHED_CHECKS
 from modules.workbench_routes import create_workbench
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -175,6 +175,24 @@ class LossReferenceTests(unittest.TestCase):
         self.assertEqual(client.get(base + 'published-checks').status_code, 400)
         self.assertNotIn('同牌号发表实测对照', client.get('/material-loss-reference').get_data(as_text=True))
         self.assertEqual(client.get(base.rstrip('/')).status_code, 200)
+
+    def test_bao_steel_special_loss_keeps_published_conditions_and_download_identity(self):
+        source = (PROJECT / BAOSTEEL_SPECIAL_SOURCE).read_bytes()
+        (self.project / BAOSTEEL_SPECIAL_SOURCE).write_bytes(source)
+        client = self.client()
+        page = client.get('/material-loss-reference').get_data(as_text=True)
+        self.assertIn('B23R075 偏磁与谐波损耗', page)
+        self.assertIn('+39.2%', page)
+        route = '/api/workbench/material-loss-reference/baosteel-special-loss'
+        with client.get(route) as response:
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, source)
+            data = json.loads(response.data)
+        self.assertEqual(len(data['readings']), 60)
+        self.assertEqual(sum(row['grade']=='B23R075' for row in data['readings']), 20)
+        self.assertIsNone(data['frequency_Hz'])
+        self.assertIsNone(data['direction'])
+        self.assertEqual(client.get(route+'?frequency=50').status_code, 400)
 
 
 if __name__ == '__main__': unittest.main()
